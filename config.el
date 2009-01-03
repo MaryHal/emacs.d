@@ -410,16 +410,6 @@
 (add-to-list 'auto-mode-alist '("\\.tag$" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.vm$" . html-mode))
 
-;; pre-evil Stuff
-(setq evil-want-C-u-scroll t)
-(setq evil-find-skip-newlines t)
-(setq evil-move-cursor-back nil)
-(setq evil-cross-lines t)
-(setq evil-intercept-esc 'always)
-;; (evil-set-toggle-key "<pause>")
-
-(setq evil-auto-indent t)
-
 ;; Tag colors (For use in modeline)
 (setq evil-normal-state-tag   (propertize " Normal "   'face '((:background "LimeGreen" :foreground "DarkGreen" :weight bold)))
       evil-insert-state-tag   (propertize " Insert "   'face '((:background "grey80" :foreground "NavyBlue" :weight bold)))
@@ -428,7 +418,6 @@
       evil-emacs-state-tag    (propertize " Emacs "    'face '((:background "MediumOrchid" :foreground "DarkMagenta" :weight bold)))
       evil-motion-state-tag   (propertize " Motion "   'face '((:background "goldenrod4" :foreground "goldenrod1" :weight bold)))
       evil-operator-state-tag (propertize " Operator " 'face '((:background "RoyalBlue4" :foreground "DarkBlue" :weight bold))))
-
 
 ;; Diminish modeline clutter
 (require 'diminish)
@@ -446,6 +435,16 @@
 (require 'smart-mode-line)
 (sml/setup)
 (setq sml/col-number-format "%4c")
+
+;; pre-evil Stuff
+(setq evil-want-C-u-scroll t)
+(setq evil-find-skip-newlines t)
+(setq evil-move-cursor-back nil)
+(setq evil-cross-lines t)
+(setq evil-intercept-esc 'always)
+;; (evil-set-toggle-key "<pause>")
+
+(setq evil-auto-indent t)
 
 ;; evil
 (require 'evil)
