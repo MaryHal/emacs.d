@@ -5,6 +5,7 @@
 ;(setq backup-inhibited t)
 
 ;disable auto save
+(auto-save-mode nil)
 (setq auto-save-default nil)
 
 ;; Place Backup Files in a Specific Directory
@@ -14,11 +15,6 @@
 ;                                       (concat "~/.emacs.d/" "backups")))))
 (setq backup-directory-alist
       `((".*" . , (concat temporary-file-directory "emacs_backups"))))
-;(setq auto-save-file-name-transforms
-;      `((".*" ,temporary-file-directory t)))
-
-
-
 ;(setq auto-save-file-name-transforms
 ;      `((".*" ,temporary-file-directory t)))
 
