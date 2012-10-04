@@ -33,7 +33,7 @@
    powerline
    smex
    expand-region
-   multiple-cursors
+   ;;multiple-cursors
    diminish
    (:name undo-tree
     :type http
@@ -73,7 +73,7 @@
 (require 'setup-evil)        ; uses evil
 
 (require 'func)
-(require 'keybindings) ; Uses expand-region, multiple-cursors, smex
+(require 'keybindings) ; Uses expand-region, smex
 (require 'misc)
 
 (require 'setup-copypaste)
