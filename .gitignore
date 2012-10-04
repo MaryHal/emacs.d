@@ -1,0 +1,9 @@
+ac-comphist.dat
+ido.last
+smex-items
+.mc-lists.el
+
+site-lisp/
+el-get/
+backups/
+auto-save-list/
