@@ -48,7 +48,7 @@
 (setq site-lisp-dir (expand-file-name "site-lisp" dotfiles-dir))
 
 (require 'workgroups)
-;(workgroups-mode 1)
+(workgroups-mode 1)
 
 ;; Personal Stuff
 (add-to-list 'load-path (concat user-emacs-directory
@@ -63,9 +63,8 @@
 (require 'setup-ido)         ; uses smex
 (require 'setup-dired)
 
-(require 'setup-yasnippet)
-
 (require 'setup-ac)          ; Uses auto-complete-config, auto-complete-clang,
+(require 'setup-yasnippet)
 
 (require 'setup-evil)        ; uses evil, evil-surround
 
