@@ -1,5 +1,10 @@
-(require 'powerline)
 (require 'color-theme)
+
+;; Make the bars pretty
+(require 'powerline)
+;; Diminish modeline clutter
+(require 'diminish)
+
 
 ;; Fonts + theme
 (color-theme-tomorrow-night)
@@ -19,7 +24,10 @@
 ;; Thematic configuration
 (menu-bar-mode -1)
 (tool-bar-mode -1)
+(tooltip-mode -1)
 (scroll-bar-mode -1)
+
+;; Boring startup screens
 (setq inhibit-splash-screen t)
 (setq initial-scratch-message nil)
 
@@ -30,10 +38,6 @@
 
 ; Don't add newlines when cursor goes past end of file
 (setq next-line-add-newlines nil)
-
-;; Whitespace
-(setq-default show-trailing-whitespace t)
-(setq-default indicate-empty-lines t)
 
 ;; Don't Blink Cursor
 (blink-cursor-mode -1)

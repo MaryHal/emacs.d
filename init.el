@@ -25,20 +25,15 @@
    auto-complete
    auto-complete-clang
    auto-complete-emacs-lisp
-   auctex
-   ac-math
    yasnippet
-   auto-complete-yasnippet
    workgroups
    powerline
    smex
    expand-region
    ;;multiple-cursors
    diminish
-   (:name undo-tree
-    :type http
-    :url "file:///home/sanford/.emacs.d/site-lisp/undo-tree/undo-tree.el")
    evil
+   evil-surround
    smooth-scrolling
    lua-mode
    haskell-mode))
@@ -49,6 +44,8 @@
 (setq dotfiles-dir (file-name-directory
                     (or (buffer-file-name) load-file-name)))
 
+;; Set path to dependencies
+(setq site-lisp-dir (expand-file-name "site-lisp" dotfiles-dir))
 
 (require 'workgroups)
 ;(workgroups-mode 1)
@@ -58,26 +55,23 @@
                                 (convert-standard-filename "config")))
 
 (require 'sane-defaults)
-(require 'appearance)          ; uses color-theme, color-theme-tomorrow, powerline
+(require 'appearance)        ; uses color-theme, color-theme-tomorrow, powerline
 
+;; Mode hooks
 (require 'setup-cc-hooks)
 
-(require 'setup-ido)           ; uses smex
+(require 'setup-ido)         ; uses smex
 (require 'setup-dired)
 
-; Uses auto-complete-config, auto-complete-clang,
-; auto-complete-yasnippet, yasnippet, auto-complete-emacs-lisp
 (require 'setup-yasnippet)
-(require 'setup-ac)
 
-(require 'setup-evil)        ; uses evil
+(require 'setup-ac)          ; Uses auto-complete-config, auto-complete-clang,
+
+(require 'setup-evil)        ; uses evil, evil-surround
 
 (require 'func)
 (require 'keybindings) ; Uses expand-region, smex
 (require 'misc)
 
 (require 'setup-copypaste)
-
-;; Diminish modeline clutter
-(require 'diminish)
 

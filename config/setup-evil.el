@@ -2,6 +2,9 @@
 (evil-mode t)
 
 ;; Evil Stuff
+(require 'surround)
+(global-surround-mode 1)
+
 (evil-define-keymap evil-esc-map :intercept nil) ; do not interpret ESC as meta
 (setq evil-auto-indent t)
 

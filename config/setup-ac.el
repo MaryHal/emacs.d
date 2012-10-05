@@ -1,9 +1,10 @@
+(require 'auto-complete)
 (require 'auto-complete-config)
 (require 'auto-complete-clang)
 ;(require 'auto-complete-yasnippet)
 
 (require 'auto-complete-emacs-lisp)
-(require 'ac-math)
+;(require 'ac-math)
 
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/el-get/auto-complete/dict")
 
@@ -46,20 +47,20 @@
 (add-hook 'c-mode-common-hook 'my-ac-cc-mode-setup)
 
 ;; Latex mode setup
-(setq ac-l-dict-directory "~/emacs.d/el-get/auto-complete-latex/ac-l-dict")
-(add-to-list 'ac-modes 'latex-mode)
-(defun ac-latex-mode-setup ()         ; add ac-sources to default ac-sources
-  (setq ac-sources
-     (append '(ac-source-math-unicode ac-source-math-latex ac-source-latex-commands)
-               ac-sources))
-)
-(add-hook 'latex-mode-hook 'ac-latex-mode-setup)
+;; (setq ac-l-dict-directory "~/emacs.d/el-get/auto-complete-latex/ac-l-dict")
+;; (add-to-list 'ac-modes 'latex-mode)
+;; (defun ac-latex-mode-setup ()         ; add ac-sources to default ac-sources
+;;   (setq ac-sources
+;;      (append '(ac-source-math-unicode ac-source-math-latex ac-source-latex-commands)
+;;                ac-sources))
+;; )
+;; (add-hook 'latex-mode-hook 'ac-latex-mode-setup)
 
-(setq TeX-PDF-mode t)
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(setq-default TeX-master nil)
-(setq ac-math-unicode-in-math-p t)
+;; (setq TeX-PDF-mode t)
+;; (setq TeX-auto-save t)
+;; (setq TeX-parse-self t)
+;; (setq-default TeX-master nil)
+;; (setq ac-math-unicode-in-math-p t)
 
 (my-ac-config)
 

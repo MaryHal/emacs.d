@@ -1,14 +1,20 @@
+;; Expand Region
 (require 'expand-region)
 (global-set-key (kbd "C-q") 'er/expand-region)
 
 ;; Easier version of "C-x k" to kill buffer
 (global-set-key (kbd "C-x C-k") 'kill-buffer)
+(global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
 
 ;; Evaluate Buffer
 ;(global-set-key (kbd "C-c C-e") 'eval-buffer)
 
 ;; Commentin'
-(global-set-key (kbd "C-c /") 'comment-or-uncomment-region)
+(global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
+(global-set-key (kbd "C-c u") 'comment-or-uncomment-region)
+
+;; Create new frame
+(define-key global-map (kbd "C-x C-n") 'make-frame-command)
 
 ;; Smex
 (global-set-key (kbd "M-x") 'smex)

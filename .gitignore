@@ -1,9 +1,15 @@
 ac-comphist.dat
 ido.last
 smex-items
-.mc-lists.el
 
 site-lisp/
 el-get/
+elpa
 backups/
 auto-save-list/
+
+*~
+.places
+session.*
+*.elc
+.DS_Store

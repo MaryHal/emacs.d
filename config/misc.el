@@ -23,5 +23,17 @@
 
 (require 'smooth-scrolling)
 
+;; Seed the random number generator
+(random t)
+
+;; Whitespace-style
+(setq-default show-trailing-whitespace t)
+(setq-default indicate-empty-lines t)
+
+(setq whitespace-style '(trailing lines space-before-tab
+                                  indentation space-after-tab)
+      whitespace-line-column 100)
+
+
 (provide 'misc)
 
