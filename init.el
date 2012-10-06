@@ -30,11 +30,15 @@
    powerline
    smex
    expand-region
+   magit
    ;;multiple-cursors
    diminish
    evil
    evil-surround
    smooth-scrolling
+   ;; (:name web-mode
+   ;;        :type git
+   ;;        :url "git://github.com/fxbois/web-mode.git")
    lua-mode
    haskell-mode))
 
@@ -48,7 +52,7 @@
 (setq site-lisp-dir (expand-file-name "site-lisp" dotfiles-dir))
 
 (require 'workgroups)
-(workgroups-mode 1)
+;(workgroups-mode 1)
 
 ;; Personal Stuff
 (add-to-list 'load-path (concat user-emacs-directory
@@ -67,6 +71,8 @@
 (require 'setup-yasnippet)
 
 (require 'setup-evil)        ; uses evil, evil-surround
+
+;(require 'setup-web-mode)    ; uses web mode
 
 (require 'func)
 (require 'keybindings) ; Uses expand-region, smex

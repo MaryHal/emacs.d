@@ -1,12 +1,12 @@
-(require 'color-theme)
-
 ;; Make the bars pretty
 (require 'powerline)
+
 ;; Diminish modeline clutter
 (require 'diminish)
-
+(add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "El")))
 
 ;; Fonts + theme
+;(require 'color-theme)
 (color-theme-tomorrow-night)
 (set-frame-font "Inconsolata 10")
 
