@@ -22,23 +22,38 @@
    switch-window
    color-theme
    color-theme-tomorrow
-   auto-complete
+   (:name auto-complete
+	  :type http
+	  :url "file:///home/sanford/.emacs.d/site-lisp/auto-complete/auto-complete.el")
+   (:name auto-complete-config
+          :type http
+          :url "file:///home/sanford/.emacs.d/site-lisp/auto-complete/auto-complete-config.el")
    auto-complete-clang
    auto-complete-emacs-lisp
+   auctex
+   ac-math
    yasnippet
    workgroups
    powerline
    smex
-   expand-region
    magit
+   (:name expand-region
+          :type git
+          :url "git://github.com/magnars/expand-region.el.git")
    ;;multiple-cursors
+   ;;mark-multiple
    diminish
+   (:name undo-tree
+	  :type http
+	  :url "file:///home/sanford/.emacs.d/site-lisp/undo-tree/undo-tree.el")
    evil
    evil-surround
    smooth-scrolling
    ;; (:name web-mode
    ;;        :type git
    ;;        :url "git://github.com/fxbois/web-mode.git")
+   php-mode
+   zencoding-mode
    lua-mode
    haskell-mode))
 
@@ -67,12 +82,14 @@
 (require 'setup-ido)         ; uses smex
 (require 'setup-dired)
 
-(require 'setup-ac)          ; Uses auto-complete-config, auto-complete-clang,
 (require 'setup-yasnippet)
+(require 'setup-ac)          ; Uses auto-complete-config, auto-complete-clang,
+(require 'setup-latex-mode)  ; uses auctex, ac-math
+
+(require 'setup-html-mode)   ; uses zencoding-mode
+;(require 'setup-web-mode)    ; uses web mode
 
 (require 'setup-evil)        ; uses evil, evil-surround
-
-;(require 'setup-web-mode)    ; uses web mode
 
 (require 'func)
 (require 'keybindings) ; Uses expand-region, smex

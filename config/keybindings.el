@@ -7,7 +7,7 @@
 (global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
 
 ;; Evaluate Buffer
-;(global-set-key (kbd "C-c C-e") 'eval-buffer)
+(global-set-key (kbd "C-c C-v") 'eval-buffer)
 
 ;; Commentin'
 (global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
@@ -18,11 +18,13 @@
 
 ;; Smex
 (global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "C-x C-m") 'smex)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
 ;; Multiple Cursors
 ;; (require 'multiple-cursors)
+;; (mc/execute-command-for-all-fake-cursors 'backward-char)
 ;; (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 ;; (global-set-key (kbd "C-S-c C-e") 'mc/edit-ends-of-lines)
 ;; (global-set-key (kbd "C-S-c C-a") 'mc/edit-beginnings-of-lines)
