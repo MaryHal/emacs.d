@@ -8,6 +8,7 @@
 
 ;; Evaluate Buffer
 (global-set-key (kbd "C-c C-v") 'eval-buffer)
+(global-set-key (kbd "C-c C-r") 'eval-region)
 
 ;; Commentin'
 (global-set-key (kbd "C-c c") 'comment-or-uncomment-region)

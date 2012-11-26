@@ -66,6 +66,8 @@
 ;; Set path to dependencies
 (setq site-lisp-dir (expand-file-name "site-lisp" dotfiles-dir))
 
+(require 'tramp)
+
 (require 'workgroups)
 ;(workgroups-mode 1)
 
