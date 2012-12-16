@@ -7,14 +7,23 @@
 
 ;; Fonts + theme
 ;(require 'color-theme)
-(color-theme-tomorrow-night)
+;;(color-theme-tomorrow-night)
 (set-frame-font "Inconsolata 10")
+
+(setq default-frame-alist
+      '((top . 10) (left . 2)
+        (width . 80) (height . 53)
+        (font . "Inconsolata 10")
+        ))
 
 (unless window-system
   (when (getenv "DISPLAY")
-    (set-face-attribute 'default nil :background "unspecified-bg")
-
     (color-theme-tomorrow-night-bright)
+
+    (set-face-attribute 'default nil :background "unspecified-bg")
+    (set-face-attribute 'font-lock-keyword-face nil :foreground "#8959a8")
+    ;; (set-face-attribute 'font-lock-keyword-face nil :foreground "#8959a8" :weight 'bold)
+
     ;; Powerline settings
     (custom-set-faces
      '(mode-line ((t (:foreground "#030303" :background "#bdbdbd" :box nil)))))

@@ -2,7 +2,7 @@
 
 ;; Use only own snippets, do not use bundled ones
 (setq yas/snippet-dirs '("~/.emacs.d/snippets"))
-(yas/global-mode 1)
+(yas/global-mode t)
 
 ;; Jump to end of snippet definition
 (define-key yas/keymap (kbd "<return>") 'yas/exit-all-snippets)
@@ -31,4 +31,3 @@
 (setq yas/prompt-functions '(yas/ido-prompt yas/completing-prompt))
 
 (provide 'setup-yasnippet)
-

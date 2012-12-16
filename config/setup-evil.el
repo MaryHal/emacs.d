@@ -71,6 +71,7 @@
 ;; Org Mode settings
 (evil-define-key 'normal org-mode-map
   (kbd "RET") 'org-open-at-point
+  (kbd "TAB") 'org-cycle
   "za" 'org-cycle
   "zA" 'org-shifttab
   "zm" 'hide-body
@@ -88,6 +89,7 @@
 
 (evil-define-key 'normal orgstruct-mode-map
   (kbd "RET") 'org-open-at-point
+  (kbd "TAB") 'org-cycle
   "za" 'org-cycle
   "zA" 'org-shifttab
   "zm" 'hide-body

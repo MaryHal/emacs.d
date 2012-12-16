@@ -29,9 +29,10 @@
           :type http
           :url "file:///home/sanford/.emacs.d/site-lisp/auto-complete/auto-complete-config.el")
    auto-complete-clang
-   auto-complete-emacs-lisp
+   ;auto-complete-yasnippet
+   ;auto-complete-emacs-lisp
    auctex
-   ac-math
+   ;ac-math
    yasnippet
    workgroups
    powerline
@@ -53,9 +54,8 @@
    ;;        :type git
    ;;        :url "git://github.com/fxbois/web-mode.git")
    php-mode
-   zencoding-mode
-   lua-mode
-   haskell-mode))
+   ;;zencoding-mode
+   lua-mode))
 
 (el-get 'sync)
 
@@ -98,4 +98,3 @@
 (require 'misc)
 
 (require 'setup-copypaste)
-

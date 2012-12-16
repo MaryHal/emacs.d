@@ -12,7 +12,7 @@
 
 ;; Commentin'
 (global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
-(global-set-key (kbd "C-c u") 'comment-or-uncomment-region)
+;;(global-set-key (kbd "C-c u") 'comment-or-uncomment-region)
 
 ;; Create new frame
 (define-key global-map (kbd "C-x C-n") 'make-frame-command)
