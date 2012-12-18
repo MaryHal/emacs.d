@@ -95,6 +95,6 @@
 
 (require 'func)
 (require 'keybindings) ; Uses expand-region, smex
-(require 'misc)
+(require 'misc) ; Uses smooth-scrolling
 
 (require 'setup-copypaste)

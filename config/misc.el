@@ -2,14 +2,16 @@
 ;; Backups
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;disable backup
-;(setq backup-inhibited t)
+(setq backup-inhibited t)
 
 ;disable auto save
 (auto-save-mode nil)
 (setq auto-save-default nil)
+(with-current-buffer (get-buffer "*scratch*")
+  (auto-save-mode -1))
 
 ;; Place Backup Files in a Specific Directory
-(setq make-backup-files t)
+(setq make-backup-files nil)
 ;; Write backup files to own directory
 ;(setq backup-directory-alist `(("." . ,(expand-file-name
 ;                                       (concat "~/.emacs.d/" "backups")))))
