@@ -15,8 +15,8 @@
 ;                                       (concat "~/.emacs.d/" "backups")))))
 (setq backup-directory-alist
       `((".*" . , (concat temporary-file-directory "emacs_backups"))))
-;(setq auto-save-file-name-transforms
-;      `((".*" ,temporary-file-directory t)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
 
 ;; Various superfluous white-space. Just say no.
 ;(add-hook 'before-save-hook 'cleanup-buffer-safe)

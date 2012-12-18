@@ -72,18 +72,21 @@
 ;(define-key ac-menu-map "\C-p" 'ac-previous)
 ;(define-key ac-menu-map (kbd "TAB") 'ac-next)
 ;(define-key ac-menu-map (kbd "M-TAB") 'ac-previous)
-(define-key ac-menu-map (kbd "<tab>") 'ac-next)
-(define-key ac-menu-map (kbd "<backtab>") 'ac-previous)
+;(define-key ac-menu-map (kbd "<tab>") 'ac-next)
+;(define-key ac-menu-map (kbd "<backtab>") 'ac-previous)
 
 ;; Stuff to help in terminal emacs
-(define-key ac-menu-map (kbd "<ESC>") 'ac-stop)
+(define-key ac-menu-map (kbd "ESC") 'ac-stop)
 (define-key ac-menu-map (kbd "C-j") 'ac-next)
 (define-key ac-menu-map (kbd "C-k") 'ac-previous)
 
+(define-key ac-menu-map (kbd "TAB") nil)
+(define-key ac-menu-map (kbd "RET") 'ac-complete)
+
 ;; Colors
-(set-face-background 'ac-candidate-face "lightgray")
+;(set-face-background 'ac-candidate-face "lightgray")
 ;(set-face-underline 'ac-candidate-face "darkgray")
-(set-face-background 'ac-selection-face "steelblue")
+;(set-face-background 'ac-selection-face "steelblue")
 (set-face-foreground 'ac-selection-face "black")
 
 (provide 'setup-ac)
