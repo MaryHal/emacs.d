@@ -36,7 +36,7 @@
 
 ;; C-common mode setup
 (defun my-ac-cc-mode-setup ()
-  (setq ac-sources (append '(ac-source-clang) ac-sources)))
+  (setq ac-sources (append '(ac-source-clang ac-source-yasnippet) ac-sources)))
 
 (defun my-ac-config ()
   (setq-default ac-sources '(ac-source-dictionary
@@ -81,7 +81,7 @@
 (define-key ac-menu-map (kbd "C-k") 'ac-previous)
 
 (define-key ac-menu-map (kbd "TAB") nil)
-(define-key ac-menu-map (kbd "RET") 'ac-complete)
+;; (define-key ac-menu-map (kbd "RET") 'ac-complete)
 
 ;; Colors
 ;(set-face-background 'ac-candidate-face "lightgray")

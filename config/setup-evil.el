@@ -41,12 +41,12 @@
 ;; Buffers
 (evil-ex-define-cmd "b"  'ido-switch-buffer)      ;B to switch buffers
 (evil-ex-define-cmd "B"  'ido-switch-buffer)      ;B to switch buffers
-(evil-ex-define-cmd "bm" 'buffer-menu)           ;Bd to open buffer menu
+(evil-ex-define-cmd "bm" 'buffer-menu)            ;Bm to open buffer menu
 (evil-ex-define-cmd "bw" (lambda()
                            (interactive)
                            (kill-this-buffer)
-                           (delete-window)))     ;Bd to delete buffers
-(evil-ex-define-cmd "BW" 'kill-this-buffer)      ;Bd to delete buffers
+                           (delete-window)))      ;Bw to delete buffers
+(evil-ex-define-cmd "BW" 'kill-this-buffer)       ;Bw to delete buffers
 
 ;; Workgroups
 (evil-ex-define-cmd "tabnew" 'wg-create-workgroup)
@@ -54,8 +54,6 @@
 (evil-ex-define-cmd "tabprev" 'wg-switch-left)
 (evil-ex-define-cmd "tabnext" 'wg-switch-right)
 
-;(evil-define-key 'normal org-mode-map "gT" 'escreen-goto-prev-screen)
-;(evil-define-key 'normal org-mode-map "gt" 'escreen-goto-next-screen)
 (define-key evil-normal-state-map "J" 'wg-switch-left)
 (define-key evil-normal-state-map "K" 'wg-switch-right)
 
@@ -64,6 +62,15 @@
 (define-key evil-replace-state-map (kbd "ESC") 'evil-normal-state)
 (define-key evil-operator-state-map (kbd "ESC") 'evil-normal-state)
 (define-key evil-motion-state-map (kbd "ESC") 'evil-normal-state)
+
+;;; esc quits
+(define-key evil-normal-state-map [escape] 'keyboard-quit)
+(define-key evil-visual-state-map [escape] 'keyboard-quit)
+(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 
 ;(set-cursor-color "#ffffff")
 ;(setq evil-insert-state-cursor '("#aa0000" hbar))
