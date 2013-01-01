@@ -23,6 +23,9 @@
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
+;; Ace Jump Mode
+(global-set-key (kbd "M-q") 'ace-jump-mode)
+
 ;; Multiple Cursors
 ;; (require 'multiple-cursors)
 ;; (mc/execute-command-for-all-fake-cursors 'backward-char)

@@ -22,12 +22,7 @@
    switch-window
    color-theme
    color-theme-tomorrow
-   (:name auto-complete
-	  :type http
-	  :url "file:///home/sanford/.emacs.d/site-lisp/auto-complete/auto-complete.el")
-   (:name auto-complete-config
-          :type http
-          :url "file:///home/sanford/.emacs.d/site-lisp/auto-complete/auto-complete-config.el")
+   auto-complete
    auto-complete-clang
    ;auto-complete-yasnippet
    ;auto-complete-emacs-lisp
@@ -41,20 +36,13 @@
    (:name expand-region
           :type git
           :url "git://github.com/magnars/expand-region.el.git")
-   ;;multiple-cursors
-   ;;mark-multiple
    diminish
-   (:name undo-tree
-	  :type http
-	  :url "file:///home/sanford/.emacs.d/site-lisp/undo-tree/undo-tree.el")
+   undo-tree
    evil
    evil-surround
+   ace-jump-mode
    smooth-scrolling
-   ;; (:name web-mode
-   ;;        :type git
-   ;;        :url "git://github.com/fxbois/web-mode.git")
    php-mode
-   ;;zencoding-mode
    lua-mode))
 
 (el-get 'sync)
@@ -94,7 +82,7 @@
 (require 'setup-evil)        ; uses evil, evil-surround
 
 (require 'func)
-(require 'keybindings) ; Uses expand-region, smex
-(require 'misc) ; Uses smooth-scrolling
+(require 'keybindings)       ; Uses expand-region, smex, ace-jump-mode
+(require 'misc)              ; Uses smooth-scrolling
 
 (require 'setup-copypaste)

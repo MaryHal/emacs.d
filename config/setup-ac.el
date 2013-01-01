@@ -7,7 +7,7 @@
 ;(require 'auto-complete-latex)
 ;(require 'ac-math)
 
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/dict")
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/el-get/auto-complete/dict")
 
 ;(ac-config-default)
 (defcustom mycustom-system-include-paths
