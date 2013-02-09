@@ -1,4 +1,4 @@
-;; Pre-init settings (really ugly)
+;; Pre-init settings (really ugly, but necessary?)
 (setq evil-want-C-u-scroll t)
 
 ;; Turn off mouse interface early in startup to avoid momentary display

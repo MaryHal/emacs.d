@@ -201,9 +201,6 @@
 ;;         (newline-mark ?\n   [?\xB6 ?\n] [?$ ?\n])    ; end-of-line
 ;;         ))
 
-
-(provide 'appearance)
-
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 (defun c-mode-common-custom ()
@@ -218,8 +215,6 @@
   )
 
 (add-hook 'c-mode-common-hook 'c-mode-common-custom)
-
-(provide 'setup-cc-hooks)
 
 ;; Interactively Do Things
 
@@ -257,14 +252,10 @@
 (setq smex-key-advice-ignore-menu-bar t)
 (setq smex-save-file "~/.emacs.d/smex-items")
 
-(provide 'setup-ido)
-
 (require 'dired)
 
 ;; Dired uses human readable sizes.
 (setq dired-listing-switches "-alh")
-
-(provide 'setup-dired)
 
 (require 'yasnippet)
 
@@ -297,8 +288,6 @@
 
 ;; No dropdowns please, yas
 (setq yas/prompt-functions '(yas/ido-prompt yas/completing-prompt))
-
-(provide 'setup-yasnippet)
 
 (require 'auto-complete)
 (require 'auto-complete-config)
@@ -391,8 +380,6 @@
 ;(set-face-background 'ac-selection-face "steelblue")
 (set-face-foreground 'ac-selection-face "black")
 
-(provide 'setup-ac)
-
 (require 'ac-math)
 
 ;; PDF stuff
@@ -412,8 +399,6 @@
 ;;       '(("zathura" "/usr/bin/zathura %q")))
 
 ;; (setq TeX-view-program-selection '((output-pdf "zathura")))
-
-(provide 'setup-latex-mode)
 
 ;; HTML
 (add-to-list 'auto-mode-alist '("\\.html\\'" . html-mode))
@@ -445,8 +430,6 @@
      (diminish 'zencoding-mode)
 
      ))
-
-(provide 'setup-html-mode)
 
 (require 'evil)
 (evil-mode t)
@@ -578,8 +561,6 @@
   (kbd "M-K") 'org-metaup
   (kbd "M-L") 'org-metaright)
 
-(provide 'setup-evil)
-
 ;; Compile display to split window
 (setq special-display-buffer-names
       '("*compilation*"))
@@ -672,8 +653,6 @@
              (set-window-start w2 s1)
              (setq i (1+ i)))))))
 
-(provide 'func)
-
 ;; Expand Region
 (require 'expand-region)
 (global-set-key (kbd "C-q") 'er/expand-region)
@@ -723,8 +702,6 @@
 
 (global-set-key [kp-delete] 'delete-char)
 
-(provide 'keybindings)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Backups
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -754,8 +731,6 @@
 
 ;; Seed the random number generator
 (random t)
-
-(provide 'misc)
 
 ; http://hugoheden.wordpress.com/2009/03/08/copypaste-with-emacs-in-terminal/
 ;; I prefer using the "clipboard" selection (the one the
@@ -794,5 +769,3 @@
     ;; http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
     ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
     ))
-
-(provide 'setup-copypaste)

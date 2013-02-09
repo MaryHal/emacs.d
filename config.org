@@ -1,5 +1,6 @@
 * Config
 ** Sane Defaults
+
 #+BEGIN_SRC emacs-lisp
 
 ;; Allow pasting selection outside of Emacs
@@ -122,6 +123,7 @@
 #+END_SRC
 
 ** Appearance
+
 #+BEGIN_SRC emacs-lisp
 
 ;; Make the bars pretty
@@ -212,7 +214,9 @@
 #+END_SRC
 
 ** Setup-cc-hooks
+
 #+BEGIN_SRC emacs-lisp
+
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 (defun c-mode-common-custom ()
@@ -229,7 +233,9 @@
 (add-hook 'c-mode-common-hook 'c-mode-common-custom)
 
 #+END_SRC
+
 ** Setup-ido
+
 #+BEGIN_SRC emacs-lisp
 
 ;; Interactively Do Things
@@ -271,6 +277,7 @@
 #+END_SRC
 
 ** Setup-dired
+
 #+BEGIN_SRC emacs-lisp
 
 (require 'dired)
@@ -282,6 +289,7 @@
 #+END_SRC
 
 ** Setup-yasnippet
+
 #+BEGIN_SRC emacs-lisp
 
 (require 'yasnippet)
@@ -319,6 +327,7 @@
 #+END_SRC
 
 ** Setup-ac
+
 #+BEGIN_SRC emacs-lisp
 
 (require 'auto-complete)
@@ -416,6 +425,7 @@
 #+END_SRC
 
 ** Setup-latex-mode
+
 #+BEGIN_SRC emacs-lisp
 
 (require 'ac-math)
@@ -442,7 +452,9 @@
 #+END_SRC
 
 ** Setup-html-mode
+
 #+BEGIN_SRC emacs-lisp
+
 ;; HTML
 (add-to-list 'auto-mode-alist '("\\.html\\'" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.tag$" . html-mode))
@@ -478,7 +490,9 @@
 #+END_SRC
 
 ** Setup-evil
+
 #+BEGIN_SRC emacs-lisp
+
 (require 'evil)
 (evil-mode t)
 
@@ -613,6 +627,7 @@
 #+END_SRC
 
 ** Func
+
 #+BEGIN_SRC emacs-lisp
 
 ;; Compile display to split window
@@ -711,6 +726,7 @@
 #+END_SRC
 
 ** Keybindings
+
 #+BEGIN_SRC emacs-lisp
 
 ;; Expand Region
@@ -766,6 +782,7 @@
 #+END_SRC
 
 ** Misc
+
 #+BEGIN_SRC emacs-lisp
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -802,7 +819,9 @@
 #+END_SRC
 
 ** Setup-copypaste
+
 #+BEGIN_SRC emacs-lisp
+
 ; http://hugoheden.wordpress.com/2009/03/08/copypaste-with-emacs-in-terminal/
 ;; I prefer using the "clipboard" selection (the one the
 ;; typically is used by c-c/c-v) before the primary selection
