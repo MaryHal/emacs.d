@@ -24,10 +24,8 @@
    color-theme-tomorrow
    auto-complete
    auto-complete-clang
-   ;auto-complete-yasnippet
-   ;auto-complete-emacs-lisp
    auctex
-   ;ac-math
+   ;;ac-math
    yasnippet
    workgroups
    powerline
@@ -54,35 +52,43 @@
 ;; Set path to dependencies
 (setq site-lisp-dir (expand-file-name "site-lisp" dotfiles-dir))
 
-(require 'tramp)
-
-(require 'workgroups)
-;(workgroups-mode 1)
-
-;; Personal Stuff
 (add-to-list 'load-path (concat user-emacs-directory
                                 (convert-standard-filename "config")))
 
-(require 'sane-defaults)
-(require 'appearance)        ; uses color-theme, color-theme-tomorrow, powerline
+;; (require 'tramp)
 
-;; Mode hooks
-(require 'setup-cc-hooks)
+(require 'workgroups)
+;;(workgroups-mode 1)
 
-(require 'setup-ido)         ; uses smex
-(require 'setup-dired)
+;; set-up org babel
+(setq org-babel-load-languages '((emacs-lisp . t)))
+(setq org-confirm-babel-evaluate nil)
+(require 'org-install)
+(require 'org)
+;; load neatly organized org file!
+(org-babel-load-file "~/.emacs.d/config.org")
 
-(require 'setup-yasnippet)
-(require 'setup-ac)          ; Uses auto-complete-config, auto-complete-clang,
-(require 'setup-latex-mode)  ; uses auctex, ac-math
+;; Personal Stuff
+;; (require 'sane-defaults)
+;; (require 'appearance)        ; uses color-theme, color-theme-tomorrow, powerline
 
-(require 'setup-html-mode)   ; uses zencoding-mode
-;(require 'setup-web-mode)    ; uses web mode
+;; ;; Mode hooks
+;; (require 'setup-cc-hooks)
 
-(require 'setup-evil)        ; uses evil, evil-surround
+;; (require 'setup-ido)         ; uses smex
+;; (require 'setup-dired)
 
-(require 'func)
-(require 'keybindings)       ; Uses expand-region, smex, ace-jump-mode
-(require 'misc)              ; Uses smooth-scrolling
+;; (require 'setup-yasnippet)
+;; (require 'setup-ac)          ; Uses auto-complete-config, auto-complete-clang,
+;; (require 'setup-latex-mode)  ; uses auctex, ac-math
 
-(require 'setup-copypaste)
+;; (require 'setup-html-mode)   ; uses zencoding-mode
+;; ;; (require 'setup-web-mode) ; uses web mode
+
+;; (require 'setup-evil)        ; uses evil, evil-surround
+
+;; (require 'func)
+;; (require 'keybindings)       ; Uses expand-region, smex, ace-jump-mode
+;; (require 'misc)              ; Uses smooth-scrolling
+
+;; (require 'setup-copypaste)

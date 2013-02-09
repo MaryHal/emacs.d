@@ -68,5 +68,21 @@
 (set-face-foreground 'show-paren-match-face "#def")
 (set-face-attribute 'show-paren-match-face nil :weight 'extra-bold)
 
+;; Whitespace-style
+(setq-default show-trailing-whitespace t)
+(setq-default indicate-empty-lines t)
+
+(setq whitespace-style '(trailing lines space-before-tab
+                                  indentation space-after-tab)
+      whitespace-line-column 100)
+;; (require 'whitespace)
+;; (whitespace-mode t)
+;; (setq whitespace-display-mappings
+;;       '((space-mark   ?\    [?\xB7]     [?.])	; space
+;;         (space-mark   ?\xA0 [?\xA4]     [?_])	; hard space
+;;         (newline-mark ?\n   [?\xB6 ?\n] [?$ ?\n])	; end-of-line
+;;         ))
+
+
 (provide 'appearance)
 
