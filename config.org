@@ -1,13 +1,93 @@
+# Configuration file for Emacs using org mode
 * Config
-** Sane Defaults
+** Pre-load Settings
 
 #+BEGIN_SRC emacs-lisp
 
-;; Allow pasting selection outside of Emacs
-(setq x-select-enable-clipboard t)
+;; Pre-init settings (really ugly, but necessary?)
+(setq evil-want-C-u-scroll t)
 
-;; Treat clipboard input as UTF-8 string first; compound text next, etc.
-(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+;; Turn off mouse interface early in startup to avoid momentary display
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+
+#+END_SRC
+
+** El-get
+
+#+BEGIN_SRC emacs-lisp
+
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
+(unless (require 'el-get nil t)
+  (url-retrieve
+   "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
+   (lambda (s)
+     (let (el-get-master-branch)
+       (goto-char (point-max))
+       (eval-print-last-sexp)))))
+
+(setq el-get-sources
+      '(
+        (:name ujelly-theme
+               :type elpa
+               :post-init (add-to-list 'custom-theme-load-path default-directory))))
+
+(setq packages
+      (append
+       '(
+         ac-math
+         ace-jump-mode
+         auctex
+         auto-complete
+         auto-complete-clang
+         color-theme
+         color-theme-tomorrow
+         diminish
+         el-get
+         evil
+         evil-surround
+         expand-region
+         ido-ubiquitous
+         json
+         lua-mode
+         magit
+         php-mode
+         powerline
+         ruby-mode
+         smex
+         smooth-scrolling
+         switch-window
+         undo-tree
+         workgroups
+         yasnippet
+         )
+       (mapcar 'el-get-source-name el-get-sources)))
+
+(el-get 'sync packages)
+
+#+END_SRC
+
+** Setup Paths and Variables
+
+#+BEGIN_SRC emacs-lisp
+
+;; Set path to .emacs.d
+(setq dotfiles-dir (file-name-directory
+                    (or (buffer-file-name) load-file-name)))
+
+;; Set path to dependencies
+(setq site-lisp-dir (expand-file-name "site-lisp" dotfiles-dir))
+
+(add-to-list 'load-path (concat user-emacs-directory
+                                (convert-standard-filename "config")))
+
+#+END_SRC
+
+** Sane Defaults
+
+#+BEGIN_SRC emacs-lisp
 
 ;; Auto refresh buffers
 (global-auto-revert-mode 1)
@@ -18,9 +98,6 @@
 
 ;; Show keystrokes in progress
 (setq echo-keystrokes 0.1)
-
-;; No splash screen please ... jeez
-(setq inhibit-startup-message t)
 
 ;; Move files to trash when deleting
 ;(setq delete-by-moving-to-trash t)
@@ -60,8 +137,8 @@
 (delete-selection-mode 1)
 
 ;; Always display line and column numbers
-;(setq line-number-mode t)
-;(setq column-number-mode t)
+;;(setq line-number-mode t)
+;;(setq column-number-mode t)
 
 ;; Lines should be 80 characters wide, not 72
 (setq fill-column 80)
@@ -84,9 +161,6 @@
 ;; Don't break lines for me, please
 (setq-default truncate-lines t)
 
-;; Keep cursor away from edges when scrolling up/down
-;(require 'smooth-scrolling)
-
 ;; org-mode: Don't ruin S-arrow to switch windows please (use M-+ and M-- instead to toggle)
 (setq org-replace-disputed-keys t)
 
@@ -94,9 +168,9 @@
 (setq org-src-fontify-natively t)
 
 ;; Represent undo-history as an actual tree (visualize with C-x u)
-;(setq undo-tree-mode-lighter "")
-;(require 'undo-tree)
-;(global-undo-tree-mode)
+;;(setq undo-tree-mode-lighter "")
+;;(require 'undo-tree)
+;;(global-undo-tree-mode)
 
 ;; Sentences do not need double spaces to end. Period.
 (set-default 'sentence-end-double-space nil)
@@ -127,15 +201,18 @@
 #+BEGIN_SRC emacs-lisp
 
 ;; Make the bars pretty
-(require 'powerline)
+;;(require 'powerline)
 
 ;; Diminish modeline clutter
 (require 'diminish)
 (add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "El")))
+(eval-after-load "Undo-Tree" '(diminish 'undo-tree-mode "ut"))
 
 ;; Fonts + theme
-;(require 'color-theme)
-;;(color-theme-tomorrow-night)
+(require 'color-theme)
+(color-theme-tomorrow-night)
+;;(require 'ujelly-theme)
+;;(load-theme 'ujelly t)
 (set-frame-font "Inconsolata 10")
 
 (setq default-frame-alist
@@ -146,16 +223,14 @@
 
 (unless window-system
   (when (getenv "DISPLAY")
-    (color-theme-tomorrow-night-bright)
-
     (set-face-attribute 'default nil :background "unspecified-bg")
-    (set-face-attribute 'font-lock-keyword-face nil :foreground "#8959a8")
-    ;; (set-face-attribute 'font-lock-keyword-face nil :foreground "#8959a8" :weight 'bold)
+    ;(set-face-attribute 'font-lock-keyword-face nil :foreground "#8959a8")
+    ;(set-face-attribute 'font-lock-keyword-face nil :foreground "#8959a8" :weight 'bold)
 
     ;; Powerline settings
     (custom-set-faces
-     '(mode-line ((t (:foreground "#030303" :background "#bdbdbd" :box nil)))))
-    ; '(mode-line-inactive ((t (:foreground "#f9f9f9" :background "#666666" :box nil)))))
+     '(mode-line ((t (:foreground "#030303" :background "#bdbdbd" :box nil))))
+     '(mode-line-inactive ((t (:foreground "#f9f9f9" :background "#666666" :box nil)))))
     ))
 
 ;; Thematic configuration
@@ -165,9 +240,10 @@
 (tooltip-mode -1)
 (scroll-bar-mode -1)
 
-;; Boring startup screens
+;; No splash screen please ... jeez
 (setq inhibit-splash-screen t)
 (setq initial-scratch-message nil)
+(setq inhibit-startup-message t)
 
 (line-number-mode 1)   ; have line numbers and
 (column-number-mode 1) ; column numbers in the mode line
@@ -239,7 +315,6 @@
 #+BEGIN_SRC emacs-lisp
 
 ;; Interactively Do Things
-
 (require 'ido)
 (ido-mode t)
 (setq ido-enable-prefix nil
@@ -265,8 +340,19 @@
 (add-to-list 'ido-ignore-directories "node_modules")
 
 ;; Use ido everywhere
-;(require 'ido-ubiquitous)
-;(ido-ubiquitous-mode 1)
+(require 'ido-ubiquitous)
+(ido-ubiquitous-mode 1)
+
+;; Fix ido-ubiquitous for newer packages
+(defmacro ido-ubiquitous-use-new-completing-read (cmd package)
+  `(eval-after-load ,package
+     '(defadvice ,cmd (around ido-ubiquitous-new activate)
+        (let ((ido-ubiquitous-enable-compatibility nil))
+          ad-do-it))))
+
+(ido-ubiquitous-use-new-completing-read webjump 'webjump)
+(ido-ubiquitous-use-new-completing-read yas/expand 'yasnippet)
+(ido-ubiquitous-use-new-completing-read yas/visit-snippet-file 'yasnippet)
 
 (require 'smex)
 (smex-initialize)
@@ -283,8 +369,8 @@
 (require 'dired)
 
 ;; Dired uses human readable sizes.
-(setq dired-listing-switches "-alh")
-
+;;(setq dired-listing-switches "-alh")
+(setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso")
 
 #+END_SRC
 
@@ -465,28 +551,6 @@
 ;;             (require 'rename-sgml-tag)
 ;;             (define-key sgml-mode-map (kbd "C-c C-r") 'rename-sgml-tag)))
 
-(autoload 'zencoding-mode "zencoding-mode")
-(autoload 'zencoding-expand-line "zencoding-mode")
-
-(add-hook 'sgml-mode-hook 'zencoding-mode)
-
-(eval-after-load 'zencoding-mode
-  '(progn
-     (define-key zencoding-mode-keymap (kbd "C-j") nil)
-     (define-key zencoding-mode-keymap (kbd "<C-return>") nil)
-     (define-key zencoding-mode-keymap (kbd "C-c C-j") 'zencoding-expand-line)
-
-     (defun zencoding-indent (text)
-       "Indent the text"
-       (if text
-           (replace-regexp-in-string "\n" "\n " (concat "\n" text))
-         nil))
-
-     (diminish 'zencoding-mode)
-
-     ))
-
-
 #+END_SRC
 
 ** Setup-evil
@@ -544,14 +608,18 @@
 (evil-ex-define-cmd "BW" 'kill-this-buffer)       ;Bw to delete buffers
 
 ;; Workgroups
-(evil-ex-define-cmd "tabnew" 'wg-create-workgroup)
-(evil-ex-define-cmd "tabdel" 'wg-kill-workgroup)
-(evil-ex-define-cmd "tabprev" 'wg-switch-left)
-(evil-ex-define-cmd "tabnext" 'wg-switch-right)
+(require 'workgroups)
+
+(evil-ex-define-cmd "tabnew"   'wg-create-workgroup)
+(evil-ex-define-cmd "tabclone" 'wg-clone-workgroup)
+(evil-ex-define-cmd "tabdel"   'wg-kill-workgroup)
+(evil-ex-define-cmd "tabprev"  'wg-switch-left)
+(evil-ex-define-cmd "tabnext"  'wg-switch-right)
 
 (define-key evil-normal-state-map "J" 'wg-switch-left)
 (define-key evil-normal-state-map "K" 'wg-switch-right)
 
+;; Redefine ESC (By default it's meta)
 (define-key evil-insert-state-map (kbd "ESC") 'evil-normal-state)
 (define-key evil-visual-state-map (kbd "ESC") 'evil-normal-state)
 (define-key evil-replace-state-map (kbd "ESC") 'evil-normal-state)
@@ -567,8 +635,9 @@
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 
-;(set-cursor-color "#ffffff")
-;(setq evil-insert-state-cursor '("#aa0000" hbar))
+;; Color the cursor
+;;(set-cursor-color "#ffffff")
+;;(setq evil-insert-state-cursor '("#aa0000" hbar))
 
 ;; Org Mode settings
 (evil-define-key 'normal org-mode-map
@@ -623,10 +692,65 @@
   (kbd "M-K") 'org-metaup
   (kbd "M-L") 'org-metaright)
 
+;; Ace Jump Motions
+(defmacro evil-enclose-ace-jump (&rest body)
+  `(let ((old-mark (mark)))
+     (remove-hook 'pre-command-hook #'evil-visual-pre-command t)
+     (remove-hook 'post-command-hook #'evil-visual-post-command t)
+     (unwind-protect
+         (progn
+           ,@body
+           (recursive-edit))
+       (if (evil-visual-state-p)
+           (progn
+             (add-hook 'pre-command-hook #'evil-visual-pre-command nil t)
+             (add-hook 'post-command-hook #'evil-visual-post-command nil t)
+             (set-mark old-mark))
+         (push-mark old-mark)))))
+
+(evil-define-motion evil-ace-jump-char-mode (count)
+  :type exclusive
+  (evil-enclose-ace-jump
+   (ace-jump-mode 5)))
+
+(evil-define-motion evil-ace-jump-line-mode (count)
+  :type line
+  (evil-enclose-ace-jump
+   (ace-jump-mode 9)))
+
+(evil-define-motion evil-ace-jump-word-mode (count)
+  :type exclusive
+  (evil-enclose-ace-jump
+   (ace-jump-mode 1)))
+
+(evil-define-motion evil-ace-jump-char-to-mode (count)
+  :type exclusive
+  (evil-enclose-ace-jump
+   (ace-jump-mode 5)
+   (forward-char -1)))
+
+;; some proposals for binding:
+
+(define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode)
+;;(define-key evil-motion-state-map (kbd "C-SPC") #'evil-ace-jump-word-mode)
+;;
+;;(define-key evil-operator-state-map (kbd "SPC") #'evil-ace-jump-char-mode) ; similar to f
+;;(define-key evil-operator-state-map (kbd "C-SPC") #'evil-ace-jump-char-to-mode) ; similar to t
+;;(define-key evil-operator-state-map (kbd "M-SPC") #'evil-ace-jump-word-mode)
+
+;; different jumps for different visual modes
+(defadvice evil-visual-line (before spc-for-line-jump activate)
+  (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-line-mode))
+
+(defadvice evil-visual-char (before spc-for-char-jump activate)
+  (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode))
+
+(defadvice evil-visual-block (before spc-for-char-jump activate)
+  (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode))
 
 #+END_SRC
 
-** Func
+** General Functions
 
 #+BEGIN_SRC emacs-lisp
 
@@ -778,20 +902,15 @@
 
 (global-set-key [kp-delete] 'delete-char)
 
-
 #+END_SRC
 
-** Misc
-
+** Backups
 #+BEGIN_SRC emacs-lisp
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Backups
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;disable backup
-(setq backup-inhibited t)
+;; Disable backup
+;; (setq backup-inhibited t)
 
-;disable auto save
+;; Disable auto save
 (auto-save-mode nil)
 (setq auto-save-default nil)
 (with-current-buffer (get-buffer "*scratch*")
@@ -799,17 +918,28 @@
 
 ;; Place Backup Files in a Specific Directory
 (setq make-backup-files nil)
+
 ;; Write backup files to own directory
-;(setq backup-directory-alist `(("." . ,(expand-file-name
-;                                       (concat "~/.emacs.d/" "backups")))))
 (setq backup-directory-alist
-      `((".*" . , (concat temporary-file-directory "emacs_backups"))))
+      `(("." . ,(expand-file-name
+                 (concat user-emacs-directory "backups")))))
+
+;; Make backups of files, even when they're in version control
+(setq vc-make-backup-files t)
+
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 
-;; Various superfluous white-space. Just say no.
-;(add-hook 'before-save-hook 'cleanup-buffer-safe)
+#+END_SRC
 
+** Miscellaneous
+
+#+BEGIN_SRC emacs-lisp
+
+;; Various superfluous white-space. Just say no.
+;;(add-hook 'before-save-hook 'cleanup-buffer-safe)
+
+;; Keep cursor away from edges when scrolling up/down
 (require 'smooth-scrolling)
 
 ;; Seed the random number generator
@@ -827,6 +957,10 @@
 ;; typically is used by c-c/c-v) before the primary selection
 ;; (that uses mouse-select/middle-button-click)
 (setq x-select-enable-clipboard t)
+(setq x-select-enable-primary t)
+
+;; Treat clipboard input as UTF-8 string first; compound text next, etc.
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
 ;; If emacs is run in a terminal, the clipboard- functions have no
 ;; effect. Instead, we use of xsel, see
