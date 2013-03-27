@@ -1,60 +1,4 @@
-
-;; Pre-init settings (really ugly, but necessary?)
-(setq evil-want-C-u-scroll t)
-
-;; Turn off mouse interface early in startup to avoid momentary display
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
-
-(unless (require 'el-get nil t)
-  (url-retrieve
-   "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
-   (lambda (s)
-     (let (el-get-master-branch)
-       (goto-char (point-max))
-       (eval-print-last-sexp)))))
-
-(setq el-get-sources
-      '(
-        (:name ujelly-theme
-               :type elpa
-               :post-init (add-to-list 'custom-theme-load-path default-directory))))
-
-(setq packages
-      (append
-       '(
-         ac-math
-         ace-jump-mode
-         auctex
-         auto-complete
-         auto-complete-clang
-         color-theme
-         color-theme-tomorrow
-         diminish
-         el-get
-         evil
-         evil-surround
-         expand-region
-         ido-ubiquitous
-         json
-         lua-mode
-         magit
-         php-mode
-         powerline
-         ruby-mode
-         smex
-         smooth-scrolling
-         switch-window
-         undo-tree
-         workgroups
-         yasnippet
-         )
-       (mapcar 'el-get-source-name el-get-sources)))
-
-(el-get 'sync packages)
+(add-to-list 'load-path (concat user-emacs-directory "themes"))
 
 ;; Set path to .emacs.d
 (setq dotfiles-dir (file-name-directory
@@ -172,7 +116,7 @@
       (when (= p (point)) ad-do-it))))
 
 ;; Make the bars pretty
-;;(require 'powerline)
+;; (require 'powerline)
 
 ;; Diminish modeline clutter
 (require 'diminish)
@@ -180,7 +124,10 @@
 (eval-after-load "Undo-Tree" '(diminish 'undo-tree-mode "ut"))
 
 ;; Fonts + theme
+(set-mouse-color "#CCCCCC")
+
 (require 'color-theme)
+(require 'color-theme-tomorrow)
 (color-theme-tomorrow-night)
 ;;(require 'ujelly-theme)
 ;;(load-theme 'ujelly t)
@@ -310,8 +257,8 @@
           ad-do-it))))
 
 (ido-ubiquitous-use-new-completing-read webjump 'webjump)
-(ido-ubiquitous-use-new-completing-read yas/expand 'yasnippet)
-(ido-ubiquitous-use-new-completing-read yas/visit-snippet-file 'yasnippet)
+;;(ido-ubiquitous-use-new-completing-read yas/expand 'yasnippet)
+;;(ido-ubiquitous-use-new-completing-read yas/visit-snippet-file 'yasnippet)
 
 (require 'smex)
 (smex-initialize)
@@ -324,38 +271,6 @@
 ;; Dired uses human readable sizes.
 ;;(setq dired-listing-switches "-alh")
 (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso")
-
-(require 'yasnippet)
-
-;; Use only own snippets, do not use bundled ones
-(setq yas/snippet-dirs '("~/.emacs.d/snippets"))
-(yas/global-mode t)
-
-;; Jump to end of snippet definition
-(define-key yas/keymap (kbd "<return>") 'yas/exit-all-snippets)
-
-;; Inter-field navigation
-(defun yas/goto-end-of-active-field ()
-  (interactive)
-  (let* ((snippet (car (yas/snippets-at-point)))
-         (position (yas/field-end (yas/snippet-active-field snippet))))
-    (if (= (point) position)
-        (move-end-of-line)
-      (goto-char position))))
-
-(defun yas/goto-start-of-active-field ()
-  (interactive)
-  (let* ((snippet (car (yas/snippets-at-point)))
-         (position (yas/field-start (yas/snippet-active-field snippet))))
-    (if (= (point) position)
-        (move-beginning-of-line)
-      (goto-char position))))
-
-(define-key yas/keymap (kbd "C-e") 'yas/goto-end-of-active-field)
-(define-key yas/keymap (kbd "C-a") 'yas/goto-start-of-active-field)
-
-;; No dropdowns please, yas
-(setq yas/prompt-functions '(yas/ido-prompt yas/completing-prompt))
 
 (require 'auto-complete)
 (require 'auto-complete-config)
@@ -431,15 +346,15 @@
 ;(define-key ac-menu-map "\C-p" 'ac-previous)
 ;(define-key ac-menu-map (kbd "TAB") 'ac-next)
 ;(define-key ac-menu-map (kbd "M-TAB") 'ac-previous)
-;(define-key ac-menu-map (kbd "<tab>") 'ac-next)
-;(define-key ac-menu-map (kbd "<backtab>") 'ac-previous)
+(define-key ac-menu-map (kbd "<tab>") 'ac-next)
+(define-key ac-menu-map (kbd "<backtab>") 'ac-previous)
 
 ;; Stuff to help in terminal emacs
 (define-key ac-menu-map (kbd "ESC") 'ac-stop)
 (define-key ac-menu-map (kbd "C-j") 'ac-next)
 (define-key ac-menu-map (kbd "C-k") 'ac-previous)
 
-(define-key ac-menu-map (kbd "TAB") nil)
+;; (define-key ac-menu-map (kbd "TAB") nil)
 ;; (define-key ac-menu-map (kbd "RET") 'ac-complete)
 
 ;; Colors
@@ -478,19 +393,26 @@
 ;;             (require 'rename-sgml-tag)
 ;;             (define-key sgml-mode-map (kbd "C-c C-r") 'rename-sgml-tag)))
 
+
+;; Evil Stuff
+(setq evil-find-skip-newlines t)
+(setq evil-move-cursor-back nil)
+(setq evil-cross-lines t)
+(setq evil-intercept-esc 'always)
+
+(setq evil-auto-indent t)
+
 (require 'evil)
 (evil-mode t)
 
-;; Evil Stuff
 (require 'surround)
 (global-surround-mode 1)
-
-(evil-define-keymap evil-esc-map :intercept nil) ; do not interpret ESC as meta
-(setq evil-auto-indent t)
 
 ;; Cursor Color
 (setq evil-default-cursor t)
 (set-cursor-color "#CCCCCC")
+;;(setq evil-insert-state-cursor '("#aa0000" hbar))
+
 
 ;; Alternate File
 (evil-ex-define-cmd "A"  'ff-find-other-file)
@@ -555,10 +477,6 @@
 (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
-
-;; Color the cursor
-;;(set-cursor-color "#ffffff")
-;;(setq evil-insert-state-cursor '("#aa0000" hbar))
 
 ;; Org Mode settings
 (evil-define-key 'normal org-mode-map
@@ -775,7 +693,6 @@
 
 ;; Commentin'
 (global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
-;;(global-set-key (kbd "C-c u") 'comment-or-uncomment-region)
 
 ;; Create new frame
 (define-key global-map (kbd "C-x C-n") 'make-frame-command)
@@ -788,21 +705,6 @@
 
 ;; Ace Jump Mode
 (global-set-key (kbd "M-q") 'ace-jump-mode)
-
-;; Multiple Cursors
-;; (require 'multiple-cursors)
-;; (mc/execute-command-for-all-fake-cursors 'backward-char)
-;; (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-;; (global-set-key (kbd "C-S-c C-e") 'mc/edit-ends-of-lines)
-;; (global-set-key (kbd "C-S-c C-a") 'mc/edit-beginnings-of-lines)
-
-;; ;; Mark additional regions matching current region
-;; (global-set-key (kbd "C-c C-e") 'mc/mark-more-like-this-extended)
-;; (global-set-key (kbd "C-c r") 'mc/mark-all-in-region)
-
-;; (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-;; (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-;; (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
 ;; Navigate windows with M-<arrows>
 (windmove-default-keybindings 'meta)
@@ -883,3 +785,4 @@
     ;; http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
     ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
     ))
+
