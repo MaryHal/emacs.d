@@ -112,16 +112,18 @@
       (when (= p (point)) ad-do-it))))
 
 ;; Fonts + theme
-(set-mouse-color "#CCCCCC")
-
 (require 'color-theme)
 (require 'color-theme-tomorrow)
 (color-theme-tomorrow-night)
 
+;; (set-cursor-color "#CCCCCC")
+;; (set-mouse-color "#CCCCCC")
+
 (setq default-frame-alist
       '((top . 10) (left . 2)
         (width . 80) (height . 30)
-        (set-mouse-color "#CCCCCC")
+        (mouse-color  . "#CCCCCC")
+        (cursor-color . "#CCCCCC")
         ))
 
 ;; Setting font
@@ -172,7 +174,6 @@
       font-lock-maximum-decoration t
       color-theme-is-global t
       truncate-partial-width-windows nil)
-
 
 ;; Diminish modeline clutter
 (require 'diminish)
@@ -457,7 +458,6 @@
 
 ;; Cursor Color
 (setq evil-default-cursor t)
-;;(set-cursor-color "#CCCCCC")
 ;;(setq evil-insert-state-cursor '("#aa0000" hbar))
 
 
