@@ -6,11 +6,8 @@
 (add-to-loadpath "~/.emacs.d/pkg/tomorrow-theme"
                  "~/.emacs.d/config")
 
-;; (add-to-list 'load-path (concat user-emacs-directory
-;;                                 (convert-standard-filename "config")))
-
 ;; Auto refresh buffers
-(global-auto-revert-mode 1)
+(global-auto-revert-mode t)
 
 ;; Also auto refresh dired, but be quiet about it
 (setq global-auto-revert-non-file-buffers t)
@@ -48,13 +45,13 @@
   (setq default-buffer-file-coding-system 'utf-8))
 
 ;; Show active region
-(transient-mark-mode 1)
+(transient-mark-mode t)
 (make-variable-buffer-local 'transient-mark-mode)
 (put 'transient-mark-mode 'permanent-local t)
 (setq-default transient-mark-mode t)
 
 ;; Remove text in active region if inserting text
-(delete-selection-mode 1)
+(delete-selection-mode t)
 
 ;; Always display line and column numbers
 ;;(setq line-number-mode t)
@@ -64,10 +61,10 @@
 (setq fill-column 80)
 
 ;; Save a list of recent files visited. (open recent file with C-x f)
-;;(recentf-mode 1)
+;;(recentf-mode t)
 
 ;; Undo/redo window configuration with C-c <left>/<right>
-(winner-mode 1)
+(winner-mode t)
 
 ;; Never insert tabs
 (set-default 'indent-tabs-mode nil)
@@ -76,7 +73,7 @@
 (set-default 'indicate-empty-lines t)
 
 ;; Easily navigate sillycased words
-(global-subword-mode 1)
+(global-subword-mode t)
 
 ;; Don't break lines for me, please
 (setq-default truncate-lines t)
@@ -114,40 +111,35 @@
     (dotimes (i 10)
       (when (= p (point)) ad-do-it))))
 
-;; Make the bars pretty
-;; (require 'powerline)
-
-;; Diminish modeline clutter
-(require 'diminish)
-(add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "El")))
-(eval-after-load "Undo-Tree" '(diminish 'undo-tree-mode "ut"))
-
 ;; Fonts + theme
 (set-mouse-color "#CCCCCC")
 
 (require 'color-theme)
 (require 'color-theme-tomorrow)
 (color-theme-tomorrow-night)
-;;(require 'ujelly-theme)
-;;(load-theme 'ujelly t)
-(set-frame-font "Inconsolata 10")
 
 (setq default-frame-alist
       '((top . 10) (left . 2)
-        (width . 80) (height . 53)
-        (font . "Inconsolata 10")
+        (width . 80) (height . 30)
+        (set-mouse-color "#CCCCCC")
         ))
 
+;; Setting font
+(if (string= system-type "windows-nt")
+    ;; if in Windows
+    (progn (setq myFrameFont "Consolas 10")
+           (add-to-list 'default-frame-alist '(font . "Consolas 10"))
+           )
+  ;; Not Windows
+  (progn (setq myFrameFont "Inconsolata 10")
+         (add-to-list 'default-frame-alist '(font . "Inconsolata 10"))
+         )
+  )
+
+;; Clear background if in terminal
 (unless window-system
   (when (getenv "DISPLAY")
     (set-face-attribute 'default nil :background "unspecified-bg")
-    ;(set-face-attribute 'font-lock-keyword-face nil :foreground "#8959a8")
-    ;(set-face-attribute 'font-lock-keyword-face nil :foreground "#8959a8" :weight 'bold)
-
-    ;; Powerline settings
-    (custom-set-faces
-     '(mode-line ((t (:foreground "#030303" :background "#bdbdbd" :box nil))))
-     '(mode-line-inactive ((t (:foreground "#f9f9f9" :background "#666666" :box nil)))))
     ))
 
 ;; Thematic configuration
@@ -162,12 +154,12 @@
 (setq initial-scratch-message nil)
 (setq inhibit-startup-message t)
 
-(line-number-mode 1)   ; have line numbers and
-(column-number-mode 1) ; column numbers in the mode line
+(line-number-mode t)   ;; have line numbers and
+(column-number-mode t) ;; column numbers in the mode line
 
-(setq-default indent-tabs-mode nil) ; No tabs
+(setq-default indent-tabs-mode nil) ;; No tabs
 
-; Don't add newlines when cursor goes past end of file
+;; Don't add newlines when cursor goes past end of file
 (setq next-line-add-newlines nil)
 
 ;; Don't Blink Cursor
@@ -182,10 +174,16 @@
       truncate-partial-width-windows nil)
 
 
+;; Diminish modeline clutter
+(require 'diminish)
+(add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "El")))
+(eval-after-load "Undo-Tree" '(diminish 'undo-tree-mode "ut"))
+
 ;; use setq-default to set it for /all/ modes
 (setq-default mode-line-format
       (list
-       "  "
+       ;; evil-mode-line-tag
+       " "
 
        ;; the buffer name; the file name as a tool tip
        '(:eval (propertize "%b " 'face 'font-lock-keyword-face
@@ -201,14 +199,14 @@
        minor-mode-alist  ;; list of minor modes
        "] "
 
-
-       "[" ;; insert vs overwrite mode, input-method in a tooltip
+       ;; insert vs overwrite mode, input-method in a tooltip
+       "["
        '(:eval (propertize (if overwrite-mode "Ovr" "Ins")
                            'face 'font-lock-preprocessor-face
                            'help-echo (concat "Buffer is in "
                                               (if overwrite-mode "overwrite" "insert") " mode")))
 
-       ;; was this buffer modified since the last save?
+       ;; Sas this buffer modified since the last save?
        '(:eval (when (buffer-modified-p)
                  (concat ","  (propertize "Mod"
                                           'face 'font-lock-warning-face
@@ -242,13 +240,12 @@
        ") "
 
        ;; "%-" ;; fill with '-'
-
        ))
 
 
 ;; Parenthesis matching
 (require 'paren)
-(show-paren-mode 1)
+(show-paren-mode t)
 (setq show-paren-delay 0)
 (set-face-background 'show-paren-match-face (face-background 'default))
 (set-face-foreground 'show-paren-match-face "#def")
@@ -261,21 +258,14 @@
 (setq whitespace-style '(trailing lines space-before-tab
                                   indentation space-after-tab)
       whitespace-line-column 100)
-;; (require 'whitespace)
-;; (whitespace-mode t)
-;; (setq whitespace-display-mappings
-;;       '((space-mark   ?\    [?\xB7]     [?.])        ; space
-;;         (space-mark   ?\xA0 [?\xA4]     [?_])        ; hard space
-;;         (newline-mark ?\n   [?\xB6 ?\n] [?$ ?\n])    ; end-of-line
-;;         ))
 
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 (defun c-mode-common-custom ()
-  (setq c-default-style "linux") ; linux-kernel-developers style indentation
-  (setq c-basic-offset 4)        ; 4-space tab size
+  (setq c-default-style "linux") ;; linux-kernel-developers style indentation
+  (setq c-basic-offset 4)        ;; 4-space tab size
 
-  (c-set-offset 'substatement-open '0) ; brackets should be at same indentation level as the statements they open
+  (c-set-offset 'substatement-open '0) ;; brackets should be at same indentation level as the statements they open
   (c-set-offset 'access-label '0)
   (c-set-offset 'inline-open '0)
 
@@ -311,7 +301,7 @@
 
 ;; Use ido everywhere
 (require 'ido-ubiquitous)
-(ido-ubiquitous-mode 1)
+(ido-ubiquitous-mode t)
 
 ;; Fix ido-ubiquitous for newer packages
 (defmacro ido-ubiquitous-use-new-completing-read (cmd package)
@@ -320,7 +310,7 @@
         (let ((ido-ubiquitous-enable-compatibility nil))
           ad-do-it))))
 
-(ido-ubiquitous-use-new-completing-read webjump 'webjump)
+;;(ido-ubiquitous-use-new-completing-read webjump 'webjump)
 ;;(ido-ubiquitous-use-new-completing-read yas/expand 'yasnippet)
 ;;(ido-ubiquitous-use-new-completing-read yas/visit-snippet-file 'yasnippet)
 
@@ -392,7 +382,7 @@
 (define-globalized-minor-mode real-global-auto-complete-mode
   auto-complete-mode (lambda ()
                        (if (not (minibufferp (current-buffer)))
-                           (auto-complete-mode 1))
+                           (auto-complete-mode t))
                        ))
 (real-global-auto-complete-mode t)
 
@@ -406,20 +396,13 @@
 ;; Key mappings
 (setq ac-use-menu-map t)
 
-;(define-key ac-menu-map "\C-n" 'ac-next)
-;(define-key ac-menu-map "\C-p" 'ac-previous)
-;(define-key ac-menu-map (kbd "TAB") 'ac-next)
-;(define-key ac-menu-map (kbd "M-TAB") 'ac-previous)
 (define-key ac-menu-map (kbd "<tab>") 'ac-next)
 (define-key ac-menu-map (kbd "<backtab>") 'ac-previous)
 
-;; Stuff to help in terminal emacs
-(define-key ac-menu-map (kbd "ESC") 'ac-stop)
 (define-key ac-menu-map (kbd "C-j") 'ac-next)
 (define-key ac-menu-map (kbd "C-k") 'ac-previous)
-
-;; (define-key ac-menu-map (kbd "TAB") nil)
-;; (define-key ac-menu-map (kbd "RET") 'ac-complete)
+(define-key ac-menu-map (kbd "C-l") 'ac-expand-common)
+(define-key ac-menu-map (kbd "ESC") 'ac-stop)
 
 ;; Colors
 ;(set-face-background 'ac-candidate-face "lightgray")
@@ -470,11 +453,11 @@
 (evil-mode t)
 
 (require 'surround)
-(global-surround-mode 1)
+(global-surround-mode t)
 
 ;; Cursor Color
 (setq evil-default-cursor t)
-(set-cursor-color "#CCCCCC")
+;;(set-cursor-color "#CCCCCC")
 ;;(setq evil-insert-state-cursor '("#aa0000" hbar))
 
 
@@ -513,15 +496,6 @@
                            (kill-this-buffer)
                            (delete-window)))      ;Bw to delete buffers
 (evil-ex-define-cmd "BW" 'kill-this-buffer)       ;Bw to delete buffers
-
-;; Workgroups
-;; (require 'workgroups)
-
-;; (evil-ex-define-cmd "tabnew"   'wg-create-workgroup)
-;; (evil-ex-define-cmd "tabclone" 'wg-clone-workgroup)
-;; (evil-ex-define-cmd "tabdel"   'wg-kill-workgroup)
-;; (evil-ex-define-cmd "tabprev"  'wg-switch-left)
-;; (evil-ex-define-cmd "tabnext"  'wg-switch-right)
 
 (define-key evil-normal-state-map "J" 'wg-switch-left)
 (define-key evil-normal-state-map "K" 'wg-switch-right)
@@ -637,8 +611,8 @@
 (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode)
 ;;(define-key evil-motion-state-map (kbd "C-SPC") #'evil-ace-jump-word-mode)
 ;;
-;;(define-key evil-operator-state-map (kbd "SPC") #'evil-ace-jump-char-mode) ; similar to f
-;;(define-key evil-operator-state-map (kbd "C-SPC") #'evil-ace-jump-char-to-mode) ; similar to t
+;;(define-key evil-operator-state-map (kbd "SPC") #'evil-ace-jump-char-mode) ;; similar to f
+;;(define-key evil-operator-state-map (kbd "C-SPC") #'evil-ace-jump-char-to-mode) ;; similar to t
 ;;(define-key evil-operator-state-map (kbd "M-SPC") #'evil-ace-jump-word-mode)
 
 ;; different jumps for different visual modes
@@ -660,37 +634,6 @@
         (split-window)
         (switch-to-buffer buffer)
         (get-buffer-window buffer 0)))
-
-;; File functions
-(defun rename-current-buffer-file ()
-  "Renames current buffer and file it is visiting."
-  (interactive)
-  (let ((name (buffer-name))
-        (filename (buffer-file-name)))
-    (if (not (and filename (file-exists-p filename)))
-        (error "Buffer '%s' is not visiting a file!" name)
-      (let ((new-name (read-file-name "New name: " filename)))
-        (cond ((get-buffer new-name)
-               (error "A buffer named '%s' already exists!" new-name))
-              (t
-               (rename-file filename new-name 1)
-               (rename-buffer new-name)
-               (set-visited-file-name new-name)
-               (set-buffer-modified-p nil)
-               (message "File '%s' successfully renamed to '%s'" name (file-name-nondirectory new-name))))))))
-
-(defun delete-current-buffer-file ()
-  "Removes file connected to current buffer and kills buffer."
-  (interactive)
-  (let ((filename (buffer-file-name))
-        (buffer (current-buffer))
-        (name (buffer-name)))
-    (if (not (and filename (file-exists-p filename)))
-        (ido-kill-buffer)
-      (when (yes-or-no-p "Are you sure you want to remove this file? ")
-        (delete-file filename)
-        (kill-buffer buffer)
-        (message "File '%s' successfully removed" filename)))))
 
 ;; Split functions
 (defun toggle-window-split ()
@@ -768,7 +711,7 @@
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
 ;; Ace Jump Mode
-(global-set-key (kbd "M-q") 'ace-jump-mode)
+;; (global-set-key (kbd "M-q") 'ace-jump-mode)
 
 ;; Navigate windows with M-<arrows>
 (windmove-default-keybindings 'meta)
@@ -808,7 +751,8 @@
 ;; Seed the random number generator
 (random t)
 
-; http://hugoheden.wordpress.com/2009/03/08/copypaste-with-emacs-in-terminal/
+
+;; http://hugoheden.wordpress.com/2009/03/08/copypaste-with-emacs-in-terminal/
 ;; I prefer using the "clipboard" selection (the one the
 ;; typically is used by c-c/c-v) before the primary selection
 ;; (that uses mouse-select/middle-button-click)
