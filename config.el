@@ -116,11 +116,11 @@
 (require 'color-theme-tomorrow)
 (color-theme-tomorrow-night)
 
-;; (set-cursor-color "#CCCCCC")
-;; (set-mouse-color "#CCCCCC")
+(set-cursor-color "#CCCCCC")
+(set-mouse-color "#CCCCCC")
 
 (setq default-frame-alist
-      '((top . 10) (left . 2)
+      '((top   . 10) (left   . 2)
         (width . 80) (height . 30)
         (mouse-color  . "#CCCCCC")
         (cursor-color . "#CCCCCC")
