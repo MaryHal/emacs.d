@@ -3,6 +3,7 @@
   (dolist (dir dirs load-path)
     (add-to-list 'load-path (expand-file-name dir) nil #'string=)))
 
+;; Custom configuration files
 (add-to-loadpath "~/.emacs.d/pkg/tomorrow-theme"
                  "~/.emacs.d/config")
 
@@ -93,8 +94,8 @@
 (set-default 'sentence-end-double-space nil)
 
 ;; Add parts of each file's directory to the buffer name if not unique
-;(require 'uniquify)
-;(setq uniquify-buffer-name-style 'forward)
+;;(require 'uniquify)
+;;(setq uniquify-buffer-name-style 'forward)
 
 ;; A saner ediff
 (setq ediff-diff-options "-w")
@@ -151,7 +152,7 @@
 (tooltip-mode -1)
 (scroll-bar-mode -1)
 
-;; No splash screen please ... jeez
+;; No splash screen please
 (setq inhibit-splash-screen t)
 (setq initial-scratch-message nil)
 (setq inhibit-startup-message t)
@@ -180,69 +181,71 @@
 (add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "El")))
 (eval-after-load "Undo-Tree" '(diminish 'undo-tree-mode "ut"))
 
-;; use setq-default to set it for /all/ modes
-(setq-default mode-line-format
-      (list
-       ;; evil-mode-line-tag
-       " "
+(require 'smart-mode-line)
+(sml/setup)
 
-       ;; the buffer name; the file name as a tool tip
-       '(:eval (propertize "%b " 'face 'font-lock-keyword-face
-                           'help-echo (buffer-file-name)))
+;; ;; use setq-default to set it for /all/ modes
+;; (setq-default mode-line-format
+;;       (list
+;;        ;; evil-mode-line-tag
+;;        " "
 
-       ;; the current major mode for the buffer.
-       "["
+;;        ;; the buffer name; the file name as a tool tip
+;;        '(:eval (propertize "%b " 'face 'font-lock-keyword-face
+;;                            'help-echo (buffer-file-name)))
 
-       '(:eval (propertize "%m" 'face 'font-lock-string-face
-                           'help-echo buffer-file-coding-system))
+;;        ;; the current major mode for the buffer.
+;;        "["
 
-       ;; i don't want to see minor-modes; but if you want, uncomment this:
-       minor-mode-alist  ;; list of minor modes
-       "] "
+;;        '(:eval (propertize "%m" 'face 'font-lock-string-face
+;;                            'help-echo buffer-file-coding-system))
 
-       ;; insert vs overwrite mode, input-method in a tooltip
-       "["
-       '(:eval (propertize (if overwrite-mode "Ovr" "Ins")
-                           'face 'font-lock-preprocessor-face
-                           'help-echo (concat "Buffer is in "
-                                              (if overwrite-mode "overwrite" "insert") " mode")))
+;;        ;; i don't want to see minor-modes; but if you want, uncomment this:
+;;        minor-mode-alist  ;; list of minor modes
+;;        "] "
 
-       ;; Sas this buffer modified since the last save?
-       '(:eval (when (buffer-modified-p)
-                 (concat ","  (propertize "Mod"
-                                          'face 'font-lock-warning-face
-                                          'help-echo "Buffer has been modified"))))
+;;        ;; insert vs overwrite mode, input-method in a tooltip
+;;        "["
+;;        '(:eval (propertize (if overwrite-mode "Ovr" "Ins")
+;;                            'face 'font-lock-preprocessor-face
+;;                            'help-echo (concat "Buffer is in "
+;;                                               (if overwrite-mode "overwrite" "insert") " mode")))
 
-       ;; is this buffer read-only?
-       '(:eval (when buffer-read-only
-                 (concat ","  (propertize "RO"
-                                          'face 'font-lock-type-face
-                                          'help-echo "Buffer is read-only"))))
-       "] "
+;;        ;; Sas this buffer modified since the last save?
+;;        '(:eval (when (buffer-modified-p)
+;;                  (concat ","  (propertize "Mod"
+;;                                           'face 'font-lock-warning-face
+;;                                           'help-echo "Buffer has been modified"))))
 
-       ;; add the time, with the date and the emacs uptime in the tooltip
-       ;; '(:eval (propertize (format-time-string "%H:%M")
-       ;;           'help-echo
-       ;;           (concat (format-time-string "%c; ")
-       ;;                   (emacs-uptime "Uptime:%hh"))))
-       ;; " --"
+;;        ;; is this buffer read-only?
+;;        '(:eval (when buffer-read-only
+;;                  (concat ","  (propertize "RO"
+;;                                           'face 'font-lock-type-face
+;;                                           'help-echo "Buffer is read-only"))))
+;;        "] "
 
-       ;; relative position, size of file
-       "["
-       (propertize "%p" 'face 'font-lock-constant-face) ;; % above top
-       "/"
-       (propertize "%I" 'face 'font-lock-constant-face) ;; size
-       "] "
+;;        ;; add the time, with the date and the emacs uptime in the tooltip
+;;        ;; '(:eval (propertize (format-time-string "%H:%M")
+;;        ;;           'help-echo
+;;        ;;           (concat (format-time-string "%c; ")
+;;        ;;                   (emacs-uptime "Uptime:%hh"))))
+;;        ;; " --"
 
-       ;; line and column
-       "(" ;; '%02' to set to 2 chars at least; prevents flickering
-       (propertize "%02l" 'face 'font-lock-type-face) ","
-       (propertize "%02c" 'face 'font-lock-type-face)
-       ") "
+;;        ;; relative position, size of file
+;;        "["
+;;        (propertize "%p" 'face 'font-lock-constant-face) ;; % above top
+;;        "/"
+;;        (propertize "%I" 'face 'font-lock-constant-face) ;; size
+;;        "] "
 
-       ;; "%-" ;; fill with '-'
-       ))
+;;        ;; line and column
+;;        "(" ;; '%02' to set to 2 chars at least; prevents flickering
+;;        (propertize "%02l" 'face 'font-lock-type-face) ","
+;;        (propertize "%02c" 'face 'font-lock-type-face)
+;;        ") "
 
+;;        ;; "%-" ;; fill with '-'
+;;        ))
 
 ;; Parenthesis matching
 (require 'paren)
@@ -460,45 +463,8 @@
 (setq evil-default-cursor t)
 ;;(setq evil-insert-state-cursor '("#aa0000" hbar))
 
-
-;; Alternate File
-(evil-ex-define-cmd "A"  'ff-find-other-file)
-(evil-ex-define-cmd "AS" (lambda()
-                           (interactive)
-                           (split-window-below)
-                           (evil-window-down 1)
-                           (ff-find-other-file)))
-(evil-ex-define-cmd "AV" (lambda()
-                           (interactive)
-                           (split-window-right)
-                           (evil-window-right 1)
-                           (ff-find-other-file)))
-
-;; Ido-open file
-(evil-ex-define-cmd "F" 'ido-find-file)
-(evil-ex-define-cmd "FS" (lambda()
-                           (interactive)
-                           (split-window-below)
-                           (evil-window-down 1)
-                           (ido-find-file)))
-(evil-ex-define-cmd "FV" (lambda()
-                           (interactive)
-                           (split-window-right)
-                           (evil-window-right 1)
-                           (ido-find-file)))
-
-;; Buffers
-(evil-ex-define-cmd "b"  'ido-switch-buffer)      ;B to switch buffers
-(evil-ex-define-cmd "B"  'ido-switch-buffer)      ;B to switch buffers
-(evil-ex-define-cmd "bm" 'buffer-menu)            ;Bm to open buffer menu
-(evil-ex-define-cmd "bw" (lambda()
-                           (interactive)
-                           (kill-this-buffer)
-                           (delete-window)))      ;Bw to delete buffers
-(evil-ex-define-cmd "BW" 'kill-this-buffer)       ;Bw to delete buffers
-
-(define-key evil-normal-state-map "J" 'wg-switch-left)
-(define-key evil-normal-state-map "K" 'wg-switch-right)
+;;(define-key evil-normal-state-map "J" 'wg-switch-left)
+;;(define-key evil-normal-state-map "K" 'wg-switch-right)
 
 ;; Redefine ESC (By default it's meta)
 (define-key evil-insert-state-map (kbd "ESC") 'evil-normal-state)

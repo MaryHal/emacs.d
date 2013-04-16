@@ -1,3 +1,11 @@
+;; Pre-init settings (really ugly, but necessary?)
+(setq evil-want-C-u-scroll t)
+
+;; Turn off mouse interface early in startup to avoid momentary display
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+
 ;; Package Archives
 (setq package-archives '(;;("gnu" . "http://elpa.gnu.org/packages/")
 			 ;;("marmalade" . "http://marmalade-repo.org/packages/")
@@ -12,10 +20,13 @@
                      diminish
                      evil
                      expand-region
+                     haskell-mode
                      ido-ubiquitous
                      markdown-mode
                      melpa
                      popup
+                     powerline
+                     smart-mode-line
                      smex
                      smooth-scrolling
                      surround
@@ -23,14 +34,14 @@
                      undo-tree
                      ))
 
-;; activate all the packages (in particular autoloads)
+;; Activate all the packages (in particular autoloads)
 (package-initialize)
 
-;; fetch the list of packages available
+;; Fetch the list of packages available
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-;; install the missing packages
+;; Install the missing packages
 (dolist (package package-list)
   (when (not (package-installed-p package))
     (package-install package)))
@@ -41,11 +52,3 @@
                                 (message "Time needed to load: %s seconds."
                                          (emacs-uptime "%s")))
           'append)
-
-;; Pre-init settings (really ugly, but necessary?)
-(setq evil-want-C-u-scroll t)
-
-;; Turn off mouse interface early in startup to avoid momentary display
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
