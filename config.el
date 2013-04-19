@@ -718,6 +718,17 @@
 (random t)
 
 
+;; Web Mode
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.jsp\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+
+
 ;; http://hugoheden.wordpress.com/2009/03/08/copypaste-with-emacs-in-terminal/
 ;; I prefer using the "clipboard" selection (the one the
 ;; typically is used by c-c/c-v) before the primary selection
