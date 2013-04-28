@@ -19,6 +19,7 @@
                      color-theme
                      diminish
                      evil
+                     expand-region
                      haskell-mode
                      ido-ubiquitous
                      markdown-mode
@@ -34,7 +35,7 @@
                      ))
 
 ;; Old packages I used to use
-;; undo-tree, powerline, expand-region
+;; undo-tree, powerline
 
 ;; Activate all the packages (in particular autoloads)
 (package-initialize)

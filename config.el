@@ -613,8 +613,8 @@
              (setq i (1+ i)))))))
 
 ;; Expand Region
-;; (require 'expand-region)
-;; (global-set-key (kbd "C-q") 'er/expand-region)
+(require 'expand-region)
+(global-set-key (kbd "C-q") 'er/expand-region)
 
 ;; Easier version of "C-x k" to kill buffer
 (global-set-key (kbd "C-x C-k") 'kill-buffer)
