@@ -18,7 +18,7 @@
 (setq echo-keystrokes 0.1)
 
 ;; Move files to trash when deleting
-;(setq delete-by-moving-to-trash t)
+;; (setq delete-by-moving-to-trash t)
 
 ;;Real emacs knights don't use shift to mark things
 (setq shift-select-mode nil)
@@ -184,69 +184,6 @@
 (require 'smart-mode-line)
 (sml/setup)
 
-;; ;; use setq-default to set it for /all/ modes
-;; (setq-default mode-line-format
-;;       (list
-;;        ;; evil-mode-line-tag
-;;        " "
-
-;;        ;; the buffer name; the file name as a tool tip
-;;        '(:eval (propertize "%b " 'face 'font-lock-keyword-face
-;;                            'help-echo (buffer-file-name)))
-
-;;        ;; the current major mode for the buffer.
-;;        "["
-
-;;        '(:eval (propertize "%m" 'face 'font-lock-string-face
-;;                            'help-echo buffer-file-coding-system))
-
-;;        ;; i don't want to see minor-modes; but if you want, uncomment this:
-;;        minor-mode-alist  ;; list of minor modes
-;;        "] "
-
-;;        ;; insert vs overwrite mode, input-method in a tooltip
-;;        "["
-;;        '(:eval (propertize (if overwrite-mode "Ovr" "Ins")
-;;                            'face 'font-lock-preprocessor-face
-;;                            'help-echo (concat "Buffer is in "
-;;                                               (if overwrite-mode "overwrite" "insert") " mode")))
-
-;;        ;; Sas this buffer modified since the last save?
-;;        '(:eval (when (buffer-modified-p)
-;;                  (concat ","  (propertize "Mod"
-;;                                           'face 'font-lock-warning-face
-;;                                           'help-echo "Buffer has been modified"))))
-
-;;        ;; is this buffer read-only?
-;;        '(:eval (when buffer-read-only
-;;                  (concat ","  (propertize "RO"
-;;                                           'face 'font-lock-type-face
-;;                                           'help-echo "Buffer is read-only"))))
-;;        "] "
-
-;;        ;; add the time, with the date and the emacs uptime in the tooltip
-;;        ;; '(:eval (propertize (format-time-string "%H:%M")
-;;        ;;           'help-echo
-;;        ;;           (concat (format-time-string "%c; ")
-;;        ;;                   (emacs-uptime "Uptime:%hh"))))
-;;        ;; " --"
-
-;;        ;; relative position, size of file
-;;        "["
-;;        (propertize "%p" 'face 'font-lock-constant-face) ;; % above top
-;;        "/"
-;;        (propertize "%I" 'face 'font-lock-constant-face) ;; size
-;;        "] "
-
-;;        ;; line and column
-;;        "(" ;; '%02' to set to 2 chars at least; prevents flickering
-;;        (propertize "%02l" 'face 'font-lock-type-face) ","
-;;        (propertize "%02c" 'face 'font-lock-type-face)
-;;        ") "
-
-;;        ;; "%-" ;; fill with '-'
-;;        ))
-
 ;; Parenthesis matching
 (require 'paren)
 (show-paren-mode t)
@@ -264,19 +201,6 @@
       whitespace-line-column 100)
 
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
-
-(defun c-mode-common-custom ()
-  (setq c-default-style "linux") ;; linux-kernel-developers style indentation
-  (setq c-basic-offset 4)        ;; 4-space tab size
-
-  (c-set-offset 'substatement-open '0) ;; brackets should be at same indentation level as the statements they open
-  (c-set-offset 'access-label '0)
-  (c-set-offset 'inline-open '0)
-
-  (c-set-offset 'brace-list-open '0)
-  )
-
-(add-hook 'c-mode-common-hook 'c-mode-common-custom)
 
 ;; Interactively Do Things
 (require 'ido)
@@ -302,6 +226,9 @@
 
 (add-to-list 'ido-ignore-directories "target")
 (add-to-list 'ido-ignore-directories "node_modules")
+
+;; Display ido results vertically, rather than horizontally
+;; (setq ido-decorations (quote ("\n-> " "" "\n " "\n ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
 
 ;; Use ido everywhere
 (require 'ido-ubiquitous)
@@ -330,16 +257,22 @@
 ;;(setq dired-listing-switches "-alh")
 (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso")
 
+(defun c-mode-common-custom ()
+  (setq c-default-style "linux") ;; linux-kernel-developers style indentation
+  (setq c-basic-offset 4)        ;; 4-space tab size
+
+  (c-set-offset 'substatement-open '0) ;; brackets should be at same indentation level as the statements they open
+  (c-set-offset 'access-label '0)
+  (c-set-offset 'inline-open '0)
+
+  (c-set-offset 'brace-list-open '0)
+  )
+
 (require 'auto-complete)
 (require 'auto-complete-config)
 (require 'auto-complete-clang)
-;(require 'auto-complete-yasnippet)
 
-;(require 'auto-complete-emacs-lisp)
-;(require 'auto-complete-latex)
-;(require 'ac-math)
-
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/el-get/auto-complete/dict")
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/elpa/ac-dict")
 
 ;(ac-config-default)
 (defcustom mycustom-system-include-paths
@@ -365,6 +298,8 @@
                )
               )
       )
+
+(add-hook 'c-mode-common-hook 'c-mode-common-custom)
 
 ;; C-common mode setup
 (defun my-ac-cc-mode-setup ()
@@ -463,8 +398,8 @@
 (setq evil-default-cursor t)
 ;;(setq evil-insert-state-cursor '("#aa0000" hbar))
 
-;;(define-key evil-normal-state-map "J" 'wg-switch-left)
-;;(define-key evil-normal-state-map "K" 'wg-switch-right)
+(define-key evil-normal-state-map "]b" 'forward-buffer)
+(define-key evil-normal-state-map "[b" 'backward-buffer)
 
 ;; Redefine ESC (By default it's meta)
 (define-key evil-insert-state-map (kbd "ESC") 'evil-normal-state)
@@ -601,6 +536,31 @@
         (switch-to-buffer buffer)
         (get-buffer-window buffer 0)))
 
+;; Switch to previously selected buffer.
+(defun backward-buffer ()
+  (interactive)
+  "Switch to previously selected buffer."
+  (let* ((list (cdr (buffer-list)))
+         (buffer (car list)))
+    (while (and (cdr list) (string-match "\\*" (buffer-name buffer)))
+      (progn
+        (setq list (cdr list))
+        (setq buffer (car list))))
+    (bury-buffer)
+    (switch-to-buffer buffer)))
+
+;; Opposite of backward-buffer.
+(defun forward-buffer ()
+  (interactive)
+  "Opposite of backward-buffer."
+  (let* ((list (reverse (buffer-list)))
+         (buffer (car list)))
+    (while (and (cdr list) (string-match "\\*" (buffer-name buffer)))
+      (progn
+        (setq list (cdr list))
+        (setq buffer (car list))))
+    (switch-to-buffer buffer)))
+
 ;; Split functions
 (defun toggle-window-split ()
   (interactive)
@@ -653,8 +613,8 @@
              (setq i (1+ i)))))))
 
 ;; Expand Region
-(require 'expand-region)
-(global-set-key (kbd "C-q") 'er/expand-region)
+;; (require 'expand-region)
+;; (global-set-key (kbd "C-q") 'er/expand-region)
 
 ;; Easier version of "C-x k" to kill buffer
 (global-set-key (kbd "C-x C-k") 'kill-buffer)
@@ -728,6 +688,15 @@
 (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 
+(defun web-mode-hook ()
+  "Hooks for Web mode."
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-indent-style 2)
+  )
+
+(add-hook 'web-mode-hook 'web-mode-hook)
 
 ;; http://hugoheden.wordpress.com/2009/03/08/copypaste-with-emacs-in-terminal/
 ;; I prefer using the "clipboard" selection (the one the
