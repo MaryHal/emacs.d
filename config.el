@@ -5,6 +5,7 @@
 
 ;; Custom configuration files
 (add-to-loadpath "~/.emacs.d/pkg/tomorrow-theme"
+                 "~/.emacs.d/pkg/auto-complete-latex"
                  "~/.emacs.d/config")
 
 ;; Auto refresh buffers
@@ -270,48 +271,20 @@
 
 (require 'auto-complete)
 (require 'auto-complete-config)
-(require 'auto-complete-clang)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/elpa/ac-dict")
-
-;(ac-config-default)
-(defcustom mycustom-system-include-paths
-  '(
-    "/usr/lib/gcc/x86_64-unknown-linux-gnu/4.7.1/../../../../include/c++/4.7.1"
-    "/usr/lib/gcc/x86_64-unknown-linux-gnu/4.7.1/../../../../include/c++/4.7.1/x86_64-unknown-linux-gnu"
-    "/usr/lib/gcc/x86_64-unknown-linux-gnu/4.7.1/../../../../include/c++/4.7.1/backward"
-    "/usr/lib/gcc/x86_64-unknown-linux-gnu/4.7.1/include"
-    "/usr/local/include"
-    "/usr/lib/gcc/x86_64-unknown-linux-gnu/4.7.1/include-fixed"
-    "/usr/include"
-    )
-  "This is a list of include paths that are used by the clang auto completion."
-  :group 'mycustom
-  :type '(repeat directory)
-  )
-
-(setq clang-completion-suppress-error 't)
-(setq ac-clang-flags
-      (mapcar (lambda (item)(concat "-I" item))
-              (append
-               mycustom-system-include-paths
-               )
-              )
-      )
-
-(add-hook 'c-mode-common-hook 'c-mode-common-custom)
-
-;; C-common mode setup
-(defun my-ac-cc-mode-setup ()
-  (setq ac-sources (append '(ac-source-clang ac-source-yasnippet) ac-sources)))
+(require 'auto-complete-latex)
+(setq ac-l-dict-directory               "~/.emacs.d/ac-dict/ac-l-dict/")
+(add-hook 'LaTeX-mode-hook #'ac-l-setup)
 
 (defun my-ac-config ()
-  (setq-default ac-sources '(ac-source-dictionary
+  (setq-default ac-sources '(ac-source-abbrev
+                             ac-source-dictionary
                              ac-source-filename
+                             ac-source-words-in-buffer
                              ac-source-words-in-same-mode-buffers))
   (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
-  ;;(add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
-  (add-hook 'c-mode-common-hook 'my-ac-cc-mode-setup)
+  (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
   (add-hook 'ruby-mode-hook 'ac-ruby-mode-setup)
   (add-hook 'css-mode-hook 'ac-css-mode-setup)
   (add-hook 'auto-complete-mode-hook 'ac-common-setup)
@@ -337,9 +310,9 @@
 
 (define-key ac-menu-map (kbd "<tab>") 'ac-next)
 (define-key ac-menu-map (kbd "<backtab>") 'ac-previous)
-
 (define-key ac-menu-map (kbd "C-j") 'ac-next)
 (define-key ac-menu-map (kbd "C-k") 'ac-previous)
+
 (define-key ac-menu-map (kbd "C-l") 'ac-expand-common)
 (define-key ac-menu-map (kbd "ESC") 'ac-stop)
 

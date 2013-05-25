@@ -2,11 +2,11 @@ ac-comphist.dat
 ido.last
 smex-items
 
-site-lisp/
-el-get/
-elpa
-backups/
 auto-save-list/
+backups/
+elpa/
+site-lisp/
+url/
 
 *~
 .places

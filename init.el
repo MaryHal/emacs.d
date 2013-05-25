@@ -21,6 +21,7 @@
                      evil
                      expand-region
                      haskell-mode
+                     lua-mode
                      ido-ubiquitous
                      markdown-mode
                      melpa
@@ -31,11 +32,9 @@
                      smooth-scrolling
                      surround
                      switch-window
+                     undo-tree
                      web-mode
                      ))
-
-;; Old packages I used to use
-;; undo-tree, powerline
 
 ;; Activate all the packages (in particular autoloads)
 (package-initialize)
