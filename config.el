@@ -232,6 +232,7 @@
 ;; (setq ido-decorations (quote ("\n-> " "" "\n " "\n ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
 
 ;; Use ido everywhere
+(ido-everywhere 1)
 (require 'ido-ubiquitous)
 (ido-ubiquitous-mode t)
 
@@ -258,6 +259,7 @@
 ;;(setq dired-listing-switches "-alh")
 (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso")
 
+;; Indentation
 (defun c-mode-common-custom ()
   (setq c-default-style "linux") ;; linux-kernel-developers style indentation
   (setq c-basic-offset 4)        ;; 4-space tab size
@@ -269,9 +271,15 @@
   (c-set-offset 'brace-list-open '0)
   )
 
+(add-hook 'c-mode-common-hook 'c-mode-common-custom)
+
+(add-to-hook 'haskell-mode-hook '(haskell-doc-mode
+                                  haskell-indentation-mode))
+
+;; Auto-complete
 (require 'auto-complete)
 (require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict/")
 
 (require 'auto-complete-latex)
 (setq ac-l-dict-directory               "~/.emacs.d/ac-dict/ac-l-dict/")
@@ -313,8 +321,9 @@
 (define-key ac-menu-map (kbd "C-j") 'ac-next)
 (define-key ac-menu-map (kbd "C-k") 'ac-previous)
 
-(define-key ac-menu-map (kbd "C-l") 'ac-expand-common)
+(define-key ac-menu-map (kbd "RET") 'ac-complete)
 (define-key ac-menu-map (kbd "ESC") 'ac-stop)
+(define-key ac-menu-map (kbd "C-l") 'ac-expand-common)
 
 ;; Colors
 ;(set-face-background 'ac-candidate-face "lightgray")
@@ -346,12 +355,6 @@
 (add-to-list 'auto-mode-alist '("\\.html\\'" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.tag$" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.vm$" . html-mode))
-
-;; (add-hook 'sgml-mode-hook
-;;           (lambda ()
-;;             (require 'rename-sgml-tag)
-;;             (define-key sgml-mode-map (kbd "C-c C-r") 'rename-sgml-tag)))
-
 
 ;; Evil Stuff
 (setq evil-find-skip-newlines t)
@@ -609,8 +612,8 @@
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
-;; Ace Jump Mode
-;; (global-set-key (kbd "M-q") 'ace-jump-mode)
+;; Other
+(global-set-key (kbd "RET") 'newline-and-indent)
 
 ;; Navigate windows with M-<arrows>
 (windmove-default-keybindings 'meta)
