@@ -1,1 +1,0 @@
-/dev/shm/asd-sanford/home/sanford/.emacs.d
