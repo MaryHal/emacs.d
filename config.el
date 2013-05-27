@@ -273,8 +273,11 @@
 
 (add-hook 'c-mode-common-hook 'c-mode-common-custom)
 
-(add-to-hook 'haskell-mode-hook '(haskell-doc-mode
-                                  haskell-indentation-mode))
+(defun haskell-mode-common-custom()
+  (haskell-doc-mode)
+  (haskell-indentation-mode)
+  )
+(add-hook 'haskell-mode-hook 'haskell-mode-common-custom)
 
 ;; Auto-complete
 (require 'auto-complete)
