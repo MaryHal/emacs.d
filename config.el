@@ -591,6 +591,10 @@
              (set-window-start w2 s1)
              (setq i (1+ i)))))))
 
+;; Key Setting
+(require 'switch-window)
+(setq switch-window-shortcut-style 'qwerty)
+
 ;; Expand Region
 (require 'expand-region)
 (global-set-key (kbd "C-q") 'er/expand-region)
