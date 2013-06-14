@@ -56,14 +56,14 @@
 (delete-selection-mode t)
 
 ;; Always display line and column numbers
-;;(setq line-number-mode t)
-;;(setq column-number-mode t)
+;; (setq line-number-mode t)
+;; (setq column-number-mode t)
 
 ;; Lines should be 80 characters wide, not 72
 (setq fill-column 80)
 
 ;; Save a list of recent files visited. (open recent file with C-x f)
-;;(recentf-mode t)
+;; (recentf-mode nil)
 
 ;; Undo/redo window configuration with C-c <left>/<right>
 (winner-mode t)
@@ -368,6 +368,7 @@
 (setq evil-auto-indent t)
 
 (require 'evil)
+(evil-set-toggle-key "<pause>")
 (evil-mode t)
 
 (require 'surround)
@@ -376,6 +377,14 @@
 ;; Cursor Color
 (setq evil-default-cursor t)
 ;;(setq evil-insert-state-cursor '("#aa0000" hbar))
+
+;; Tag colors
+;; (setq evil-normal-state-tag   (propertize "<N>" 'face '((:background "green" :foreground "black")))
+;;       evil-emacs-state-tag    (propertize "<E>" 'face '((:background "orange" :foreground "black")))
+;;       evil-insert-state-tag   (propertize "<I>" 'face '((:background "red")))
+;;       evil-motion-state-tag   (propertize "<M>" 'face '((:background "blue")))
+;;       evil-visual-state-tag   (propertize "<V>" 'face '((:background "grey80" :foreground "black")))
+;;       evil-operator-state-tag (propertize "<O>" 'face '((:background "purple"))))
 
 (define-key evil-normal-state-map "]b" 'forward-buffer)
 (define-key evil-normal-state-map "[b" 'backward-buffer)
@@ -660,6 +669,8 @@
 ;; Seed the random number generator
 (random t)
 
+;; ag, The Silver Searcher
+(setq ag-highlight-search t)
 
 ;; Web Mode
 (require 'web-mode)
@@ -686,7 +697,7 @@
 ;; typically is used by c-c/c-v) before the primary selection
 ;; (that uses mouse-select/middle-button-click)
 (setq x-select-enable-clipboard t)
-(setq x-select-enable-primary t)
+;; (setq x-select-enable-primary t)
 
 ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
