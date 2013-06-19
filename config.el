@@ -359,20 +359,38 @@
 (add-to-list 'auto-mode-alist '("\\.tag$" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.vm$" . html-mode))
 
-;; Evil Stuff
+
+;; pre-evil Stuff
 (setq evil-find-skip-newlines t)
 (setq evil-move-cursor-back nil)
 (setq evil-cross-lines t)
 (setq evil-intercept-esc 'always)
+;; (evil-set-toggle-key "<pause>")
 
 (setq evil-auto-indent t)
 
+;; evil
 (require 'evil)
-;; (evil-set-toggle-key "<pause>")
 (evil-mode t)
 
 (require 'surround)
 (global-surround-mode t)
+
+;; evil-leader
+(setq evil-leader/in-all-states t
+      evil-leader/leader "SPC"
+      evil-leader/non-normal-prefix "s-")
+
+(require 'evil-leader)
+
+;; Unset shortcuts which shadow evil leader
+;; (eval-after-load "compile"
+;;  (define-key compilation-mode-map (kbd "SPC") nil))
+
+;; make leader available in visual mode
+(define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
+(define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
+(define-key evil-emacs-state-map (kbd "SPC") evil-leader--default-map)
 
 ;; Cursor Color
 (setq evil-default-cursor t)
@@ -385,9 +403,6 @@
 ;;       evil-motion-state-tag   (propertize "<M>" 'face '((:background "blue")))
 ;;       evil-visual-state-tag   (propertize "<V>" 'face '((:background "grey80" :foreground "black")))
 ;;       evil-operator-state-tag (propertize "<O>" 'face '((:background "purple"))))
-
-(define-key evil-normal-state-map "]b" 'forward-buffer)
-(define-key evil-normal-state-map "[b" 'backward-buffer)
 
 ;; Redefine ESC (By default it's meta)
 (define-key evil-insert-state-map (kbd "ESC") 'evil-normal-state)
@@ -459,45 +474,45 @@
   (kbd "M-L") 'org-metaright)
 
 ;; Ace Jump Motions
-(defmacro evil-enclose-ace-jump (&rest body)
-  `(let ((old-mark (mark)))
-     (remove-hook 'pre-command-hook #'evil-visual-pre-command t)
-     (remove-hook 'post-command-hook #'evil-visual-post-command t)
-     (unwind-protect
-         (progn
-           ,@body
-           (recursive-edit))
-       (if (evil-visual-state-p)
-           (progn
-             (add-hook 'pre-command-hook #'evil-visual-pre-command nil t)
-             (add-hook 'post-command-hook #'evil-visual-post-command nil t)
-             (set-mark old-mark))
-         (push-mark old-mark)))))
+;; (defmacro evil-enclose-ace-jump (&rest body)
+;;   `(let ((old-mark (mark)))
+;;      (remove-hook 'pre-command-hook #'evil-visual-pre-command t)
+;;      (remove-hook 'post-command-hook #'evil-visual-post-command t)
+;;      (unwind-protect
+;;          (progn
+;;            ,@body
+;;            (recursive-edit))
+;;        (if (evil-visual-state-p)
+;;            (progn
+;;              (add-hook 'pre-command-hook #'evil-visual-pre-command nil t)
+;;              (add-hook 'post-command-hook #'evil-visual-post-command nil t)
+;;              (set-mark old-mark))
+;;          (push-mark old-mark)))))
 
-(evil-define-motion evil-ace-jump-char-mode (count)
-  :type exclusive
-  (evil-enclose-ace-jump
-   (ace-jump-mode 5)))
+;; (evil-define-motion evil-ace-jump-char-mode (count)
+;;   :type exclusive
+;;   (evil-enclose-ace-jump
+;;    (ace-jump-mode 5)))
 
-(evil-define-motion evil-ace-jump-line-mode (count)
-  :type line
-  (evil-enclose-ace-jump
-   (ace-jump-mode 9)))
+;; (evil-define-motion evil-ace-jump-line-mode (count)
+;;   :type line
+;;   (evil-enclose-ace-jump
+;;    (ace-jump-mode 9)))
 
-(evil-define-motion evil-ace-jump-word-mode (count)
-  :type exclusive
-  (evil-enclose-ace-jump
-   (ace-jump-mode 1)))
+;; (evil-define-motion evil-ace-jump-word-mode (count)
+;;   :type exclusive
+;;   (evil-enclose-ace-jump
+;;    (ace-jump-mode 1)))
 
-(evil-define-motion evil-ace-jump-char-to-mode (count)
-  :type exclusive
-  (evil-enclose-ace-jump
-   (ace-jump-mode 5)
-   (forward-char -1)))
+;; (evil-define-motion evil-ace-jump-char-to-mode (count)
+;;   :type exclusive
+;;   (evil-enclose-ace-jump
+;;    (ace-jump-mode 5)
+;;    (forward-char -1)))
 
 ;; some proposals for binding:
 
-(define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode)
+;; (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode)
 ;;(define-key evil-motion-state-map (kbd "C-SPC") #'evil-ace-jump-word-mode)
 ;;
 ;;(define-key evil-operator-state-map (kbd "SPC") #'evil-ace-jump-char-mode) ;; similar to f
@@ -505,14 +520,14 @@
 ;;(define-key evil-operator-state-map (kbd "M-SPC") #'evil-ace-jump-word-mode)
 
 ;; different jumps for different visual modes
-(defadvice evil-visual-line (before spc-for-line-jump activate)
-  (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-line-mode))
+;; (defadvice evil-visual-line (before spc-for-line-jump activate)
+;;   (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-line-mode))
 
-(defadvice evil-visual-char (before spc-for-char-jump activate)
-  (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode))
+;; (defadvice evil-visual-char (before spc-for-char-jump activate)
+;;   (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode))
 
-(defadvice evil-visual-block (before spc-for-char-jump activate)
-  (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode))
+;; (defadvice evil-visual-block (before spc-for-char-jump activate)
+;;   (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode))
 
 ;; Compile display to split window
 (setq special-display-buffer-names
@@ -524,126 +539,6 @@
         (switch-to-buffer buffer)
         (get-buffer-window buffer 0)))
 
-;; Switch to previously selected buffer.
-(defun backward-buffer ()
-  (interactive)
-  "Switch to previously selected buffer."
-  (let* ((list (cdr (buffer-list)))
-         (buffer (car list)))
-    (while (and (cdr list) (string-match "\\*" (buffer-name buffer)))
-      (progn
-        (setq list (cdr list))
-        (setq buffer (car list))))
-    (bury-buffer)
-    (switch-to-buffer buffer)))
-
-;; Opposite of backward-buffer.
-(defun forward-buffer ()
-  (interactive)
-  "Opposite of backward-buffer."
-  (let* ((list (reverse (buffer-list)))
-         (buffer (car list)))
-    (while (and (cdr list) (string-match "\\*" (buffer-name buffer)))
-      (progn
-        (setq list (cdr list))
-        (setq buffer (car list))))
-    (switch-to-buffer buffer)))
-
-;; Split functions
-(defun toggle-window-split ()
-  (interactive)
-  (if (= (count-windows) 2)
-      (let* ((this-win-buffer (window-buffer))
-             (next-win-buffer (window-buffer (next-window)))
-             (this-win-edges (window-edges (selected-window)))
-             (next-win-edges (window-edges (next-window)))
-             (this-win-2nd (not (and (<= (car this-win-edges)
-                                         (car next-win-edges))
-                                     (<= (cadr this-win-edges)
-                                         (cadr next-win-edges)))))
-             (splitter
-              (if (= (car this-win-edges)
-                     (car (window-edges (next-window))))
-                  'split-window-horizontally
-                'split-window-vertically)))
-        (delete-other-windows)
-        (let ((first-win (selected-window)))
-          (funcall splitter)
-          (if this-win-2nd (other-window 1))
-          (set-window-buffer (selected-window) this-win-buffer)
-          (set-window-buffer (next-window) next-win-buffer)
-          (select-window first-win)
-          (if this-win-2nd (other-window 1))))))
-
-(defun rotate-windows ()
-  "Rotate your windows"
-  (interactive)
-  (cond ((not (> (count-windows)1))
-         (message "You can't rotate a single window!"))
-        (t
-         (setq i 1)
-         (setq numWindows (count-windows))
-         (while (< i numWindows)
-           (let* (
-                  (w1 (elt (window-list) i))
-                  (w2 (elt (window-list) (+ (% i numWindows) 1)))
-
-                  (b1 (window-buffer w1))
-                  (b2 (window-buffer w2))
-
-                  (s1 (window-start w1))
-                  (s2 (window-start w2))
-                  )
-             (set-window-buffer w1 b2)
-             (set-window-buffer w2 b1)
-             (set-window-start w1 s2)
-             (set-window-start w2 s1)
-             (setq i (1+ i)))))))
-
-;; Key Setting
-(require 'switch-window)
-(setq switch-window-shortcut-style 'qwerty)
-
-;; Ace Jump Stuff
-(require 'ace-jump-mode)
-;; (ace-jump-mode t)
-
-(require 'ace-jump-buffer)
-(ace-jump-buffer-mode t)
-(global-set-key (kbd "C-c C-b") 'ace-jump-buffer)
-
-;; Expand Region
-(require 'expand-region)
-(global-set-key (kbd "C-q") 'er/expand-region)
-
-;; Easier version of "C-x k" to kill buffer
-(global-set-key (kbd "C-x C-k") 'kill-buffer)
-(global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
-
-;; Evaluate Buffer
-(global-set-key (kbd "C-c C-v") 'eval-buffer)
-(global-set-key (kbd "C-c C-r") 'eval-region)
-
-;; Commentin'
-(global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
-
-;; Create new frame
-(define-key global-map (kbd "C-x C-n") 'make-frame-command)
-
-;; Smex
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "C-x C-m") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
-
-;; Other
-(global-set-key (kbd "RET") 'newline-and-indent)
-
-;; Navigate windows with M-<arrows>
-(windmove-default-keybindings 'meta)
-(setq windmove-wrap-around nil)
-
-(global-set-key [kp-delete] 'delete-char)
 
 ;; Disable backup
 ;; (setq backup-inhibited t)
@@ -741,3 +636,193 @@
     ;; http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
     ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
     ))
+
+
+;; Functions
+
+;; Switch to previously selected buffer.
+(defun backward-buffer ()
+  (interactive)
+  "Switch to previously selected buffer."
+  (let* ((list (cdr (buffer-list)))
+         (buffer (car list)))
+    (while (and (cdr list) (string-match "\\*" (buffer-name buffer)))
+      (progn
+        (setq list (cdr list))
+        (setq buffer (car list))))
+    (bury-buffer)
+    (switch-to-buffer buffer)))
+
+;; Opposite of backward-buffer.
+(defun forward-buffer ()
+  (interactive)
+  "Opposite of backward-buffer."
+  (let* ((list (reverse (buffer-list)))
+         (buffer (car list)))
+    (while (and (cdr list) (string-match "\\*" (buffer-name buffer)))
+      (progn
+        (setq list (cdr list))
+        (setq buffer (car list))))
+    (switch-to-buffer buffer)))
+
+;; Split functions
+(defun toggle-window-split ()
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
+
+(defun rotate-windows ()
+  "Rotate your windows"
+  (interactive)
+  (cond ((not (> (count-windows)1))
+         (message "You can't rotate a single window!"))
+        (t
+         (setq i 1)
+         (setq numWindows (count-windows))
+         (while (< i numWindows)
+           (let* (
+                  (w1 (elt (window-list) i))
+                  (w2 (elt (window-list) (+ (% i numWindows) 1)))
+
+                  (b1 (window-buffer w1))
+                  (b2 (window-buffer w2))
+
+                  (s1 (window-start w1))
+                  (s2 (window-start w2))
+                  )
+             (set-window-buffer w1 b2)
+             (set-window-buffer w2 b1)
+             (set-window-start w1 s2)
+             (set-window-start w2 s1)
+             (setq i (1+ i)))))))
+
+;; insert one or several line below without changing current evil state
+(defun evil-insert-line-below (count)
+  "Insert one of several lines below the current point's line without changing
+the current state and point position."
+  (interactive "p")
+  (save-excursion
+    (evil-save-state (evil-open-below count))))
+
+;; insert one or several line above without changing current evil state
+(defun evil-insert-line-above (count)
+  "Insert one of several lines above the current point's line without changing
+the current state and point position."
+  (interactive "p")
+  (save-excursion
+    (evil-save-state (evil-open-above count))))
+
+;; from https://gist.github.com/3402786
+(defun toggle-maximize-buffer () "Maximize buffer"
+  (interactive)
+  (if (= 1 (length (window-list)))
+    (jump-to-register '_)
+    (progn
+      (set-register '_ (list (current-window-configuration)))
+      (delete-other-windows))))
+
+
+;; Miscellaneous Keybindings
+
+(require 'switch-window)
+(setq switch-window-shortcut-style 'qwerty)
+
+;; Ace Jump
+(require 'ace-jump-mode)
+
+;; Expand Region
+(require 'expand-region)
+(global-set-key (kbd "C-q") 'er/expand-region)
+
+;; Easier version of "C-x k" to kill buffer
+(global-set-key (kbd "C-x C-k") 'kill-buffer)
+(global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
+
+;; Evaluate Buffer
+(global-set-key (kbd "C-c C-v") 'eval-buffer)
+(global-set-key (kbd "C-c C-r") 'eval-region)
+
+;; Commentin'
+(global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
+
+;; Create new frame
+(define-key global-map (kbd "C-x C-n") 'make-frame-command)
+
+;; Smex
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "C-x C-m") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+
+;; Other
+(global-set-key (kbd "RET") 'newline-and-indent)
+
+;; Navigate windows with M-<arrows>
+(windmove-default-keybindings 'meta)
+(setq windmove-wrap-around nil)
+
+(global-set-key [kp-delete] 'delete-char)
+
+;; Other evil keybindings
+(define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
+(define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
+
+;; evil-leader keybindings
+
+;; Buffers
+(evil-leader/set-key "bk" 'ido-kill-buffer)
+(evil-leader/set-key "bn" 'switch-to-next-buffer)
+(evil-leader/set-key "bp" 'switch-to-prev-buffer)
+
+;; File
+(evil-leader/set-key "ff" 'ido-find-file)
+
+;; Jump
+(evil-leader/set-key "jc" 'ace-jump-char-mode)
+(evil-leader/set-key "ju" 'ace-jump-mode)
+(evil-leader/set-key "jw" 'ace-jump-word-mode)
+
+;; Line insertion
+;; (evil-leader/set-key "jj" 'evil-insert-line-below)
+;; (evil-leader/set-key "kk" 'evil-insert-line-above)
+
+;; Selection
+(evil-leader/set-key "v" 'er/expand-region)
+
+;; Window
+(evil-leader/set-key "wb" 'balance-windows)
+(evil-leader/set-key "wc" 'delete-window)
+
+(evil-leader/set-key "wH" 'evil-window-move-far-left)
+(evil-leader/set-key "wh" 'evil-window-left)
+(evil-leader/set-key "wJ" 'evil-window-move-very-bottom)
+(evil-leader/set-key "wj" 'evil-window-down)
+(evil-leader/set-key "wK" 'evil-window-move-very-top)
+(evil-leader/set-key "wk" 'evil-window-up)
+(evil-leader/set-key "wL" 'evil-window-move-far-right)
+(evil-leader/set-key "wl" 'evil-window-right)
+
+(evil-leader/set-key "wm" 'toggle-maximize-buffer)
+(evil-leader/set-key "ws" 'split-window-vertically)
+(evil-leader/set-key "wv" 'split-window-horizontally)
+(evil-leader/set-key "ww" 'switch-window)

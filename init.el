@@ -13,7 +13,6 @@
 
 (setq package-list '(ac-math
                      ace-jump-mode
-                     ace-jump-buffer
                      ag
                      auctex
                      auto-complete
@@ -21,6 +20,7 @@
                      color-theme
                      diminish
                      evil
+                     evil-leader
                      expand-region
                      haskell-mode
                      lua-mode
