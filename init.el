@@ -13,6 +13,7 @@
 
 (setq package-list '(ac-math
                      ace-jump-mode
+                     ace-jump-buffer
                      ag
                      auctex
                      auto-complete

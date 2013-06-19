@@ -130,7 +130,7 @@
 
 ;; Setting font
 (if (string= system-type "windows-nt")
-    ;; if in Windows
+    ;; If Windows
     (progn (setq myFrameFont "Consolas 10")
            (add-to-list 'default-frame-alist '(font . "Consolas 10"))
            )
@@ -368,7 +368,7 @@
 (setq evil-auto-indent t)
 
 (require 'evil)
-(evil-set-toggle-key "<pause>")
+;; (evil-set-toggle-key "<pause>")
 (evil-mode t)
 
 (require 'surround)
@@ -603,6 +603,14 @@
 ;; Key Setting
 (require 'switch-window)
 (setq switch-window-shortcut-style 'qwerty)
+
+;; Ace Jump Stuff
+(require 'ace-jump-mode)
+;; (ace-jump-mode t)
+
+(require 'ace-jump-buffer)
+(ace-jump-buffer-mode t)
+(global-set-key (kbd "C-c C-b") 'ace-jump-buffer)
 
 ;; Expand Region
 (require 'expand-region)
