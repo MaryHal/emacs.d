@@ -797,9 +797,8 @@ the current state and point position."
 ;; File
 (evil-leader/set-key "ff" 'ido-find-file)
 
-;; Jump
+;; Jump. ACE Jump.
 (evil-leader/set-key "jc" 'ace-jump-char-mode)
-(evil-leader/set-key "ju" 'ace-jump-mode)
 (evil-leader/set-key "jw" 'ace-jump-word-mode)
 
 ;; Line insertion
