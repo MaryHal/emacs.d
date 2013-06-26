@@ -346,8 +346,8 @@
 (setq-default TeX-master nil)
 (setq ac-math-unicode-in-math-p t)
 
-;(add-hook ‘latex-mode-hook ‘LaTeX-math-mode)
-;(add-hook ‘lateX-mode-hook ‘auto-fill-mode)
+;;(add-hook ‘latex-mode-hook ‘LaTeX-math-mode)
+;;(add-hook ‘lateX-mode-hook ‘auto-fill-mode)
 
 ;; (setq TeX-view-program-list
 ;;       '(("zathura" "/usr/bin/zathura %q")))
@@ -752,7 +752,7 @@ the current state and point position."
 
 ;; Expand Region
 (require 'expand-region)
-(global-set-key (kbd "C-q") 'er/expand-region)
+;;(global-set-key (kbd "C-q") 'er/expand-region)
 
 ;; Easier version of "C-x k" to kill buffer
 (global-set-key (kbd "C-x C-k") 'kill-buffer)
@@ -790,9 +790,16 @@ the current state and point position."
 ;; evil-leader keybindings
 
 ;; Buffers
+(evil-leader/set-key "bb" 'ido-switch-buffer)
 (evil-leader/set-key "bk" 'ido-kill-buffer)
+(evil-leader/set-key "bm" 'buffer-menu)
 (evil-leader/set-key "bn" 'switch-to-next-buffer)
 (evil-leader/set-key "bp" 'switch-to-prev-buffer)
+(evil-leader/set-key "bw" (lambda()
+                            (interactive)
+                            (kill-this-buffer)
+                            (delete-window)))
+(evil-leader/set-key "bW" 'kill-this-buffer)
 
 ;; File
 (evil-leader/set-key "ff" 'ido-find-file)
