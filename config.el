@@ -755,6 +755,7 @@ the current state and point position."
 ;;(global-set-key (kbd "C-q") 'er/expand-region)
 
 ;; Easier version of "C-x k" to kill buffer
+(global-set-key (kbd "C-x C-b") 'buffer-menu)
 (global-set-key (kbd "C-x C-k") 'kill-buffer)
 (global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
 
