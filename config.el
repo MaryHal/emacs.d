@@ -790,6 +790,9 @@ the current state and point position."
 
 ;; evil-leader keybindings
 
+;; Alternate
+(evil-leader/set-key "A" 'ff-find-other-file)
+
 ;; Buffers
 (evil-leader/set-key "bb" 'ido-switch-buffer)
 (evil-leader/set-key "bk" 'ido-kill-buffer)
@@ -810,8 +813,14 @@ the current state and point position."
 (evil-leader/set-key "jw" 'ace-jump-word-mode)
 
 ;; Line insertion
-;; (evil-leader/set-key "jj" 'evil-insert-line-below)
-;; (evil-leader/set-key "kk" 'evil-insert-line-above)
+(evil-leader/set-key "jj" 'evil-insert-line-below)
+(evil-leader/set-key "kk" 'evil-insert-line-above)
+
+;; narrow & widen
+(evil-leader/set-key "nr" 'narrow-to-region)
+(evil-leader/set-key "np" 'narrow-to-page)
+(evil-leader/set-key "nf" 'narrow-to-defun)
+(evil-leader/set-key "nw" 'widen)
 
 ;; Selection
 (evil-leader/set-key "v" 'er/expand-region)
@@ -833,3 +842,13 @@ the current state and point position."
 (evil-leader/set-key "ws" 'split-window-vertically)
 (evil-leader/set-key "wv" 'split-window-horizontally)
 (evil-leader/set-key "ww" 'switch-window)
+
+;; text
+(evil-leader/set-key "xdw" 'delete-trailing-whitespace)
+(evil-leader/set-key "xmj" 'move-text-down)
+(evil-leader/set-key "xmk" 'move-text-up)
+(evil-leader/set-key "xtc" 'transpose-chars)
+(evil-leader/set-key "xtl" 'transpose-lines)
+(evil-leader/set-key "xtw" 'transpose-words)
+(evil-leader/set-key "xU" 'upcase-word)
+(evil-leader/set-key "xu" 'downcase-word)
