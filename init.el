@@ -23,6 +23,7 @@
                      evil-leader
                      expand-region
                      haskell-mode
+                     helm
                      lua-mode
                      ido-ubiquitous
                      markdown-mode

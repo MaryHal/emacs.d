@@ -63,7 +63,7 @@
 (setq fill-column 80)
 
 ;; Save a list of recent files visited. (open recent file with C-x f)
-;; (recentf-mode nil)
+(recentf-mode nil)
 
 ;; Undo/redo window configuration with C-c <left>/<right>
 (winner-mode t)
@@ -177,14 +177,6 @@
       color-theme-is-global t
       truncate-partial-width-windows nil)
 
-;; Diminish modeline clutter
-(require 'diminish)
-(add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "El")))
-(eval-after-load "Undo-Tree" '(diminish 'undo-tree-mode "ut"))
-
-(require 'smart-mode-line)
-(sml/setup)
-
 ;; Parenthesis matching
 (require 'paren)
 (show-paren-mode t)
@@ -248,6 +240,34 @@
 ;;(ido-ubiquitous-use-new-completing-read yas/visit-snippet-file 'yasnippet)
 
 (require 'helm-config)
+(require 'helm-files)
+(set-face-attribute 'helm-selection nil
+                    :background nil
+                    :foreground "brightwhite"
+                    :underline t)
+(set-face-attribute 'helm-source-header nil
+                    :weight 'bold
+                    :background "grey30"
+                    :underline nil)
+(set-face-attribute 'helm-header nil
+                    :weight 'bold
+                    :background "grey10"
+                    :underline nil
+                    :height 1.0)
+(set-face-attribute 'helm-visible-mark nil
+                    :background nil
+                    :foreground "grey40"
+                    :underline nil)
+
+(set-face-attribute 'helm-ff-file nil
+                    :foreground "white" :background nil)
+(set-face-attribute 'helm-ff-directory nil
+                    :foreground "cyan" :background nil :underline t)
+
+(define-key helm-map (kbd "C-k") 'helm-previous-line)
+(define-key helm-map (kbd "C-j") 'helm-next-line)
+(define-key helm-map (kbd "C-h") 'helm-previous-source)
+(define-key helm-map (kbd "C-l") 'helm-next-source)
 
 (require 'smex)
 (smex-initialize)
@@ -371,6 +391,15 @@
 
 (setq evil-auto-indent t)
 
+;; Diminish modeline clutter
+(require 'diminish)
+(add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "ξlisp")))
+(eval-after-load "Undo-Tree" '(diminish 'undo-tree-mode "ut"))
+
+;; Mode line
+(require 'smart-mode-line)
+(sml/setup)
+
 ;; evil
 (require 'evil)
 (evil-mode t)
@@ -399,6 +428,7 @@
 ;;(setq evil-insert-state-cursor '("#aa0000" hbar))
 
 ;; Tag colors
+;; http://raebear.net/comp/emacscolors.html
 (setq evil-normal-state-tag   (propertize " Normal "   'face '((:background "LimeGreen" :foreground "DarkGreen" :weight bold)))
       evil-insert-state-tag   (propertize " Insert "   'face '((:background "grey80" :foreground "NavyBlue" :weight bold)))
       evil-visual-state-tag   (propertize " Visual "   'face '((:background "DarkOrange" :foreground "Red4" :weight bold)))
