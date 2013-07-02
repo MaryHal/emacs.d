@@ -30,6 +30,7 @@
                      melpa
                      php-mode
                      popup
+                     pretty-mode
                      smart-mode-line
                      smex
                      smooth-scrolling

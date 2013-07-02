@@ -195,6 +195,22 @@
 
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
+;; Prettify Buffers
+(require 'pretty-mode)
+(defadvice indent-region (around no-pretty-on-indent activate)
+  (if pretty-mode
+      (progn
+        (pretty-mode -1)
+        ad-do-it
+        (pretty-mode 1))
+    ad-do-it))
+;; Extra Symbols
+;; (dolist (mode '(python-mode c-mode java-mode cpp-mode))
+;;   (pretty-add-keywords mode '(("="  . "←")
+;;                               ("==" . "≡"))))
+
+(global-pretty-mode 1)
+
 ;; Interactively Do Things
 (require 'ido)
 (ido-mode t)
@@ -439,7 +455,6 @@
 ;;(setq evil-insert-state-cursor '("#aa0000" hbar))
 
 ;; Tag colors
-;; http://raebear.net/comp/emacscolors.html
 (setq evil-normal-state-tag   (propertize " Normal "   'face '((:background "LimeGreen" :foreground "DarkGreen" :weight bold)))
       evil-insert-state-tag   (propertize " Insert "   'face '((:background "grey80" :foreground "NavyBlue" :weight bold)))
       evil-visual-state-tag   (propertize " Visual "   'face '((:background "DarkOrange" :foreground "Red4" :weight bold)))
