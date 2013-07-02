@@ -240,6 +240,8 @@
 ;;(ido-ubiquitous-use-new-completing-read yas/visit-snippet-file 'yasnippet)
 
 (require 'helm-config)
+(helm-mode t)
+
 (require 'helm-files)
 (set-face-attribute 'helm-selection nil
                     :background nil
@@ -248,6 +250,7 @@
 (set-face-attribute 'helm-source-header nil
                     :weight 'bold
                     :background "grey30"
+                    :foreground "brightwhite"
                     :underline nil)
 (set-face-attribute 'helm-header nil
                     :weight 'bold
@@ -259,8 +262,8 @@
                     :foreground "grey40"
                     :underline nil)
 
-(set-face-attribute 'helm-ff-file nil
-                    :foreground "white" :background nil)
+;; (set-face-attribute 'helm-ff-file nil
+;;                     :foreground "white" :background nil)
 (set-face-attribute 'helm-ff-directory nil
                     :foreground "cyan" :background nil :underline t)
 
@@ -268,6 +271,14 @@
 (define-key helm-map (kbd "C-j") 'helm-next-line)
 (define-key helm-map (kbd "C-h") 'helm-previous-source)
 (define-key helm-map (kbd "C-l") 'helm-next-source)
+
+(setq helm-idle-delay 0.3
+      helm-input-idle-delay 0
+      helm-quick-update t
+      helm-candidate-number-limit nil
+      helm-su-or-sudo "sudo"
+      helm-allow-skipping-current-buffer nil
+      helm-enable-shortcuts t)
 
 (require 'smex)
 (smex-initialize)
@@ -393,7 +404,7 @@
 
 ;; Diminish modeline clutter
 (require 'diminish)
-(add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "ξlisp")))
+(add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "ξLisp")))
 (eval-after-load "Undo-Tree" '(diminish 'undo-tree-mode "ut"))
 
 ;; Mode line
@@ -434,8 +445,8 @@
       evil-visual-state-tag   (propertize " Visual "   'face '((:background "DarkOrange" :foreground "Red4" :weight bold)))
       evil-replace-state-tag  (propertize " Replace "  'face '((:background "red3" :foreground "grey80" :weight bold)))
       evil-emacs-state-tag    (propertize " Emacs "    'face '((:background "MediumOrchid" :foreground "DarkMagenta" :weight bold)))
-      evil-motion-state-tag   (propertize " Motion "   'face '((:background "blue" :weight bold)))
-      evil-operator-state-tag (propertize " Operator " 'face '((:background "purple" :weight bold))))
+      evil-motion-state-tag   (propertize " Motion "   'face '((:background "goldenrod4" :foreground "goldenrod1" :weight bold)))
+      evil-operator-state-tag (propertize " Operator " 'face '((:background "RoyalBlue4" :foreground "DarkBlue" :weight bold))))
 
 ;; Redefine ESC (By default it's meta)
 (define-key evil-insert-state-map (kbd "ESC") 'evil-normal-state)
