@@ -864,10 +864,14 @@ the current state and point position."
                             (delete-window)))
 (evil-leader/set-key "bW" 'kill-this-buffer)
 
-(evil-leader/set-key "bs" 'helm-mini)
-
 ;; File
 (evil-leader/set-key "ff" 'ido-find-file)
+
+;; Helm
+(evil-leader/set-key "hb" 'helm-mini)
+(evil-leader/set-key "hf" 'helm-find-files)
+(evil-leader/set-key "hi" 'helm-imenu)
+(evil-leader/set-key "hc" 'helm-browse-code)
 
 ;; Jump. ACE Jump.
 (evil-leader/set-key "jc" 'ace-jump-char-mode)
