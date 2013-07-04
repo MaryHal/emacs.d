@@ -410,6 +410,7 @@
 
 
 ;; pre-evil Stuff
+(setq evil-want-C-u-scroll t)
 (setq evil-find-skip-newlines t)
 (setq evil-move-cursor-back nil)
 (setq evil-cross-lines t)
@@ -417,6 +418,16 @@
 ;; (evil-set-toggle-key "<pause>")
 
 (setq evil-auto-indent t)
+
+;; Tag colors (For use in modeline)
+(setq evil-normal-state-tag   (propertize " Normal "   'face '((:background "LimeGreen" :foreground "DarkGreen" :weight bold)))
+      evil-insert-state-tag   (propertize " Insert "   'face '((:background "grey80" :foreground "NavyBlue" :weight bold)))
+      evil-visual-state-tag   (propertize " Visual "   'face '((:background "DarkOrange" :foreground "Red4" :weight bold)))
+      evil-replace-state-tag  (propertize " Replace "  'face '((:background "red3" :foreground "grey80" :weight bold)))
+      evil-emacs-state-tag    (propertize " Emacs "    'face '((:background "MediumOrchid" :foreground "DarkMagenta" :weight bold)))
+      evil-motion-state-tag   (propertize " Motion "   'face '((:background "goldenrod4" :foreground "goldenrod1" :weight bold)))
+      evil-operator-state-tag (propertize " Operator " 'face '((:background "RoyalBlue4" :foreground "DarkBlue" :weight bold))))
+
 
 ;; Diminish modeline clutter
 (require 'diminish)
@@ -453,15 +464,6 @@
 ;; Cursor Color
 (setq evil-default-cursor t)
 ;;(setq evil-insert-state-cursor '("#aa0000" hbar))
-
-;; Tag colors
-(setq evil-normal-state-tag   (propertize " Normal "   'face '((:background "LimeGreen" :foreground "DarkGreen" :weight bold)))
-      evil-insert-state-tag   (propertize " Insert "   'face '((:background "grey80" :foreground "NavyBlue" :weight bold)))
-      evil-visual-state-tag   (propertize " Visual "   'face '((:background "DarkOrange" :foreground "Red4" :weight bold)))
-      evil-replace-state-tag  (propertize " Replace "  'face '((:background "red3" :foreground "grey80" :weight bold)))
-      evil-emacs-state-tag    (propertize " Emacs "    'face '((:background "MediumOrchid" :foreground "DarkMagenta" :weight bold)))
-      evil-motion-state-tag   (propertize " Motion "   'face '((:background "goldenrod4" :foreground "goldenrod1" :weight bold)))
-      evil-operator-state-tag (propertize " Operator " 'face '((:background "RoyalBlue4" :foreground "DarkBlue" :weight bold))))
 
 ;; Redefine ESC (By default it's meta)
 (define-key evil-insert-state-map (kbd "ESC") 'evil-normal-state)
