@@ -195,22 +195,6 @@
 
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
-;; Prettify Buffers
-(require 'pretty-mode)
-(defadvice indent-region (around no-pretty-on-indent activate)
-  (if pretty-mode
-      (progn
-        (pretty-mode -1)
-        ad-do-it
-        (pretty-mode 1))
-    ad-do-it))
-;; Extra Symbols
-;; (dolist (mode '(python-mode c-mode java-mode cpp-mode))
-;;   (pretty-add-keywords mode '(("="  . "←")
-;;                               ("==" . "≡"))))
-
-(global-pretty-mode 1)
-
 ;; Interactively Do Things
 (require 'ido)
 (ido-mode t)
@@ -634,26 +618,6 @@
 
 ;; ag, The Silver Searcher
 (setq ag-highlight-search t)
-
-;; Web Mode
-(require 'web-mode)
-(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.jsp\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-
-(defun web-mode-hook ()
-  "Hooks for Web mode."
-  (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-css-indent-offset 2)
-  (setq web-mode-code-indent-offset 2)
-  (setq web-mode-indent-style 2)
-  )
-
-(add-hook 'web-mode-hook 'web-mode-hook)
 
 ;; http://hugoheden.wordpress.com/2009/03/08/copypaste-with-emacs-in-terminal/
 ;; I prefer using the "clipboard" selection (the one the

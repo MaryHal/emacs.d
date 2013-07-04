@@ -26,14 +26,12 @@
                      markdown-mode
                      melpa
                      popup
-                     pretty-mode
                      smart-mode-line
                      smex
                      smooth-scrolling
                      surround
                      switch-window
                      undo-tree
-                     web-mode
                      ))
 
 ;; Activate all the packages (in particular autoloads)
