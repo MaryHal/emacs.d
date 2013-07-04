@@ -255,9 +255,6 @@
 ;;(ido-ubiquitous-use-new-completing-read yas/expand 'yasnippet)
 ;;(ido-ubiquitous-use-new-completing-read yas/visit-snippet-file 'yasnippet)
 
-(require 'helm-config)
-(helm-mode t)
-
 (require 'helm-files)
 (set-face-attribute 'helm-selection nil
                     :background nil
@@ -282,6 +279,8 @@
 ;;                     :foreground "white" :background nil)
 (set-face-attribute 'helm-ff-directory nil
                     :foreground "cyan" :background nil :underline t)
+
+(require 'helm-config)
 
 (define-key helm-map (kbd "C-k") 'helm-previous-line)
 (define-key helm-map (kbd "C-j") 'helm-next-line)
@@ -865,6 +864,10 @@ the current state and point position."
                             (kill-this-buffer)
                             (delete-window)))
 (evil-leader/set-key "bW" 'kill-this-buffer)
+
+;; Eval
+(evil-leader/set-key "eb" 'eval-buffer)
+(evil-leader/set-key "er" 'eval-region)
 
 ;; File
 (evil-leader/set-key "ff" 'ido-find-file)

@@ -25,7 +25,6 @@
                      ido-ubiquitous
                      markdown-mode
                      melpa
-                     php-mode
                      popup
                      pretty-mode
                      smart-mode-line
