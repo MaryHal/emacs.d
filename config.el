@@ -417,6 +417,13 @@
 (add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "ξLisp")))
 (eval-after-load "Undo-Tree" '(diminish 'undo-tree-mode "ut"))
 
+(defmacro rename-modeline (package-name mode new-name)
+  `(eval-after-load ,package-name
+     '(defadvice ,mode (after rename-modeline activate)
+        (setq mode-name ,new-name))))
+
+(rename-modeline "js2-mode" js2-mode "js2")
+
 ;; Mode line
 (require 'smart-mode-line)
 (sml/setup)
