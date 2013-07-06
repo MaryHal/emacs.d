@@ -427,6 +427,7 @@
 ;; Mode line
 (require 'smart-mode-line)
 (sml/setup)
+(setq sml/col-number-format "%4c")
 
 ;; evil
 (require 'evil)
