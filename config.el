@@ -411,6 +411,18 @@
 (add-to-list 'auto-mode-alist '("\\.tag$" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.vm$" . html-mode))
 
+;; Workgroups
+(require 'workgroups2)
+(desktop-save-mode t)
+
+(setq wg-prefix-key (kbd "C-c z")
+      wg-restore-associated-buffers nil ; restore all buffers opened in this WG?
+      wg-use-default-session-file nil   ; turn off for "emacs --daemon"
+      wg-default-session-file "~/.emacs.d/wgSession"
+      wg-use-faces nil
+      wg-morph-on nil)                  ; animation off
+
+;; (workgroups-mode)     ; Activate workgroups
 
 ;; pre-evil Stuff
 (setq evil-want-C-u-scroll t)
@@ -601,16 +613,16 @@
 ;; (defadvice evil-visual-block (before spc-for-char-jump activate)
 ;;   (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode))
 
-;; Compile display to split window
-(setq special-display-buffer-names
-      '("*compilation*"))
-
 ;; Bury the compilation buffer when compilation is finished and successful.
-(add-to-list 'compilation-finish-functions
-             (lambda (buffer msg)
-               (when
-                 (bury-buffer buffer)
-                 (replace-buffer-in-windows buffer))))
+;; (add-to-list 'compilation-finish-functions
+;;              (lambda (buffer msg)
+;;                (when
+;;                  (bury-buffer buffer)
+;;                  (replace-buffer-in-windows buffer))))
+
+;; Prevent compilation buffer from showing up
+(defadvice compile (around compile/save-window-excursion first () activate)
+  (save-window-excursion ad-do-it))
 
 (setq special-display-function
       (lambda (buffer &optional args)
@@ -844,8 +856,16 @@ the current state and point position."
 (global-set-key [kp-delete] 'delete-char)
 
 ;; Other evil keybindings
+(evil-define-operator evil-join-previous-line (beg end)
+  "Join the previous line with the current line."
+  :motion evil-line
+  (evil-previous-visual-line)
+  (evil-join beg end))
+
 (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
 (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
+
+(define-key evil-normal-state-map (kbd "K") 'evil-join-previous-line)
 
 ;; evil-leader keybindings
 
@@ -870,6 +890,14 @@ the current state and point position."
 
 ;; File
 (evil-leader/set-key "ff" 'ido-find-file)
+
+;; Workgroups2
+(evil-leader/set-key "gc" 'wg-create-workgroup)
+(evil-leader/set-key "gk" 'wg-kill-workgroup)
+(evil-leader/set-key "gh" 'wg-switch-to-workgroup-left)
+(evil-leader/set-key "gl" 'wg-switch-to-workgroup-right)
+(evil-leader/set-key "gs" 'wg-save-session)
+(evil-leader/set-key "gf" 'wg-find-session-file)
 
 ;; Helm
 (evil-leader/set-key "hb" 'helm-mini)

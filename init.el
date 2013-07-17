@@ -31,6 +31,7 @@
                      surround
                      switch-window
                      undo-tree
+                     workgroups
                      ))
 
 ;; Activate all the packages (in particular autoloads)
