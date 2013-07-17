@@ -6,7 +6,7 @@
 ;; Custom configuration files
 (add-to-loadpath "~/.emacs.d/pkg/tomorrow-theme"
                  "~/.emacs.d/pkg/auto-complete-latex"
-                 "~/.emacs.d/config")
+                 "~/.emacs.d/pkg/emacs-clang-complete-async")
 
 ;; Auto refresh buffers
 (global-auto-revert-mode t)
@@ -291,7 +291,7 @@
 ;;(setq dired-listing-switches "-alh")
 (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso")
 
-;; Indentation
+;; C Mode Hooks
 (defun c-mode-common-custom ()
   (setq c-default-style "linux") ;; linux-kernel-developers style indentation
   (setq c-basic-offset 4)        ;; 4-space tab size
@@ -305,16 +305,36 @@
 
 (add-hook 'c-mode-common-hook 'c-mode-common-custom)
 
+;; Haskell Mode Hooks
 (defun haskell-mode-common-custom()
   (haskell-doc-mode)
   (haskell-indentation-mode)
   )
 (add-hook 'haskell-mode-hook 'haskell-mode-common-custom)
 
+;; Octave Mode Hooks
+(autoload 'octave-mode "octave-mod" nil t)
+(setq auto-mode-alist
+      (cons '("\\.m$" . octave-mode) auto-mode-alist))
+
+(add-hook 'octave-mode-hook
+          (lambda ()
+            (abbrev-mode 1)
+            (auto-fill-mode 1)
+            (if (eq window-system 'x)
+                (font-lock-mode 1))))
+
 ;; Auto-complete
 (require 'auto-complete)
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict/")
+
+(require 'auto-complete-clang-async)
+(defun ac-cc-mode-setup ()
+  (setq ac-clang-complete-executable "~/.emacs.d/pkg/emacs-clang-complete-async/clang-complete")
+  (setq ac-sources '(ac-source-clang-async))
+  (ac-clang-launch-completion-process)
+  )
 
 (require 'auto-complete-latex)
 (setq ac-l-dict-directory               "~/.emacs.d/ac-dict/ac-l-dict/")
@@ -585,6 +605,13 @@
 (setq special-display-buffer-names
       '("*compilation*"))
 
+;; Bury the compilation buffer when compilation is finished and successful.
+(add-to-list 'compilation-finish-functions
+             (lambda (buffer msg)
+               (when
+                 (bury-buffer buffer)
+                 (replace-buffer-in-windows buffer))))
+
 (setq special-display-function
       (lambda (buffer &optional args)
         (split-window)
@@ -632,7 +659,7 @@
 ;; typically is used by c-c/c-v) before the primary selection
 ;; (that uses mouse-select/middle-button-click)
 (setq x-select-enable-clipboard t)
-;; (setq x-select-enable-primary t)
+(setq x-select-enable-primary nil)
 
 ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))

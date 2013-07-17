@@ -13,7 +13,6 @@
                      ag
                      auctex
                      auto-complete
-                     auto-complete-clang
                      color-theme
                      diminish
                      evil
