@@ -476,8 +476,8 @@
 (require 'evil-leader)
 
 ;; Unset shortcuts which shadow evil leader
-;; (eval-after-load "compile"
-;;  (define-key compilation-mode-map (kbd "SPC") nil))
+(eval-after-load "compile"
+ (define-key compilation-mode-map (kbd "SPC") nil))
 
 ;; make leader available in visual mode
 (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
@@ -620,9 +620,14 @@
 ;;                  (bury-buffer buffer)
 ;;                  (replace-buffer-in-windows buffer))))
 
-;; Prevent compilation buffer from showing up
-(defadvice compile (around compile/save-window-excursion first () activate)
-  (save-window-excursion ad-do-it))
+(setq compilation-finish-functions 'compile-autoclose)
+(defun compile-autoclose (buffer string)
+  (cond ((string-match "finished" string)
+         (bury-buffer "*compilation*")
+         (winner-undo)
+         (message "Build successful."))
+        (t
+         (message "Compilation exited abnormally: %s" string))))
 
 (setq special-display-function
       (lambda (buffer &optional args)
