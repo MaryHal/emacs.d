@@ -411,19 +411,6 @@
 (add-to-list 'auto-mode-alist '("\\.tag$" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.vm$" . html-mode))
 
-;; Workgroups
-(require 'workgroups2)
-(desktop-save-mode t)
-
-(setq wg-prefix-key (kbd "C-c z")
-      wg-restore-associated-buffers nil ; restore all buffers opened in this WG?
-      wg-use-default-session-file nil   ; turn off for "emacs --daemon"
-      wg-default-session-file "~/.emacs.d/wgSession"
-      wg-use-faces nil
-      wg-morph-on nil)                  ; animation off
-
-;; (workgroups-mode)     ; Activate workgroups
-
 ;; pre-evil Stuff
 (setq evil-want-C-u-scroll t)
 (setq evil-find-skip-newlines t)
@@ -895,14 +882,6 @@ the current state and point position."
 
 ;; File
 (evil-leader/set-key "ff" 'ido-find-file)
-
-;; Workgroups2
-(evil-leader/set-key "gc" 'wg-create-workgroup)
-(evil-leader/set-key "gk" 'wg-kill-workgroup)
-(evil-leader/set-key "gh" 'wg-switch-to-workgroup-left)
-(evil-leader/set-key "gl" 'wg-switch-to-workgroup-right)
-(evil-leader/set-key "gs" 'wg-save-session)
-(evil-leader/set-key "gf" 'wg-find-session-file)
 
 ;; Helm
 (evil-leader/set-key "hb" 'helm-mini)
