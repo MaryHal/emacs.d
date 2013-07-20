@@ -178,25 +178,6 @@
       color-theme-is-global t
       truncate-partial-width-windows nil)
 
-;; Parenthesis matching
-(require 'paren)
-(show-paren-mode t)
-(setq show-paren-delay 0)
-(set-face-background 'show-paren-match-face (face-background 'default))
-(set-face-foreground 'show-paren-match-face "#def")
-(set-face-attribute 'show-paren-match-face nil :weight 'extra-bold)
-
-;; Whitespace-style
-(setq-default show-trailing-whitespace t)
-(setq-default indicate-empty-lines t)
-
-(setq whitespace-style '(trailing lines space-before-tab
-                                  indentation space-after-tab)
-      whitespace-line-column 100)
-
-(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
-
-;; Interactively Do Things
 (require 'ido)
 (ido-mode t)
 (setq ido-enable-prefix nil
@@ -240,6 +221,12 @@
 ;;(ido-ubiquitous-use-new-completing-read yas/expand 'yasnippet)
 ;;(ido-ubiquitous-use-new-completing-read yas/visit-snippet-file 'yasnippet)
 
+(require 'smex)
+(smex-initialize)
+
+(setq smex-key-advice-ignore-menu-bar t)
+(setq smex-save-file "~/.emacs.d/smex-items")
+
 (require 'helm-files)
 (set-face-attribute 'helm-selection nil
                     :background nil
@@ -279,12 +266,6 @@
       helm-su-or-sudo "sudo"
       helm-allow-skipping-current-buffer nil
       helm-enable-shortcuts t)
-
-(require 'smex)
-(smex-initialize)
-
-(setq smex-key-advice-ignore-menu-bar t)
-(setq smex-save-file "~/.emacs.d/smex-items")
 
 (require 'dired)
 
@@ -545,62 +526,6 @@
   (kbd "M-K") 'org-metaup
   (kbd "M-L") 'org-metaright)
 
-;; Ace Jump Motions
-;; (defmacro evil-enclose-ace-jump (&rest body)
-;;   `(let ((old-mark (mark)))
-;;      (remove-hook 'pre-command-hook #'evil-visual-pre-command t)
-;;      (remove-hook 'post-command-hook #'evil-visual-post-command t)
-;;      (unwind-protect
-;;          (progn
-;;            ,@body
-;;            (recursive-edit))
-;;        (if (evil-visual-state-p)
-;;            (progn
-;;              (add-hook 'pre-command-hook #'evil-visual-pre-command nil t)
-;;              (add-hook 'post-command-hook #'evil-visual-post-command nil t)
-;;              (set-mark old-mark))
-;;          (push-mark old-mark)))))
-
-;; (evil-define-motion evil-ace-jump-char-mode (count)
-;;   :type exclusive
-;;   (evil-enclose-ace-jump
-;;    (ace-jump-mode 5)))
-
-;; (evil-define-motion evil-ace-jump-line-mode (count)
-;;   :type line
-;;   (evil-enclose-ace-jump
-;;    (ace-jump-mode 9)))
-
-;; (evil-define-motion evil-ace-jump-word-mode (count)
-;;   :type exclusive
-;;   (evil-enclose-ace-jump
-;;    (ace-jump-mode 1)))
-
-;; (evil-define-motion evil-ace-jump-char-to-mode (count)
-;;   :type exclusive
-;;   (evil-enclose-ace-jump
-;;    (ace-jump-mode 5)
-;;    (forward-char -1)))
-
-;; some proposals for binding:
-
-;; (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode)
-;;(define-key evil-motion-state-map (kbd "C-SPC") #'evil-ace-jump-word-mode)
-;;
-;;(define-key evil-operator-state-map (kbd "SPC") #'evil-ace-jump-char-mode) ;; similar to f
-;;(define-key evil-operator-state-map (kbd "C-SPC") #'evil-ace-jump-char-to-mode) ;; similar to t
-;;(define-key evil-operator-state-map (kbd "M-SPC") #'evil-ace-jump-word-mode)
-
-;; different jumps for different visual modes
-;; (defadvice evil-visual-line (before spc-for-line-jump activate)
-;;   (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-line-mode))
-
-;; (defadvice evil-visual-char (before spc-for-char-jump activate)
-;;   (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode))
-
-;; (defadvice evil-visual-block (before spc-for-char-jump activate)
-;;   (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode))
-
 ;; Bury the compilation buffer when compilation is finished and successful.
 ;; (add-to-list 'compilation-finish-functions
 ;;              (lambda (buffer msg)
@@ -622,7 +547,6 @@
         (split-window)
         (switch-to-buffer buffer)
         (get-buffer-window buffer 0)))
-
 
 ;; Disable backup
 ;; (setq backup-inhibited t)
@@ -700,9 +624,6 @@
     ;; http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
     ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
     ))
-
-
-;; Functions
 
 ;; Switch to previously selected buffer.
 (defun backward-buffer ()
@@ -804,9 +725,6 @@ the current state and point position."
     (progn
       (set-register '_ (list (current-window-configuration)))
       (delete-other-windows))))
-
-
-;; Miscellaneous Keybindings
 
 (require 'switch-window)
 (setq switch-window-shortcut-style 'qwerty)
@@ -934,3 +852,59 @@ the current state and point position."
 (evil-leader/set-key "xtw" 'transpose-words)
 (evil-leader/set-key "xU" 'upcase-word)
 (evil-leader/set-key "xu" 'downcase-word)
+
+;; Ace Jump Motions
+;; (defmacro evil-enclose-ace-jump (&rest body)
+;;   `(let ((old-mark (mark)))
+;;      (remove-hook 'pre-command-hook #'evil-visual-pre-command t)
+;;      (remove-hook 'post-command-hook #'evil-visual-post-command t)
+;;      (unwind-protect
+;;          (progn
+;;            ,@body
+;;            (recursive-edit))
+;;        (if (evil-visual-state-p)
+;;            (progn
+;;              (add-hook 'pre-command-hook #'evil-visual-pre-command nil t)
+;;              (add-hook 'post-command-hook #'evil-visual-post-command nil t)
+;;              (set-mark old-mark))
+;;          (push-mark old-mark)))))
+
+;; (evil-define-motion evil-ace-jump-char-mode (count)
+;;   :type exclusive
+;;   (evil-enclose-ace-jump
+;;    (ace-jump-mode 5)))
+
+;; (evil-define-motion evil-ace-jump-line-mode (count)
+;;   :type line
+;;   (evil-enclose-ace-jump
+;;    (ace-jump-mode 9)))
+
+;; (evil-define-motion evil-ace-jump-word-mode (count)
+;;   :type exclusive
+;;   (evil-enclose-ace-jump
+;;    (ace-jump-mode 1)))
+
+;; (evil-define-motion evil-ace-jump-char-to-mode (count)
+;;   :type exclusive
+;;   (evil-enclose-ace-jump
+;;    (ace-jump-mode 5)
+;;    (forward-char -1)))
+
+;; some proposals for binding:
+
+;; (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode)
+;;(define-key evil-motion-state-map (kbd "C-SPC") #'evil-ace-jump-word-mode)
+;;
+;;(define-key evil-operator-state-map (kbd "SPC") #'evil-ace-jump-char-mode) ;; similar to f
+;;(define-key evil-operator-state-map (kbd "C-SPC") #'evil-ace-jump-char-to-mode) ;; similar to t
+;;(define-key evil-operator-state-map (kbd "M-SPC") #'evil-ace-jump-word-mode)
+
+;; different jumps for different visual modes
+;; (defadvice evil-visual-line (before spc-for-line-jump activate)
+;;   (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-line-mode))
+
+;; (defadvice evil-visual-char (before spc-for-char-jump activate)
+;;   (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode))
+
+;; (defadvice evil-visual-block (before spc-for-char-jump activate)
+;;   (define-key evil-motion-state-map (kbd "SPC") #'evil-ace-jump-char-mode))
