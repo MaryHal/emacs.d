@@ -178,6 +178,23 @@
       color-theme-is-global t
       truncate-partial-width-windows nil)
 
+(require 'paren)
+(show-paren-mode t)
+(setq show-paren-delay 0)
+(set-face-background 'show-paren-match-face (face-background 'default))
+(set-face-foreground 'show-paren-match-face "#def")
+(set-face-attribute 'show-paren-match-face nil :weight 'extra-bold)
+
+;; Whitespace-style
+(setq-default show-trailing-whitespace t)
+(setq-default indicate-empty-lines t)
+
+(setq whitespace-style '(trailing lines space-before-tab
+                                  indentation space-after-tab)
+      whitespace-line-column 100)
+
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+
 (require 'ido)
 (ido-mode t)
 (setq ido-enable-prefix nil
