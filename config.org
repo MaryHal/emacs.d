@@ -1,4 +1,5 @@
-
+* Everything
+  #+begin_src emacs-lisp
 ;; Helper Functions
 (defun add-to-loadpath (&rest dirs)
   (dolist (dir dirs load-path)
@@ -934,3 +935,4 @@ the current state and point position."
 (evil-leader/set-key "xtw" 'transpose-words)
 (evil-leader/set-key "xU" 'upcase-word)
 (evil-leader/set-key "xu" 'downcase-word)
+#+end_src

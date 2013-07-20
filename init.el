@@ -45,7 +45,14 @@
   (when (not (package-installed-p package))
     (package-install package)))
 
-(add-hook 'after-init-hook (lambda () (load "~/.emacs.d/config.el")))
+;; Set-up org babel
+(setq org-babel-load-languages '((emacs-lisp . t)))
+(setq org-confirm-babel-evaluate nil)
+(require 'org-install)
+(require 'org)
+
+;; Load neatly organized org file!
+(add-hook 'after-init-hook (lambda () (org-babel-load-file "~/.emacs.d/config.org")))
 
 (add-hook 'emacs-startup-hook (lambda ()
                                 (message "Time needed to load: %s seconds."
