@@ -114,6 +114,9 @@
     (dotimes (i 10)
       (when (= p (point)) ad-do-it))))
 
+;; Seed the random number generator
+(random t)
+
 ;; Fonts + theme
 (require 'color-theme)
 (require 'color-theme-tomorrow)
@@ -587,17 +590,12 @@
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 
-;; Various superfluous white-space. Just say no.
-;;(add-hook 'before-save-hook 'cleanup-buffer-safe)
+;; ag, The Silver Searcher
+(require 'ag)
+(setq ag-highlight-search t)
 
 ;; Keep cursor away from edges when scrolling up/down
 (require 'smooth-scrolling)
-
-;; Seed the random number generator
-(random t)
-
-;; ag, The Silver Searcher
-(setq ag-highlight-search t)
 
 ;; http://hugoheden.wordpress.com/2009/03/08/copypaste-with-emacs-in-terminal/
 ;; I prefer using the "clipboard" selection (the one the

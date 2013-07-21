@@ -119,6 +119,9 @@
       (let ((p (point)))
         (dotimes (i 10)
           (when (= p (point)) ad-do-it))))
+
+    ;; Seed the random number generator
+    (random t)
   #+end_src
 
 ** Appearance
@@ -621,19 +624,17 @@
 
      (setq auto-save-file-name-transforms
            `((".*" ,temporary-file-directory t)))
-
-     ;; Various superfluous white-space. Just say no.
-     ;;(add-hook 'before-save-hook 'cleanup-buffer-safe)
+   #+end_src
+** Other Package Init
+   #+begin_src emacs-lisp
+     ;; ag, The Silver Searcher
+     (require 'ag)
+     (setq ag-highlight-search t)
 
      ;; Keep cursor away from edges when scrolling up/down
      (require 'smooth-scrolling)
-
-     ;; Seed the random number generator
-     (random t)
-
-     ;; ag, The Silver Searcher
-     (setq ag-highlight-search t)
    #+end_src
+
 ** Copy-paste
    #+begin_src emacs-lisp
      ;; http://hugoheden.wordpress.com/2009/03/08/copypaste-with-emacs-in-terminal/
