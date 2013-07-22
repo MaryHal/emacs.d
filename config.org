@@ -520,59 +520,6 @@
      (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
      (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
      (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
-
-     ;; Org Mode settings
-     (evil-define-key 'normal org-mode-map
-       (kbd "RET") 'org-open-at-point
-       (kbd "TAB") 'org-cycle
-       "za" 'org-cycle
-       "zA" 'org-shifttab
-       "zm" 'hide-body
-       "zr" 'show-all
-       "zo" 'show-subtree
-       "zO" 'show-all
-       "zc" 'hide-subtree
-       "zC" 'hide-all
-       (kbd "M-j") 'org-shiftleft
-       (kbd "M-k") 'org-shiftright
-       (kbd "M-H") 'org-metaleft
-       (kbd "M-J") 'org-metadown
-       (kbd "M-K") 'org-metaup
-       (kbd "M-L") 'org-metaright)
-
-     (evil-define-key 'normal orgstruct-mode-map
-       (kbd "RET") 'org-open-at-point
-       (kbd "TAB") 'org-cycle
-       "za" 'org-cycle
-       "zA" 'org-shifttab
-       "zm" 'hide-body
-       "zr" 'show-all
-       "zo" 'show-subtree
-       "zO" 'show-all
-       "zc" 'hide-subtree
-       "zC" 'hide-all
-       (kbd "M-j") 'org-shiftleft
-       (kbd "M-k") 'org-shiftright
-       (kbd "M-H") 'org-metaleft
-       (kbd "M-J") 'org-metadown
-       (kbd "M-K") 'org-metaup
-       (kbd "M-L") 'org-metaright)
-
-     (evil-define-key 'insert org-mode-map
-       (kbd "M-j") 'org-shiftleft
-       (kbd "M-k") 'org-shiftright
-       (kbd "M-H") 'org-metaleft
-       (kbd "M-J") 'org-metadown
-       (kbd "M-K") 'org-metaup
-       (kbd "M-L") 'org-metaright)
-
-     (evil-define-key 'insert orgstruct-mode-map
-       (kbd "M-j") 'org-shiftleft
-       (kbd "M-k") 'org-shiftright
-       (kbd "M-H") 'org-metaleft
-       (kbd "M-J") 'org-metadown
-       (kbd "M-K") 'org-metaup
-       (kbd "M-L") 'org-metaright)
    #+end_src
 
 ** Special
@@ -911,6 +858,59 @@
      (evil-leader/set-key "xtw" 'transpose-words)
      (evil-leader/set-key "xU" 'upcase-word)
      (evil-leader/set-key "xu" 'downcase-word)
+
+     ;; Org Mode settings
+     (evil-define-key 'normal org-mode-map
+       (kbd "RET") 'org-open-at-point
+       (kbd "TAB") 'org-cycle
+       "za" 'org-cycle
+       "zA" 'org-shifttab
+       "zm" 'hide-body
+       "zr" 'show-all
+       "zo" 'show-subtree
+       "zO" 'show-all
+       "zc" 'hide-subtree
+       "zC" 'hide-all
+       (kbd "M-j") 'org-shiftleft
+       (kbd "M-k") 'org-shiftright
+       (kbd "M-H") 'org-metaleft
+       (kbd "M-J") 'org-metadown
+       (kbd "M-K") 'org-metaup
+       (kbd "M-L") 'org-metaright)
+
+     (evil-define-key 'normal orgstruct-mode-map
+       (kbd "RET") 'org-open-at-point
+       (kbd "TAB") 'org-cycle
+       "za" 'org-cycle
+       "zA" 'org-shifttab
+       "zm" 'hide-body
+       "zr" 'show-all
+       "zo" 'show-subtree
+       "zO" 'show-all
+       "zc" 'hide-subtree
+       "zC" 'hide-all
+       (kbd "M-j") 'org-shiftleft
+       (kbd "M-k") 'org-shiftright
+       (kbd "M-H") 'org-metaleft
+       (kbd "M-J") 'org-metadown
+       (kbd "M-K") 'org-metaup
+       (kbd "M-L") 'org-metaright)
+
+     (evil-define-key 'insert org-mode-map
+       (kbd "M-j") 'org-shiftleft
+       (kbd "M-k") 'org-shiftright
+       (kbd "M-H") 'org-metaleft
+       (kbd "M-J") 'org-metadown
+       (kbd "M-K") 'org-metaup
+       (kbd "M-L") 'org-metaright)
+
+     (evil-define-key 'insert orgstruct-mode-map
+       (kbd "M-j") 'org-shiftleft
+       (kbd "M-k") 'org-shiftright
+       (kbd "M-H") 'org-metaleft
+       (kbd "M-J") 'org-metadown
+       (kbd "M-K") 'org-metaup
+       (kbd "M-L") 'org-metaright)
    #+end_src
 ** Unused
    #+begin_src emacs-lisp
