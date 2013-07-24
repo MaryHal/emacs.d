@@ -1,4 +1,3 @@
-
 ;; Helper Functions
 (defun add-to-loadpath (&rest dirs)
   (dolist (dir dirs load-path)
@@ -169,6 +168,7 @@
 
 ;; Don't add newlines when cursor goes past end of file
 (setq next-line-add-newlines nil)
+(setq require-final-newline nil)
 
 ;; Don't Blink Cursor
 (blink-cursor-mode -1)
@@ -295,7 +295,7 @@
 
 ;; C Mode Hooks
 (defun c-mode-common-custom ()
-  (setq c-default-style "linux") ;; linux-kernel-developers style indentation
+  (setq c-default-style "bsd")
   (setq c-basic-offset 4)        ;; 4-space tab size
 
   (c-set-offset 'substatement-open '0) ;; brackets should be at same indentation level as the statements they open
@@ -310,7 +310,9 @@
 ;; Haskell Mode Hooks
 (defun haskell-mode-common-custom()
   (haskell-doc-mode)
-  (haskell-indentation-mode)
+  ;; (haskell-indentation-mode)
+  ;; (haskell-simple-indent-mode)
+  (haskell-indent-mode)
   )
 (add-hook 'haskell-mode-hook 'haskell-mode-common-custom)
 
@@ -492,58 +494,19 @@
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 
-;; Org Mode settings
-(evil-define-key 'normal org-mode-map
-  (kbd "RET") 'org-open-at-point
-  (kbd "TAB") 'org-cycle
-  "za" 'org-cycle
-  "zA" 'org-shifttab
-  "zm" 'hide-body
-  "zr" 'show-all
-  "zo" 'show-subtree
-  "zO" 'show-all
-  "zc" 'hide-subtree
-  "zC" 'hide-all
-  (kbd "M-j") 'org-shiftleft
-  (kbd "M-k") 'org-shiftright
-  (kbd "M-H") 'org-metaleft
-  (kbd "M-J") 'org-metadown
-  (kbd "M-K") 'org-metaup
-  (kbd "M-L") 'org-metaright)
+(require 'workgroups2)
 
-(evil-define-key 'normal orgstruct-mode-map
-  (kbd "RET") 'org-open-at-point
-  (kbd "TAB") 'org-cycle
-  "za" 'org-cycle
-  "zA" 'org-shifttab
-  "zm" 'hide-body
-  "zr" 'show-all
-  "zo" 'show-subtree
-  "zO" 'show-all
-  "zc" 'hide-subtree
-  "zC" 'hide-all
-  (kbd "M-j") 'org-shiftleft
-  (kbd "M-k") 'org-shiftright
-  (kbd "M-H") 'org-metaleft
-  (kbd "M-J") 'org-metadown
-  (kbd "M-K") 'org-metaup
-  (kbd "M-L") 'org-metaright)
+(desktop-save-mode nil)     ; save all opened files (or disable it)
+(setq wg-prefix-key (kbd "C-c z")
+      wg-restore-associated-buffers nil ; restore all buffers opened in this WG?
+      wg-use-default-session-file nil   ; turn off for "emacs --daemon"
+      wg-default-session-file "~/.emacs.d/workgroup_session"
+      wg-use-faces nil
+      wg-morph-on nil)                  ; animation off
 
-(evil-define-key 'insert org-mode-map
-  (kbd "M-j") 'org-shiftleft
-  (kbd "M-k") 'org-shiftright
-  (kbd "M-H") 'org-metaleft
-  (kbd "M-J") 'org-metadown
-  (kbd "M-K") 'org-metaup
-  (kbd "M-L") 'org-metaright)
+(wg-save-session-on-exit nil)
 
-(evil-define-key 'insert orgstruct-mode-map
-  (kbd "M-j") 'org-shiftleft
-  (kbd "M-k") 'org-shiftright
-  (kbd "M-H") 'org-metaleft
-  (kbd "M-J") 'org-metadown
-  (kbd "M-K") 'org-metaup
-  (kbd "M-L") 'org-metaright)
+;;(workgroups-mode 1)     ; Activate workgroups
 
 ;; Bury the compilation buffer when compilation is finished and successful.
 ;; (add-to-list 'compilation-finish-functions
@@ -816,6 +779,14 @@ the current state and point position."
 ;; File
 (evil-leader/set-key "ff" 'ido-find-file)
 
+;; Workgroups2
+(evil-leader/set-key "gc" 'wg-create-workgroup)
+(evil-leader/set-key "gk" 'wg-kill-workgroup)
+(evil-leader/set-key "gh" 'wg-switch-to-workgroup-left)
+(evil-leader/set-key "gl" 'wg-switch-to-workgroup-right)
+(evil-leader/set-key "gs" 'wg-save-session)
+(evil-leader/set-key "gf" 'wg-find-session-file)
+
 ;; Helm
 (evil-leader/set-key "hb" 'helm-mini)
 (evil-leader/set-key "hf" 'helm-find-files)
@@ -866,6 +837,59 @@ the current state and point position."
 (evil-leader/set-key "xtw" 'transpose-words)
 (evil-leader/set-key "xU" 'upcase-word)
 (evil-leader/set-key "xu" 'downcase-word)
+
+;; Org Mode settings
+(evil-define-key 'normal org-mode-map
+  (kbd "RET") 'org-open-at-point
+  (kbd "TAB") 'org-cycle
+  "za" 'org-cycle
+  "zA" 'org-shifttab
+  "zm" 'hide-body
+  "zr" 'show-all
+  "zo" 'show-subtree
+  "zO" 'show-all
+  "zc" 'hide-subtree
+  "zC" 'hide-all
+  (kbd "M-j") 'org-shiftleft
+  (kbd "M-k") 'org-shiftright
+  (kbd "M-H") 'org-metaleft
+  (kbd "M-J") 'org-metadown
+  (kbd "M-K") 'org-metaup
+  (kbd "M-L") 'org-metaright)
+
+(evil-define-key 'normal orgstruct-mode-map
+  (kbd "RET") 'org-open-at-point
+  (kbd "TAB") 'org-cycle
+  "za" 'org-cycle
+  "zA" 'org-shifttab
+  "zm" 'hide-body
+  "zr" 'show-all
+  "zo" 'show-subtree
+  "zO" 'show-all
+  "zc" 'hide-subtree
+  "zC" 'hide-all
+  (kbd "M-j") 'org-shiftleft
+  (kbd "M-k") 'org-shiftright
+  (kbd "M-H") 'org-metaleft
+  (kbd "M-J") 'org-metadown
+  (kbd "M-K") 'org-metaup
+  (kbd "M-L") 'org-metaright)
+
+(evil-define-key 'insert org-mode-map
+  (kbd "M-j") 'org-shiftleft
+  (kbd "M-k") 'org-shiftright
+  (kbd "M-H") 'org-metaleft
+  (kbd "M-J") 'org-metadown
+  (kbd "M-K") 'org-metaup
+  (kbd "M-L") 'org-metaright)
+
+(evil-define-key 'insert orgstruct-mode-map
+  (kbd "M-j") 'org-shiftleft
+  (kbd "M-k") 'org-shiftright
+  (kbd "M-H") 'org-metaleft
+  (kbd "M-J") 'org-metadown
+  (kbd "M-K") 'org-metaup
+  (kbd "M-L") 'org-metaright)
 
 ;; Ace Jump Motions
 ;; (defmacro evil-enclose-ace-jump (&rest body)

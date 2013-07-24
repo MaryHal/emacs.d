@@ -31,6 +31,7 @@
                      surround
                      switch-window
                      undo-tree
+                     workgroups2
                      ))
 
 ;; Activate all the packages (in particular autoloads)
@@ -45,14 +46,7 @@
   (when (not (package-installed-p package))
     (package-install package)))
 
-;; Set-up org babel
-(setq org-babel-load-languages '((emacs-lisp . t)))
-(setq org-confirm-babel-evaluate nil)
-(require 'org-install)
-(require 'org)
-
-;; Load neatly organized org file!
-(add-hook 'after-init-hook (lambda () (org-babel-load-file "~/.emacs.d/config.org")))
+(add-hook 'after-init-hook (lambda () (load "~/.emacs.d/config.el")))
 
 (add-hook 'emacs-startup-hook (lambda ()
                                 (message "Time needed to load: %s seconds."
