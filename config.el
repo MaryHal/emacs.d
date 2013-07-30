@@ -447,13 +447,17 @@
 (setq evil-move-cursor-back nil)
 (setq evil-cross-lines t)
 (setq evil-intercept-esc 'always)
-;; (evil-set-toggle-key "<pause>")
 
 (setq evil-auto-indent t)
 
 ;; evil
 (require 'evil)
+
+;; Actually activate evil mode
 (evil-mode t)
+
+;; Reclaim C-z for suspend in terminal
+(evil-set-toggle-key "C-m")
 
 (require 'surround)
 (global-surround-mode t)
@@ -496,17 +500,19 @@
 
 (require 'workgroups2)
 
-(desktop-save-mode nil)     ; save all opened files (or disable it)
+;; Let's not use desktop-save-mode
+;; (desktop-save-mode)
+
 (setq wg-prefix-key (kbd "C-c z")
-      wg-restore-associated-buffers nil ; restore all buffers opened in this WG?
-      wg-use-default-session-file nil   ; turn off for "emacs --daemon"
+      wg-restore-associated-buffers nil ;; restore all buffers opened in this WG?
+      wg-use-default-session-file nil   ;; turn off for "emacs --daemon"
       wg-default-session-file "~/.emacs.d/workgroup_session"
       wg-use-faces nil
-      wg-morph-on nil)                  ; animation off
+      wg-morph-on nil)                  ;; animation off
 
 (wg-save-session-on-exit nil)
 
-;;(workgroups-mode 1)     ; Activate workgroups
+;;(workgroups-mode 1)     ;; Activate workgroups
 
 ;; Bury the compilation buffer when compilation is finished and successful.
 ;; (add-to-list 'compilation-finish-functions
