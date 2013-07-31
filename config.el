@@ -457,7 +457,7 @@
 (evil-mode t)
 
 ;; Reclaim C-z for suspend in terminal
-(evil-set-toggle-key "C-m")
+(evil-set-toggle-key "C-\\")
 
 (require 'surround)
 (global-surround-mode t)
