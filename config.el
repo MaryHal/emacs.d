@@ -490,8 +490,8 @@
 (define-key evil-motion-state-map (kbd "ESC") 'evil-normal-state)
 
 ;;; esc quits
-(define-key evil-normal-state-map [escape] 'keyboard-quit)
-(define-key evil-visual-state-map [escape] 'keyboard-quit)
+;; (define-key evil-normal-state-map [escape] 'keyboard-quit)
+;; (define-key evil-visual-state-map [escape] 'keyboard-quit)
 (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
@@ -512,7 +512,7 @@
 
 (wg-save-session-on-exit nil)
 
-;;(workgroups-mode 1)     ;; Activate workgroups
+;; (workgroups-mode)     ;; Activate workgroups
 
 ;; Bury the compilation buffer when compilation is finished and successful.
 ;; (add-to-list 'compilation-finish-functions
@@ -764,6 +764,7 @@ the current state and point position."
 ;; evil-leader keybindings
 
 ;; Alternate
+(evil-leader/set-key "a" 'ff-find-other-file)
 (evil-leader/set-key "A" 'ff-find-other-file)
 
 ;; Buffers
@@ -794,7 +795,7 @@ the current state and point position."
 (evil-leader/set-key "gf" 'wg-find-session-file)
 
 ;; Helm
-(evil-leader/set-key "hb" 'helm-mini)
+(evil-leader/set-key "hb" 'helm-buffer-list)
 (evil-leader/set-key "hf" 'helm-find-files)
 (evil-leader/set-key "hi" 'helm-imenu)
 (evil-leader/set-key "hc" 'helm-browse-code)
@@ -838,11 +839,13 @@ the current state and point position."
 (evil-leader/set-key "xdw" 'delete-trailing-whitespace)
 (evil-leader/set-key "xmj" 'move-text-down)
 (evil-leader/set-key "xmk" 'move-text-up)
-(evil-leader/set-key "xtc" 'transpose-chars)
-(evil-leader/set-key "xtl" 'transpose-lines)
-(evil-leader/set-key "xtw" 'transpose-words)
-(evil-leader/set-key "xU" 'upcase-word)
-(evil-leader/set-key "xu" 'downcase-word)
+;; (evil-leader/set-key "xtc" 'transpose-chars)
+;; (evil-leader/set-key "xtl" 'transpose-lines)
+;; (evil-leader/set-key "xtw" 'transpose-words)
+(evil-leader/set-key "xbu" 'untabify)
+(evil-leader/set-key "xbt" 'tabify)
+(evil-leader/set-key "xU"  'upcase-word)
+(evil-leader/set-key "xu"  'downcase-word)
 
 ;; Org Mode settings
 (evil-define-key 'normal org-mode-map
