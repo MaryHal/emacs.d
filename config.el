@@ -837,8 +837,6 @@ the current state and point position."
 
 ;; text
 (evil-leader/set-key "xdw" 'delete-trailing-whitespace)
-(evil-leader/set-key "xmj" 'move-text-down)
-(evil-leader/set-key "xmk" 'move-text-up)
 ;; (evil-leader/set-key "xtc" 'transpose-chars)
 ;; (evil-leader/set-key "xtl" 'transpose-lines)
 ;; (evil-leader/set-key "xtw" 'transpose-words)
