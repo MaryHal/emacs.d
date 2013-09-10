@@ -119,6 +119,27 @@
   (unless (string-match-p "\\[wiki\\]$" (package-desc-doc (cdr package)))
     ad-do-it))
 
+;; Window Rebalancing
+(setq split-height-threshold nil)
+(setq split-width-threshold 0)
+
+;; Rebalance windows after splitting right
+(defadvice split-window-right
+  (after rebalance-windows activate)
+  (balance-windows))
+(ad-activate 'split-window-right)
+
+;; Rebalance windows after splitting horizontally
+(defadvice split-window-horizontally
+  (after rebalance-windows activate)
+  (balance-windows))
+(ad-activate 'split-window-horizontally)
+
+(defadvice delete-window
+  (after rebalance-windows activate)
+  (balance-windows))
+(ad-activate 'delete-window)
+
 ;; Seed the random number generator
 (random t)
 
@@ -334,6 +355,25 @@
             (if (eq window-system 'x)
                 (font-lock-mode 1))))
 
+;; Workgroups2
+(require 'workgroups2)
+
+(setq wg-use-default-session-file nil)
+
+;; Change prefix key (before activating WG)
+(setq wg-prefix-key (kbd "C-c z"))
+
+;; Change workgroups session file
+(setq wg-default-session-file "~/.emacs.d/.emacs_workgroups")
+
+;; Set your own keyboard shortcuts to reload/save/switch WG:
+(global-set-key (kbd "<pause>")     'wg-reload-session)
+(global-set-key (kbd "C-S-<pause>") 'wg-save-session)
+(global-set-key (kbd "s-z")         'wg-switch-to-workgroup)
+(global-set-key (kbd "s-/")         'wg-switch-to-previous-workgroup)
+
+(workgroups-mode 1)   ;; put this one at the bottom of .emacs
+
 ;; Auto-complete
 (require 'auto-complete)
 (require 'auto-complete-config)
@@ -503,22 +543,6 @@
 (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
-
-(require 'workgroups2)
-
-;; Let's not use desktop-save-mode
-;; (desktop-save-mode)
-
-(setq wg-prefix-key (kbd "C-c z")
-      wg-restore-associated-buffers nil ;; restore all buffers opened in this WG?
-      wg-use-default-session-file nil   ;; turn off for "emacs --daemon"
-      wg-default-session-file "~/.emacs.d/workgroup_session"
-      wg-use-faces nil
-      wg-morph-on nil)                  ;; animation off
-
-(wg-save-session-on-exit nil)
-
-;; (workgroups-mode)     ;; Activate workgroups
 
 ;; Bury the compilation buffer when compilation is finished and successful.
 ;; (add-to-list 'compilation-finish-functions
@@ -806,7 +830,7 @@ the current state and point position."
 (evil-leader/set-key "gf" 'wg-find-session-file)
 
 ;; Helm
-(evil-leader/set-key "hb" 'helm-buffer-list)
+(evil-leader/set-key "hb" 'helm-buffers-list)
 (evil-leader/set-key "hf" 'helm-find-files)
 (evil-leader/set-key "hi" 'helm-imenu)
 (evil-leader/set-key "hc" 'helm-browse-code)
