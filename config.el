@@ -358,13 +358,12 @@
 ;; Workgroups2
 (require 'workgroups2)
 
+;; Change workgroups session file
+(setq wg-default-session-file "~/.emacs.d/.emacs_workgroups")
 (setq wg-use-default-session-file nil)
 
 ;; Change prefix key (before activating WG)
 (setq wg-prefix-key (kbd "C-c z"))
-
-;; Change workgroups session file
-(setq wg-default-session-file "~/.emacs.d/.emacs_workgroups")
 
 ;; Set your own keyboard shortcuts to reload/save/switch WG:
 (global-set-key (kbd "<pause>")     'wg-reload-session)
@@ -372,7 +371,7 @@
 (global-set-key (kbd "s-z")         'wg-switch-to-workgroup)
 (global-set-key (kbd "s-/")         'wg-switch-to-previous-workgroup)
 
-(workgroups-mode 1)   ;; put this one at the bottom of .emacs
+;; (workgroups-mode 1)   ;; put this one at the bottom of .emacs
 
 ;; Auto-complete
 (require 'auto-complete)
@@ -820,6 +819,18 @@ the current state and point position."
 
 ;; File
 (evil-leader/set-key "ff" 'ido-find-file)
+(evil-leader/set-key "fd" 'ido-list-directory)
+(evil-leader/set-key "fh" (lambda()
+                            (interactive)
+                            (split-window-below)
+                            (evil-window-down 1)
+                            (ido-find-file)))
+
+(evil-leader/set-key "fv" (lambda()
+                            (interactive)
+                            (split-window-right)
+                            (evil-window-right 1)
+                            (ido-find-file)))
 
 ;; Workgroups2
 (evil-leader/set-key "gc" 'wg-create-workgroup)
@@ -831,9 +842,11 @@ the current state and point position."
 
 ;; Helm
 (evil-leader/set-key "hb" 'helm-buffers-list)
+(evil-leader/set-key "hc" 'helm-browse-code)
 (evil-leader/set-key "hf" 'helm-find-files)
 (evil-leader/set-key "hi" 'helm-imenu)
-(evil-leader/set-key "hc" 'helm-browse-code)
+(evil-leader/set-key "hm" 'helm-mini)
+(evil-leader/set-key "hx" 'helm-M-x)
 
 ;; Jump. ACE Jump.
 (evil-leader/set-key "jc" 'ace-jump-char-mode)
