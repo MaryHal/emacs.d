@@ -362,16 +362,22 @@
 (setq wg-default-session-file "~/.emacs.d/.emacs_workgroups")
 (setq wg-use-default-session-file nil)
 
+(setq wg-use-faces nil)
+(setq wg-morph-on nil)  ;; animation off
+
+
 ;; Change prefix key (before activating WG)
 (setq wg-prefix-key (kbd "C-c z"))
 
 ;; Set your own keyboard shortcuts to reload/save/switch WG:
-(global-set-key (kbd "<pause>")     'wg-reload-session)
+(global-set-key (kbd "<pause>") 'wg-reload-session)
 (global-set-key (kbd "C-S-<pause>") 'wg-save-session)
-(global-set-key (kbd "s-z")         'wg-switch-to-workgroup)
-(global-set-key (kbd "s-/")         'wg-switch-to-previous-workgroup)
+(global-set-key (kbd "s-z") 'wg-switch-to-workgroup)
+(global-set-key (kbd "s-/") 'wg-switch-to-previous-workgroup)
 
-;; (workgroups-mode 1)   ;; put this one at the bottom of .emacs
+(wg-save-session-on-exit nil)
+
+;; (workgroups-mode 1) ;; put this one at the bottom of .emacs
 
 ;; Auto-complete
 (require 'auto-complete)
@@ -799,7 +805,16 @@ the current state and point position."
 
 ;; Alternate
 (evil-leader/set-key "a" 'ff-find-other-file)
-(evil-leader/set-key "A" 'ff-find-other-file)
+(evil-leader/set-key "ah" (lambda()
+                            (interactive)
+                            (split-window-below)
+                            (evil-window-down 1)
+                            (ff-find-other-file)))
+(evil-leader/set-key "av" (lambda()
+                            (interactive)
+                            (split-window-right)
+                            (evil-window-right 1)
+                            (ff-find-other-file)))
 
 ;; Buffers
 (evil-leader/set-key "bb" 'ido-switch-buffer)
@@ -825,7 +840,6 @@ the current state and point position."
                             (split-window-below)
                             (evil-window-down 1)
                             (ido-find-file)))
-
 (evil-leader/set-key "fv" (lambda()
                             (interactive)
                             (split-window-right)
