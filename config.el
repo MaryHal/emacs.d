@@ -361,10 +361,10 @@
 ;; Change workgroups session file
 (setq wg-default-session-file "~/.emacs.d/.emacs_workgroups")
 (setq wg-use-default-session-file nil)
+(setq wg-query-for-save-on-emacs-exit nil)
 
 (setq wg-use-faces nil)
-(setq wg-morph-on nil)  ;; animation off
-
+;; (setq wg-morph-on nil)  ;; animation off
 
 ;; Change prefix key (before activating WG)
 (setq wg-prefix-key (kbd "C-c z"))
@@ -804,7 +804,7 @@ the current state and point position."
 ;; evil-leader keybindings
 
 ;; Alternate
-(evil-leader/set-key "a" 'ff-find-other-file)
+(evil-leader/set-key "aa" 'ff-find-other-file)
 (evil-leader/set-key "ah" (lambda()
                             (interactive)
                             (split-window-below)
