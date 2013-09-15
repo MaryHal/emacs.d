@@ -813,10 +813,20 @@ the current state and point position."
   (evil-previous-visual-line)
   (evil-join beg end))
 
+;; gj gk by default
 (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
 (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
 
+;; Let K match J
 (define-key evil-normal-state-map (kbd "K") 'evil-join-previous-line)
+
+;; Alternate escapes
+;; (define-key evil-insert-state-map (kbd "j k") 'evil-normal-state)
+;; (define-key evil-insert-state-map (kbd "k j") 'evil-normal-state)
+
+;; "Unimpaired"
+(define-key evil-normal-state-map (kbd "[ b") 'previous-buffer)
+(define-key evil-normal-state-map (kbd "] b") 'next-buffer)
 
 ;; evil-leader keybindings
 
