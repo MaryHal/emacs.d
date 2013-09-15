@@ -46,9 +46,15 @@
   (when (not (package-installed-p package))
     (package-install package)))
 
-(add-hook 'after-init-hook (lambda () (load "~/.emacs.d/config.el")))
+;; Custom Configuration
+(setq custom-file "~/.emacs.d/config.el")
+(defun loadConfigFile()
+  (unless (not (file-exists-p custom-file))
+    (load custom-file)))
+(add-hook 'after-init-hook 'loadConfigFile)
 
-(add-hook 'emacs-startup-hook (lambda ()
-                                (message "Time needed to load: %s seconds."
-                                         (emacs-uptime "%s")))
-          'append)
+;; Time Startup
+(defun getUptime()
+  (message "Time needed to load: %s seconds."
+           (emacs-uptime "%s")))
+(add-hook 'emacs-startup-hook 'getUptime 'append)

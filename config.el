@@ -140,6 +140,12 @@
   (balance-windows))
 (ad-activate 'delete-window)
 
+;; Mouse support
+(require 'mouse)
+(xterm-mouse-mode t)
+(defun track-mouse (e))
+(setq mouse-sel-mode t)
+
 ;; Seed the random number generator
 (random t)
 
@@ -274,6 +280,18 @@
 (setq smex-key-advice-ignore-menu-bar t)
 (setq smex-save-file "~/.emacs.d/smex-items")
 
+;; Helm
+(require 'helm-config)
+
+(setq helm-idle-delay 0.1
+      helm-input-idle-delay 0
+      helm-quick-update t
+      helm-candidate-number-limit nil
+      helm-su-or-sudo "sudo"
+      helm-allow-skipping-current-buffer nil
+      helm-enable-shortcuts t)
+
+;; Helm faces
 (require 'helm-files)
 (set-face-attribute 'helm-selection nil
                     :background nil
@@ -299,20 +317,11 @@
 (set-face-attribute 'helm-ff-directory nil
                     :foreground "cyan" :background nil :underline t)
 
-(require 'helm-config)
-
+;; Helm keybindings
 (define-key helm-map (kbd "C-k") 'helm-previous-line)
 (define-key helm-map (kbd "C-j") 'helm-next-line)
 (define-key helm-map (kbd "C-h") 'helm-previous-source)
 (define-key helm-map (kbd "C-l") 'helm-next-source)
-
-(setq helm-idle-delay 0.3
-      helm-input-idle-delay 0
-      helm-quick-update t
-      helm-candidate-number-limit nil
-      helm-su-or-sudo "sudo"
-      helm-allow-skipping-current-buffer nil
-      helm-enable-shortcuts t)
 
 (require 'dired)
 
@@ -418,10 +427,17 @@
 
 (my-ac-config)
 
-(setq ac-auto-start nil)
-(setq ac-quick-help-delay 0.5)
-(ac-set-trigger-key "TAB")
+;; Triggered Auto complete
+;; (setq ac-auto-start nil)
+;; (setq ac-quick-help-delay 0.5)
+;; (ac-set-trigger-key "TAB")
 ;;(define-key ac-mode-map  [(control tab)] 'auto-complete)
+
+;; Automatic Auto Complete
+(setq ac-auto-start 2
+      ac-auto-show-menu t
+      ac-quick-help-delay 0.3
+      ac-quick-help-height 50)
 
 ;; Key mappings
 (setq ac-use-menu-map t)
@@ -519,6 +535,7 @@
       evil-leader/non-normal-prefix "s-")
 
 (require 'evil-leader)
+(global-evil-leader-mode)
 
 ;; Unset shortcuts which shadow evil leader
 (eval-after-load "compile"
