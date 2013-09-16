@@ -281,41 +281,42 @@
 (setq smex-save-file "~/.emacs.d/smex-items")
 
 ;; Helm
+(require 'helm)
 (require 'helm-config)
 
-(setq helm-idle-delay 0.1
-      helm-input-idle-delay 0
-      helm-quick-update t
-      helm-candidate-number-limit nil
-      helm-su-or-sudo "sudo"
-      helm-allow-skipping-current-buffer nil
-      helm-enable-shortcuts t)
+;; (setq helm-idle-delay 0.1
+;;       helm-input-idle-delay 0
+;;       helm-quick-update t
+;;       helm-candidate-number-limit nil
+;;       helm-su-or-sudo "sudo"
+;;       helm-allow-skipping-current-buffer nil
+;;       helm-enable-shortcuts t)
 
-;; Helm faces
-(require 'helm-files)
-(set-face-attribute 'helm-selection nil
-                    :background nil
-                    :foreground "white"
-                    :underline t)
-(set-face-attribute 'helm-source-header nil
-                    :weight 'bold
-                    :background "grey30"
-                    :foreground "white"
-                    :underline nil)
-(set-face-attribute 'helm-header nil
-                    :weight 'bold
-                    :background "grey10"
-                    :underline nil
-                    :height 1.0)
-(set-face-attribute 'helm-visible-mark nil
-                    :background nil
-                    :foreground "grey40"
-                    :underline nil)
+;; ;; Helm faces
+;; (require 'helm-files)
+;; (set-face-attribute 'helm-selection nil
+;;                     :background nil
+;;                     :foreground "white"
+;;                     :underline t)
+;; (set-face-attribute 'helm-source-header nil
+;;                     :weight 'bold
+;;                     :background "grey30"
+;;                     :foreground "white"
+;;                     :underline nil)
+;; (set-face-attribute 'helm-header nil
+;;                     :weight 'bold
+;;                     :background "grey10"
+;;                     :underline nil
+;;                     :height 1.0)
+;; (set-face-attribute 'helm-visible-mark nil
+;;                     :background nil
+;;                     :foreground "grey40"
+;;                     :underline nil)
 
-;; (set-face-attribute 'helm-ff-file nil
-;;                     :foreground "white" :background nil)
-(set-face-attribute 'helm-ff-directory nil
-                    :foreground "cyan" :background nil :underline t)
+;; ;; (set-face-attribute 'helm-ff-file nil
+;; ;;                     :foreground "white" :background nil)
+;; (set-face-attribute 'helm-ff-directory nil
+;;                     :foreground "cyan" :background nil :underline t)
 
 ;; Helm keybindings
 (define-key helm-map (kbd "C-k") 'helm-previous-line)
@@ -986,3 +987,20 @@ the current state and point position."
   (kbd "M-J") 'org-metadown
   (kbd "M-K") 'org-metaup
   (kbd "M-L") 'org-metaright)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(helm-candidate-number-limit nil)
+ '(helm-quick-update t))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(helm-header ((t (:background "grey10" :weight bold))))
+ '(helm-selection ((t (:foreground "white" :underline t))))
+ '(helm-source-header ((t (:background "grey30" :foreground "white" :weight bold))))
+ '(helm-visible-mark ((t (:foreground "grey40")))))

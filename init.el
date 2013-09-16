@@ -25,6 +25,7 @@
                      markdown-mode
                      melpa
                      popup
+                     popwin
                      smart-mode-line
                      smex
                      smooth-scrolling
