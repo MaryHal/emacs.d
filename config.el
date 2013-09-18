@@ -229,8 +229,6 @@
                                   indentation space-after-tab)
       whitespace-line-column 100)
 
-(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
-
 (require 'ido)
 (ido-mode t)
 (setq ido-enable-prefix nil
@@ -241,13 +239,13 @@
 
 (setq ido-save-directory-list-file "~/.emacs.d/ido.last")
 
-(add-hook
- 'ido-setup-hook
- #'(lambda ()
-     ;; Use C-w to go back up a dir to better match normal usage of C-w
-     ;; - insert current file name with C-x C-w instead.
-     (define-key ido-file-completion-map (kbd "C-w") 'ido-delete-backward-updir)
-     (define-key ido-file-completion-map (kbd "C-x C-w") 'ido-copy-current-file-name)))
+(defun my-ido-define-keys()
+(define-key ido-file-completion-map (kbd "C-w") 'ido-delete-backward-updir)
+(define-key ido-file-completion-map (kbd "C-x C-w") 'ido-copy-current-file-name)
+(define-key ido-completion-map (kbd "C-n") 'ido-next-match)
+(define-key ido-completion-map (kbd "C-p") 'ido-prev-match))
+
+(add-hook 'ido-setup-hook 'my-ido-define-keys)
 
 ;; Always rescan buffer for imenu
 (set-default 'imenu-auto-rescan t)
@@ -292,32 +290,6 @@
 ;;       helm-allow-skipping-current-buffer nil
 ;;       helm-enable-shortcuts t)
 
-;; ;; Helm faces
-;; (require 'helm-files)
-;; (set-face-attribute 'helm-selection nil
-;;                     :background nil
-;;                     :foreground "white"
-;;                     :underline t)
-;; (set-face-attribute 'helm-source-header nil
-;;                     :weight 'bold
-;;                     :background "grey30"
-;;                     :foreground "white"
-;;                     :underline nil)
-;; (set-face-attribute 'helm-header nil
-;;                     :weight 'bold
-;;                     :background "grey10"
-;;                     :underline nil
-;;                     :height 1.0)
-;; (set-face-attribute 'helm-visible-mark nil
-;;                     :background nil
-;;                     :foreground "grey40"
-;;                     :underline nil)
-
-;; ;; (set-face-attribute 'helm-ff-file nil
-;; ;;                     :foreground "white" :background nil)
-;; (set-face-attribute 'helm-ff-directory nil
-;;                     :foreground "cyan" :background nil :underline t)
-
 ;; Helm keybindings
 (define-key helm-map (kbd "C-k") 'helm-previous-line)
 (define-key helm-map (kbd "C-j") 'helm-next-line)
@@ -342,6 +314,7 @@
   (c-set-offset 'brace-list-open '0)
   )
 
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 (add-hook 'c-mode-common-hook 'c-mode-common-custom)
 
 ;; Haskell Mode Hooks
@@ -354,16 +327,31 @@
 (add-hook 'haskell-mode-hook 'haskell-mode-common-custom)
 
 ;; Octave Mode Hooks
-(autoload 'octave-mode "octave-mod" nil t)
-(setq auto-mode-alist
-      (cons '("\\.m$" . octave-mode) auto-mode-alist))
-
-(add-hook 'octave-mode-hook
-          (lambda ()
+(defun my-octave-mode-hook()
             (abbrev-mode 1)
             (auto-fill-mode 1)
             (if (eq window-system 'x)
-                (font-lock-mode 1))))
+                (font-lock-mode 1)))
+
+(add-to-list 'auto-mode-alist '("\\.m\\'" . octave-modee))
+(add-hook 'octave-mode-hook 'my-octave-mode-hook)
+
+;; Markdown Mode Hooks
+(defun my-markdown-mode-hook()
+  (setq markdown-imenu-generic-expression
+        '(("title" "^\\(.*\\)[\n]=+$" 1)
+          ("h2-" "^\\(.*\\)[\n]-+$" 1)
+          ("h1" "^# \\(.*\\)$" 1)
+          ("h2" "^## \\(.*\\)$" 1)
+          ("h3" "^### \\(.*\\)$" 1)
+          ("h4" "^#### \\(.*\\)$" 1)
+          ("h5" "^##### \\(.*\\)$" 1)
+          ("h6" "^###### \\(.*\\)$" 1)
+          ("fn" "^\\[\\^\\(.*\\)\\]" 1)
+          ))
+  (setq imenu-generic-expression markdown-imenu-generic-expression))
+
+(add-hook 'markdown-mode-hook 'my-markdown-mode-hook)
 
 ;; Workgroups2
 (require 'workgroups2)
@@ -436,9 +424,15 @@
 
 ;; Automatic Auto Complete
 (setq ac-auto-start 2
-      ac-auto-show-menu t
-      ac-quick-help-delay 0.3
+      ac-auto-show-menu 0.1
+      ac-quick-help-delay 0.5
       ac-quick-help-height 50)
+
+;; Fuzzy matching
+(setq ac-use-fuzzy t)
+
+;; Set history file location
+(setq ac-comphist-file (expand-file-name ".cache/ac-comphist.dat" user-emacs-directory))
 
 ;; Key mappings
 (setq ac-use-menu-map t)
@@ -507,7 +501,6 @@
 ;; Mode line
 (require 'smart-mode-line)
 (sml/setup)
-(setq sml/col-number-format "%4c")
 
 ;; pre-evil Stuff
 (setq evil-want-C-u-scroll t)
@@ -821,6 +814,9 @@ the current state and point position."
 ;; Let K match J
 (define-key evil-normal-state-map (kbd "K") 'evil-join-previous-line)
 
+;; Make Y work like D
+(define-key evil-normal-state-map (kbd "Y") (kbd "y$"))
+
 ;; Alternate escapes
 ;; (define-key evil-insert-state-map (kbd "j k") 'evil-normal-state)
 ;; (define-key evil-insert-state-map (kbd "k j") 'evil-normal-state)
@@ -994,7 +990,8 @@ the current state and point position."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(helm-candidate-number-limit nil)
- '(helm-quick-update t))
+ '(helm-quick-update t)
+ '(sml/col-number-format " %4c"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
