@@ -755,6 +755,39 @@ the current state and point position."
       (set-register '_ (list (current-window-configuration)))
       (delete-other-windows))))
 
+(defun move-text-internal (arg)
+   (cond
+    ((and mark-active transient-mark-mode)
+     (if (> (point) (mark))
+            (exchange-point-and-mark))
+     (let ((column (current-column))
+              (text (delete-and-extract-region (point) (mark))))
+       (forward-line arg)
+       (move-to-column column t)
+       (set-mark (point))
+       (insert text)
+       (exchange-point-and-mark)
+       (setq deactivate-mark nil)))
+    (t
+     (beginning-of-line)
+     (when (or (> arg 0) (not (bobp)))
+       (forward-line)
+       (when (or (< arg 0) (not (eobp)))
+            (transpose-lines arg))
+       (forward-line -1)))))
+
+(defun move-text-down (arg)
+   "Move region (transient-mark-mode active) or current line
+  arg lines down."
+   (interactive "*p")
+   (move-text-internal arg))
+
+(defun move-text-up (arg)
+   "Move region (transient-mark-mode active) or current line
+  arg lines up."
+   (interactive "*p")
+   (move-text-internal (- arg)))
+
 (require 'switch-window)
 (setq switch-window-shortcut-style 'qwerty)
 
@@ -822,8 +855,14 @@ the current state and point position."
 ;; (define-key evil-insert-state-map (kbd "k j") 'evil-normal-state)
 
 ;; "Unimpaired"
+(define-key evil-normal-state-map (kbd "[ SPC") 'evil-insert-line-above)
+(define-key evil-normal-state-map (kbd "] SPC") 'evil-insert-line-below)
 (define-key evil-normal-state-map (kbd "[ b") 'previous-buffer)
 (define-key evil-normal-state-map (kbd "] b") 'next-buffer)
+
+;; Bubble Text up and down. Works with regions.
+(define-key evil-normal-state-map (kbd "[ e") 'move-text-up)
+(define-key evil-normal-state-map (kbd "] e") 'move-text-down)
 
 ;; evil-leader keybindings
 
