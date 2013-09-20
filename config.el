@@ -502,6 +502,10 @@
 (require 'smart-mode-line)
 (sml/setup)
 
+;; Highlight current line
+;; (global-hl-line-mode t)
+;; (set-face-background 'hl-line "#222")
+
 ;; pre-evil Stuff
 (setq evil-want-C-u-scroll t)
 (setq evil-find-skip-newlines t)
