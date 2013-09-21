@@ -854,6 +854,28 @@ the current state and point position."
 ;; Make Y work like D
 (define-key evil-normal-state-map (kbd "Y") (kbd "y$"))
 
+;; Visual indentation now reselects visual selection.
+(define-key evil-visual-state-map ">" (lambda ()
+    (interactive)
+    ;; ensure mark is less than point
+    (when (> (mark) (point))
+        (exchange-point-and-mark)
+    )
+    (evil-normal-state)
+    (evil-shift-right (mark) (point))
+    ;; re-select last visual-mode selection
+    (evil-visual-restore)))
+(define-key evil-visual-state-map "<" (lambda ()
+    (interactive)
+    ; ensure mark is less than point
+    (when (> (mark) (point))
+        (exchange-point-and-mark)
+    )
+    (evil-normal-state)
+    (evil-shift-left (mark) (point))
+    ;; re-select last visual-mode selection
+    (evil-visual-restore)))
+
 ;; Alternate escapes
 ;; (define-key evil-insert-state-map (kbd "j k") 'evil-normal-state)
 ;; (define-key evil-insert-state-map (kbd "k j") 'evil-normal-state)
