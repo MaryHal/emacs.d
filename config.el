@@ -4,9 +4,7 @@
     (add-to-list 'load-path (expand-file-name dir) nil #'string=)))
 
 ;; Custom configuration files
-(add-to-loadpath "~/.emacs.d/pkg/tomorrow-theme"
-                 "~/.emacs.d/pkg/auto-complete-latex"
-                 "~/.emacs.d/pkg/emacs-clang-complete-async")
+(add-to-loadpath "~/.emacs.d/pkg/emacs-clang-complete-async")
 
 ;; Auto refresh buffers
 (global-auto-revert-mode t)
@@ -150,9 +148,11 @@
 (random t)
 
 ;; Fonts + theme
-(require 'color-theme)
-(require 'color-theme-tomorrow)
-(color-theme-tomorrow-night)
+;; (load-theme 'base16-eighties)
+
+;; However, some parts don't look too nice in terminal Emacs, let's fix that.
+(set-face-background 'region    "color-66")
+(set-face-foreground 'region    "color-1")
 
 (set-cursor-color "#CCCCCC")
 (set-mouse-color "#CCCCCC")
@@ -389,10 +389,6 @@
   (ac-clang-launch-completion-process)
   )
 
-(require 'auto-complete-latex)
-(setq ac-l-dict-directory               "~/.emacs.d/ac-dict/ac-l-dict/")
-(add-hook 'LaTeX-mode-hook #'ac-l-setup)
-
 (defun my-ac-config ()
   (setq-default ac-sources '(ac-source-abbrev
                              ac-source-dictionary
@@ -427,6 +423,7 @@
       ac-auto-show-menu 0.1
       ac-quick-help-delay 0.5
       ac-quick-help-height 50)
+(setq ac-show-menu-immediately-on-auto-complete t)
 
 ;; Fuzzy matching
 (setq ac-use-fuzzy t)
@@ -447,30 +444,20 @@
 (define-key ac-menu-map (kbd "C-l") 'ac-expand-common)
 
 ;; Colors
-;(set-face-background 'ac-candidate-face "lightgray")
-;(set-face-underline 'ac-candidate-face "darkgray")
-;(set-face-background 'ac-selection-face "steelblue")
+;; (set-face-background 'ac-candidate-face "lightgray")
+;; (set-face-underline 'ac-candidate-face "darkgray")
+;; (set-face-background 'ac-selection-face "steelblue")
 (set-face-foreground 'ac-selection-face "black")
 
-(require 'ac-math)
-
 ;; PDF stuff
-(setq TeX-PDF-mode t)
-(setq latex-run-command "pdflatex")
-;(setq TeX-engine 'pdflatex)
+;; (setq TeX-PDF-mode t)
+;; (setq latex-run-command "pdflatex")
+;; (setq TeX-engine 'pdflatex)
 
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(setq-default TeX-master nil)
-(setq ac-math-unicode-in-math-p t)
-
-;;(add-hook ‘latex-mode-hook ‘LaTeX-math-mode)
-;;(add-hook ‘lateX-mode-hook ‘auto-fill-mode)
-
-;; (setq TeX-view-program-list
-;;       '(("zathura" "/usr/bin/zathura %q")))
-
-;; (setq TeX-view-program-selection '((output-pdf "zathura")))
+;; (setq TeX-auto-save t)
+;; (setq TeX-parse-self t)
+;; (setq-default TeX-master nil)
+;; (setq ac-math-unicode-in-math-p t)
 
 ;; HTML
 (add-to-list 'auto-mode-alist '("\\.html\\'" . html-mode))
@@ -894,7 +881,7 @@ the current state and point position."
 
 ;; Alternate
 (evil-leader/set-key "aa" 'ff-find-other-file)
-(evil-leader/set-key "ah" (lambda()
+(evil-leader/set-key "as" (lambda()
                             (interactive)
                             (split-window-below)
                             (evil-window-down 1)
@@ -924,7 +911,7 @@ the current state and point position."
 ;; File
 (evil-leader/set-key "ff" 'ido-find-file)
 (evil-leader/set-key "fd" 'ido-list-directory)
-(evil-leader/set-key "fh" (lambda()
+(evil-leader/set-key "fs" (lambda()
                             (interactive)
                             (split-window-below)
                             (evil-window-down 1)

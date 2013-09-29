@@ -8,32 +8,33 @@
 			 ("marmalade" . "http://marmalade-repo.org/packages/")
 			 ("melpa" . "http://melpa.milkbox.net/packages/")))
 
-(setq package-list '(ac-math
-                     ace-jump-mode
+(setq package-list '(ace-jump-mode
                      ag
-                     auctex
                      auto-complete
-                     color-theme
+                     base16-theme
                      diminish
-                     evil
                      evil-leader
+                     evil
                      expand-region
                      haskell-mode
                      helm
-                     lua-mode
                      ido-ubiquitous
+                     lua-mode
                      markdown-mode
                      melpa
+                     perspective
+                     pkg-info
+                     dash
                      popup
                      popwin
+                     s
                      smart-mode-line
                      smex
                      smooth-scrolling
                      surround
                      switch-window
                      undo-tree
-                     workgroups2
-                     ))
+                     workgroups2))
 
 ;; Activate all the packages (in particular autoloads)
 (package-initialize)
