@@ -148,11 +148,8 @@
 (random t)
 
 ;; Fonts + theme
+;; Theme is loaded via Customize
 ;; (load-theme 'base16-eighties)
-
-;; However, some parts don't look too nice in terminal Emacs, let's fix that.
-(set-face-background 'region    "color-66")
-(set-face-foreground 'region    "color-1")
 
 (set-cursor-color "#CCCCCC")
 (set-mouse-color "#CCCCCC")
@@ -1035,21 +1032,3 @@ the current state and point position."
   (kbd "M-J") 'org-metadown
   (kbd "M-K") 'org-metaup
   (kbd "M-L") 'org-metaright)
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(helm-candidate-number-limit nil)
- '(helm-quick-update t)
- '(sml/col-number-format " %4c"))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(helm-header ((t (:background "grey10" :weight bold))))
- '(helm-selection ((t (:foreground "white" :underline t))))
- '(helm-source-header ((t (:background "grey30" :foreground "white" :weight bold))))
- '(helm-visible-mark ((t (:foreground "grey40")))))

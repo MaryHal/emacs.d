@@ -49,10 +49,16 @@
     (package-install package)))
 
 ;; Custom Configuration
-(setq custom-file "~/.emacs.d/config.el")
-(defun loadConfigFile()
+(setq custom-file "~/.emacs.d/custom.el")
+(defun loadCustomFile()
   (unless (not (file-exists-p custom-file))
     (load custom-file)))
+(add-hook 'after-init-hook 'loadCustomFile)
+
+;; Personal Configuration
+(setq config-file "~/.emacs.d/config.el")
+(defun loadConfigFile()
+  (load config-file))
 (add-hook 'after-init-hook 'loadConfigFile)
 
 ;; Time Startup
