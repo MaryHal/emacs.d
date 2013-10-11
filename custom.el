@@ -13,8 +13,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(header-line ((t (:inherit mode-line :inverse-video nil))))
  '(helm-header ((t (:background "grey10" :weight bold))))
  '(helm-selection ((t (:foreground "white" :underline t))))
  '(helm-source-header ((t (:background "grey30" :foreground "white" :weight bold))))
  '(helm-visible-mark ((t (:foreground "grey40"))))
+ '(highlight ((t (:background "cyan" :foreground "black"))))
+ '(lazy-highlight ((t (:background "brightblue" :foreground "black"))))
  '(region ((t (:background "RoyalBlue" :foreground "black")))))
