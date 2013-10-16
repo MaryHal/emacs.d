@@ -516,6 +516,9 @@
       evil-leader/leader "SPC"
       evil-leader/non-normal-prefix "s-")
 
+(require 'evil-matchit)
+(global-evil-matchit-mode 1)
+
 (require 'evil-leader)
 (global-evil-leader-mode)
 

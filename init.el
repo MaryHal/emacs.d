@@ -14,6 +14,7 @@
                      base16-theme
                      diminish
                      evil-leader
+                     evil-matchit
                      evil
                      expand-region
                      haskell-mode
