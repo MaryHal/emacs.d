@@ -18,6 +18,8 @@
                      expand-region
                      haskell-mode
                      helm
+                     flx
+                     flx-ido
                      ido-ubiquitous
                      lua-mode
                      markdown-mode
@@ -33,8 +35,7 @@
                      smooth-scrolling
                      surround
                      switch-window
-                     undo-tree
-                     workgroups2))
+                     undo-tree))
 
 ;; Activate all the packages (in particular autoloads)
 (package-initialize)

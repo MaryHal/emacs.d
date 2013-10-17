@@ -4,7 +4,7 @@
     (add-to-list 'load-path (expand-file-name dir) nil #'string=)))
 
 ;; Custom configuration files
-(add-to-loadpath "~/.emacs.d/pkg/emacs-clang-complete-async")
+(add-to-loadpath (concat user-emacs-directory "pkg/emacs-clang-complete-async"))
 
 ;; Auto refresh buffers
 (global-auto-revert-mode t)
@@ -234,7 +234,7 @@
       ido-use-filename-at-point nil
       ido-max-prospects 10)
 
-(setq ido-save-directory-list-file "~/.emacs.d/ido.last")
+(setq ido-save-directory-list-file (concat user-emacs-directory "ido.last"))
 
 (defun my-ido-define-keys()
 (define-key ido-file-completion-map (kbd "C-w") 'ido-delete-backward-updir)
@@ -269,11 +269,14 @@
 ;;(ido-ubiquitous-use-new-completing-read yas/expand 'yasnippet)
 ;;(ido-ubiquitous-use-new-completing-read yas/visit-snippet-file 'yasnippet)
 
+(require 'flx-ido)
+(flx-ido-mode t)
+
 (require 'smex)
 (smex-initialize)
 
 (setq smex-key-advice-ignore-menu-bar t)
-(setq smex-save-file "~/.emacs.d/smex-items")
+(setq smex-save-file (concat user-emacs-directory "smex-items"))
 
 ;; Helm
 (require 'helm)
@@ -349,30 +352,6 @@
   (setq imenu-generic-expression markdown-imenu-generic-expression))
 
 (add-hook 'markdown-mode-hook 'my-markdown-mode-hook)
-
-;; Workgroups2
-(require 'workgroups2)
-
-;; Change workgroups session file
-(setq wg-default-session-file "~/.emacs.d/.emacs_workgroups")
-(setq wg-use-default-session-file nil)
-(setq wg-query-for-save-on-emacs-exit nil)
-
-(setq wg-use-faces nil)
-;; (setq wg-morph-on nil)  ;; animation off
-
-;; Change prefix key (before activating WG)
-(setq wg-prefix-key (kbd "C-c z"))
-
-;; Set your own keyboard shortcuts to reload/save/switch WG:
-(global-set-key (kbd "<pause>") 'wg-reload-session)
-(global-set-key (kbd "C-S-<pause>") 'wg-save-session)
-(global-set-key (kbd "s-z") 'wg-switch-to-workgroup)
-(global-set-key (kbd "s-/") 'wg-switch-to-previous-workgroup)
-
-(wg-save-session-on-exit nil)
-
-;; (workgroups-mode 1) ;; put this one at the bottom of .emacs
 
 ;; Auto-complete
 (require 'auto-complete)
@@ -918,14 +897,6 @@ the current state and point position."
                             (split-window-right)
                             (evil-window-right 1)
                             (ido-find-file)))
-
-;; Workgroups2
-(evil-leader/set-key "gc" 'wg-create-workgroup)
-(evil-leader/set-key "gk" 'wg-kill-workgroup)
-(evil-leader/set-key "gh" 'wg-switch-to-workgroup-left)
-(evil-leader/set-key "gl" 'wg-switch-to-workgroup-right)
-(evil-leader/set-key "gs" 'wg-save-session)
-(evil-leader/set-key "gf" 'wg-find-session-file)
 
 ;; Helm
 (evil-leader/set-key "hb" 'helm-buffers-list)
