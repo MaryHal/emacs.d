@@ -21,6 +21,5 @@
  '(helm-source-header ((t (:background "grey30" :foreground "white" :weight bold))))
  '(helm-visible-mark ((t (:foreground "grey40"))))
  '(highlight ((t (:background "cyan" :foreground "black"))))
- '(ido-subdir ((t (:foreground "cyan"))))
  '(lazy-highlight ((t (:background "brightblue" :foreground "black"))))
  '(region ((t (:background "RoyalBlue" :foreground "black")))))
