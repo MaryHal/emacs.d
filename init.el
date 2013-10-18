@@ -10,6 +10,7 @@
 
 (setq package-list '(ace-jump-mode
                      ag
+                     auctex
                      auto-complete
                      base16-theme
                      diminish

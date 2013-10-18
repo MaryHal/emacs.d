@@ -426,14 +426,14 @@
 (set-face-foreground 'ac-selection-face "black")
 
 ;; PDF stuff
-;; (setq TeX-PDF-mode t)
-;; (setq latex-run-command "pdflatex")
-;; (setq TeX-engine 'pdflatex)
+(setq TeX-PDF-mode t)
+(setq latex-run-command "pdflatex")
+(setq TeX-engine 'pdflatex)
 
-;; (setq TeX-auto-save t)
-;; (setq TeX-parse-self t)
-;; (setq-default TeX-master nil)
-;; (setq ac-math-unicode-in-math-p t)
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+(setq-default TeX-master nil)
+(setq ac-math-unicode-in-math-p t)
 
 ;; HTML
 (add-to-list 'auto-mode-alist '("\\.html\\'" . html-mode))
