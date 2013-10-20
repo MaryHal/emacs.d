@@ -5,6 +5,7 @@ recentf
 
 auto-save-list/
 backups/
+cache/
 elpa/
 site-lisp/
 url/

@@ -64,7 +64,7 @@
 (recentf-mode t)
 
 ;; Move .recentf location
-(setq recentf-save-file (concat user-emacs-directory "recentf"))
+(setq recentf-save-file (concat user-emacs-directory "cache/recentf"))
 
 ;; Undo/redo window configuration with C-c <left>/<right>
 (winner-mode t)
@@ -244,7 +244,7 @@
       ido-use-filename-at-point nil
       ido-max-prospects 10)
 
-(setq ido-save-directory-list-file (concat user-emacs-directory "ido.last"))
+(setq ido-save-directory-list-file (concat user-emacs-directory "cache/ido.last"))
 
 (defun my-ido-define-keys()
 (define-key ido-file-completion-map (kbd "C-w") 'ido-delete-backward-updir)
@@ -286,7 +286,7 @@
 (smex-initialize)
 
 (setq smex-key-advice-ignore-menu-bar t)
-(setq smex-save-file (concat user-emacs-directory "smex-items"))
+(setq smex-save-file (concat user-emacs-directory "cache/smex-items"))
 
 ;; Helm
 (require 'helm)
@@ -417,7 +417,7 @@
 (setq ac-use-fuzzy t)
 
 ;; Set history file location
-(setq ac-comphist-file (expand-file-name ".cache/ac-comphist.dat" user-emacs-directory))
+(setq ac-comphist-file (expand-file-name "cache/ac-comphist.dat" user-emacs-directory))
 
 ;; Key mappings
 (setq ac-use-menu-map t)

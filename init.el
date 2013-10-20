@@ -22,7 +22,6 @@
                      flx
                      flx-ido
                      ido-ubiquitous
-                     lua-mode
                      markdown-mode
                      melpa
                      pkg-info
