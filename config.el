@@ -61,7 +61,10 @@
 (setq fill-column 80)
 
 ;; Save a list of recent files visited. (open recent file with C-x f)
-(recentf-mode nil)
+(recentf-mode t)
+
+;; Move .recentf location
+(setq recentf-save-file (concat user-emacs-directory "recentf"))
 
 ;; Undo/redo window configuration with C-c <left>/<right>
 (winner-mode t)
@@ -116,6 +119,13 @@
   (around package-filter-wiki-packages (package archive) activate compile)
   (unless (string-match-p "\\[wiki\\]$" (package-desc-doc (cdr package)))
     ad-do-it))
+
+;; After load theme, if in terminal, clear background.
+(defadvice load-theme (after load-theme activate compile)
+  (unless window-system
+    (when (getenv "DISPLAY")
+      (set-face-attribute 'default nil :background "unspecified-bg")
+      )))
 
 ;; Window Rebalancing
 (setq split-height-threshold nil)
@@ -174,10 +184,10 @@
   )
 
 ;; Clear background if in terminal
-(unless window-system
-  (when (getenv "DISPLAY")
-    (set-face-attribute 'default nil :background "unspecified-bg")
-    ))
+;; (unless window-system
+;;   (when (getenv "DISPLAY")
+;;     (set-face-attribute 'default nil :background "unspecified-bg")
+;;     ))
 
 ;; Thematic configuration
 ;(add-hook 'before-make-frame-hook 'turn-off-tool-bar)
@@ -295,6 +305,8 @@
 (define-key helm-map (kbd "C-j") 'helm-next-line)
 (define-key helm-map (kbd "C-h") 'helm-previous-source)
 (define-key helm-map (kbd "C-l") 'helm-next-source)
+
+;; (require 'perspective)
 
 (require 'dired)
 
@@ -886,7 +898,7 @@ the current state and point position."
 
 ;; File
 (evil-leader/set-key "ff" 'ido-find-file)
-(evil-leader/set-key "fd" 'ido-list-directory)
+(evil-leader/set-key "fd" 'ido-dired)
 (evil-leader/set-key "fs" (lambda()
                             (interactive)
                             (split-window-below)
@@ -929,6 +941,7 @@ the current state and point position."
 
 (evil-leader/set-key "wH" 'evil-window-move-far-left)
 (evil-leader/set-key "wh" 'evil-window-left)
+
 (evil-leader/set-key "wJ" 'evil-window-move-very-bottom)
 (evil-leader/set-key "wj" 'evil-window-down)
 (evil-leader/set-key "wK" 'evil-window-move-very-top)

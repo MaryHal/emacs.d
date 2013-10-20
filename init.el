@@ -25,7 +25,6 @@
                      lua-mode
                      markdown-mode
                      melpa
-                     perspective
                      pkg-info
                      dash
                      popup
