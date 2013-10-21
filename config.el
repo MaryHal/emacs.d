@@ -69,9 +69,6 @@
 ;; Undo/redo window configuration with C-c <left>/<right>
 (winner-mode t)
 
-;; Never insert tabs
-(set-default 'indent-tabs-mode nil)
-
 ;; Show me empty lines after buffer end
 (set-default 'indicate-empty-lines t)
 
@@ -317,14 +314,9 @@
 ;; C Mode Hooks
 (defun c-mode-common-custom ()
   (setq c-default-style "bsd")
-  (setq c-basic-offset 4)        ;; 4-space tab size
 
-  (c-set-offset 'substatement-open '0) ;; brackets should be at same indentation level as the statements they open
-  (c-set-offset 'access-label '0)
-  (c-set-offset 'inline-open '0)
-
-  (c-set-offset 'brace-list-open '0)
-  )
+  ;; 4-space tab size
+  (setq c-basic-offset 4))
 
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 (add-hook 'c-mode-common-hook 'c-mode-common-custom)
@@ -439,13 +431,13 @@
 
 ;; PDF stuff
 (setq TeX-PDF-mode t)
-(setq latex-run-command "pdflatex")
-(setq TeX-engine 'pdflatex)
+;; (setq latex-run-command "pdflatex")
+;; (setq TeX-engine 'pdflatex)
 
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
 (setq-default TeX-master nil)
-(setq ac-math-unicode-in-math-p t)
+;; (setq ac-math-unicode-in-math-p t)
 
 ;; HTML
 (add-to-list 'auto-mode-alist '("\\.html\\'" . html-mode))
@@ -767,8 +759,8 @@ the current state and point position."
    (interactive "*p")
    (move-text-internal (- arg)))
 
-(require 'switch-window)
-(setq switch-window-shortcut-style 'qwerty)
+;; (require 'switch-window)
+;; (setq switch-window-shortcut-style 'qwerty)
 
 ;; Ace Jump
 (require 'ace-jump-mode)

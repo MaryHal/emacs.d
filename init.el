@@ -14,6 +14,7 @@
                      auto-complete
                      base16-theme
                      diminish
+                     epl
                      evil-leader
                      evil
                      expand-region
@@ -33,7 +34,6 @@
                      smex
                      smooth-scrolling
                      surround
-                     switch-window
                      undo-tree))
 
 ;; Activate all the packages (in particular autoloads)
