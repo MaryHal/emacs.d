@@ -581,7 +581,10 @@
 (setq ag-highlight-search t)
 
 ;; Keep cursor away from edges when scrolling up/down
-(require 'smooth-scrolling)
+;; (require 'smooth-scrolling)
+(setq scroll-margin 5
+      scroll-conservatively 9999
+      scroll-preserve-screen-position t)
 
 ;; http://hugoheden.wordpress.com/2009/03/08/copypaste-with-emacs-in-terminal/
 ;; I prefer using the "clipboard" selection (the one the

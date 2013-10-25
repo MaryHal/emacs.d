@@ -32,7 +32,6 @@
                      s
                      smart-mode-line
                      smex
-                     smooth-scrolling
                      surround
                      undo-tree))
 
