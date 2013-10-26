@@ -38,6 +38,7 @@
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
+
 ;; backwards compatibility as default-buffer-file-coding-system
 ;; is deprecated in 23.2.
 (if (boundp 'buffer-file-coding-system)
@@ -457,13 +458,6 @@
 (require 'diminish)
 (add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "ξLisp")))
 (eval-after-load "Undo-Tree" '(diminish 'undo-tree-mode "ut"))
-
-(defmacro rename-modeline (package-name mode new-name)
-  `(eval-after-load ,package-name
-     '(defadvice ,mode (after rename-modeline activate)
-        (setq mode-name ,new-name))))
-
-(rename-modeline "js2-mode" js2-mode "js2")
 
 ;; Mode line
 (require 'smart-mode-line)
