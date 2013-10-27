@@ -25,6 +25,7 @@
                      ido-ubiquitous
                      markdown-mode
                      melpa
+                     multiple-cursors
                      pkg-info
                      dash
                      popup

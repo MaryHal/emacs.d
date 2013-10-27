@@ -525,6 +525,12 @@
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 
+(require 'multiple-cursors)
+(setq mc/list-file (concat user-emacs-directory "cache/mc-lists.el"))
+(add-hook 'multiple-cursors-mode-enabled-hook 'evil-emacs-state)
+(add-hook 'multiple-cursors-mode-disabled-hook 'evil-normal-state)
+
+
 ;; Bury the compilation buffer when compilation is finished and successful.
 ;; (add-to-list 'compilation-finish-functions
 ;;              (lambda (buffer msg)
@@ -792,6 +798,13 @@ the current state and point position."
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
+;; Multiple Cursors
+(define-key evil-emacs-state-map (kbd "C->") 'mc/mark-next-like-this)
+(define-key evil-emacs-state-map (kbd "C-<") 'mc/mark-previous-like-this)
+(define-key evil-visual-state-map (kbd "C->") 'mc/mark-all-like-this)
+(define-key evil-normal-state-map (kbd "C->") 'mc/mark-next-like-this)
+(define-key evil-normal-state-map (kbd "C-<") 'mc/mark-previous-like-this)
+
 ;; Other
 (global-set-key (kbd "RET") 'newline-and-indent)
 
@@ -807,6 +820,10 @@ the current state and point position."
   :motion evil-line
   (evil-previous-visual-line)
   (evil-join beg end))
+
+;; Package list don't need to switch to evil mode if I have these two keys...
+(define-key package-menu-mode-map "j" 'next-line)
+(define-key package-menu-mode-map "k" 'previous-line)
 
 ;; gj gk by default
 (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
