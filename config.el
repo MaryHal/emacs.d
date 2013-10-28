@@ -34,6 +34,7 @@
 ;; UTF-8 please
 (setq locale-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
+
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
@@ -66,6 +67,8 @@
 
 ;; Move .recentf location
 (setq recentf-save-file (concat user-emacs-directory "cache/recentf"))
+(setq recentf-max-saved-items 100)
+(setq recentf-max-menu-items 50)
 
 ;; Undo/redo window configuration with C-c <left>/<right>
 (winner-mode t)
@@ -93,9 +96,12 @@
 ;; Sentences do not need double spaces to end. Period.
 (set-default 'sentence-end-double-space nil)
 
-;; Add parts of each file's directory to the buffer name if not unique
-;;(require 'uniquify)
-;;(setq uniquify-buffer-name-style 'forward)
+;; Better buffer names for duplicates
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward
+      uniquify-separator "/"
+      uniquify-ignore-buffers-re "^\\*" ; leave special buffers alone
+      uniquify-after-kill-buffer-p t)
 
 ;; A saner ediff
 (setq ediff-diff-options "-w")
@@ -770,7 +776,11 @@ the current state and point position."
 (setq ace-jump-mode-case-fold t)
 (setq ace-jump-mode-scope 'window)
 
-(global-set-key (kbd "C-c SPC") 'ace-jump-char-mode)
+;; Lowercase only for ace-jump
+(setq ace-jump-mode-move-keys
+      (loop for i from ?a to ?z collect i))
+
+;; (global-set-key (kbd "C-c SPC") 'ace-jump-char-mode)
 ;; (define-key evil-normal-state-map (kbd "") 'ace-jump-mode)
 
 ;; Expand Region
@@ -874,6 +884,8 @@ the current state and point position."
 ;; evil-leader keybindings
 
 ;; Alternate
+(evil-leader/set-key "SPC" 'ace-jump-char-mode)
+
 (evil-leader/set-key "aa" 'ff-find-other-file)
 (evil-leader/set-key "as" (lambda()
                             (interactive)
@@ -921,6 +933,7 @@ the current state and point position."
 (evil-leader/set-key "hc" 'helm-browse-code)
 (evil-leader/set-key "hf" 'helm-find-files)
 (evil-leader/set-key "hi" 'helm-imenu)
+(evil-leader/set-key "hk" 'helm-show-kill-ring)
 (evil-leader/set-key "hm" 'helm-mini)
 (evil-leader/set-key "hx" 'helm-M-x)
 
