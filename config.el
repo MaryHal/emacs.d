@@ -19,7 +19,7 @@
 ;; Move files to trash when deleting
 ;; (setq delete-by-moving-to-trash t)
 
-;;Real emacs knights don't use shift to mark things
+;; Real emacs knights don't use shift to mark things
 (setq shift-select-mode nil)
 
 ;; Transparently open compressed files
@@ -264,9 +264,6 @@
 (add-to-list 'ido-ignore-directories "target")
 (add-to-list 'ido-ignore-directories "node_modules")
 
-;; Display ido results vertically, rather than horizontally
-;; (setq ido-decorations (quote ("\n-> " "" "\n " "\n ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
-
 ;; Use ido everywhere
 (ido-everywhere 1)
 (require 'ido-ubiquitous)
@@ -282,6 +279,10 @@
 ;;(ido-ubiquitous-use-new-completing-read webjump 'webjump)
 ;;(ido-ubiquitous-use-new-completing-read yas/expand 'yasnippet)
 ;;(ido-ubiquitous-use-new-completing-read yas/visit-snippet-file 'yasnippet)
+
+;; Display ido results vertically, rather than horizontally
+;; (setq ido-decorations (quote ("\n-> " "" "\n " "\n ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
+(require 'ido-vertical-mode)
 
 (require 'flx-ido)
 (flx-ido-mode t)
@@ -775,6 +776,7 @@ the current state and point position."
 (require 'ace-jump-mode)
 (setq ace-jump-mode-case-fold t)
 (setq ace-jump-mode-scope 'window)
+(ace-jump-mode-enable-mark-sync)
 
 ;; Lowercase only for ace-jump
 (setq ace-jump-mode-move-keys
@@ -883,9 +885,10 @@ the current state and point position."
 
 ;; evil-leader keybindings
 
-;; Alternate
-(evil-leader/set-key "SPC" 'ace-jump-char-mode)
+(evil-leader/set-key "SPC" 'ace-jump-mode)
+(global-set-key (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
 
+;; Alternate
 (evil-leader/set-key "aa" 'ff-find-other-file)
 (evil-leader/set-key "as" (lambda()
                             (interactive)
