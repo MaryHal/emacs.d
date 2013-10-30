@@ -283,6 +283,7 @@
 ;; Display ido results vertically, rather than horizontally
 ;; (setq ido-decorations (quote ("\n-> " "" "\n " "\n ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
 (require 'ido-vertical-mode)
+(ido-vertical-mode t)
 
 (require 'flx-ido)
 (flx-ido-mode t)
