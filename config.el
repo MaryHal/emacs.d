@@ -88,6 +88,12 @@
 ;; Fontify org-mode code blocks
 (setq org-src-fontify-natively t)
 
+;; Useful frame title, that show either a file or a buffer name (if the buffer isn't visiting a file)
+(setq frame-title-format
+      '("" invocation-name " Prelude - " (:eval (if (buffer-file-name)
+                                                    (abbreviate-file-name (buffer-file-name))
+                                                  "%b"))))
+
 ;; Represent undo-history as an actual tree (visualize with C-x u)
 ;;(setq undo-tree-mode-lighter "")
 ;;(require 'undo-tree)

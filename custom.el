@@ -14,8 +14,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(header-line ((t (:inherit mode-line :inverse-video nil))))
+ '(helm-ff-directory ((t (:foreground "red"))))
  '(helm-header ((t (:background "grey10" :weight bold))))
- '(helm-selection ((t (:foreground "white" :underline t))))
+ '(helm-selection ((t (:underline t))))
  '(helm-source-header ((t (:background "grey30" :foreground "white" :weight bold))))
  '(helm-visible-mark ((t (:foreground "grey40"))))
  '(isearch-fail ((t (:background "red" :foreground "brightwhite"))))
