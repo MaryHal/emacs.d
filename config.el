@@ -544,6 +544,12 @@
 (add-hook 'multiple-cursors-mode-enabled-hook 'evil-emacs-state)
 (add-hook 'multiple-cursors-mode-disabled-hook 'evil-normal-state)
 
+(require 'workgroups2)
+(setq wg-use-default-session-file nil)
+(setq wg-default-session-file (concat user-emacs-directory "cache/workgroups"))
+
+(setq wg-prefix-key (kbd "C-c z"))
+(workgroups-mode t)
 
 ;; Bury the compilation buffer when compilation is finished and successful.
 ;; (add-to-list 'compilation-finish-functions
@@ -879,6 +885,10 @@ the current state and point position."
 ;; Alternate escapes
 ;; (define-key evil-insert-state-map (kbd "j k") 'evil-normal-state)
 ;; (define-key evil-insert-state-map (kbd "k j") 'evil-normal-state)
+
+;; Workgroups2
+(global-set-key (kbd "C-c h") 'wg-switch-to-workgroup-left)
+(global-set-key (kbd "C-c l") 'wg-switch-to-workgroup-right)
 
 ;; "Unimpaired"
 (define-key evil-normal-state-map (kbd "[ SPC") 'evil-insert-line-above)

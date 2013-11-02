@@ -34,7 +34,8 @@
                      smart-mode-line
                      smex
                      surround
-                     undo-tree))
+                     undo-tree
+                     workgroups2))
 
 ;; Activate all the packages (in particular autoloads)
 (package-initialize)
