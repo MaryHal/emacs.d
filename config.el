@@ -373,11 +373,14 @@
 ;; Auto-complete
 (require 'auto-complete)
 (require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict/")
+
+;; Auto-complete dictionary directories. It should already contain the default dictionaries.
+;; (add-to-list 'ac-dictionary-directories (concat user-emacs-directory "ac-dict/"))
 
 (require 'auto-complete-clang-async)
 (defun ac-cc-mode-setup ()
-  (setq ac-clang-complete-executable "~/.emacs.d/pkg/emacs-clang-complete-async/clang-complete")
+  (setq ac-clang-complete-executable (concat user-emacs-directory
+                                             "pkg/emacs-clang-complete-async/clang-complete"))
   (setq ac-sources '(ac-source-clang-async))
   (ac-clang-launch-completion-process)
   )
