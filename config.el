@@ -288,8 +288,6 @@
 
 ;; Display ido results vertically, rather than horizontally
 ;; (setq ido-decorations (quote ("\n-> " "" "\n " "\n ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
-(require 'ido-vertical-mode)
-(ido-vertical-mode t)
 
 (require 'flx-ido)
 (flx-ido-mode t)
@@ -545,9 +543,6 @@
 (add-hook 'multiple-cursors-mode-disabled-hook 'evil-normal-state)
 
 (require 'workgroups2)
-(setq wg-use-default-session-file nil)
-(setq wg-default-session-file (concat user-emacs-directory "cache/workgroups"))
-
 (setq wg-prefix-key (kbd "C-c z"))
 (workgroups-mode t)
 

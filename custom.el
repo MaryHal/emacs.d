@@ -7,7 +7,13 @@
  '(custom-safe-themes (quote ("ae8d0f1f36460f3705b583970188e4fbb145805b7accce0adb41031d99bd2580" "1affe85e8ae2667fb571fc8331e1e12840746dae5c46112d5abb0c3a973f5f5a" "51bea7765ddaee2aac2983fac8099ec7d62dff47b708aa3595ad29899e9e9e44" default)))
  '(helm-candidate-number-limit nil)
  '(helm-quick-update t)
- '(sml/col-number-format " %4c"))
+ '(sml/col-number-format " %4c")
+ '(wg-associate-buffers nil)
+ '(wg-buffer-auto-association-on nil)
+ '(wg-buffer-list-filtration-on nil)
+ '(wg-default-session-file "~/.emacs.d/cache/wg-session")
+ '(wg-emacs-exit-save-behavior nil)
+ '(wg-use-default-session-file nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
