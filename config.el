@@ -325,6 +325,15 @@
 
 ;; (require 'perspective)
 
+(require 'projectile)
+(defvar projectile-cache-file (concat user-emacs-directory "cache/projectile.cache"))
+(defvar projectile-known-projects-file (concat user-emacs-directory "cache/projectile-bookmarks.eld"))
+
+(add-to-list 'projectile-globally-ignored-directories "elpa")
+(add-to-list 'projectile-globally-ignored-directories ".cache")
+
+(projectile-global-mode t)
+
 (require 'dired)
 
 ;; Dired uses human readable sizes.
@@ -536,14 +545,10 @@
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 
-(require 'multiple-cursors)
-(setq mc/list-file (concat user-emacs-directory "cache/mc-lists.el"))
-(add-hook 'multiple-cursors-mode-enabled-hook 'evil-emacs-state)
-(add-hook 'multiple-cursors-mode-disabled-hook 'evil-normal-state)
-
-(require 'workgroups2)
-(setq wg-prefix-key (kbd "C-c z"))
-(workgroups-mode t)
+;; (require 'multiple-cursors)
+;; (setq mc/list-file (concat user-emacs-directory "cache/mc-lists.el"))
+;; (add-hook 'multiple-cursors-mode-enabled-hook 'evil-emacs-state)
+;; (add-hook 'multiple-cursors-mode-disabled-hook 'evil-normal-state)
 
 ;; Bury the compilation buffer when compilation is finished and successful.
 ;; (add-to-list 'compilation-finish-functions
@@ -809,7 +814,9 @@ the current state and point position."
 (global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
 
 ;; Create new frame
-(define-key global-map (kbd "C-x C-n") 'make-frame-command)
+(define-key global-map (kbd "C-c C-n") 'make-frame-command)
+(define-key global-map (kbd "C-c C-o") 'other-frame)
+(define-key global-map (kbd "C-c C-d") 'delete-frame)
 
 ;; Smex
 (global-set-key (kbd "M-x") 'smex)
@@ -817,12 +824,15 @@ the current state and point position."
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
-;; Multiple Cursors
-(define-key evil-emacs-state-map (kbd "C->") 'mc/mark-next-like-this)
-(define-key evil-emacs-state-map (kbd "C-<") 'mc/mark-previous-like-this)
-(define-key evil-visual-state-map (kbd "C->") 'mc/mark-all-like-this)
-(define-key evil-normal-state-map (kbd "C->") 'mc/mark-next-like-this)
-(define-key evil-normal-state-map (kbd "C-<") 'mc/mark-previous-like-this)
+;; Projectile
+(define-key evil-normal-state-map (kbd "C-p") 'projectile-find-file)
+
+;; ;; Multiple Cursors
+;; (define-key evil-emacs-state-map (kbd "C->") 'mc/mark-next-like-this)
+;; (define-key evil-emacs-state-map (kbd "C-<") 'mc/mark-previous-like-this)
+;; (define-key evil-visual-state-map (kbd "C->") 'mc/mark-all-like-this)
+;; (define-key evil-normal-state-map (kbd "C->") 'mc/mark-next-like-this)
+;; (define-key evil-normal-state-map (kbd "C-<") 'mc/mark-previous-like-this)
 
 ;; Other
 (global-set-key (kbd "RET") 'newline-and-indent)
@@ -880,10 +890,6 @@ the current state and point position."
 ;; (define-key evil-insert-state-map (kbd "j k") 'evil-normal-state)
 ;; (define-key evil-insert-state-map (kbd "k j") 'evil-normal-state)
 
-;; Workgroups2
-(global-set-key (kbd "C-c h") 'wg-switch-to-workgroup-left)
-(global-set-key (kbd "C-c l") 'wg-switch-to-workgroup-right)
-
 ;; "Unimpaired"
 (define-key evil-normal-state-map (kbd "[ SPC") 'evil-insert-line-above)
 (define-key evil-normal-state-map (kbd "] SPC") 'evil-insert-line-below)
@@ -895,7 +901,6 @@ the current state and point position."
 (define-key evil-normal-state-map (kbd "] e") 'move-text-down)
 
 ;; evil-leader keybindings
-
 (evil-leader/set-key "SPC" 'ace-jump-mode)
 (global-set-key (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
 
@@ -964,6 +969,9 @@ the current state and point position."
 (evil-leader/set-key "np" 'narrow-to-page)
 (evil-leader/set-key "nf" 'narrow-to-defun)
 (evil-leader/set-key "nw" 'widen)
+
+;; Projectile
+(evil-leader/set-key "p"  'projectile-ag)
 
 ;; Selection
 (evil-leader/set-key "v" 'er/expand-region)

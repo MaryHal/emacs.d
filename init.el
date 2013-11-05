@@ -24,17 +24,16 @@
                      ido-ubiquitous
                      markdown-mode
                      melpa
-                     multiple-cursors
                      pkg-info
                      dash
                      popup
                      popwin
+                     projectile
                      s
                      smart-mode-line
                      smex
                      surround
-                     undo-tree
-                     workgroups2))
+                     undo-tree))
 
 ;; Activate all the packages (in particular autoloads)
 (package-initialize)

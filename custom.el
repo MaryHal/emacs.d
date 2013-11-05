@@ -8,14 +8,7 @@
  '(helm-candidate-number-limit nil)
  '(helm-quick-update t)
  '(sml/col-number-format " %4c")
- '(sml/hidden-modes (quote (" hl-p" " AC" " Undo-Tree")))
- '(wg-associate-buffers nil)
- '(wg-buffer-auto-association-on nil)
- '(wg-buffer-list-filtration-on nil)
- '(wg-default-session-file "~/.emacs.d/cache/wg-session")
- '(wg-emacs-exit-save-behavior nil)
- '(wg-switch-to-first-workgroup-on-find-session-file nil)
- '(wg-use-default-session-file nil))
+ '(sml/hidden-modes (quote (" hl-p" " AC" " Undo-Tree" " Projectile"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
