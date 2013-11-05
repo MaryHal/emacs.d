@@ -3,6 +3,13 @@
   (dolist (dir dirs load-path)
     (add-to-list 'load-path (expand-file-name dir) nil #'string=)))
 
+(defmacro after (feature &rest body)
+  "After FEATURE is loaded, evaluate BODY."
+  (declare (indent defun))
+  `(eval-after-load ,feature
+     '(progn ,@body)))
+
+
 ;; Custom configuration files
 (add-to-loadpath (concat user-emacs-directory "pkg/emacs-clang-complete-async"))
 
@@ -324,6 +331,10 @@
 ;;(setq dired-listing-switches "-alh")
 (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso")
 
+
+;; Emacs-Lisp Hooks
+(add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "ξLisp")))
+
 ;; C Mode Hooks
 (defun c-mode-common-custom ()
   (setq c-default-style "bsd")
@@ -331,7 +342,7 @@
   ;; 4-space tab size
   (setq c-basic-offset 4))
 
-(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+;; (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 (add-hook 'c-mode-common-hook 'c-mode-common-custom)
 
 ;; Haskell Mode Hooks
@@ -342,16 +353,6 @@
   (haskell-indent-mode)
   )
 (add-hook 'haskell-mode-hook 'haskell-mode-common-custom)
-
-;; Octave Mode Hooks
-(defun my-octave-mode-hook()
-            (abbrev-mode 1)
-            (auto-fill-mode 1)
-            (if (eq window-system 'x)
-                (font-lock-mode 1)))
-
-(add-to-list 'auto-mode-alist '("\\.m\\'" . octave-modee))
-(add-hook 'octave-mode-hook 'my-octave-mode-hook)
 
 ;; Markdown Mode Hooks
 (defun my-markdown-mode-hook()
@@ -461,18 +462,13 @@
 (add-to-list 'auto-mode-alist '("\\.vm$" . html-mode))
 
 ;; Tag colors (For use in modeline)
-(setq evil-normal-state-tag   (propertize " Normal "   'face '((:background "LimeGreen" :foreground "DarkGreen" :weight bold)))
-      evil-insert-state-tag   (propertize " Insert "   'face '((:background "grey80" :foreground "NavyBlue" :weight bold)))
-      evil-visual-state-tag   (propertize " Visual "   'face '((:background "DarkOrange" :foreground "Red4" :weight bold)))
-      evil-replace-state-tag  (propertize " Replace "  'face '((:background "red3" :foreground "grey80" :weight bold)))
-      evil-emacs-state-tag    (propertize " Emacs "    'face '((:background "MediumOrchid" :foreground "DarkMagenta" :weight bold)))
-      evil-motion-state-tag   (propertize " Motion "   'face '((:background "goldenrod4" :foreground "goldenrod1" :weight bold)))
-      evil-operator-state-tag (propertize " Operator " 'face '((:background "RoyalBlue4" :foreground "DarkBlue" :weight bold))))
-
-;; Diminish modeline clutter
-(require 'diminish)
-(add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "ξLisp")))
-(eval-after-load "Undo-Tree" '(diminish 'undo-tree-mode "ut"))
+;; (setq evil-normal-state-tag   (propertize " Normal "   'face '((:background "LimeGreen" :foreground "DarkGreen" :weight bold)))
+;;       evil-insert-state-tag   (propertize " Insert "   'face '((:background "grey80" :foreground "NavyBlue" :weight bold)))
+;;       evil-visual-state-tag   (propertize " Visual "   'face '((:background "DarkOrange" :foreground "Red4" :weight bold)))
+;;       evil-replace-state-tag  (propertize " Replace "  'face '((:background "red3" :foreground "grey80" :weight bold)))
+;;       evil-emacs-state-tag    (propertize " Emacs "    'face '((:background "MediumOrchid" :foreground "DarkMagenta" :weight bold)))
+;;       evil-motion-state-tag   (propertize " Motion "   'face '((:background "goldenrod4" :foreground "goldenrod1" :weight bold)))
+;;       evil-operator-state-tag (propertize " Operator " 'face '((:background "RoyalBlue4" :foreground "DarkBlue" :weight bold))))
 
 ;; Mode line
 (require 'smart-mode-line)

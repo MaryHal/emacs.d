@@ -13,7 +13,6 @@
                      auctex
                      auto-complete
                      base16-theme
-                     diminish
                      epl
                      evil-leader
                      evil
