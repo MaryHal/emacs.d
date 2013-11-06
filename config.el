@@ -308,6 +308,7 @@
 ;; Helm
 (require 'helm)
 (require 'helm-config)
+(require 'helm-swoop)
 
 ;; (setq helm-idle-delay 0.1
 ;;       helm-input-idle-delay 0
@@ -323,11 +324,12 @@
 (define-key helm-map (kbd "C-h") 'helm-previous-source)
 (define-key helm-map (kbd "C-l") 'helm-next-source)
 
-;; (require 'perspective)
 
-(require 'projectile)
+
 (defvar projectile-cache-file (concat user-emacs-directory "cache/projectile.cache"))
 (defvar projectile-known-projects-file (concat user-emacs-directory "cache/projectile-bookmarks.eld"))
+
+(require 'projectile)
 
 (add-to-list 'projectile-globally-ignored-directories "elpa")
 (add-to-list 'projectile-globally-ignored-directories ".cache")
@@ -586,7 +588,7 @@
 
 ;; Write backup files to own directory
 (setq backup-directory-alist
-      `(("." . ,(expand-file-name
+      `((".*" . ,(expand-file-name
                  (concat user-emacs-directory "backups")))))
 
 ;; Make backups of files, even when they're in version control
@@ -814,9 +816,9 @@ the current state and point position."
 (global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
 
 ;; Create new frame
-(define-key global-map (kbd "C-c C-n") 'make-frame-command)
-(define-key global-map (kbd "C-c C-o") 'other-frame)
-(define-key global-map (kbd "C-c C-d") 'delete-frame)
+;; (define-key global-map (kbd "C-c C-n") 'make-frame-command)
+;; (define-key global-map (kbd "C-c C-o") 'other-frame)
+;; (define-key global-map (kbd "C-c C-d") 'delete-frame)
 
 ;; Smex
 (global-set-key (kbd "M-x") 'smex)
@@ -850,7 +852,7 @@ the current state and point position."
   (evil-previous-visual-line)
   (evil-join beg end))
 
-;; Package list don't need to switch to evil mode if I have these two keys...
+;; Package list: don't need to switch to evil mode if I have these two keys...
 (define-key package-menu-mode-map "j" 'next-line)
 (define-key package-menu-mode-map "k" 'previous-line)
 
@@ -954,6 +956,7 @@ the current state and point position."
 (evil-leader/set-key "hi" 'helm-imenu)
 (evil-leader/set-key "hk" 'helm-show-kill-ring)
 (evil-leader/set-key "hm" 'helm-mini)
+(evil-leader/set-key "hs" 'helm-swoop)
 (evil-leader/set-key "hx" 'helm-M-x)
 
 ;; Jump. ACE Jump.

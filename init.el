@@ -19,6 +19,7 @@
                      expand-region
                      haskell-mode
                      helm
+                     helm-swoop
                      flx
                      flx-ido
                      ido-ubiquitous
