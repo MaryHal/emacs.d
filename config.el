@@ -96,10 +96,10 @@
 (setq org-src-fontify-natively t)
 
 ;; Useful frame title, that show either a file or a buffer name (if the buffer isn't visiting a file)
-(setq frame-title-format
-      '("" invocation-name " Prelude - " (:eval (if (buffer-file-name)
-                                                    (abbreviate-file-name (buffer-file-name))
-                                                  "%b"))))
+;; (setq frame-title-format
+;;       '("" invocation-name " Prelude - " (:eval (if (buffer-file-name)
+;;                                                     (abbreviate-file-name (buffer-file-name))
+;;                                                   "%b"))))
 
 ;; Represent undo-history as an actual tree (visualize with C-x u)
 ;;(setq undo-tree-mode-lighter "")
@@ -482,6 +482,7 @@
 ;;       evil-operator-state-tag (propertize " Operator " 'face '((:background "RoyalBlue4" :foreground "DarkBlue" :weight bold))))
 
 ;; Mode line
+(setq sml/theme 'dark)
 (require 'smart-mode-line)
 (sml/setup)
 
@@ -816,9 +817,9 @@ the current state and point position."
 (global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
 
 ;; Create new frame
-;; (define-key global-map (kbd "C-c C-n") 'make-frame-command)
-;; (define-key global-map (kbd "C-c C-o") 'other-frame)
-;; (define-key global-map (kbd "C-c C-d") 'delete-frame)
+(define-key global-map (kbd "C-c f k") 'delete-frame)
+(define-key global-map (kbd "C-c f n") 'make-frame-command)
+(define-key global-map (kbd "C-c f o") 'other-frame)
 
 ;; Smex
 (global-set-key (kbd "M-x") 'smex)
