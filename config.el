@@ -11,8 +11,7 @@
 
 
 ;; Custom configuration files
-(add-to-loadpath (concat user-emacs-directory "pkg/emacs-clang-complete-async")
-                 (concat user-emacs-directory "pkg/irony-mode/elisp"))
+(add-to-loadpath (concat user-emacs-directory "pkg/emacs-clang-complete-async"))
 
 ;; Auto refresh buffers
 (global-auto-revert-mode t)
@@ -390,6 +389,27 @@
 ;; Auto-complete dictionary directories. It should already contain the default dictionaries.
 ;; (add-to-list 'ac-dictionary-directories (concat user-emacs-directory "ac-dict/"))
 
+(require 'auto-complete-clang-async)
+(defun ac-cc-mode-setup ()
+  (setq ac-clang-complete-executable (concat user-emacs-directory
+                                             "pkg/emacs-clang-complete-async/clang-complete"))
+  (setq ac-sources '(ac-source-clang-async))
+  (ac-clang-launch-completion-process)
+
+  (setq ac-clang-flags
+        (mapcar (lambda (item)(concat "-I" item))
+                (split-string
+                 "
+ /usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.2/../../../../include/c++/4.8.2
+ /usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.2/../../../../include/c++/4.8.2/x86_64-unknown-linux-gnu
+ /usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.2/../../../../include/c++/4.8.2/backward
+ /usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.2/include
+ /usr/local/include
+ /usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.2/include-fixed
+ /usr/include
+"
+                 )))
+  )
 
 (defun my-ac-config ()
   (setq-default ac-sources '(ac-source-abbrev
@@ -450,22 +470,6 @@
 ;; (set-face-underline 'ac-candidate-face "darkgray")
 ;; (set-face-background 'ac-selection-face "steelblue")
 (set-face-foreground 'ac-selection-face "black")
-
-(require 'irony) ;Note: hit `C-c C-b' to open build menu
-
-;; the ac plugin will be activated in each buffer using irony-mode
-(irony-enable 'ac)             ; hit C-RET to trigger completion
-
-(defun my-c++-hooks ()
-  "Enable the hooks in the preferred order: 'yas -> auto-complete -> irony'."
-  ;; if yas is not set before (auto-complete-mode 1), overlays may persist after
-  ;; an expansion.
-  (auto-complete-mode 1)
-  (irony-mode 1))
-
-(add-hook 'c++-mode-hook 'my-c++-hooks)
-(add-hook 'c-mode-hook 'my-c++-hooks)
-
 
 ;; PDF stuff
 (setq TeX-PDF-mode t)
