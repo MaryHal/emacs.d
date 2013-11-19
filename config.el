@@ -11,7 +11,8 @@
 
 
 ;; Custom configuration files
-(add-to-loadpath (concat user-emacs-directory "pkg/emacs-clang-complete-async"))
+(add-to-loadpath (concat user-emacs-directory "pkg/emacs-clang-complete-async")
+                 (concat user-emacs-directory "pkg/free-keys"))
 
 ;; Auto refresh buffers
 (global-auto-revert-mode t)
@@ -299,6 +300,9 @@
 (require 'flx-ido)
 (flx-ido-mode t)
 
+;; disable ido faces to see flx highlights.
+(setq ido-use-faces nil)
+
 (require 'smex)
 (smex-initialize)
 
@@ -323,8 +327,6 @@
 (define-key helm-map (kbd "C-j") 'helm-next-line)
 (define-key helm-map (kbd "C-h") 'helm-previous-source)
 (define-key helm-map (kbd "C-l") 'helm-next-source)
-
-
 
 (defvar projectile-cache-file (concat user-emacs-directory "cache/projectile.cache"))
 (defvar projectile-known-projects-file (concat user-emacs-directory "cache/projectile-bookmarks.eld"))
@@ -544,7 +546,7 @@
 
 ;; Cursor Color
 (setq evil-default-cursor t)
-;;(setq evil-insert-state-cursor '("#aa0000" hbar))
+;; (setq evil-insert-state-cursor '("#aa0000" hbar))
 
 ;; Redefine ESC (By default it's meta)
 (define-key evil-insert-state-map (kbd "ESC") 'evil-normal-state)
@@ -553,27 +555,26 @@
 (define-key evil-operator-state-map (kbd "ESC") 'evil-normal-state)
 (define-key evil-motion-state-map (kbd "ESC") 'evil-normal-state)
 
-;;; esc quits
-;; (define-key evil-normal-state-map [escape] 'keyboard-quit)
-;; (define-key evil-visual-state-map [escape] 'keyboard-quit)
+;;; Esc quits
+;; (defun minibuffer-keyboard-quit ()
+;;   "Abort recursive edit. In Delete Selection mode, if the mark is active, just deactivate it; then it takes a second \[keyboard-quit] to abort the minibuffer."
+;;   (interactive)
+;;   (if (and delete-selection-mode transient-mark-mode mark-active)
+;;       (setq deactivate-mark t)
+;;     (when (get-buffer "Completions")
+;;       (delete-windows-on "Completions"))
+;;     (abort-recursive-edit)))
+
+(define-key evil-normal-state-map [escape] 'keyboard-quit)
+(define-key evil-visual-state-map [escape] 'keyboard-quit)
 (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
-
-;; (require 'multiple-cursors)
-;; (setq mc/list-file (concat user-emacs-directory "cache/mc-lists.el"))
-;; (add-hook 'multiple-cursors-mode-enabled-hook 'evil-emacs-state)
-;; (add-hook 'multiple-cursors-mode-disabled-hook 'evil-normal-state)
+(global-set-key [escape] 'evil-exit-emacs-state)
 
 ;; Bury the compilation buffer when compilation is finished and successful.
-;; (add-to-list 'compilation-finish-functions
-;;              (lambda (buffer msg)
-;;                (when
-;;                  (bury-buffer buffer)
-;;                  (replace-buffer-in-windows buffer))))
-
 (setq compilation-finish-functions 'compile-autoclose)
 (defun compile-autoclose (buffer string)
   (cond ((string-match "finished" string)
@@ -817,6 +818,8 @@ the current state and point position."
 ;; Expand Region
 (require 'expand-region)
 ;;(global-set-key (kbd "C-q") 'er/expand-region)
+
+(require 'free-keys)
 
 ;; Easier version of "C-x k" to kill buffer
 (global-set-key (kbd "C-x C-b") 'buffer-menu)
