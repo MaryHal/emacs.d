@@ -304,7 +304,7 @@
 (setq ido-use-faces nil)
 
 ;; Disable flx highlights
-(setq flx-ido-use-faces nil)
+;; (setq flx-ido-use-faces nil)
 
 (require 'smex)
 (smex-initialize)
@@ -552,14 +552,14 @@
 ;; (setq evil-insert-state-cursor '("#aa0000" hbar))
 
 ;; Bury the compilation buffer when compilation is finished and successful.
-;; (setq compilation-finish-functions 'compile-autoclose)
-;; (defun compile-autoclose (buffer string)
-;;   (cond ((string-match "finished" string)
-;;          (bury-buffer "*compilation*")
-;;          (winner-undo)
-;;          (message "Build successful."))
-;;         (t
-;;          (message "Compilation exited abnormally: %s" string))))
+(setq compilation-finish-functions 'compile-autoclose)
+(defun compile-autoclose (buffer string)
+  (cond ((string-match "finished" string)
+         (bury-buffer "*compilation*")
+         (winner-undo)
+         (message "Build successful."))
+        (t
+         (message "Compilation exited abnormally: %s" string))))
 
 (setq special-display-function
       (lambda (buffer &optional args)
