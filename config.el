@@ -303,6 +303,9 @@
 ;; disable ido faces to see flx highlights.
 (setq ido-use-faces nil)
 
+;; Disable flx highlights
+(setq flx-ido-use-faces nil)
+
 (require 'smex)
 (smex-initialize)
 
@@ -548,41 +551,15 @@
 (setq evil-default-cursor t)
 ;; (setq evil-insert-state-cursor '("#aa0000" hbar))
 
-;; Redefine ESC (By default it's meta)
-(define-key evil-insert-state-map (kbd "ESC") 'evil-normal-state)
-(define-key evil-visual-state-map (kbd "ESC") 'evil-normal-state)
-(define-key evil-replace-state-map (kbd "ESC") 'evil-normal-state)
-(define-key evil-operator-state-map (kbd "ESC") 'evil-normal-state)
-(define-key evil-motion-state-map (kbd "ESC") 'evil-normal-state)
-
-;;; Esc quits
-;; (defun minibuffer-keyboard-quit ()
-;;   "Abort recursive edit. In Delete Selection mode, if the mark is active, just deactivate it; then it takes a second \[keyboard-quit] to abort the minibuffer."
-;;   (interactive)
-;;   (if (and delete-selection-mode transient-mark-mode mark-active)
-;;       (setq deactivate-mark t)
-;;     (when (get-buffer "Completions")
-;;       (delete-windows-on "Completions"))
-;;     (abort-recursive-edit)))
-
-(define-key evil-normal-state-map [escape] 'keyboard-quit)
-(define-key evil-visual-state-map [escape] 'keyboard-quit)
-(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
-(global-set-key [escape] 'evil-exit-emacs-state)
-
 ;; Bury the compilation buffer when compilation is finished and successful.
-(setq compilation-finish-functions 'compile-autoclose)
-(defun compile-autoclose (buffer string)
-  (cond ((string-match "finished" string)
-         (bury-buffer "*compilation*")
-         (winner-undo)
-         (message "Build successful."))
-        (t
-         (message "Compilation exited abnormally: %s" string))))
+;; (setq compilation-finish-functions 'compile-autoclose)
+;; (defun compile-autoclose (buffer string)
+;;   (cond ((string-match "finished" string)
+;;          (bury-buffer "*compilation*")
+;;          (winner-undo)
+;;          (message "Build successful."))
+;;         (t
+;;          (message "Compilation exited abnormally: %s" string))))
 
 (setq special-display-function
       (lambda (buffer &optional args)
@@ -808,12 +785,29 @@ the current state and point position."
 (setq ace-jump-mode-scope 'window)
 (ace-jump-mode-enable-mark-sync)
 
-;; Lowercase only for ace-jump
-(setq ace-jump-mode-move-keys
-      (loop for i from ?a to ?z collect i))
+;; ;; Lowercase only for ace-jump
+;; (setq ace-jump-mode-move-keys
+;;       (loop for i from ?a to ?z collect i))
 
 ;; (global-set-key (kbd "C-c SPC") 'ace-jump-char-mode)
 ;; (define-key evil-normal-state-map (kbd "") 'ace-jump-mode)
+
+
+;; Redefine ESC (By default it's meta)
+(define-key evil-insert-state-map (kbd "ESC") 'evil-normal-state)
+(define-key evil-visual-state-map (kbd "ESC") 'evil-normal-state)
+(define-key evil-replace-state-map (kbd "ESC") 'evil-normal-state)
+(define-key evil-operator-state-map (kbd "ESC") 'evil-normal-state)
+(define-key evil-motion-state-map (kbd "ESC") 'evil-normal-state)
+
+(define-key evil-normal-state-map [escape] 'keyboard-quit)
+(define-key evil-visual-state-map [escape] 'keyboard-quit)
+(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+(global-set-key [escape] 'evil-exit-emacs-state)
 
 ;; Expand Region
 (require 'expand-region)
@@ -907,8 +901,10 @@ the current state and point position."
     (evil-visual-restore)))
 
 ;; Alternate escapes
-;; (define-key evil-insert-state-map (kbd "j k") 'evil-normal-state)
-;; (define-key evil-insert-state-map (kbd "k j") 'evil-normal-state)
+(require 'key-chord)
+(key-chord-mode 1)
+(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+(key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
 
 ;; "Unimpaired"
 (define-key evil-normal-state-map (kbd "[ SPC") 'evil-insert-line-above)

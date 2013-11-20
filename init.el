@@ -20,6 +20,7 @@
                      haskell-mode
                      helm
                      helm-swoop
+                     key-chord
                      flx
                      flx-ido
                      ido-ubiquitous
