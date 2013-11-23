@@ -398,9 +398,6 @@
 (defun ac-cc-mode-setup ()
   (setq ac-clang-complete-executable (concat user-emacs-directory
                                              "pkg/emacs-clang-complete-async/clang-complete"))
-  (setq ac-sources '(ac-source-clang-async))
-  (ac-clang-launch-completion-process)
-
   (setq ac-clang-flags
         (mapcar (lambda (item)(concat "-I" item))
                 (split-string
@@ -414,6 +411,8 @@
  /usr/include
 "
                  )))
+  (setq ac-sources '(ac-source-clang-async ac-source-dictionary ac-source-filename))
+  (ac-clang-launch-completion-process)
   )
 
 (defun my-ac-config ()
