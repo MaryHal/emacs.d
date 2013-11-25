@@ -40,6 +40,9 @@
 ;; Activate all the packages (in particular autoloads)
 (package-initialize)
 
+;; package-initialize normally gets executed twice, stop it for slightly faster startup
+(setq package-enable-at-startup nil)
+
 ;; Fetch the list of packages available
 (when (not package-archive-contents)
   (package-refresh-contents))
