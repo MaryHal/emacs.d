@@ -905,6 +905,10 @@ the current state and point position."
 (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
 (key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
 
+(key-chord-define evil-normal-state-map "jc" 'ace-jump-char-mode)
+(key-chord-define evil-normal-state-map "jl" 'ace-jump-line-mode)
+(key-chord-define evil-normal-state-map "jw" 'ace-jump-word-mode)
+
 ;; "Unimpaired"
 (define-key evil-normal-state-map (kbd "[ SPC") 'evil-insert-line-above)
 (define-key evil-normal-state-map (kbd "] SPC") 'evil-insert-line-below)
