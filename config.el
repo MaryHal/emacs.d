@@ -341,6 +341,8 @@
 
 (require 'projectile)
 
+(setq projectile-indexing-method 'native)
+
 (add-to-list 'projectile-globally-ignored-directories "elpa")
 (add-to-list 'projectile-globally-ignored-directories ".cache")
 
@@ -600,7 +602,7 @@
 
 ;; Keep cursor away from edges when scrolling up/down
 ;; (require 'smooth-scrolling)
-(setq scroll-margin 5
+(setq scroll-margin 8
       scroll-conservatively 9999
       scroll-preserve-screen-position t)
 
@@ -997,6 +999,11 @@ the current state and point position."
 
 ;; Projectile
 (evil-leader/set-key "p"  'projectile-ag)
+
+;; Terminal
+(evil-leader/set-key "t"  '(lambda()
+                             (interactive)
+                             (async-shell-command "urxvtc")))
 
 ;; Selection
 (evil-leader/set-key "v" 'er/expand-region)
