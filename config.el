@@ -12,7 +12,8 @@
 
 ;; Custom configuration files
 (add-to-loadpath (concat user-emacs-directory "pkg/emacs-clang-complete-async")
-                 (concat user-emacs-directory "pkg/free-keys"))
+                 (concat user-emacs-directory "pkg/free-keys")
+                 (concat user-emacs-directory "pkg/irony-mode"))
 
 ;; Auto refresh buffers
 (global-auto-revert-mode t)
@@ -361,12 +362,24 @@
 ;; C Mode Hooks
 (defun c-mode-common-custom ()
   (setq c-default-style "bsd")
-
   ;; 4-space tab size
   (setq c-basic-offset 4))
 
 ;; (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 (add-hook 'c-mode-common-hook 'c-mode-common-custom)
+
+;; Guess indentation style --------------------
+;;Automagically find the indentation style in the source file.
+;;(Good for me, since my collaborator is using tabs)
+
+;;Use autoload for faster start-up (rather than "require"):
+;;(autoload 'dtrt-indent-mode "dtrt-indent" "Adapt to foreign indentation offsets" t)
+;;(add-hook 'c-mode-common-hook 'dtrt-indent-mode)
+
+(add-hook 'c-mode-common-hook
+          (lambda()
+            (when (require 'dtrt-indent nil 'noerror)
+              (dtrt-indent-mode t))))
 
 ;; Haskell Mode Hooks
 (defun haskell-mode-common-custom()

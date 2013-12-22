@@ -20,6 +20,7 @@
                      haskell-mode
                      helm
                      helm-swoop
+                     json
                      key-chord
                      flx
                      flx-ido
