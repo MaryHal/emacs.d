@@ -7,8 +7,10 @@
  '(custom-safe-themes (quote ("ae8d0f1f36460f3705b583970188e4fbb145805b7accce0adb41031d99bd2580" "1affe85e8ae2667fb571fc8331e1e12840746dae5c46112d5abb0c3a973f5f5a" "51bea7765ddaee2aac2983fac8099ec7d62dff47b708aa3595ad29899e9e9e44" default)))
  '(helm-candidate-number-limit nil)
  '(helm-quick-update t)
+ '(sml/active-background-color "black")
  '(sml/col-number-format " %4c")
- '(sml/hidden-modes (quote (" hl-p" " AC" " Undo-Tree" " Projectile"))))
+ '(sml/hidden-modes (quote (" hl-p" " AC" " Undo-Tree" " Projectile")))
+ '(sml/inactive-background-color "#404045"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -24,4 +26,5 @@
  '(lazy-highlight ((t (:background "brightblue" :foreground "black"))))
  '(mode-line ((t (:background "gray6" :foreground "gray60"))))
  '(mode-line-inactive ((t (:background "gray10" :foreground "gray60"))))
- '(region ((t (:background "RoyalBlue" :foreground "black")))))
+ '(region ((t (:background "RoyalBlue" :foreground "black"))))
+ '(vertical-border ((t (:background "black" :foreground "black")))))

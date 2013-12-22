@@ -207,8 +207,11 @@
 ;;     (set-face-attribute 'default nil :background "unspecified-bg")
 ;;     ))
 
+;; In text terminals, change vertical divider
+
+
 ;; Thematic configuration
-;(add-hook 'before-make-frame-hook 'turn-off-tool-bar)
+;; (add-hook 'before-make-frame-hook 'turn-off-tool-bar)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (tooltip-mode -1)
@@ -330,6 +333,8 @@
 (define-key helm-map (kbd "C-j") 'helm-next-line)
 (define-key helm-map (kbd "C-h") 'helm-previous-source)
 (define-key helm-map (kbd "C-l") 'helm-next-source)
+
+(setq projectile-enable-caching t)
 
 (defvar projectile-cache-file (concat user-emacs-directory "cache/projectile.cache"))
 (defvar projectile-known-projects-file (concat user-emacs-directory "cache/projectile-bookmarks.eld"))
