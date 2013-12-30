@@ -11,9 +11,7 @@
 
 
 ;; Custom configuration files
-(add-to-loadpath (concat user-emacs-directory "pkg/emacs-clang-complete-async")
-                 (concat user-emacs-directory "pkg/free-keys")
-                 (concat user-emacs-directory "pkg/irony-mode"))
+(add-to-loadpath (concat user-emacs-directory "pkg/emacs-clang-complete-async"))
 
 ;; Auto refresh buffers
 (global-auto-revert-mode t)
@@ -831,8 +829,6 @@ the current state and point position."
 ;; Expand Region
 (require 'expand-region)
 ;;(global-set-key (kbd "C-q") 'er/expand-region)
-
-(require 'free-keys)
 
 ;; Easier version of "C-x k" to kill buffer
 (global-set-key (kbd "C-x C-b") 'buffer-menu)
