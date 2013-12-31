@@ -1,17 +1,16 @@
-;; Helper Functions
+;; Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun add-to-loadpath (&rest dirs)
   (dolist (dir dirs load-path)
     (add-to-list 'load-path (expand-file-name dir) nil #'string=)))
 
-(defmacro after (feature &rest body)
-  "After FEATURE is loaded, evaluate BODY."
-  (declare (indent defun))
-  `(eval-after-load ,feature
-     '(progn ,@body)))
-
-
 ;; Custom configuration files
-(add-to-loadpath (concat user-emacs-directory "pkg/emacs-clang-complete-async"))
+(add-to-loadpath (concat user-emacs-directory "pkg/emacs-clang-complete-async")
+                 (concat user-emacs-directory "pkg/irony-mode"))
+
+
+
+;; Sane Defaults ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Auto refresh buffers
 (global-auto-revert-mode t)
@@ -39,6 +38,7 @@
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; UTF-8 please
+(set-language-environment "UTF-8")
 (setq locale-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
@@ -125,13 +125,63 @@
 ;; that you can always see what's happening.
 (setq eval-expression-print-level nil)
 
+;; Mouse support
+(require 'mouse)
+(xterm-mouse-mode t)
+(defun track-mouse (e))
+(setq mouse-sel-mode t)
+
+;; Seed the random number generator
+(random t)
+
+
+
+;; Backups ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Disable backup
+;; (setq backup-inhibited t)
+
+;; Disable auto save
+(auto-save-mode nil)
+(setq auto-save-default nil)
+(with-current-buffer (get-buffer "*scratch*")
+  (auto-save-mode -1))
+
+;; Place Backup Files in a Specific Directory
+(setq make-backup-files nil)
+
+;; Write backup files to own directory
+(setq backup-directory-alist
+      `((".*" . ,(expand-file-name
+                 (concat user-emacs-directory "backups")))))
+
+;; Make backups of files, even when they're in version control
+(setq vc-make-backup-files t)
+
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+
+
+
+;; Dired ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require 'dired)
+
+;; Dired uses human readable sizes.
+;;(setq dired-listing-switches "-alh")
+(setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso")
+
+
+
+;; Advice ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; When popping the mark, continue popping until the cursor actually moves
 (defadvice pop-to-mark-command (around ensure-new-position activate)
   (let ((p (point)))
     (dotimes (i 10)
       (when (= p (point)) ad-do-it))))
 
-;; Ignore wiki packages
+;; Ignore wiki packages during package-list-packages
 (defadvice package--add-to-archive-contents
   (around package-filter-wiki-packages (package archive) activate compile)
   (unless (string-match-p "\\[wiki\\]$" (package-desc-doc (cdr package)))
@@ -160,23 +210,17 @@
   (balance-windows))
 (ad-activate 'split-window-horizontally)
 
+;; Balance windows after window close
 (defadvice delete-window
   (after rebalance-windows activate)
   (balance-windows))
 (ad-activate 'delete-window)
 
-;; Mouse support
-(require 'mouse)
-(xterm-mouse-mode t)
-(defun track-mouse (e))
-(setq mouse-sel-mode t)
 
-;; Seed the random number generator
-(random t)
 
-;; Fonts + theme
+;; Appearance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; Theme is loaded via Customize
-;; (load-theme 'base16-eighties)
 
 (set-cursor-color "#CCCCCC")
 (set-mouse-color "#CCCCCC")
@@ -188,7 +232,7 @@
         (cursor-color . "#CCCCCC")
         ))
 
-;; Setting font
+;; Set font
 (if (string= system-type "windows-nt")
     ;; If Windows
     (progn (setq myFrameFont "Consolas 10")
@@ -200,16 +244,7 @@
          )
   )
 
-;; Clear background if in terminal
-;; (unless window-system
-;;   (when (getenv "DISPLAY")
-;;     (set-face-attribute 'default nil :background "unspecified-bg")
-;;     ))
-
-;; In text terminals, change vertical divider
-
-
-;; Thematic configuration
+;; Toolbars and such
 ;; (add-hook 'before-make-frame-hook 'turn-off-tool-bar)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
@@ -256,6 +291,10 @@
                                   indentation space-after-tab)
       whitespace-line-column 100)
 
+
+
+;; Ido-mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (require 'ido)
 (ido-mode t)
 (setq ido-enable-prefix nil
@@ -299,6 +338,7 @@
 ;; Display ido results vertically, rather than horizontally
 ;; (setq ido-decorations (quote ("\n-> " "" "\n " "\n ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
 
+;; Better matching
 (require 'flx-ido)
 (flx-ido-mode t)
 
@@ -314,7 +354,10 @@
 (setq smex-key-advice-ignore-menu-bar t)
 (setq smex-save-file (concat user-emacs-directory "cache/smex-items"))
 
-;; Helm
+
+
+;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (require 'helm)
 (require 'helm-config)
 (require 'helm-swoop)
@@ -333,6 +376,10 @@
 (define-key helm-map (kbd "C-h") 'helm-previous-source)
 (define-key helm-map (kbd "C-l") 'helm-next-source)
 
+
+
+;; Projectile ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (setq projectile-enable-caching t)
 
 (defvar projectile-cache-file (concat user-emacs-directory "cache/projectile.cache"))
@@ -347,12 +394,9 @@
 
 (projectile-global-mode t)
 
-(require 'dired)
 
-;; Dired uses human readable sizes.
-;;(setq dired-listing-switches "-alh")
-(setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso")
 
+;; Language Hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Emacs-Lisp Hooks
 (add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "ξLisp")))
@@ -405,7 +449,25 @@
 
 (add-hook 'markdown-mode-hook 'my-markdown-mode-hook)
 
-;; Auto-complete
+;; PDF stuff
+(setq TeX-PDF-mode t)
+;; (setq latex-run-command "pdflatex")
+;; (setq TeX-engine 'pdflatex)
+
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+(setq-default TeX-master nil)
+;; (setq ac-math-unicode-in-math-p t)
+
+;; HTML
+(add-to-list 'auto-mode-alist '("\\.html\\'" . html-mode))
+(add-to-list 'auto-mode-alist '("\\.tag$" . html-mode))
+(add-to-list 'auto-mode-alist '("\\.vm$" . html-mode))
+
+
+
+;; Auto-complete ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (require 'auto-complete)
 (require 'auto-complete-config)
 
@@ -493,31 +555,10 @@
 ;; (set-face-background 'ac-selection-face "steelblue")
 (set-face-foreground 'ac-selection-face "black")
 
-;; PDF stuff
-(setq TeX-PDF-mode t)
-;; (setq latex-run-command "pdflatex")
-;; (setq TeX-engine 'pdflatex)
 
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(setq-default TeX-master nil)
-;; (setq ac-math-unicode-in-math-p t)
 
-;; HTML
-(add-to-list 'auto-mode-alist '("\\.html\\'" . html-mode))
-(add-to-list 'auto-mode-alist '("\\.tag$" . html-mode))
-(add-to-list 'auto-mode-alist '("\\.vm$" . html-mode))
+;; Modeline ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Tag colors (For use in modeline)
-;; (setq evil-normal-state-tag   (propertize " Normal "   'face '((:background "LimeGreen" :foreground "DarkGreen" :weight bold)))
-;;       evil-insert-state-tag   (propertize " Insert "   'face '((:background "grey80" :foreground "NavyBlue" :weight bold)))
-;;       evil-visual-state-tag   (propertize " Visual "   'face '((:background "DarkOrange" :foreground "Red4" :weight bold)))
-;;       evil-replace-state-tag  (propertize " Replace "  'face '((:background "red3" :foreground "grey80" :weight bold)))
-;;       evil-emacs-state-tag    (propertize " Emacs "    'face '((:background "MediumOrchid" :foreground "DarkMagenta" :weight bold)))
-;;       evil-motion-state-tag   (propertize " Motion "   'face '((:background "goldenrod4" :foreground "goldenrod1" :weight bold)))
-;;       evil-operator-state-tag (propertize " Operator " 'face '((:background "RoyalBlue4" :foreground "DarkBlue" :weight bold))))
-
-;; Mode line
 (setq sml/theme 'dark)
 (require 'smart-mode-line)
 (sml/setup)
@@ -535,7 +576,19 @@
 
 (setq evil-auto-indent t)
 
-;; evil
+;; Evil tag colors
+;; (setq evil-normal-state-tag   (propertize " Normal "   'face '((:background "LimeGreen" :foreground "DarkGreen" :weight bold)))
+;;       evil-insert-state-tag   (propertize " Insert "   'face '((:background "grey80" :foreground "NavyBlue" :weight bold)))
+;;       evil-visual-state-tag   (propertize " Visual "   'face '((:background "DarkOrange" :foreground "Red4" :weight bold)))
+;;       evil-replace-state-tag  (propertize " Replace "  'face '((:background "red3" :foreground "grey80" :weight bold)))
+;;       evil-emacs-state-tag    (propertize " Emacs "    'face '((:background "MediumOrchid" :foreground "DarkMagenta" :weight bold)))
+;;       evil-motion-state-tag   (propertize " Motion "   'face '((:background "goldenrod4" :foreground "goldenrod1" :weight bold)))
+;;       evil-operator-state-tag (propertize " Operator " 'face '((:background "RoyalBlue4" :foreground "DarkBlue" :weight bold))))
+
+
+
+;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (require 'evil)
 
 ;; Actually activate evil mode
@@ -584,38 +637,24 @@
         (switch-to-buffer buffer)
         (get-buffer-window buffer 0)))
 
-;; Disable backup
-;; (setq backup-inhibited t)
-
-;; Disable auto save
-(auto-save-mode nil)
-(setq auto-save-default nil)
-(with-current-buffer (get-buffer "*scratch*")
-  (auto-save-mode -1))
-
-;; Place Backup Files in a Specific Directory
-(setq make-backup-files nil)
-
-;; Write backup files to own directory
-(setq backup-directory-alist
-      `((".*" . ,(expand-file-name
-                 (concat user-emacs-directory "backups")))))
-
-;; Make backups of files, even when they're in version control
-(setq vc-make-backup-files t)
-
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
-
 ;; ag, The Silver Searcher
 (require 'ag)
 (setq ag-highlight-search t)
 
-;; Keep cursor away from edges when scrolling up/down
-;; (require 'smooth-scrolling)
+
+
+;; Smooth Scrolling ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (setq scroll-margin 8
       scroll-conservatively 9999
       scroll-preserve-screen-position t)
+
+;; Keep cursor away from edges when scrolling up/down
+;; (require 'smooth-scrolling)
+
+
+
+;; Clipboard ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; http://hugoheden.wordpress.com/2009/03/08/copypaste-with-emacs-in-terminal/
 ;; I prefer using the "clipboard" selection (the one the
@@ -658,6 +697,10 @@
     ;; http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
     ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
     ))
+
+
+
+;; Keybinding Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Switch to previously selected buffer.
 (defun backward-buffer ()
@@ -793,8 +836,9 @@ the current state and point position."
    (interactive "*p")
    (move-text-internal (- arg)))
 
-;; (require 'switch-window)
-;; (setq switch-window-shortcut-style 'qwerty)
+
+
+;; Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Ace Jump
 (require 'ace-jump-mode)
@@ -808,7 +852,6 @@ the current state and point position."
 
 ;; (global-set-key (kbd "C-c SPC") 'ace-jump-char-mode)
 ;; (define-key evil-normal-state-map (kbd "") 'ace-jump-mode)
-
 
 ;; Redefine ESC (By default it's meta)
 (define-key evil-insert-state-map (kbd "ESC") 'evil-normal-state)
@@ -856,15 +899,9 @@ the current state and point position."
 ;; Projectile
 (define-key evil-normal-state-map (kbd "C-p") 'projectile-find-file)
 
-;; ;; Multiple Cursors
-;; (define-key evil-emacs-state-map (kbd "C->") 'mc/mark-next-like-this)
-;; (define-key evil-emacs-state-map (kbd "C-<") 'mc/mark-previous-like-this)
-;; (define-key evil-visual-state-map (kbd "C->") 'mc/mark-all-like-this)
-;; (define-key evil-normal-state-map (kbd "C->") 'mc/mark-next-like-this)
-;; (define-key evil-normal-state-map (kbd "C-<") 'mc/mark-previous-like-this)
-
 ;; Other
 (global-set-key (kbd "RET") 'newline-and-indent)
+(define-key minibuffer-local-map (kbd "C-w") 'backward-kill-word)
 
 ;; Navigate windows with M-<arrows>
 (windmove-default-keybindings 'meta)
@@ -904,9 +941,10 @@ the current state and point position."
     (evil-shift-right (mark) (point))
     ;; re-select last visual-mode selection
     (evil-visual-restore)))
+
 (define-key evil-visual-state-map "<" (lambda ()
     (interactive)
-    ; ensure mark is less than point
+    ;; ensure mark is less than point
     (when (> (mark) (point))
         (exchange-point-and-mark)
     )
@@ -935,7 +973,10 @@ the current state and point position."
 (define-key evil-normal-state-map (kbd "[ e") 'move-text-up)
 (define-key evil-normal-state-map (kbd "] e") 'move-text-down)
 
-;; evil-leader keybindings
+
+
+;; Evil-leader Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (evil-leader/set-key "SPC" 'ace-jump-mode)
 (global-set-key (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
 
@@ -1007,12 +1048,12 @@ the current state and point position."
 (evil-leader/set-key "nw" 'widen)
 
 ;; Projectile
-(evil-leader/set-key "p"  'projectile-ag)
+(evil-leader/set-key "p"  'projectile-find-file)
 
 ;; Terminal
 (evil-leader/set-key "t"  '(lambda()
                              (interactive)
-                             (async-shell-command "urxvtc")))
+                             (shell-command "urxvtc")))
 
 ;; Selection
 (evil-leader/set-key "v" 'er/expand-region)
