@@ -225,6 +225,7 @@
 (set-cursor-color "#CCCCCC")
 (set-mouse-color "#CCCCCC")
 
+;; Default window metrics
 (setq default-frame-alist
       '((top   . 10) (left   . 2)
         (width . 80) (height . 30)
@@ -238,7 +239,7 @@
     (progn (setq myFrameFont "Consolas 10")
            (add-to-list 'default-frame-alist '(font . "Consolas 10"))
            )
-  ;; Not Windows
+  ;; If not Windows
   (progn (setq myFrameFont "Inconsolata 10")
          (add-to-list 'default-frame-alist '(font . "Inconsolata 10"))
          )
@@ -259,7 +260,7 @@
 (line-number-mode t)   ;; have line numbers and
 (column-number-mode t) ;; column numbers in the mode line
 
-(setq-default indent-tabs-mode nil) ;; No tabs
+(setq indent-tabs-mode nil) ;; No tabs
 
 ;; Don't add newlines when cursor goes past end of file
 (setq next-line-add-newlines nil)
@@ -401,35 +402,32 @@
 ;; Emacs-Lisp Hooks
 (add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "ξLisp")))
 
+(defun my-c-lineup-inclass (langelem)
+  (let ((inclass (assoc 'inclass c-syntactic-context)))
+    (save-excursion
+      (goto-char (c-langelem-pos inclass))
+      (if (or (looking-at "struct")
+              (looking-at "typedef struct"))
+          '+
+        '++))))
+
 ;; C Mode Hooks
 (defun c-mode-common-custom ()
   (setq c-default-style "bsd")
-  ;; 4-space tab size
-  (setq c-basic-offset 4))
+  (setq c-basic-offset 4)
+  (c-set-offset 'access-label '-)
+  (c-set-offset 'inclass 'my-c-lineup-inclass))
 
 ;; (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 (add-hook 'c-mode-common-hook 'c-mode-common-custom)
-
-;; Guess indentation style --------------------
-;;Automagically find the indentation style in the source file.
-;;(Good for me, since my collaborator is using tabs)
-
-;;Use autoload for faster start-up (rather than "require"):
-;;(autoload 'dtrt-indent-mode "dtrt-indent" "Adapt to foreign indentation offsets" t)
-;;(add-hook 'c-mode-common-hook 'dtrt-indent-mode)
-
-(add-hook 'c-mode-common-hook
-          (lambda()
-            (when (require 'dtrt-indent nil 'noerror)
-              (dtrt-indent-mode t))))
 
 ;; Haskell Mode Hooks
 (defun haskell-mode-common-custom()
   (haskell-doc-mode)
   ;; (haskell-indentation-mode)
   ;; (haskell-simple-indent-mode)
-  (haskell-indent-mode)
-  )
+  (haskell-indent-mode))
+
 (add-hook 'haskell-mode-hook 'haskell-mode-common-custom)
 
 ;; Markdown Mode Hooks
@@ -509,12 +507,12 @@
   (global-auto-complete-mode t))
 
 ;; dirty fix for having AC everywhere
-(define-globalized-minor-mode real-global-auto-complete-mode
-  auto-complete-mode (lambda ()
-                       (if (not (minibufferp (current-buffer)))
-                           (auto-complete-mode t))
-                       ))
-(real-global-auto-complete-mode t)
+;; (define-globalized-minor-mode real-global-auto-complete-mode
+;;   auto-complete-mode (lambda ()
+;;                        (if (not (minibufferp (current-buffer)))
+;;                            (auto-complete-mode t))
+;;                        ))
+;; (real-global-auto-complete-mode t)
 
 (my-ac-config)
 
@@ -838,7 +836,7 @@ the current state and point position."
 
 
 
-;; Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (Other) Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Ace Jump
 (require 'ace-jump-mode)
@@ -853,7 +851,7 @@ the current state and point position."
 ;; (global-set-key (kbd "C-c SPC") 'ace-jump-char-mode)
 ;; (define-key evil-normal-state-map (kbd "") 'ace-jump-mode)
 
-;; Redefine ESC (By default it's meta)
+;; Redefine ESC for Evil (By default it's meta)
 (define-key evil-insert-state-map (kbd "ESC") 'evil-normal-state)
 (define-key evil-visual-state-map (kbd "ESC") 'evil-normal-state)
 (define-key evil-replace-state-map (kbd "ESC") 'evil-normal-state)
@@ -916,7 +914,7 @@ the current state and point position."
   (evil-previous-visual-line)
   (evil-join beg end))
 
-;; Package list: don't need to switch to evil mode if I have these two keys...
+;; Package list: don't need to switch to evil mode if I have these two keys!
 (define-key package-menu-mode-map "j" 'next-line)
 (define-key package-menu-mode-map "k" 'previous-line)
 
