@@ -477,21 +477,17 @@
   (setq ac-clang-complete-executable (concat user-emacs-directory
                                              "pkg/emacs-clang-complete-async/clang-complete"))
   (setq ac-clang-flags
-        (mapcar (lambda (item)(concat "-I" item))
-                (split-string
-                 "
- /usr/include/c++/4.8.2
- /usr/include/c++/4.8.2/x86_64-unknown-linux-gnu
- /usr/include/c++/4.8.2/backward
- /usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.2/include
- /usr/local/include
- /usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.2/include-fixed
- /usr/include
-"
-                 )))
+	(append
+	 (list
+	  "-I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.2/../../../../include/c++/4.8.2"
+	  "-I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.2/../../../../include/c++/4.8.2/x86_64-unknown-linux-gnu"
+	  "-I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.2/../../../../include/c++/4.8.2/backward"
+	  "-I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.2/include"
+	  "-I/usr/local/include"
+	  "-I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.2/include-fixed"
+	  "-I/usr/include")))
   (setq ac-sources '(ac-source-clang-async ac-source-dictionary ac-source-filename))
-  (ac-clang-launch-completion-process)
-  )
+  (ac-clang-launch-completion-process))
 
 (defun my-ac-config ()
   (setq-default ac-sources '(ac-source-abbrev
@@ -533,7 +529,7 @@
 (setq ac-use-fuzzy t)
 
 ;; Set history file location
-(setq ac-comphist-file (expand-file-name "cache/ac-comphist.dat" user-emacs-directory))
+(setq ac-comphist-file (expand-file-name (concat user-emacs-directory "cache/ac-comphist.dat")))
 
 ;; Key mappings
 (setq ac-use-menu-map t)
@@ -560,6 +556,8 @@
 (setq sml/theme 'dark)
 (require 'smart-mode-line)
 (sml/setup)
+
+;; More smart-mode-line configuration inside "custom.el"
 
 ;; Highlight current line
 ;; (global-hl-line-mode t)
@@ -612,10 +610,10 @@
 
 ;; make leader available in visual mode
 (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
-(define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
+;; (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
 (define-key evil-emacs-state-map (kbd "SPC") evil-leader--default-map)
 
-;; Cursor Color
+;; Stop evil from overwriting cursor color
 (setq evil-default-cursor t)
 ;; (setq evil-insert-state-cursor '("#aa0000" hbar))
 
@@ -851,6 +849,9 @@ the current state and point position."
 ;; (global-set-key (kbd "C-c SPC") 'ace-jump-char-mode)
 ;; (define-key evil-normal-state-map (kbd "") 'ace-jump-mode)
 
+;; Make end-of-line work in insert
+(define-key evil-insert-state-map "\C-e" 'end-of-line)
+
 ;; Redefine ESC for Evil (By default it's meta)
 (define-key evil-insert-state-map (kbd "ESC") 'evil-normal-state)
 (define-key evil-visual-state-map (kbd "ESC") 'evil-normal-state)
@@ -860,12 +861,11 @@ the current state and point position."
 
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
 (define-key evil-visual-state-map [escape] 'keyboard-quit)
-(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
-(global-set-key [escape] 'evil-exit-emacs-state)
+(define-key minibuffer-local-map [escape] 'abort-recursive-edit)
+(define-key minibuffer-local-ns-map [escape] 'abort-recursive-edit)
+(define-key minibuffer-local-completion-map [escape] 'abort-recursive-edit)
+(define-key minibuffer-local-must-match-map [escape] 'abort-recursive-edit)
+(define-key minibuffer-local-isearch-map [escape] 'abort-recursive-edit)
 
 ;; Expand Region
 (require 'expand-region)
@@ -893,9 +893,6 @@ the current state and point position."
 (global-set-key (kbd "C-x C-m") 'smex)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
-
-;; Projectile
-(define-key evil-normal-state-map (kbd "C-p") 'projectile-find-file)
 
 ;; Other
 (global-set-key (kbd "RET") 'newline-and-indent)
@@ -955,7 +952,6 @@ the current state and point position."
 (require 'key-chord)
 (key-chord-mode 1)
 (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
-(key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
 
 (key-chord-define evil-normal-state-map "jc" 'ace-jump-char-mode)
 (key-chord-define evil-normal-state-map "jl" 'ace-jump-line-mode)
@@ -1055,35 +1051,6 @@ the current state and point position."
 
 ;; Selection
 (evil-leader/set-key "v" 'er/expand-region)
-
-;; Window
-(evil-leader/set-key "wb" 'balance-windows)
-(evil-leader/set-key "wc" 'delete-window)
-
-(evil-leader/set-key "wH" 'evil-window-move-far-left)
-(evil-leader/set-key "wh" 'evil-window-left)
-
-(evil-leader/set-key "wJ" 'evil-window-move-very-bottom)
-(evil-leader/set-key "wj" 'evil-window-down)
-(evil-leader/set-key "wK" 'evil-window-move-very-top)
-(evil-leader/set-key "wk" 'evil-window-up)
-(evil-leader/set-key "wL" 'evil-window-move-far-right)
-(evil-leader/set-key "wl" 'evil-window-right)
-
-(evil-leader/set-key "wm" 'toggle-maximize-buffer)
-(evil-leader/set-key "ws" 'split-window-vertically)
-(evil-leader/set-key "wv" 'split-window-horizontally)
-(evil-leader/set-key "ww" 'switch-window)
-
-;; text
-(evil-leader/set-key "xdw" 'delete-trailing-whitespace)
-;; (evil-leader/set-key "xtc" 'transpose-chars)
-;; (evil-leader/set-key "xtl" 'transpose-lines)
-;; (evil-leader/set-key "xtw" 'transpose-words)
-(evil-leader/set-key "xbu" 'untabify)
-(evil-leader/set-key "xbt" 'tabify)
-(evil-leader/set-key "xU"  'upcase-word)
-(evil-leader/set-key "xu"  'downcase-word)
 
 ;; Org Mode settings
 (evil-define-key 'normal org-mode-map
