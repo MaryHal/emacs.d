@@ -216,6 +216,13 @@
   (balance-windows))
 (ad-activate 'delete-window)
 
+;; Don't kill scratch buffer, just bury it.
+(defadvice kill-buffer (around my-advice-for-kill-buffer activate)
+  (let ((buffer-to-kill (ad-get-arg 0)))
+    (if (equal buffer-to-kill "*Scratch*")
+        (bury-buffer)
+      ad-do-it)))
+
 
 
 ;; Appearance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -237,12 +244,10 @@
 (if (string= system-type "windows-nt")
     ;; If Windows
     (progn (setq myFrameFont "Consolas 10")
-           (add-to-list 'default-frame-alist '(font . "Consolas 10"))
-           )
+           (add-to-list 'default-frame-alist '(font . "Consolas 10")))
   ;; If not Windows
   (progn (setq myFrameFont "Inconsolata 10")
-         (add-to-list 'default-frame-alist '(font . "Inconsolata 10"))
-         )
+         (add-to-list 'default-frame-alist '(font . "Inconsolata 10")))
   )
 
 ;; Toolbars and such
@@ -402,6 +407,7 @@
 ;; Emacs-Lisp Hooks
 (add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "ξLisp")))
 
+;; C Mode Hooks
 (defun my-c-lineup-inclass (langelem)
   (let ((inclass (assoc 'inclass c-syntactic-context)))
     (save-excursion
@@ -411,7 +417,6 @@
           '+
         '++))))
 
-;; C Mode Hooks
 (defun c-mode-common-custom ()
   (setq c-default-style "bsd")
   (setq c-basic-offset 4)
@@ -883,10 +888,12 @@ the current state and point position."
 ;; Commentin'
 (global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
 
-;; Create new frame
+;; Frames
 (define-key global-map (kbd "C-c f k") 'delete-frame)
 (define-key global-map (kbd "C-c f n") 'make-frame-command)
 (define-key global-map (kbd "C-c f o") 'other-frame)
+
+(define-key evil-normal-state-map (kbd "g t") 'other-frame)
 
 ;; Smex
 (global-set-key (kbd "M-x") 'smex)
@@ -953,15 +960,13 @@ the current state and point position."
 (key-chord-mode 1)
 (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
 
-(key-chord-define evil-normal-state-map "jc" 'ace-jump-char-mode)
-(key-chord-define evil-normal-state-map "jl" 'ace-jump-line-mode)
-(key-chord-define evil-normal-state-map "jw" 'ace-jump-word-mode)
-
 ;; "Unimpaired"
 (define-key evil-normal-state-map (kbd "[ SPC") 'evil-insert-line-above)
 (define-key evil-normal-state-map (kbd "] SPC") 'evil-insert-line-below)
 (define-key evil-normal-state-map (kbd "[ b") 'previous-buffer)
 (define-key evil-normal-state-map (kbd "] b") 'next-buffer)
+(define-key evil-normal-state-map (kbd "[ q") 'previous-error)
+(define-key evil-normal-state-map (kbd "] q") 'next-error)
 
 ;; Bubble Text up and down. Works with regions.
 (define-key evil-normal-state-map (kbd "[ e") 'move-text-up)
@@ -973,6 +978,9 @@ the current state and point position."
 
 (evil-leader/set-key "SPC" 'ace-jump-mode)
 (global-set-key (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
+
+;; Vim-sneak-like keybinding
+(define-key evil-motion-state-map (kbd "z") 'evil-ace-jump-char-mode)
 
 ;; Alternate
 (evil-leader/set-key "aa" 'ff-find-other-file)
@@ -1019,27 +1027,12 @@ the current state and point position."
 
 ;; Helm
 (evil-leader/set-key "hb" 'helm-buffers-list)
-(evil-leader/set-key "hc" 'helm-browse-code)
 (evil-leader/set-key "hf" 'helm-find-files)
 (evil-leader/set-key "hi" 'helm-imenu)
 (evil-leader/set-key "hk" 'helm-show-kill-ring)
 (evil-leader/set-key "hm" 'helm-mini)
 (evil-leader/set-key "hs" 'helm-swoop)
 (evil-leader/set-key "hx" 'helm-M-x)
-
-;; Jump. ACE Jump.
-(evil-leader/set-key "jc" 'ace-jump-char-mode)
-(evil-leader/set-key "jw" 'ace-jump-word-mode)
-
-;; Line insertion
-(evil-leader/set-key "jj" 'evil-insert-line-below)
-(evil-leader/set-key "kk" 'evil-insert-line-above)
-
-;; narrow & widen
-(evil-leader/set-key "nr" 'narrow-to-region)
-(evil-leader/set-key "np" 'narrow-to-page)
-(evil-leader/set-key "nf" 'narrow-to-defun)
-(evil-leader/set-key "nw" 'widen)
 
 ;; Projectile
 (evil-leader/set-key "p"  'projectile-find-file)
