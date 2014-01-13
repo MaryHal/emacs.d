@@ -250,6 +250,13 @@
          (add-to-list 'default-frame-alist '(font . "Inconsolata 10")))
   )
 
+;; Transparency?
+;; (if (string= system-type "gnu/linux")
+;;     (if (string= window-system "x")
+;;         (set-frame-parameter (selected-frame) 'alpha '(90 90))
+;;         (add-to-list 'default-frame-alist '(alpha 90 90))
+;; 	))
+
 ;; Toolbars and such
 ;; (add-hook 'before-make-frame-hook 'turn-off-tool-bar)
 (menu-bar-mode -1)
@@ -539,14 +546,14 @@
 ;; Key mappings
 (setq ac-use-menu-map t)
 
-(define-key ac-menu-map (kbd "<tab>") 'ac-next)
-(define-key ac-menu-map (kbd "<backtab>") 'ac-previous)
+;; (define-key ac-menu-map (kbd "<tab>") 'ac-next)
+;; (define-key ac-menu-map (kbd "<backtab>") 'ac-previous)
 (define-key ac-menu-map (kbd "C-j") 'ac-next)
 (define-key ac-menu-map (kbd "C-k") 'ac-previous)
 
-(define-key ac-menu-map (kbd "RET") 'ac-complete)
-(define-key ac-menu-map (kbd "ESC") 'ac-stop)
-(define-key ac-menu-map (kbd "C-l") 'ac-expand-common)
+;; (define-key ac-menu-map (kbd "RET") 'ac-complete)
+;; (define-key ac-menu-map (kbd "ESC") 'ac-stop)
+;; (define-key ac-menu-map (kbd "C-l") 'ac-expand-common)
 
 ;; Colors
 ;; (set-face-background 'ac-candidate-face "lightgray")
@@ -703,6 +710,12 @@
 
 ;; Keybinding Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+ ;; Set transparency of emacs
+ (defun transparency (value)
+   "Sets the transparency of the frame window. 0=transparent/100=opaque"
+   (interactive "nTransparency Value 0 - 100 opaque:")
+   (set-frame-parameter (selected-frame) 'alpha value))
+
 ;; Switch to previously selected buffer.
 (defun backward-buffer ()
   (interactive)
@@ -855,7 +868,7 @@ the current state and point position."
 ;; (define-key evil-normal-state-map (kbd "") 'ace-jump-mode)
 
 ;; Make end-of-line work in insert
-(define-key evil-insert-state-map "\C-e" 'end-of-line)
+(define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
 
 ;; Redefine ESC for Evil (By default it's meta)
 (define-key evil-insert-state-map (kbd "ESC") 'evil-normal-state)
@@ -894,6 +907,8 @@ the current state and point position."
 (define-key global-map (kbd "C-c f o") 'other-frame)
 
 (define-key evil-normal-state-map (kbd "g t") 'other-frame)
+
+(global-set-key (kbd "C-c t") 'transparency)
 
 ;; Smex
 (global-set-key (kbd "M-x") 'smex)
