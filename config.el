@@ -6,7 +6,7 @@
 
 ;; Custom configuration files
 (add-to-loadpath (concat user-emacs-directory "pkg/emacs-clang-complete-async")
-                 (concat user-emacs-directory "pkg/irony-mode"))
+                 (concat user-emacs-directory "pkg/irony-mode/elisp"))
 
 
 
@@ -193,13 +193,13 @@
 (defadvice load-theme (after load-theme activate compile)
   (if (string= system-type "gnu/linux")
       (if (string= window-system "x")
-	  (progn (set-frame-parameter (selected-frame) 'alpha '(90 90))
-		 (add-to-list 'default-frame-alist '(alpha 90 90))
-		 (set-face-attribute 'default nil :background "black"))
-	(progn (when (getenv "DISPLAY")
-		   (set-face-attribute 'default nil :background "unspecified-bg")
-		   ))
-	)))
+          (progn (set-frame-parameter (selected-frame) 'alpha '(90 90))
+                 (add-to-list 'default-frame-alist '(alpha 90 90))
+                 (set-face-attribute 'default nil :background "black"))
+        (progn (when (getenv "DISPLAY")
+                   (set-face-attribute 'default nil :background "unspecified-bg")
+                   ))
+        )))
 
 ;; Window Rebalancing
 (setq split-height-threshold nil)
@@ -282,8 +282,10 @@
 ;; Don't Blink Cursor
 (blink-cursor-mode -1)
 
-;; Fringe
+;; Fringe and window margins
 (set-fringe-mode 0)
+(setq-default left-margin-width 1 right-margin-width 1)
+(set-window-buffer nil (current-buffer))
 
 (setq visible-bell nil
       font-lock-maximum-decoration t
@@ -485,6 +487,27 @@
 ;; Auto-complete dictionary directories. It should already contain the default dictionaries.
 ;; (add-to-list 'ac-dictionary-directories (concat user-emacs-directory "ac-dict/"))
 
+;; Irony Mode
+(require 'irony)
+
+(autoload 'irony-enable "irony")
+(irony-enable 'ac)
+
+
+(defun my-c++-hooks ()
+  "Enable the hooks in the preferred order: 'yas -> auto-complete -> irony'."
+  ;; if yas is not set before (auto-complete-mode 1), overlays may persist after
+  ;; an expansion.
+  ;; (yas/minor-mode-on)
+  (auto-complete-mode 1)
+
+  ;; avoid enabling irony-mode in modes that inherits c-mode, e.g: php-mode
+  (when (member major-mode irony-known-modes)
+    (irony-mode 1)))
+
+(add-hook 'c++-mode-hook 'my-c++-hooks)
+(add-hook 'c-mode-hook 'my-c++-hooks)
+
 (defun my-ac-config ()
   (setq-default ac-sources '(ac-source-abbrev
                              ac-source-dictionary
@@ -492,7 +515,7 @@
                              ac-source-words-in-buffer
                              ac-source-words-in-same-mode-buffers))
   (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
-  (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
+  ;; (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
   (add-hook 'ruby-mode-hook 'ac-ruby-mode-setup)
   (add-hook 'css-mode-hook 'ac-css-mode-setup)
   (add-hook 'auto-complete-mode-hook 'ac-common-setup)
@@ -530,8 +553,8 @@
 ;; Key mappings
 (setq ac-use-menu-map t)
 
-;; (define-key ac-menu-map (kbd "<tab>") 'ac-next)
-;; (define-key ac-menu-map (kbd "<backtab>") 'ac-previous)
+(define-key ac-menu-map (kbd "<tab>") 'ac-next)
+(define-key ac-menu-map (kbd "<backtab>") 'ac-previous)
 (define-key ac-menu-map (kbd "C-j") 'ac-next)
 (define-key ac-menu-map (kbd "C-k") 'ac-previous)
 
@@ -543,7 +566,7 @@
 ;; (set-face-background 'ac-candidate-face "lightgray")
 ;; (set-face-underline 'ac-candidate-face "darkgray")
 ;; (set-face-background 'ac-selection-face "steelblue")
-(set-face-foreground 'ac-selection-face "black")
+;; (set-face-foreground 'ac-selection-face "black")
 
 
 
