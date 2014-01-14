@@ -485,23 +485,6 @@
 ;; Auto-complete dictionary directories. It should already contain the default dictionaries.
 ;; (add-to-list 'ac-dictionary-directories (concat user-emacs-directory "ac-dict/"))
 
-(require 'auto-complete-clang-async)
-(defun ac-cc-mode-setup ()
-  (setq ac-clang-complete-executable (concat user-emacs-directory
-                                             "pkg/emacs-clang-complete-async/clang-complete"))
-  (setq ac-clang-flags
-	(append
-	 (list
-	  "-I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.2/../../../../include/c++/4.8.2"
-	  "-I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.2/../../../../include/c++/4.8.2/x86_64-unknown-linux-gnu"
-	  "-I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.2/../../../../include/c++/4.8.2/backward"
-	  "-I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.2/include"
-	  "-I/usr/local/include"
-	  "-I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.2/include-fixed"
-	  "-I/usr/include")))
-  (setq ac-sources '(ac-source-clang-async ac-source-dictionary ac-source-filename))
-  (ac-clang-launch-completion-process))
-
 (defun my-ac-config ()
   (setq-default ac-sources '(ac-source-abbrev
                              ac-source-dictionary

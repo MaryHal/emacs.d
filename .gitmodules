@@ -1,0 +1,6 @@
+[submodule "pkg/emacs-clang-complete-async"]
+	path = pkg/emacs-clang-complete-async
+	url = https://github.com/Golevka/emacs-clang-complete-async.git
+[submodule "pkg/irony-mode"]
+	path = pkg/irony-mode
+	url = https://github.com/Sarcasm/irony-mode.git
