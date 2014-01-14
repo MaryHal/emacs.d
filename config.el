@@ -187,12 +187,19 @@
   (unless (string-match-p "\\[wiki\\]$" (package-desc-doc (cdr package)))
     ad-do-it))
 
-;; After load theme, if in terminal, clear background.
+;; Transparency after load theme...
+;; On Linux, if in terminal, clear the background. If GUI, set background to black and set
+;; frame transparency.
 (defadvice load-theme (after load-theme activate compile)
-  (unless window-system
-    (when (getenv "DISPLAY")
-      (set-face-attribute 'default nil :background "unspecified-bg")
-      )))
+  (if (string= system-type "gnu/linux")
+      (if (string= window-system "x")
+	  (progn (set-frame-parameter (selected-frame) 'alpha '(90 90))
+		 (add-to-list 'default-frame-alist '(alpha 90 90))
+		 (set-face-attribute 'default nil :background "black"))
+	(progn (when (getenv "DISPLAY")
+		   (set-face-attribute 'default nil :background "unspecified-bg")
+		   ))
+	)))
 
 ;; Window Rebalancing
 (setq split-height-threshold nil)
@@ -227,7 +234,8 @@
 
 ;; Appearance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Theme is loaded via Customize
+;; Load theme
+(load-theme 'base16-default t)
 
 (set-cursor-color "#CCCCCC")
 (set-mouse-color "#CCCCCC")
@@ -249,13 +257,6 @@
   (progn (setq myFrameFont "Inconsolata 10")
          (add-to-list 'default-frame-alist '(font . "Inconsolata 10")))
   )
-
-;; Transparency?
-;; (if (string= system-type "gnu/linux")
-;;     (if (string= window-system "x")
-;;         (set-frame-parameter (selected-frame) 'alpha '(90 90))
-;;         (add-to-list 'default-frame-alist '(alpha 90 90))
-;; 	))
 
 ;; Toolbars and such
 ;; (add-hook 'before-make-frame-hook 'turn-off-tool-bar)
@@ -710,11 +711,20 @@
 
 ;; Keybinding Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
- ;; Set transparency of emacs
- (defun transparency (value)
-   "Sets the transparency of the frame window. 0=transparent/100=opaque"
-   (interactive "nTransparency Value 0 - 100 opaque:")
-   (set-frame-parameter (selected-frame) 'alpha value))
+(defun my-window-killer ()
+  "closes the window, and deletes the buffer if it's the last window open."
+  (interactive)
+  (if (> buffer-display-count 1)
+      (if (= (length (window-list)) 1)
+          (kill-buffer)
+        (delete-window))
+    (kill-buffer-and-window)))
+
+;; Set transparency of emacs
+(defun transparency (value)
+  "Sets the transparency of the frame window. 0=transparent/100=opaque"
+  (interactive "nTransparency Value 0 - 100 opaque:")
+  (set-frame-parameter (selected-frame) 'alpha value))
 
 ;; Switch to previously selected buffer.
 (defun backward-buffer ()
@@ -908,8 +918,6 @@ the current state and point position."
 
 (define-key evil-normal-state-map (kbd "g t") 'other-frame)
 
-(global-set-key (kbd "C-c t") 'transparency)
-
 ;; Smex
 (global-set-key (kbd "M-x") 'smex)
 (global-set-key (kbd "C-x C-m") 'smex)
@@ -946,6 +954,9 @@ the current state and point position."
 
 ;; Make Y work like D
 (define-key evil-normal-state-map (kbd "Y") (kbd "y$"))
+
+;; Kill buffer if only window with buffer open, otherwise just close the window.
+(define-key evil-normal-state-map (kbd "Q") 'my-window-killer)
 
 ;; Visual indentation now reselects visual selection.
 (define-key evil-visual-state-map ">" (lambda ()
