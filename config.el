@@ -234,9 +234,6 @@
 
 ;; Appearance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Load theme
-(load-theme 'base16-default t)
-
 (set-cursor-color "#CCCCCC")
 (set-mouse-color "#CCCCCC")
 
@@ -247,6 +244,9 @@
         (mouse-color  . "#CCCCCC")
         (cursor-color . "#CCCCCC")
         ))
+
+;; Load theme
+(load-theme 'base16-default t)
 
 ;; Set font
 (if (string= system-type "windows-nt")
