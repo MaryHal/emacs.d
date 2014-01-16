@@ -273,7 +273,8 @@
 (line-number-mode t)   ;; have line numbers and
 (column-number-mode t) ;; column numbers in the mode line
 
-(setq indent-tabs-mode nil) ;; No tabs
+;; No Tabs, just spaces
+(setq-default indent-tabs-mode nil)
 
 ;; Don't add newlines when cursor goes past end of file
 (setq next-line-add-newlines nil)

@@ -26,6 +26,7 @@
                      auctex
                      auto-complete
                      base16-theme
+                     elscreen
                      epl
                      evil-leader
                      evil
@@ -34,7 +35,7 @@
                      helm
                      helm-swoop
                      json
-		     js3-mode
+                     js2-mode
                      key-chord
                      flx
                      flx-ido
