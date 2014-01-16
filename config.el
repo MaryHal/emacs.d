@@ -1,4 +1,4 @@
-;; Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun add-to-loadpath (&rest dirs)
   (dolist (dir dirs load-path)
@@ -10,7 +10,7 @@
 
 
 
-;; Sane Defaults ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Sane Defaults ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Auto refresh buffers
 (global-auto-revert-mode t)
@@ -173,7 +173,7 @@
 
 
 
-;; Advice ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Advice ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; When popping the mark, continue popping until the cursor actually moves
 (defadvice pop-to-mark-command (around ensure-new-position activate)
@@ -309,7 +309,7 @@
 
 
 
-;; Ido-mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Ido-mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (require 'ido)
 (ido-mode t)
@@ -372,7 +372,7 @@
 
 
 
-;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (require 'helm)
 (require 'helm-config)
@@ -412,7 +412,7 @@
 
 
 
-;; Language Hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Language Hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Emacs-Lisp Hooks
 (add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "ξLisp")))
@@ -566,11 +566,11 @@
 ;; (set-face-background 'ac-candidate-face "lightgray")
 ;; (set-face-underline 'ac-candidate-face "darkgray")
 ;; (set-face-background 'ac-selection-face "steelblue")
-;; (set-face-foreground 'ac-selection-face "black")
+;; (set-face-foreground 'ac-selection-face "darkgray")
 
 
 
-;; Modeline ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Modeline ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (setq sml/theme 'dark)
 (require 'smart-mode-line)
@@ -658,7 +658,7 @@
 
 
 
-;; Smooth Scrolling ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Smooth Scrolling ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (setq scroll-margin 8
       scroll-conservatively 9999
@@ -1058,13 +1058,17 @@ the current state and point position."
                             (ido-find-file)))
 
 ;; Helm
-(evil-leader/set-key "hb" 'helm-buffers-list)
+(evil-leader/set-key "k" 'helm-show-kill-ring)
+(evil-leader/set-key "o" 'helm-imenu)
+(evil-leader/set-key "r" 'helm-register)
+(evil-leader/set-key "u" 'helm-buffers-list)
+(evil-leader/set-key "x" 'helm-M-x)
+
 (evil-leader/set-key "hf" 'helm-find-files)
-(evil-leader/set-key "hi" 'helm-imenu)
+(evil-leader/set-key "ho" 'helm-imenu)
 (evil-leader/set-key "hk" 'helm-show-kill-ring)
 (evil-leader/set-key "hm" 'helm-mini)
 (evil-leader/set-key "hs" 'helm-swoop)
-(evil-leader/set-key "hx" 'helm-M-x)
 
 ;; Projectile
 (evil-leader/set-key "p"  'projectile-find-file)

@@ -34,7 +34,7 @@
                      helm
                      helm-swoop
                      json
-		     js2-mode
+		     js3-mode
                      key-chord
                      flx
                      flx-ido
