@@ -285,8 +285,8 @@
 
 ;; Fringe and window margins
 (set-fringe-mode 0)
-(setq-default left-margin-width 1 right-margin-width 1)
-(set-window-buffer nil (current-buffer))
+;; (setq-default left-margin-width 1 right-margin-width 1)
+;; (set-window-buffer nil (current-buffer))
 
 (setq visible-bell nil
       font-lock-maximum-decoration t
@@ -478,6 +478,9 @@
 (add-to-list 'auto-mode-alist '("\\.tag$" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.vm$" . html-mode))
 
+;; Javascript
+(add-hook 'js2-mode-hook 'ac-js2-mode)
+
 
 
 ;; Auto-complete ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -567,7 +570,7 @@
 ;; (set-face-background 'ac-candidate-face "lightgray")
 ;; (set-face-underline 'ac-candidate-face "darkgray")
 ;; (set-face-background 'ac-selection-face "steelblue")
-;; (set-face-foreground 'ac-selection-face "darkgray")
+(set-face-foreground 'ac-selection-face "darkgray")
 
 
 

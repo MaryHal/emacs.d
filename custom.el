@@ -25,4 +25,4 @@
  '(mode-line ((t (:background "gray6" :foreground "gray60"))))
  '(mode-line-inactive ((t (:background "gray10" :foreground "gray60"))))
  '(region ((t (:background "RoyalBlue" :foreground "gray6"))))
- '(vertical-border ((t (:background "gray6" :foreground "gray6")))))
+ '(vertical-border ((t (:background "gray10" :foreground "gray10")))))

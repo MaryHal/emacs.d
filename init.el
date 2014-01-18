@@ -22,11 +22,11 @@
 			 ("melpa" . "http://melpa.milkbox.net/packages/")))
 
 (setq package-list '(ace-jump-mode
+                     ac-js2
                      ag
                      auctex
                      auto-complete
                      base16-theme
-                     elscreen
                      epl
                      evil-leader
                      evil
@@ -48,10 +48,12 @@
                      popwin
                      projectile
                      s
+                     skewer-mode
                      smart-mode-line
                      smex
                      surround
-                     undo-tree))
+                     undo-tree
+                     workgroups2))
 
 ;; Activate all the packages (in particular autoloads)
 (package-initialize)
