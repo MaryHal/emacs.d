@@ -557,7 +557,7 @@
 ;; Key mappings
 (setq ac-use-menu-map t)
 
-(define-key ac-menu-map (kbd "<tab>") 'ac-next)
+(define-key ac-menu-map (kbd "<tab>") 'ac-complete)
 (define-key ac-menu-map (kbd "<backtab>") 'ac-previous)
 (define-key ac-menu-map (kbd "C-j") 'ac-next)
 (define-key ac-menu-map (kbd "C-k") 'ac-previous)
@@ -570,7 +570,7 @@
 ;; (set-face-background 'ac-candidate-face "lightgray")
 ;; (set-face-underline 'ac-candidate-face "darkgray")
 ;; (set-face-background 'ac-selection-face "steelblue")
-(set-face-foreground 'ac-selection-face "darkgray")
+(set-face-foreground 'ac-selection-face "gray10")
 
 
 
