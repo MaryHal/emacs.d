@@ -41,7 +41,6 @@
                      flx-ido
                      ido-ubiquitous
                      markdown-mode
-                     melpa
                      pkg-info
                      dash
                      popup
