@@ -955,6 +955,10 @@ the current state and point position."
 (define-key package-menu-mode-map "j" 'next-line)
 (define-key package-menu-mode-map "k" 'previous-line)
 
+(define-key evil-normal-state-map (kbd "z z") (lambda ()
+                                                (interactive)
+                                                (evil-scroll-line-to-center (line-number-at-pos))))
+
 ;; gj gk by default
 (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
 (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
