@@ -4,6 +4,9 @@
   (dolist (dir dirs load-path)
     (add-to-list 'load-path (expand-file-name dir) nil #'string=)))
 
+(defun is-in-terminal()
+    (not (display-graphic-p)))
+
 ;; Custom configuration files
 (add-to-loadpath (concat user-emacs-directory "pkg/emacs-clang-complete-async")
                  (concat user-emacs-directory "pkg/irony-mode/elisp"))
@@ -285,8 +288,11 @@
 
 ;; Fringe and window margins
 (set-fringe-mode 0)
-;; (setq-default left-margin-width 1 right-margin-width 1)
-;; (set-window-buffer nil (current-buffer))
+
+;; Set margins to 1 if not in terminal
+(when (not (is-in-terminal))
+  (setq-default left-margin-width 1 right-margin-width 1)
+         (set-window-buffer nil (current-buffer)))
 
 (setq visible-bell nil
       font-lock-maximum-decoration t
