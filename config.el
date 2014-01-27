@@ -8,8 +8,7 @@
     (not (display-graphic-p)))
 
 ;; Custom configuration files
-(add-to-loadpath (concat user-emacs-directory "pkg/emacs-clang-complete-async")
-                 (concat user-emacs-directory "pkg/irony-mode/elisp"))
+(add-to-loadpath (concat user-emacs-directory "pkg/irony-mode/elisp"))
 
 
 
@@ -933,6 +932,13 @@ the current state and point position."
 (define-key global-map (kbd "C-c f o") 'other-frame)
 
 (define-key evil-normal-state-map (kbd "g t") 'other-frame)
+
+;; Window Registers
+;; Register Windows
+(global-set-key (kbd "<f9>") '(lambda () (interactive) (jump-to-register 9)
+                                (message "Windows disposition loaded")))
+(global-set-key (kbd "<f10>") '(lambda () (interactive) (window-configuration-to-register 9)
+                                 (message "Windows disposition saved")))
 
 ;; Smex
 (global-set-key (kbd "M-x") 'smex)
