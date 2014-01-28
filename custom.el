@@ -5,8 +5,6 @@
  ;; If there is more than one, they won't work right.
  '(helm-candidate-number-limit nil)
  '(helm-quick-update t)
- '(persp-mode t nil (persp-mode))
- '(persp-nil-name "none")
  '(sml/active-background-color "gray10")
  '(sml/col-number-format " %4c")
  '(sml/hidden-modes (quote ("hl-p" "AC" "Undo-Tree" "Projectile")))
@@ -27,4 +25,5 @@
  '(mode-line ((t (:background "gray6" :foreground "gray60"))))
  '(mode-line-inactive ((t (:background "gray10" :foreground "gray60"))))
  '(region ((t (:background "RoyalBlue" :foreground "gray6"))))
+ '(trailing-whitespace ((t (:background "goldenrod"))))
  '(vertical-border ((t (:background "gray10" :foreground "gray10")))))
