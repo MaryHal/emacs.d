@@ -5,10 +5,12 @@
  ;; If there is more than one, they won't work right.
  '(helm-candidate-number-limit nil)
  '(helm-quick-update t)
+ '(persp-mode t nil (persp-mode))
+ '(persp-nil-name "none")
  '(sml/active-background-color "gray10")
- '(sml/inactive-background-color "gray18")
  '(sml/col-number-format " %4c")
- '(sml/hidden-modes (quote ("hl-p" "AC" "Undo-Tree" "Projectile"))))
+ '(sml/hidden-modes (quote ("hl-p" "AC" "Undo-Tree" "Projectile")))
+ '(sml/inactive-background-color "gray18"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
