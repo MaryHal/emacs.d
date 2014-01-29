@@ -418,6 +418,21 @@
 
 
 
+;; Workgroups2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'workgroups2)
+
+;; Change workgroups session file
+(setq wg-default-session-file (concat user-emacs-directory "cache/workgroups2"))
+
+(setq wg-use-default-session-file nil)
+
+;; Change prefix key (before activating WG)
+(setq wg-prefix-key (kbd "C-c z"))
+
+(workgroups-mode 1)
+
+
+
 ;; Language Hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Emacs-Lisp Hooks
@@ -927,14 +942,21 @@ the current state and point position."
 (global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
 
 ;; Frames
-(define-key global-map (kbd "C-c f k") 'delete-frame)
-(define-key global-map (kbd "C-c f n") 'make-frame-command)
-(define-key global-map (kbd "C-c f o") 'other-frame)
+;; (define-key global-map (kbd "C-c f k") 'delete-frame)
+;; (define-key global-map (kbd "C-c f n") 'make-frame-command)
+;; (define-key global-map (kbd "C-c f o") 'other-frame)
 
-(define-key evil-normal-state-map (kbd "g t") 'other-frame)
+;; (define-key evil-normal-state-map (kbd "g t") 'other-frame)
+
+;; Workgroups2
+;; (global-set-key (kbd "C-c l") 'wg-reload-session)
+;; (global-set-key (kbd "C-c s") 'wg-save-session)
+;; (global-set-key (kbd "C-c w")   'wg-switch-to-workgroup)
+
+(define-key evil-normal-state-map (kbd "g T") 'wg-switch-to-workgroup-left)
+(define-key evil-normal-state-map (kbd "g t") 'wg-switch-to-workgroup-right)
 
 ;; Window Registers
-;; Register Windows
 (global-set-key (kbd "<f9>") '(lambda () (interactive) (jump-to-register 9)
                                 (message "Windows disposition loaded")))
 (global-set-key (kbd "<f10>") '(lambda () (interactive) (window-configuration-to-register 9)
