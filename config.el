@@ -512,11 +512,12 @@
 ;; (add-to-list 'ac-dictionary-directories (concat user-emacs-directory "ac-dict/"))
 
 ;; Irony Mode
+(if (file-exists-p (concat user-emacs-directory "pkg/irony-mode/elisp/irony.el"))
+    (progn
 (require 'irony)
 
 (autoload 'irony-enable "irony")
 (irony-enable 'ac)
-
 
 (defun my-c++-hooks ()
   "Enable the hooks in the preferred order: 'yas -> auto-complete -> irony'."
@@ -531,6 +532,7 @@
 
 (add-hook 'c++-mode-hook 'my-c++-hooks)
 (add-hook 'c-mode-hook 'my-c++-hooks)
+))
 
 (defun my-ac-config ()
   (setq-default ac-sources '(ac-source-abbrev
