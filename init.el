@@ -31,7 +31,6 @@
                      evil-leader
                      evil
                      expand-region
-                     haskell-mode
                      helm
                      helm-swoop
                      json
