@@ -14,6 +14,11 @@
 
 ;; Sane Defaults ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Emacs will run garbage collection after `gc-cons-threshold' bytes of consing.
+;; The default value is 800,000 bytes, or ~ 0.7 MiB.
+;; By increasing to 10 MiB we reduce the number of pauses due to garbage collection.
+(setq gc-cons-threshold (* 10 1024 1024))
+
 ;; Auto refresh buffers
 (global-auto-revert-mode t)
 
