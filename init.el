@@ -27,6 +27,7 @@
                      auctex
                      auto-complete
                      base16-theme
+                     emacs-eclim
                      epl
                      evil-leader
                      evil

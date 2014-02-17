@@ -511,6 +511,16 @@
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-hook 'js2-mode-hook 'ac-js2-mode)
 
+;; Java + Eclim
+(require 'eclim)
+(custom-set-variables
+ '(eclim-eclipse-dirs '("~/.eclipse")))
+
+(global-eclim-mode)
+
+(require 'ac-emacs-eclim-source)
+(ac-emacs-eclim-config)
+
 
 
 ;; Auto-complete ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
