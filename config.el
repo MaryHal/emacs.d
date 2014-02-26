@@ -513,13 +513,15 @@
 
 ;; Java + Eclim
 (require 'eclim)
-(custom-set-variables
- '(eclim-eclipse-dirs '("~/.eclipse")))
+;; (custom-set-variables
+;;  '(eclim-eclipse-dirs '("")))
+
+;; Error Help
+(setq help-at-pt-display-when-idle t)
+(setq help-at-pt-timer-delay 0.1)
+(help-at-pt-set-timer)
 
 (global-eclim-mode)
-
-(require 'ac-emacs-eclim-source)
-(ac-emacs-eclim-config)
 
 
 
@@ -554,6 +556,10 @@
       (add-hook 'c-mode-hook 'my-c++-hooks)
       ))
 
+;; Eclim Auto-complete
+(require 'ac-emacs-eclim-source)
+(ac-emacs-eclim-config)
+
 (defun my-ac-config ()
   (setq-default ac-sources '(ac-source-abbrev
                              ac-source-dictionary
@@ -567,14 +573,13 @@
   (add-hook 'auto-complete-mode-hook 'ac-common-setup)
   (global-auto-complete-mode t))
 
-;; dirty fix for having AC everywhere
+;; ;; dirty fix for having AC everywhere
 ;; (define-globalized-minor-mode real-global-auto-complete-mode
 ;;   auto-complete-mode (lambda ()
 ;;                        (if (not (minibufferp (current-buffer)))
 ;;                            (auto-complete-mode t))
 ;;                        ))
 ;; (real-global-auto-complete-mode t)
-
 (my-ac-config)
 
 ;; Triggered Auto complete
