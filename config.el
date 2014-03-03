@@ -443,33 +443,25 @@
 ;; Emacs-Lisp Hooks
 (add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "ξLisp")))
 
-;; C Mode Hooks
-(defun my-c-lineup-inclass (langelem)
-  (let ((inclass (assoc 'inclass c-syntactic-context)))
-    (save-excursion
-      (goto-char (c-langelem-pos inclass))
-      (if (or (looking-at "struct")
-              (looking-at "typedef struct"))
-          '+
-        '++))))
+;; ;; C Mode Hooks
+;; (defun my-c-lineup-inclass (langelem)
+;;   (let ((inclass (assoc 'inclass c-syntactic-context)))
+;;     (save-excursion
+;;       (goto-char (c-langelem-pos inclass))
+;;       (if (or (looking-at "struct")
+;;               (looking-at "typedef struct"))
+;;           '+
+;;         '++))))
 
 (defun c-mode-common-custom ()
   (setq c-default-style "bsd")
   (setq c-basic-offset 4)
   (c-set-offset 'access-label '-)
-  (c-set-offset 'inclass 'my-c-lineup-inclass))
+  ;; (c-set-offset 'inclass 'my-c-lineup-inclass)
+  )
 
 ;; (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 (add-hook 'c-mode-common-hook 'c-mode-common-custom)
-
-;; Haskell Mode Hooks
-(defun haskell-mode-common-custom()
-  (haskell-doc-mode)
-  ;; (haskell-indentation-mode)
-  ;; (haskell-simple-indent-mode)
-  (haskell-indent-mode))
-
-(add-hook 'haskell-mode-hook 'haskell-mode-common-custom)
 
 ;; Markdown Mode Hooks
 (defun my-markdown-mode-hook()
