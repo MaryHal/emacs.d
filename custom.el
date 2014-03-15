@@ -6,10 +6,10 @@
  '(helm-candidate-number-limit nil)
  '(helm-quick-update t)
  '(sml/active-background-color "gray10")
- '(sml/col-number-format "δ%4c")
+ '(sml/col-number-format "%3c")
  '(sml/hidden-modes (quote ("hl-p" "AC" "Undo-Tree" "Projectile")))
  '(sml/inactive-background-color "gray18")
- '(sml/line-number-format "%3l"))
+ '(sml/line-number-format " %3l"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

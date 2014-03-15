@@ -441,7 +441,6 @@
 ;; Language Hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Emacs-Lisp Hooks
-(add-hook 'emacs-lisp-mode-hook (lambda() (setq mode-name "ξLisp")))
 
 ;; ;; C Mode Hooks
 ;; (defun my-c-lineup-inclass (langelem)
@@ -503,17 +502,20 @@
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-hook 'js2-mode-hook 'ac-js2-mode)
 
+;; Java Indentation
+(defun fix-java-annotations()
+            "Treat Java 1.5 @-style annotations as comments."
+            (setq c-comment-start-regexp "(@|/(/|[*][*]?))")
+            (modify-syntax-entry ?@ "< b" java-mode-syntax-table))
+(add-hook 'java-mode-hook 'fix-java-annotations)
+
 ;; Java + Eclim
 (require 'eclim)
-;; (custom-set-variables
-;;  '(eclim-eclipse-dirs '("")))
 
 ;; Error Help
 (setq help-at-pt-display-when-idle t)
 (setq help-at-pt-timer-delay 0.1)
 (help-at-pt-set-timer)
-
-(global-eclim-mode)
 
 
 
@@ -581,7 +583,7 @@
 ;;(define-key ac-mode-map  [(control tab)] 'auto-complete)
 
 ;; Automatic Auto Complete
-(setq ac-auto-start 2
+(setq ac-auto-start t
       ac-auto-show-menu 0.1
       ac-quick-help-delay 0.5
       ac-quick-help-height 50)
@@ -649,6 +651,12 @@
 ;;       evil-emacs-state-tag    (propertize " Emacs "    'face '((:background "MediumOrchid" :foreground "DarkMagenta" :weight bold)))
 ;;       evil-motion-state-tag   (propertize " Motion "   'face '((:background "goldenrod4" :foreground "goldenrod1" :weight bold)))
 ;;       evil-operator-state-tag (propertize " Operator " 'face '((:background "RoyalBlue4" :foreground "DarkBlue" :weight bold))))
+
+(defmacro rename-modeline (package-name mode new-name)
+  `(eval-after-load ,package-name
+     '(defadvice ,mode (after rename-modeline activate)
+        (setq mode-name ,new-name))))
+(rename-modeline "Emacs-Lisp" emacs-lisp-mode "ξLisp")
 
 
 
