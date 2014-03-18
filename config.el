@@ -527,6 +527,29 @@
 ;; Auto-complete dictionary directories. It should already contain the default dictionaries.
 ;; (add-to-list 'ac-dictionary-directories (concat user-emacs-directory "ac-dict/"))
 
+(defun my-ac-config ()
+  (setq-default ac-sources '(ac-source-abbrev
+                             ac-source-dictionary
+                             ac-source-filename
+                             ac-source-words-in-buffer
+                             ac-source-words-in-same-mode-buffers))
+  (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
+  ;; (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
+  (add-hook 'ruby-mode-hook 'ac-ruby-mode-setup)
+  (add-hook 'css-mode-hook 'ac-css-mode-setup)
+  (add-hook 'auto-complete-mode-hook 'ac-common-setup)
+  (global-auto-complete-mode t))
+
+;; ;; dirty fix for having AC everywhere
+;; (define-globalized-minor-mode real-global-auto-complete-mode
+;;   auto-complete-mode (lambda ()
+;;                        (if (not (minibufferp (current-buffer)))
+;;                            (auto-complete-mode t))
+;;                        ))
+;; (real-global-auto-complete-mode t)
+;; (my-ac-config)
+(ac-config-default)
+
 ;; Irony Mode
 (if (file-exists-p (concat user-emacs-directory "pkg/irony-mode/elisp/irony.el"))
     (progn
@@ -554,28 +577,6 @@
 (require 'ac-emacs-eclim-source)
 (ac-emacs-eclim-config)
 
-(defun my-ac-config ()
-  (setq-default ac-sources '(ac-source-abbrev
-                             ac-source-dictionary
-                             ac-source-filename
-                             ac-source-words-in-buffer
-                             ac-source-words-in-same-mode-buffers))
-  (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
-  ;; (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
-  (add-hook 'ruby-mode-hook 'ac-ruby-mode-setup)
-  (add-hook 'css-mode-hook 'ac-css-mode-setup)
-  (add-hook 'auto-complete-mode-hook 'ac-common-setup)
-  (global-auto-complete-mode t))
-
-;; ;; dirty fix for having AC everywhere
-;; (define-globalized-minor-mode real-global-auto-complete-mode
-;;   auto-complete-mode (lambda ()
-;;                        (if (not (minibufferp (current-buffer)))
-;;                            (auto-complete-mode t))
-;;                        ))
-;; (real-global-auto-complete-mode t)
-(my-ac-config)
-
 ;; Triggered Auto complete
 ;; (setq ac-auto-start nil)
 ;; (setq ac-quick-help-delay 0.5)
@@ -585,7 +586,7 @@
 ;; Automatic Auto Complete
 (setq ac-auto-start t
       ac-auto-show-menu 0.1
-      ac-quick-help-delay 0.5
+      ac-quick-help-delay 0.3
       ac-quick-help-height 50)
 (setq ac-show-menu-immediately-on-auto-complete t)
 
