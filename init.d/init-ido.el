@@ -60,6 +60,9 @@
 
 (req-package smex
   :require ido
+  :bind
+  (("M-x" . smex)
+   )
   :init
   (progn
     (smex-initialize)
