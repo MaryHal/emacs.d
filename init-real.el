@@ -32,4 +32,4 @@
 
 ;; start emacs server
 
-(server-start)
+;; (server-start)

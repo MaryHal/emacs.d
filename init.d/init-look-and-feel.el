@@ -139,27 +139,42 @@
 (req-package xt-mouse
   :init (xterm-mouse-mode 1))
 
-    ;; Theme
+;; Theme
 
-(req-package base16-theme
-  :init
-  (progn
-    ;; Transparency after load theme...
-    ;; On Linux, if in terminal, clear the background. If GUI, set background to black and set
-    ;; frame transparency.
-    (defadvice load-theme (after load-theme activate compile)
-      (if (string= system-type "gnu/linux")
-          (if (string= window-system "x")
-              (progn (set-frame-parameter (selected-frame) 'alpha '(90 90))
-                     (add-to-list 'default-frame-alist '(alpha 90 90))
-                     (set-face-attribute 'default nil :background "black"))
-            (progn (when (getenv "DISPLAY")
-                     (set-face-attribute 'default nil :background "unspecified-bg")
-                     ))
-            )))
+;; (req-package base16-theme
+;;   :init
+;;   (progn
+;;     ;; Transparency after load theme...
+;;     ;; On Linux, if in terminal, clear the background. If GUI, set background to black and set
+;;     ;; frame transparency.
+;;     (defadvice load-theme (after load-theme activate compile)
+;;       (if (string= system-type "gnu/linux")
+;;           (if (string= window-system "x")
+;;               (progn (set-frame-parameter (selected-frame) 'alpha '(90 90))
+;;                      (add-to-list 'default-frame-alist '(alpha 90 90))
+;;                      (set-face-attribute 'default nil :background "black"))
+;;             (progn (when (getenv "DISPLAY")
+;;                      (set-face-attribute 'default nil :background "unspecified-bg")
+;;                      ))
+;;             )))
 
-    (load-theme 'base16-default t)
-    ))
+;;     (load-theme 'base16-default t)
+;;     ))
+
+;; (req-package base16-theme)
+(defadvice load-theme (after load-theme activate compile)
+  (if (string= system-type "gnu/linux")
+      (if (string= window-system "x")
+          (progn (set-frame-parameter (selected-frame) 'alpha '(90 90))
+                 (add-to-list 'default-frame-alist '(alpha 90 90))
+                 (set-face-attribute 'default nil :background "black"))
+        (progn (when (getenv "DISPLAY")
+                 (set-face-attribute 'default nil :background "unspecified-bg")
+                 ))
+        )))
+
+;; (add-to-list 'custom-theme-directory (concat user-emacs-directory "themes/"))
+(load-theme 'base16-default t)
 
 ;; Smooth Scrolling
 
