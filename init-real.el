@@ -20,11 +20,12 @@
     (progn (package-try-install 'req-package)
            (require 'req-package)))
 
-;; init.d
+;; Personal Configuration
+(setq config-file "~/.emacs.d/config.el")
 
 (use-package load-dir
   :ensure load-dir
-  :init (load-dir-one "~/.emacs.d/init.d"))
+  :init (load-file config-file))
 
 ;; finish loading packages
 
