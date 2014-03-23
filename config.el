@@ -45,11 +45,11 @@
 
 ;; snippets using helm
 
-(req-package helm-c-yasnippet
-  :require
-  (helm yasnippet cc-mode auto-complete auto-complete-clang)
-  :init
-  (define-key global-map (kbd "C-M-y") 'helm-c-yas-complete))
+;; (req-package helm-c-yasnippet
+;;   :require
+;;   (helm yasnippet cc-mode auto-complete auto-complete-clang)
+;;   :init
+;;   (define-key global-map (kbd "C-M-y") 'helm-c-yas-complete))
 
 ;; rtags
 
@@ -70,7 +70,7 @@
     a))
 
 (defun cc-mode-clang-hook ()
-  (add-to-list 'ac-sources 'ac-source-yasnippet)
+  ;; (add-to-list 'ac-sources 'ac-source-yasnippet)
   (add-to-list 'ac-sources 'ac-source-clang)
   (add-to-list 'ac-sources 'ac-source-c-headers)
 
@@ -163,8 +163,96 @@
          ;; Stop evil from overwriting cursor color
          (setq evil-default-cursor t)
          ;; (setq evil-insert-state-cursor '("#aa0000" hbar))
+
+         ;; Make end-of-line work in insert
+         (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
+
+         ;; Redefine ESC for Evil (By default it's meta)
+         (define-key evil-insert-state-map (kbd "ESC") 'evil-normal-state)
+         (define-key evil-visual-state-map (kbd "ESC") 'evil-normal-state)
+         (define-key evil-replace-state-map (kbd "ESC") 'evil-normal-state)
+         (define-key evil-operator-state-map (kbd "ESC") 'evil-normal-state)
+         (define-key evil-motion-state-map (kbd "ESC") 'evil-normal-state)
+
+         (define-key evil-normal-state-map [escape] 'keyboard-quit)
+         (define-key evil-visual-state-map [escape] 'keyboard-quit)
+         (define-key minibuffer-local-map [escape] 'abort-recursive-edit)
+         (define-key minibuffer-local-ns-map [escape] 'abort-recursive-edit)
+         (define-key minibuffer-local-completion-map [escape] 'abort-recursive-edit)
+         (define-key minibuffer-local-must-match-map [escape] 'abort-recursive-edit)
+         (define-key minibuffer-local-isearch-map [escape] 'abort-recursive-edit)
+         
+         ;; Other evil keybindings
+         (evil-define-operator evil-join-previous-line (beg end)
+           "Join the previous line with the current line."
+           :motion evil-line
+           (evil-previous-visual-line)
+           (evil-join beg end))
+
+         ;; Package list: don't need to switch to evil mode if I have these two keys!
+         (define-key package-menu-mode-map "j" 'next-line)
+         (define-key package-menu-mode-map "k" 'previous-line)
+
+         (define-key evil-normal-state-map (kbd "z z") (lambda ()
+                                                         (interactive)
+                                                         (evil-scroll-line-to-center (line-number-at-pos))))
+
+         ;; gj gk by default
+         (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
+         (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
+
+         ;; Let K match J
+         (define-key evil-normal-state-map (kbd "K") 'evil-join-previous-line)
+
+         ;; Make Y work like D
+         (define-key evil-normal-state-map (kbd "Y") (kbd "y$"))
+
+         ;; "Unimpaired"
+         (define-key evil-normal-state-map (kbd "[ SPC") 'evil-insert-line-above)
+         (define-key evil-normal-state-map (kbd "] SPC") 'evil-insert-line-below)
+         (define-key evil-normal-state-map (kbd "[ b") 'previous-buffer)
+         (define-key evil-normal-state-map (kbd "] b") 'next-buffer)
+         (define-key evil-normal-state-map (kbd "[ q") 'previous-error)
+         (define-key evil-normal-state-map (kbd "] q") 'next-error)
+
+         ;; Bubble Text up and down. Works with regions.
+         (define-key evil-normal-state-map (kbd "[ e") 'move-text-up)
+         (define-key evil-normal-state-map (kbd "] e") 'move-text-down)
          ))
 
+
+;; evil-leader
+(setq evil-leader/in-all-states t
+      evil-leader/leader "SPC"
+      evil-leader/non-normal-prefix "s-")
+
+(req-package evil-leader
+  :init (progn
+          (global-evil-leader-mode)
+
+          (evil-leader/set-key "eb" 'eval-buffer)
+          (evil-leader/set-key "er" 'eval-region)
+
+          (evil-leader/set-key "ff" 'ido-find-file)
+          (evil-leader/set-key "fd" 'ido-dired)
+          (evil-leader/set-key "fs" (lambda()
+                                      (interactive)
+                                      (split-window-below)
+                                      (evil-window-down 1)
+                                      (ido-find-file)))
+          (evil-leader/set-key "fv" (lambda()
+                                      (interactive)
+                                      (split-window-right)
+                                      (evil-window-right 1)
+                                      (ido-find-file)))
+
+          ;; Helm
+          (evil-leader/set-key "k" 'helm-show-kill-ring)
+          (evil-leader/set-key "o" 'helm-imenu)
+          (evil-leader/set-key "r" 'helm-register)
+          (evil-leader/set-key "u" 'helm-buffers-list)
+          (evil-leader/set-key "x" 'helm-M-x)
+          ))
 
 ;; save package list
 
@@ -276,7 +364,13 @@
                (global-auto-complete-mode t)
                (setq ac-auto-start 1)
                (setq ac-quick-help-delay 0.1)
-               (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)))
+               (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
+
+               ;; Fuzzy matching
+               (setq ac-use-fuzzy t)
+               ;; Set history file location
+               (setq ac-comphist-file (expand-file-name (concat user-emacs-directory "cache/ac-comphist.dat")))
+               ))
 
 ;; yasnippet
 
@@ -346,7 +440,8 @@
   :require
   (helm wgrep grep))
 
-(provide 'init-helm)
+;; Ido Mode
+
 (req-package ido
   :init
   (progn
@@ -411,6 +506,9 @@
   :require ido
   :bind
   (("M-x" . smex)
+   ("C-x C-m" . smex)
+   ("M-X" . smex-major-mode-commands)
+   ("C-c C-c M-x" . execute-extended-command)
    )
   :init
   (progn
@@ -428,17 +526,6 @@
 ;; json reformatter
 
 (req-package json-reformat)
-
-(provide 'init-json)
-(if (eq system-type 'gnu/linux)
-
-	(progn (req-package battery
-             :init
-             (progn (setq battery-mode-line-format " %p%%")
-                    (display-battery-mode)))
-
-           ;; aur interface
-           (req-package aurel)))
 
 ;; pretty lambda
 
@@ -466,8 +553,6 @@
          (add-to-list 'sml/hidden-modes " Anzu")
          (add-to-list 'sml/hidden-modes " AC")
          (add-to-list 'sml/hidden-modes " yas")
-         (add-to-list 'sml/hidden-modes " pair")
-         (add-to-list 'sml/hidden-modes " 80col")
          (add-to-list 'sml/hidden-modes " FIC")
          (add-to-list 'sml/hidden-modes " Abbrev")
          (add-to-list 'sml/hidden-modes " ARev")
@@ -689,11 +774,16 @@
 
 (req-package gitignore-mode)
 
-;; xml
+;; More Keybindings
 
-(req-package auto-complete-nxml
-  :require auto-complete
-  :init (progn (setq-default nxml-child-indent 4)
-               (setq nxml-child-indent 4)))
+;; Easier version of "C-x k" to kill buffer
+(global-set-key (kbd "C-x C-b") 'buffer-menu)
+(global-set-key (kbd "C-x C-k") 'kill-buffer)
+(global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
 
-(provide 'init-xml)
+;; Evaluate Buffer
+(global-set-key (kbd "C-c C-v") 'eval-buffer)
+(global-set-key (kbd "C-c C-r") 'eval-region)
+
+;; Commentin'
+(global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
