@@ -1,3 +1,23 @@
+;; Sane defaults
+
+;; Emacs will run garbage collection after `gc-cons-threshold' bytes of consing.
+;; The default value is 800,000 bytes, or ~ 0.7 MiB.
+;; By increasing to 10 MiB we reduce the number of pauses due to garbage collection.
+(setq gc-cons-threshold (* 10 1024 1024))
+
+;; UTF-8 please
+(set-language-environment "UTF-8")
+(setq locale-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+
+;; Fringe and window margins
+(set-fringe-mode 0)
+
 ;; batch mode
 
 (req-package batch-mode
@@ -70,7 +90,7 @@
     a))
 
 (defun cc-mode-clang-hook ()
-  ;; (add-to-list 'ac-sources 'ac-source-yasnippet)
+  (add-to-list 'ac-sources 'ac-source-yasnippet)
   (add-to-list 'ac-sources 'ac-source-clang)
   (add-to-list 'ac-sources 'ac-source-c-headers)
 
@@ -137,11 +157,12 @@
   :require
   dired)
 
-;; lusty
+;; Undo Tree
 
-(req-package lusty-explorer
-  :init
-  (global-set-key (kbd "C-x f") 'lusty-file-explorer))
+(req-package undo-tree
+  :diminish undo-tree-mode)
+
+;; Evil Mode
 
 (setq evil-want-C-u-scroll t)
 (setq evil-find-skip-newlines t)
@@ -150,9 +171,6 @@
 (setq evil-intercept-esc 'always)
 
 (setq evil-auto-indent t)
-
-(req-package undo-tree
-  :diminish undo-tree-mode)
 
 (req-package evil
   :require undo-tree
@@ -168,19 +186,19 @@
          (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
 
          ;; Redefine ESC for Evil (By default it's meta)
-         (define-key evil-insert-state-map (kbd "ESC") 'evil-normal-state)
-         (define-key evil-visual-state-map (kbd "ESC") 'evil-normal-state)
-         (define-key evil-replace-state-map (kbd "ESC") 'evil-normal-state)
-         (define-key evil-operator-state-map (kbd "ESC") 'evil-normal-state)
-         (define-key evil-motion-state-map (kbd "ESC") 'evil-normal-state)
+         ;; (define-key evil-insert-state-map (kbd "ESC") 'evil-normal-state)
+         ;; (define-key evil-visual-state-map (kbd "ESC") 'evil-normal-state)
+         ;; (define-key evil-replace-state-map (kbd "ESC") 'evil-normal-state)
+         ;; (define-key evil-operator-state-map (kbd "ESC") 'evil-normal-state)
+         ;; (define-key evil-motion-state-map (kbd "ESC") 'evil-normal-state)
 
-         (define-key evil-normal-state-map [escape] 'keyboard-quit)
-         (define-key evil-visual-state-map [escape] 'keyboard-quit)
-         (define-key minibuffer-local-map [escape] 'abort-recursive-edit)
-         (define-key minibuffer-local-ns-map [escape] 'abort-recursive-edit)
-         (define-key minibuffer-local-completion-map [escape] 'abort-recursive-edit)
-         (define-key minibuffer-local-must-match-map [escape] 'abort-recursive-edit)
-         (define-key minibuffer-local-isearch-map [escape] 'abort-recursive-edit)
+         ;; (define-key evil-normal-state-map [escape] 'keyboard-quit)
+         ;; (define-key evil-visual-state-map [escape] 'keyboard-quit)
+         ;; (define-key minibuffer-local-map [escape] 'abort-recursive-edit)
+         ;; (define-key minibuffer-local-ns-map [escape] 'abort-recursive-edit)
+         ;; (define-key minibuffer-local-completion-map [escape] 'abort-recursive-edit)
+         ;; (define-key minibuffer-local-must-match-map [escape] 'abort-recursive-edit)
+         ;; (define-key minibuffer-local-isearch-map [escape] 'abort-recursive-edit)
          
          ;; Other evil keybindings
          (evil-define-operator evil-join-previous-line (beg end)
@@ -246,13 +264,29 @@
                                       (evil-window-right 1)
                                       (ido-find-file)))
 
-          ;; Helm
-          (evil-leader/set-key "k" 'helm-show-kill-ring)
-          (evil-leader/set-key "o" 'helm-imenu)
-          (evil-leader/set-key "r" 'helm-register)
-          (evil-leader/set-key "u" 'helm-buffers-list)
-          (evil-leader/set-key "x" 'helm-M-x)
+          ;; Terminal
+          (evil-leader/set-key "t"  '(lambda()
+                                       (interactive)
+                                       (shell-command "urxvtc")))
           ))
+
+;; Projectile
+(req-package projectile
+  :require evil-leader
+  :init (progn
+          (setq projectile-enable-caching t)
+
+          (defvar projectile-cache-file (concat user-emacs-directory "cache/projectile.cache"))
+          (defvar projectile-known-projects-file (concat user-emacs-directory "cache/projectile-bookmarks.eld"))
+
+          (setq projectile-indexing-method 'native)
+          (add-to-list 'projectile-globally-ignored-directories "elpa")
+          (add-to-list 'projectile-globally-ignored-directories ".cache")
+
+          (projectile-global-mode t)
+
+          (evil-leader/set-key "p" 'projectile-find-file)
+          )) 
 
 ;; save package list
 
@@ -362,7 +396,7 @@
 (req-package auto-complete
   :init (progn (require 'auto-complete-config)
                (global-auto-complete-mode t)
-               (setq ac-auto-start 1)
+               (setq ac-auto-start t)
                (setq ac-quick-help-delay 0.1)
                (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
 
@@ -374,8 +408,8 @@
 
 ;; yasnippet
 
-;; (req-package yasnippet
-;;   :init (yas-global-mode 1))
+(req-package yasnippet
+  :init (yas-global-mode 1))
 
 ;; glsl
 
@@ -389,9 +423,23 @@
 ;; helm
 
 (req-package helm
+  :require evil-leader
   :init
   (progn (require 'helm-config)
-         (define-key global-map (kbd "C-x b") 'helm-buffers-list)))
+
+         ;; Helm keybindings
+         (define-key helm-map (kbd "C-k") 'helm-previous-line)
+         (define-key helm-map (kbd "C-j") 'helm-next-line)
+         (define-key helm-map (kbd "C-h") 'helm-previous-source)
+         (define-key helm-map (kbd "C-l") 'helm-next-source)
+
+         ;; Helm evil-leader keys
+         (evil-leader/set-key "k" 'helm-show-kill-ring)
+         (evil-leader/set-key "o" 'helm-imenu)
+         (evil-leader/set-key "r" 'helm-register)
+         (evil-leader/set-key "u" 'helm-buffers-list)
+         (evil-leader/set-key "x" 'helm-M-x)
+         ))
 
 ;; helm ac
 
@@ -459,11 +507,11 @@
       (define-key ido-file-completion-map (kbd "C-w") 'ido-delete-backward-updir)
       (define-key ido-file-completion-map (kbd "C-x C-w") 'ido-copy-current-file-name)
       (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
-      (define-key ido-completion-map (kbd "C-p") 'ido-prev-match))
+      (define-key ido-completion-map (kbd "C-p") 'ido-prev-match)
+        )
 
     (add-hook 'ido-setup-hook 'my-ido-define-keys)
 
-    
     ;; Always rescan buffer for imenu
     (set-default 'imenu-auto-rescan t)
 
@@ -473,7 +521,7 @@
 
 (req-package ido-ubiquitous
   :require ido
-  :init
+  :config
   (progn
     (ido-ubiquitous-mode t)
 
@@ -484,8 +532,8 @@
             (let ((ido-ubiquitous-enable-compatibility nil))
               ad-do-it))))
 
+    (ido-ubiquitous-use-new-completing-read yas/expand 'yasnippet)
     ;;(ido-ubiquitous-use-new-completing-read webjump 'webjump)
-    ;;(ido-ubiquitous-use-new-completing-read yas/expand 'yasnippet)
     ;;(ido-ubiquitous-use-new-completing-read yas/visit-snippet-file 'yasnippet)
     ))
 
@@ -521,7 +569,12 @@
 ;; js2 mode
 
 (req-package js2-mode
-  :init (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode)))
+  :init (progn
+          (setq js2-highlight-level 3)
+          ;; (setq-default js2-basic-offset 2)
+
+          (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+          ))
 
 ;; json reformatter
 
@@ -689,19 +742,29 @@
 ;;     ))
 
 ;; (req-package base16-theme)
-(defadvice load-theme (after load-theme activate compile)
-  (if (string= system-type "gnu/linux")
-      (if (string= window-system "x")
-          (progn (set-frame-parameter (selected-frame) 'alpha '(90 90))
-                 (add-to-list 'default-frame-alist '(alpha 90 90))
-                 (set-face-attribute 'default nil :background "black"))
-        (progn (when (getenv "DISPLAY")
-                 (set-face-attribute 'default nil :background "unspecified-bg")
-                 ))
-        )))
+(req-package hemisu-theme
+  :init
+  (progn
+    (load-theme 'hemisu-dark t)
+    (if (string= system-type "gnu/linux")
+        (if (getenv "DISPLAY")
+            (set-face-attribute 'default nil :background "unspecified-bg")
+          )
+      )))
+
+
+;; (defadvice load-theme (after load-theme activate compile)
+;;   (if (string= system-type "gnu/linux")
+;;       (if (string= window-system "x")
+;;           (progn (set-frame-parameter (selected-frame) 'alpha '(90 90))
+;;                  (add-to-list 'default-frame-alist '(alpha 90 90))
+;;                  (set-face-attribute 'default nil :background "black"))
+;;         (progn (when (getenv "DISPLAY")
+;;                  (set-face-attribute 'default nil :background "unspecified-bg")
+;;                  ))
+;;         )))
 
 ;; (add-to-list 'custom-theme-directory (concat user-emacs-directory "themes/"))
-(load-theme 'base16-default t)
 
 ;; Smooth Scrolling
 
@@ -727,15 +790,12 @@
          (add-to-list 'default-frame-alist '(font . "Inconsolata 10")))
   )
 
-;; lua mode
-
-(req-package lua-mode
-  :init (setq lua-indent-level 4))
+;; Org Mode
 
 (req-package org
   :init
   (progn (global-set-key "\C-cl" 'org-store-link)
-         (global-set-key "\C-cc" 'org-capture)
+         ;; (global-set-key "\C-cc" 'org-capture)
          (global-set-key "\C-ca" 'org-agenda)
          (global-set-key "\C-cb" 'org-iswitchb)))
 
@@ -773,6 +833,38 @@
 ;; git ignore mode
 
 (req-package gitignore-mode)
+
+;; Markdown-mode
+
+(req-package markdown-mode
+  :init (progn
+          (defun my-markdown-mode-hook()
+            (setq markdown-imenu-generic-expression
+                  '(("title" "^\\(.*\\)[\n]=+$" 1)
+                    ("h2-" "^\\(.*\\)[\n]-+$" 1)
+                    ("h1" "^# \\(.*\\)$" 1)
+                    ("h2" "^## \\(.*\\)$" 1)
+                    ("h3" "^### \\(.*\\)$" 1)
+                    ("h4" "^#### \\(.*\\)$" 1)
+                    ("h5" "^##### \\(.*\\)$" 1)
+                    ("h6" "^###### \\(.*\\)$" 1)
+                    ("fn" "^\\[\\^\\(.*\\)\\]" 1)
+                    ))
+            (setq imenu-generic-expression markdown-imenu-generic-expression))
+
+          (add-hook 'markdown-mode-hook 'my-markdown-mode-hook)
+          ))
+
+;; Java + Eclim
+
+(req-package emacs-eclim
+             :init (progn
+                     (require 'eclim)
+                     (global-eclim-mode)
+
+                     (require 'ac-emacs-eclim-source)
+                     (ac-emacs-eclim-config)
+                     ))
 
 ;; More Keybindings
 

@@ -1,0 +1,1 @@
+("/dev/shm/asd-sanford/home/sanford/.emacs.d/" "~/code/current/Burst/" "~/code/current/Digital_Table/")
