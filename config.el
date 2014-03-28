@@ -117,7 +117,7 @@
 
 (req-package dired-single
   :require
-  (dired helm-swoop autorevert diff-hl)
+  (dired helm-swoop autorevert)
   :init
   (progn (define-key dired-mode-map (kbd "f")
            'dired-single-buffer)
@@ -134,10 +134,7 @@
            'helm-swoop)
 
          (add-hook 'dired-mode-hook (lambda ()
-                                      (auto-revert-mode 1)))
-
-         (add-hook 'dired-mode-hook (lambda ()
-                                      (diff-hl-dired-mode 1)))))
+                                      (auto-revert-mode 1)))))
 
 ;; sunrise commander
 
@@ -297,7 +294,7 @@
 
 ;; swoop
 
-(req-package swoop)
+;; (req-package swoop)
 
 ;; sudo support
 
@@ -595,8 +592,6 @@
 ;; main line
 
 (req-package smart-mode-line
-  :require
-  remember-theme
   :init
   (progn (setq sml/theme 'respectfull)
          (setq sml/shorten-modes t)
@@ -692,11 +687,11 @@
 
 ;; diff highlight
 
-(req-package diff-hl
-  :require
-  (smartrep fringe)
-  :init
-  (global-diff-hl-mode 1))
+;; (req-package diff-hl
+;;   :require
+;;   (smartrep fringe)
+;;   :init
+;;   (global-diff-hl-mode 1))
 
 ;; highlight defined symbols
 
@@ -742,29 +737,26 @@
 ;;     ))
 
 ;; (req-package base16-theme)
+
 (req-package hemisu-theme
   :init
   (progn
+    ;; frame transparency.
+    (defadvice load-theme (after load-theme activate compile)
+      (if (string= system-type "gnu/linux")
+          (if (string= window-system "x")
+              (progn (set-frame-parameter (selected-frame) 'alpha '(90 90))
+                     (add-to-list 'default-frame-alist '(alpha 90 90))
+                     (set-face-attribute 'default nil :background "black"))
+            (progn (when (getenv "DISPLAY")
+                     (set-face-attribute 'default nil :background "unspecified-bg")
+                     ))
+            )))
+
     (load-theme 'hemisu-dark t)
-    (if (string= system-type "gnu/linux")
-        (if (getenv "DISPLAY")
-            (set-face-attribute 'default nil :background "unspecified-bg")
-          )
-      )))
+    ))
 
 
-;; (defadvice load-theme (after load-theme activate compile)
-;;   (if (string= system-type "gnu/linux")
-;;       (if (string= window-system "x")
-;;           (progn (set-frame-parameter (selected-frame) 'alpha '(90 90))
-;;                  (add-to-list 'default-frame-alist '(alpha 90 90))
-;;                  (set-face-attribute 'default nil :background "black"))
-;;         (progn (when (getenv "DISPLAY")
-;;                  (set-face-attribute 'default nil :background "unspecified-bg")
-;;                  ))
-;;         )))
-
-;; (add-to-list 'custom-theme-directory (concat user-emacs-directory "themes/"))
 
 ;; Smooth Scrolling
 
