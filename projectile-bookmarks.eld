@@ -1,1 +1,1 @@
-("~/code/current/Burst/" "/dev/shm/asd-sanford/home/sanford/.emacs.d/" "~/code/current/Digital_Table/")
+("/dev/shm/asd-sanford/home/sanford/.emacs.d/" "~/code/current/Digital_Table/" "~/code/current/Burst/")

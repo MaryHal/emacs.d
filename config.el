@@ -73,7 +73,7 @@
 
 ;; rtags
 
-(req-package rtags)
+;; (req-package rtags)
 
 ;; some utils
 
