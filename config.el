@@ -117,7 +117,7 @@
 
 (req-package dired-single
   :require
-  (dired helm-swoop autorevert)
+  (dired autorevert)
   :init
   (progn (define-key dired-mode-map (kbd "f")
            'dired-single-buffer)
@@ -129,9 +129,6 @@
            (function (lambda ()
                        (interactive)
                        (dired-single-buffer ".."))))
-
-         (define-key dired-mode-map (kbd "M-i")
-           'helm-swoop)
 
          (add-hook 'dired-mode-hook (lambda ()
                                       (auto-revert-mode 1)))))
@@ -268,13 +265,13 @@
           ))
 
 ;; Projectile
+(defvar projectile-cache-file (concat user-emacs-directory "cache/projectile.cache"))
+(defvar projectile-known-projects-file (concat user-emacs-directory "cache/projectile-bookmarks.eld"))
+
 (req-package projectile
   :require evil-leader
   :init (progn
           (setq projectile-enable-caching t)
-
-          (defvar projectile-cache-file (concat user-emacs-directory "cache/projectile.cache"))
-          (defvar projectile-known-projects-file (concat user-emacs-directory "cache/projectile-bookmarks.eld"))
 
           (setq projectile-indexing-method 'native)
           (add-to-list 'projectile-globally-ignored-directories "elpa")
@@ -294,7 +291,7 @@
 
 ;; swoop
 
-;; (req-package swoop)
+(req-package swoop)
 
 ;; sudo support
 
@@ -423,6 +420,9 @@
   :require evil-leader
   :init
   (progn (require 'helm-config)
+
+         (setq helm-candidate-number-limit nil)
+         (setq helm-quick-update t)
 
          ;; Helm keybindings
          (define-key helm-map (kbd "C-k") 'helm-previous-line)
@@ -601,9 +601,12 @@
          (add-to-list 'sml/hidden-modes " Anzu")
          (add-to-list 'sml/hidden-modes " AC")
          (add-to-list 'sml/hidden-modes " yas")
-         (add-to-list 'sml/hidden-modes " FIC")
          (add-to-list 'sml/hidden-modes " Abbrev")
          (add-to-list 'sml/hidden-modes " ARev")
+
+         (setq sml/active-background-color "gray10")
+         (setq sml/inactive-background-color "gray18")
+
          (sml/setup)))
 
 ;; anzu
@@ -665,11 +668,11 @@
          (setq scroll-preserve-screen-position t)
          (setq isearch-allow-scroll t)))
 
-;; todo, fixme highlighting
+;; ;; todo, fixme highlighting
 
-(req-package fic-mode
-  :init
-  (add-hook 'prog-mode-hook (lambda () (fic-mode 1))))
+;; (req-package fic-mode
+;;   :init
+;;   (add-hook 'prog-mode-hook (lambda () (fic-mode 1))))
 
 ;; highlight parenthesis
 
@@ -705,9 +708,9 @@
 
 ;; helm themes
 
-(req-package helm-themes
-  :require
-  helm)
+;; (req-package helm-themes
+;;   :require
+;;   helm)
 
 ;; xt mosue
 
@@ -813,10 +816,10 @@
 
 ;; helm ls git
 
-(req-package helm-ls-git
-  :require
-  helm
-  :init (global-set-key (kbd "M-+") 'helm-ls-git-ls))
+;; (req-package helm-ls-git
+;;   :require
+;;   helm
+;;   :init (global-set-key (kbd "M-+") 'helm-ls-git-ls))
 
 ;; git config mode
 

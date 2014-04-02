@@ -35,10 +35,22 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes (quote ("77bd459212c0176bdf63c1904c4ba20fce015f730f0343776a1a14432de80990" "c1fb68aa00235766461c7e31ecfc759aa2dd905899ae6d95097061faeb72f9ee" "7feeed063855b06836e0262f77f5c6d3f415159a98a9676d549bfeb6c49637c4" "e53cc4144192bb4e4ed10a3fa3e7442cae4c3d231df8822f6c02f1220a0d259a" "de2c46ed1752b0d0423cde9b6401062b67a6a1300c068d5d7f67725adc6c3afb" "1affe85e8ae2667fb571fc8331e1e12840746dae5c46112d5abb0c3a973f5f5a" default))))
+ '(custom-safe-themes (quote ("7feeed063855b06836e0262f77f5c6d3f415159a98a9676d549bfeb6c49637c4" default))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(header-line ((t (:inherit mode-line :inverse-video nil))))
+ '(helm-ff-directory ((t (:foreground "red"))))
+ '(helm-header ((t (:background "grey10" :weight bold))))
+ '(helm-selection ((t (:underline t))))
+ '(helm-source-header ((t (:background "grey30" :foreground "white" :weight bold))))
+ '(helm-visible-mark ((t (:foreground "grey40"))))
+ '(isearch-fail ((t (:background "red" :foreground "brightwhite"))))
+ '(lazy-highlight ((t (:background "RoyalBlue" :foreground "gray6"))))
+ '(mode-line ((t (:background "gray6" :foreground "gray60"))))
+ '(mode-line-inactive ((t (:background "gray10" :foreground "gray60"))))
+ '(region ((t (:background "RoyalBlue" :foreground "gray6"))))
+ '(trailing-whitespace ((t (:background "goldenrod"))))
+ '(vertical-border ((t (:background "gray10" :foreground "gray10")))))
