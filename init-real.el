@@ -22,10 +22,9 @@
 
 ;; Personal Configuration
 (setq config-file "~/.emacs.d/config.el")
-
-(use-package load-dir
-  :ensure load-dir
-  :init (load-file config-file))
+(defun loadConfigFile()
+  (load config-file))
+(loadConfigFile)
 
 ;; finish loading packages
 

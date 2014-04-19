@@ -1,5 +1,7 @@
 ;; Sane defaults
 
+(setq debug-on-error t)
+
 ;; Emacs will run garbage collection after `gc-cons-threshold' bytes of consing.
 ;; The default value is 800,000 bytes, or ~ 0.7 MiB.
 ;; By increasing to 10 MiB we reduce the number of pauses due to garbage collection.
@@ -17,6 +19,45 @@
 
 ;; Fringe and window margins
 (set-fringe-mode 0)
+
+;; Clipboard
+(setq x-select-enable-clipboard t)
+(setq x-select-enable-primary nil)
+
+;; Treat clipboard input as UTF-8 string first; compound text next, etc.
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+
+;; If emacs is run in a terminal, the clipboard- functions have no
+;; effect. Instead, we use of xsel, see
+;; http://www.vergenet.net/~conrad/software/xsel/ -- "a command-line
+;; program for getting and setting the contents of the X selection"
+(unless window-system
+  (when (getenv "DISPLAY")
+    ;; Callback for when user cuts
+    (defun xsel-cut-function (text &optional push)
+      ;; Insert text to temp-buffer, and "send" content to xsel stdin
+      (with-temp-buffer
+        (insert text)
+        ;; I prefer using the "clipboard" selection (the one the
+        ;; typically is used by c-c/c-v) before the primary selection
+        ;; (that uses mouse-select/middle-button-click)
+        (call-process-region (point-min) (point-max) "xsel" nil 0 nil "--clipboard" "--input")))
+    ;; Call back for when user pastes
+    (defun xsel-paste-function()
+      ;; Find out what is current selection by xsel. If it is different
+      ;; from the top of the kill-ring (car kill-ring), then return
+      ;; it. Else, nil is returned, so whatever is in the top of the
+      ;; kill-ring will be used.
+      (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
+        (unless (string= (car kill-ring) xsel-output)
+          xsel-output )))
+    ;; Attach callbacks to hooks
+    (setq interprogram-cut-function 'xsel-cut-function)
+    (setq interprogram-paste-function 'xsel-paste-function)
+    ;; Idea from
+    ;; http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
+    ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
+    ))
 
 ;; batch mode
 
@@ -65,11 +106,11 @@
 
 ;; snippets using helm
 
-;; (req-package helm-c-yasnippet
-;;   :require
-;;   (helm yasnippet cc-mode auto-complete auto-complete-clang)
-;;   :init
-;;   (define-key global-map (kbd "C-M-y") 'helm-c-yas-complete))
+(req-package helm-c-yasnippet
+  :require
+  (helm yasnippet cc-mode auto-complete auto-complete-clang)
+  :init
+  (define-key global-map (kbd "C-M-y") 'helm-c-yas-complete))
 
 ;; rtags
 
@@ -210,8 +251,8 @@
                                                          (evil-scroll-line-to-center (line-number-at-pos))))
 
          ;; gj gk by default
-         (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
-         (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
+         ;; (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
+         ;; (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
 
          ;; Let K match J
          (define-key evil-normal-state-map (kbd "K") 'evil-join-previous-line)
@@ -337,6 +378,7 @@
 
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
+
 ;; do not use dialog boxes
 
 (setq use-dialog-box nil)
@@ -874,13 +916,13 @@
 ;; Java + Eclim
 
 (req-package emacs-eclim
-             :init (progn
-                     (require 'eclim)
-                     (global-eclim-mode)
+  :init (progn
+          (require 'eclim)
+          (global-eclim-mode)
 
-                     (require 'ac-emacs-eclim-source)
-                     (ac-emacs-eclim-config)
-                     ))
+          (require 'ac-emacs-eclim-source)
+          (ac-emacs-eclim-config)
+          ))
 
 ;; More Keybindings
 
