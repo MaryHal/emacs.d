@@ -1,3 +1,0 @@
-[submodule "pkg/irony-mode"]
-	path = pkg/irony-mode
-	url = https://github.com/Sarcasm/irony-mode.git

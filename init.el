@@ -1,89 +1,55 @@
-;; Turn off mouse interface early in startup to avoid momentary display
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-
-;; Package helpers
-(defun require-package (package)
-  "Install given PACKAGE."
-  (unless (package-installed-p package)
-    (unless (assoc package package-archive-contents)
-      (package-refresh-contents))
-    (package-install package)))
-
-(defmacro after (feature &rest body)
-  "After FEATURE is loaded, evaluate BODY."
-  (declare (indent defun))
-  `(eval-after-load ,feature
-     '(progn ,@body)))
-
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-			 ("marmalade" . "http://marmalade-repo.org/packages/")
-			 ("melpa" . "http://melpa.milkbox.net/packages/")))
+						 ("marmalade" . "http://marmalade-repo.org/packages/")
+						 ("elpa" . "http://tromey.com/elpa/")
+						 ("melpa" . "http://melpa.milkbox.net/packages/")))
 
-(setq package-list '(ace-jump-mode
-                     ac-js2
-                     ag
-                     auctex
-                     auto-complete
-                     base16-theme
-                     emacs-eclim
-                     epl
-                     evil-leader
-                     evil
-                     expand-region
-                     helm
-                     helm-swoop
-                     json
-                     js2-mode
-                     key-chord
-                     flx
-                     flx-ido
-                     ido-ubiquitous
-                     markdown-mode
-                     pkg-info
-                     dash
-                     popup
-                     popwin
-                     projectile
-                     s
-                     skewer-mode
-                     smart-mode-line
-                     smex
-                     surround
-                     undo-tree
-                     workgroups2))
+;; packages paths
 
-;; Activate all the packages (in particular autoloads)
-(package-initialize)
+(require 'package)
 
-;; package-initialize normally gets executed twice, stop it for slightly faster startup
-(setq package-enable-at-startup nil)
+(defun package-update-load-path ()
+  "Update the load path for newly installed packages"
+  (interactive)
+  (let ((package-dir (expand-file-name  package-user-dir)))
+	(mapc (lambda (pkg)
+			(let ((stem (symbol-name (car pkg)))
+				  (mapc (lambda (num)
+						  (if first
+							  (setq first nil)
+							(setq version (format "%s." version)))
+						  (setq version (format "%s%s" version num)))
+						(aref (cdr pkg) 0))
+				  (setq path (format "%s/%s-%s" package-dir stem version))
+				  (add-to-list 'load-path path)))
+			package-alist))))
 
-;; Fetch the list of packages available
-(when (not package-archive-contents)
-  (package-refresh-contents))
+;; (add-to-list 'load-path "~/.emacs.d/")
 
-;; Install the missing packages
-(dolist (package package-list)
-  (when (not (package-installed-p package))
-    (package-install package)))
+;; after init
 
-;; Custom Configuration
-(setq custom-file "~/.emacs.d/custom.el")
-(defun loadCustomFile()
-  (unless (not (file-exists-p custom-file))
-    (load custom-file)))
-(add-hook 'after-init-hook 'loadCustomFile)
+(add-hook 'after-init-hook #'(lambda () (load "~/.emacs.d/init-real.el")))
 
-;; Personal Configuration
-(setq config-file "~/.emacs.d/config.el")
-(defun loadConfigFile()
-  (load config-file))
-(add-hook 'after-init-hook 'loadConfigFile)
-
-;; Time Startup
-(defun getUptime()
-  (message "Time needed to load: %s seconds."
-           (emacs-uptime "%s")))
-(add-hook 'emacs-startup-hook 'getUptime 'append)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes (quote ("c1fb68aa00235766461c7e31ecfc759aa2dd905899ae6d95097061faeb72f9ee" "7feeed063855b06836e0262f77f5c6d3f415159a98a9676d549bfeb6c49637c4" default))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(header-line ((t (:inherit mode-line :inverse-video nil))))
+ '(helm-ff-directory ((t (:foreground "red"))) t)
+ '(helm-header ((t (:background "grey10" :weight bold))))
+ '(helm-selection ((t (:underline t))))
+ '(helm-source-header ((t (:background "grey30" :foreground "white" :weight bold))))
+ '(helm-visible-mark ((t (:foreground "grey40"))))
+ '(isearch-fail ((t (:background "red" :foreground "brightwhite"))))
+ '(lazy-highlight ((t (:background "RoyalBlue" :foreground "gray6"))))
+ '(mode-line ((t (:background "gray6" :foreground "gray60"))))
+ '(mode-line-inactive ((t (:background "gray10" :foreground "gray60"))))
+ '(region ((t (:background "RoyalBlue" :foreground "gray6"))))
+ '(trailing-whitespace ((t (:background "goldenrod"))))
+ '(vertical-border ((t (:background "gray10" :foreground "gray10")))))
