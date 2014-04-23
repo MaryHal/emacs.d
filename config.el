@@ -531,6 +531,11 @@
 ;; Auto-complete dictionary directories. It should already contain the default dictionaries.
 ;; (add-to-list 'ac-dictionary-directories (concat user-emacs-directory "ac-dict/"))
 
+;; Fuzzy matching
+(setq ac-use-fuzzy t)
+;; Set history file location
+(setq ac-comphist-file (expand-file-name (concat user-emacs-directory "cache/ac-comphist.dat")))
+
 (defun my-ac-config ()
   (setq-default ac-sources '(ac-source-abbrev
                              ac-source-dictionary
@@ -538,44 +543,13 @@
                              ac-source-words-in-buffer
                              ac-source-words-in-same-mode-buffers))
   (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
-  ;; (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
+  (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
   (add-hook 'ruby-mode-hook 'ac-ruby-mode-setup)
   (add-hook 'css-mode-hook 'ac-css-mode-setup)
   (add-hook 'auto-complete-mode-hook 'ac-common-setup)
   (global-auto-complete-mode t))
 
-;; ;; dirty fix for having AC everywhere
-;; (define-globalized-minor-mode real-global-auto-complete-mode
-;;   auto-complete-mode (lambda ()
-;;                        (if (not (minibufferp (current-buffer)))
-;;                            (auto-complete-mode t))
-;;                        ))
-;; (real-global-auto-complete-mode t)
-;; (my-ac-config)
-(ac-config-default)
-
-;; Irony Mode
-(if (file-exists-p (concat user-emacs-directory "pkg/irony-mode/elisp/irony.el"))
-    (progn
-      (require 'irony)
-
-      (autoload 'irony-enable "irony")
-      (irony-enable 'ac)
-
-      (defun my-c++-hooks ()
-        "Enable the hooks in the preferred order: 'yas -> auto-complete -> irony'."
-        ;; if yas is not set before (auto-complete-mode 1), overlays may persist after
-        ;; an expansion.
-        ;; (yas/minor-mode-on)
-        (auto-complete-mode 1)
-
-        ;; avoid enabling irony-mode in modes that inherits c-mode, e.g: php-mode
-        (when (member major-mode irony-known-modes)
-          (irony-mode 1)))
-
-      (add-hook 'c++-mode-hook 'my-c++-hooks)
-      (add-hook 'c-mode-hook 'my-c++-hooks)
-      ))
+(my-ac-config)
 
 ;; Eclim Auto-complete
 (require 'ac-emacs-eclim-source)
@@ -629,9 +603,24 @@
 
 ;; Modeline ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq sml/theme 'dark)
 (require 'smart-mode-line)
+(setq sml/theme 'respectfull)
+(setq sml/shorten-modes t)
+(setq sml/shorten-directory t)
+(setq sml/name-width 20)
+(setq sml/mode-width 'full)
+
+(add-to-list 'sml/hidden-modes " Anzu")
+(add-to-list 'sml/hidden-modes " AC")
+(add-to-list 'sml/hidden-modes " yas")
+(add-to-list 'sml/hidden-modes " Abbrev")
+(add-to-list 'sml/hidden-modes " ARev")
+
 (sml/setup)
+
+;; Anzu (requires smart-mode-line)
+(require 'anzu)
+(global-anzu-mode 1)
 
 ;; More smart-mode-line configuration inside "custom.el"
 
@@ -656,12 +645,6 @@
 ;;       evil-emacs-state-tag    (propertize " Emacs "    'face '((:background "MediumOrchid" :foreground "DarkMagenta" :weight bold)))
 ;;       evil-motion-state-tag   (propertize " Motion "   'face '((:background "goldenrod4" :foreground "goldenrod1" :weight bold)))
 ;;       evil-operator-state-tag (propertize " Operator " 'face '((:background "RoyalBlue4" :foreground "DarkBlue" :weight bold))))
-
-(defmacro rename-modeline (package-name mode new-name)
-  `(eval-after-load ,package-name
-     '(defadvice ,mode (after rename-modeline activate)
-        (setq mode-name ,new-name))))
-(rename-modeline "Emacs-Lisp" emacs-lisp-mode "ξLisp")
 
 
 
