@@ -507,19 +507,19 @@
 (add-hook 'js2-mode-hook 'ac-js2-mode)
 
 ;; Java Indentation
-(defun fix-java-annotations()
-            "Treat Java 1.5 @-style annotations as comments."
-            (setq c-comment-start-regexp "(@|/(/|[*][*]?))")
-            (modify-syntax-entry ?@ "< b" java-mode-syntax-table))
-(add-hook 'java-mode-hook 'fix-java-annotations)
+;; (defun fix-java-annotations()
+;;             "Treat Java 1.5 @-style annotations as comments."
+;;             (setq c-comment-start-regexp "(@|/(/|[*][*]?))")
+;;             (modify-syntax-entry ?@ "< b" java-mode-syntax-table))
+;; (add-hook 'java-mode-hook 'fix-java-annotations)
 
-;; Java + Eclim
-(require 'eclim)
+;; ;; Java + Eclim
+;; (require 'eclim)
 
-;; Error Help
-(setq help-at-pt-display-when-idle t)
-(setq help-at-pt-timer-delay 0.1)
-(help-at-pt-set-timer)
+;; ;; Error Help
+;; (setq help-at-pt-display-when-idle t)
+;; (setq help-at-pt-timer-delay 0.1)
+;; (help-at-pt-set-timer)
 
 
 
@@ -551,9 +551,9 @@
 
 (my-ac-config)
 
-;; Eclim Auto-complete
-(require 'ac-emacs-eclim-source)
-(ac-emacs-eclim-config)
+;; ;; Eclim Auto-complete
+;; (require 'ac-emacs-eclim-source)
+;; (ac-emacs-eclim-config)
 
 ;; Triggered Auto complete
 ;; (setq ac-auto-start nil)
