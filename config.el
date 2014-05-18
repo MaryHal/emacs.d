@@ -604,7 +604,7 @@
 ;; Modeline ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (require 'smart-mode-line)
-(setq sml/theme 'respectfull)
+;; (setq sml/theme 'respectfull)
 (setq sml/shorten-modes t)
 (setq sml/shorten-directory t)
 (setq sml/name-width 20)
@@ -612,9 +612,11 @@
 
 (add-to-list 'sml/hidden-modes " Anzu")
 (add-to-list 'sml/hidden-modes " AC")
+(add-to-list 'sml/hidden-modes " hl-p")
+;; (add-to-list 'sml/hidden-modes " Projectile")
+(add-to-list 'sml/hidden-modes " Undo-Tree")
+(add-to-list 'sml/hidden-modes " wg")
 (add-to-list 'sml/hidden-modes " yas")
-(add-to-list 'sml/hidden-modes " Abbrev")
-(add-to-list 'sml/hidden-modes " ARev")
 
 (sml/setup)
 
@@ -1207,3 +1209,4 @@ the current state and point position."
   (kbd "M-J") 'org-metadown
   (kbd "M-K") 'org-metaup
   (kbd "M-L") 'org-metaright)
+
