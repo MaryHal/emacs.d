@@ -22,17 +22,13 @@
 			 ("melpa" . "http://melpa.milkbox.net/packages/")))
 
 (setq package-list '(ace-jump-mode
-                     ac-js2
                      ag
-                     auctex
                      auto-complete
                      emacs-eclim
                      epl
                      evil-leader
                      evil
                      expand-region
-                     helm
-                     helm-swoop
                      hemisu-theme
                      highlight-parentheses
                      json
@@ -48,7 +44,6 @@
                      popwin
                      projectile
                      s
-                     skewer-mode
                      smart-mode-line
                      smex
                      surround

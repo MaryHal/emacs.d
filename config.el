@@ -367,7 +367,7 @@
 ;;(ido-ubiquitous-use-new-completing-read yas/visit-snippet-file 'yasnippet)
 
 ;; Display ido results vertically, rather than horizontally
-;; (setq ido-decorations (quote ("\n-> " "" "\n " "\n ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
+(setq ido-decorations (quote ("\n-> " "" "\n " "\n ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
 
 ;; Better matching
 (require 'flx-ido)
@@ -384,28 +384,6 @@
 
 (setq smex-key-advice-ignore-menu-bar t)
 (setq smex-save-file (concat user-emacs-directory "cache/smex-items"))
-
-
-
-;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(require 'helm)
-(require 'helm-config)
-(require 'helm-swoop)
-
-;; (setq helm-idle-delay 0.1
-;;       helm-input-idle-delay 0
-;;       helm-quick-update t
-;;       helm-candidate-number-limit nil
-;;       helm-su-or-sudo "sudo"
-;;       helm-allow-skipping-current-buffer nil
-;;       helm-enable-shortcuts t)
-
-;; Helm keybindings
-(define-key helm-map (kbd "C-k") 'helm-previous-line)
-(define-key helm-map (kbd "C-j") 'helm-next-line)
-(define-key helm-map (kbd "C-h") 'helm-previous-source)
-(define-key helm-map (kbd "C-l") 'helm-next-source)
 
 
 
@@ -482,16 +460,6 @@
   (setq imenu-generic-expression markdown-imenu-generic-expression))
 
 (add-hook 'markdown-mode-hook 'my-markdown-mode-hook)
-
-;; PDF stuff
-(setq TeX-PDF-mode t)
-;; (setq latex-run-command "pdflatex")
-;; (setq TeX-engine 'pdflatex)
-
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(setq-default TeX-master nil)
-;; (setq ac-math-unicode-in-math-p t)
 
 ;; HTML
 (add-to-list 'auto-mode-alist '("\\.html\\'" . html-mode))
@@ -1133,18 +1101,9 @@ the current state and point position."
                             (evil-window-right 1)
                             (ido-find-file)))
 
-;; Helm
-(evil-leader/set-key "k" 'helm-show-kill-ring)
-(evil-leader/set-key "o" 'helm-imenu)
-(evil-leader/set-key "r" 'helm-register)
-(evil-leader/set-key "u" 'helm-buffers-list)
-(evil-leader/set-key "x" 'helm-M-x)
-
-(evil-leader/set-key "hf" 'helm-find-files)
-(evil-leader/set-key "ho" 'helm-imenu)
-(evil-leader/set-key "hk" 'helm-show-kill-ring)
-(evil-leader/set-key "hm" 'helm-mini)
-(evil-leader/set-key "hs" 'helm-swoop)
+(evil-leader/set-key "o" 'imenu)
+(evil-leader/set-key "u" 'ido-kill-buffer)
+(evil-leader/set-key "x" 'smex)
 
 ;; Projectile
 (evil-leader/set-key "p"  'projectile-find-file)
