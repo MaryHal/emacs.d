@@ -520,6 +520,9 @@
 (my-ac-config)
 
 ;; ;; Eclim Auto-complete
+;; (require 'eclim)
+;; (global-eclim-mode)
+
 ;; (require 'ac-emacs-eclim-source)
 ;; (ac-emacs-eclim-config)
 
@@ -1059,54 +1062,23 @@ the current state and point position."
 (define-key evil-motion-state-map (kbd "z") 'evil-ace-jump-char-mode)
 
 ;; Alternate
-(evil-leader/set-key "aa" 'ff-find-other-file)
-(evil-leader/set-key "as" (lambda()
-                            (interactive)
-                            (split-window-below)
-                            (evil-window-down 1)
-                            (ff-find-other-file)))
-(evil-leader/set-key "av" (lambda()
-                            (interactive)
-                            (split-window-right)
-                            (evil-window-right 1)
-                            (ff-find-other-file)))
-
-;; Buffers
-(evil-leader/set-key "bb" 'ido-switch-buffer)
-(evil-leader/set-key "bk" 'ido-kill-buffer)
-(evil-leader/set-key "bm" 'buffer-menu)
-(evil-leader/set-key "bn" 'switch-to-next-buffer)
-(evil-leader/set-key "bp" 'switch-to-prev-buffer)
-(evil-leader/set-key "bw" (lambda()
-                            (interactive)
-                            (kill-this-buffer)
-                            (delete-window)))
-(evil-leader/set-key "bW" 'kill-this-buffer)
+(evil-leader/set-key "a" 'ff-find-other-file)
 
 ;; Eval
 (evil-leader/set-key "eb" 'eval-buffer)
 (evil-leader/set-key "er" 'eval-region)
 
-;; File
-(evil-leader/set-key "ff" 'ido-find-file)
-(evil-leader/set-key "fd" 'ido-dired)
-(evil-leader/set-key "fs" (lambda()
-                            (interactive)
-                            (split-window-below)
-                            (evil-window-down 1)
-                            (ido-find-file)))
-(evil-leader/set-key "fv" (lambda()
-                            (interactive)
-                            (split-window-right)
-                            (evil-window-right 1)
-                            (ido-find-file)))
+;; Files and Directories
+(evil-leader/set-key "d" 'ido-dired)
+(evil-leader/set-key "f" 'ido-find-file)
 
 (evil-leader/set-key "o" 'imenu)
-(evil-leader/set-key "u" 'ido-kill-buffer)
+(evil-leader/set-key "u" 'ido-switch-buffer)
 (evil-leader/set-key "x" 'smex)
 
 ;; Projectile
 (evil-leader/set-key "p"  'projectile-find-file)
+
 
 ;; Terminal
 (evil-leader/set-key "t"  '(lambda()
