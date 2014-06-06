@@ -8,7 +8,7 @@
     (not (display-graphic-p)))
 
 ;; Custom configuration files
-(add-to-loadpath (concat user-emacs-directory "pkg/irony-mode/elisp"))
+;; (add-to-loadpath (concat user-emacs-directory "pkg/irony-mode/elisp"))
 
 
 
@@ -563,13 +563,6 @@
 ;; (set-face-background 'ac-selection-face "steelblue")
 (set-face-foreground 'ac-selection-face "gray10")
 
-;; Company-mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; (require 'company)
-
-;; (setq company-idle-delay t)
-;; (add-hook 'after-init-hook 'global-company-mode)
-
 
 
 ;; Modeline ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -930,9 +923,6 @@ the current state and point position."
 (define-key minibuffer-local-must-match-map [escape] 'abort-recursive-edit)
 (define-key minibuffer-local-isearch-map [escape] 'abort-recursive-edit)
 
-;; Expand Region
-(require 'expand-region)
-;;(global-set-key (kbd "C-q") 'er/expand-region)
 
 ;; Easier version of "C-x k" to kill buffer
 (global-set-key (kbd "C-x C-b") 'buffer-menu)
