@@ -933,9 +933,6 @@ the current state and point position."
 (global-set-key (kbd "C-c C-v") 'eval-buffer)
 (global-set-key (kbd "C-c C-r") 'eval-region)
 
-;; Commentin'
-(global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
-
 ;; Frames
 ;; (define-key global-map (kbd "C-c f k") 'delete-frame)
 ;; (define-key global-map (kbd "C-c f n") 'make-frame-command)
@@ -1040,6 +1037,13 @@ the current state and point position."
 ;; Bubble Text up and down. Works with regions.
 (define-key evil-normal-state-map (kbd "[ e") 'move-text-up)
 (define-key evil-normal-state-map (kbd "] e") 'move-text-down)
+
+;; Commentin'
+(define-key evil-normal-state-map (kbd "g c c") '(lambda ()
+                                                   (interactive)
+                                                   (comment-or-uncomment-region (line-beginning-position) (line-end-position))
+                                                   ))
+(define-key evil-visual-state-map (kbd "g c") 'comment-or-uncomment-region)
 
 
 
