@@ -1045,9 +1045,9 @@ the current state and point position."
     (evil-visual-restore)))
 
 ;; Alternate escapes
-(require 'key-chord)
-(key-chord-mode 1)
-(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+;; (require 'key-chord)
+;; (key-chord-mode 1)
+;; (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
 
 ;; "Unimpaired"
 (define-key evil-normal-state-map (kbd "[ SPC") 'evil-insert-line-above)
@@ -1100,7 +1100,7 @@ the current state and point position."
 ;; Terminal
 (evil-leader/set-key "t"  '(lambda()
                              (interactive)
-                             (shell-command "urxvtc")))
+                             (shell-command "$TERMINAL -e fish")))
 
 ;; Selection
 (evil-leader/set-key "v" 'er/expand-region)

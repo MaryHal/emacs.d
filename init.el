@@ -22,6 +22,7 @@
 
 (setq package-list '(ace-jump-mode
                      ag
+                     anzu
                      auto-complete
                      emacs-eclim
                      epl
