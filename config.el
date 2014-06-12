@@ -898,6 +898,29 @@ the current state and point position."
 (setq ace-jump-mode-scope 'window)
 (ace-jump-mode-enable-mark-sync)
 
+(evil-define-motion evil-ace-jump-char-mode (count)
+  :type exclusive
+  (ace-jump-mode 5)
+  (recursive-edit))
+
+(evil-define-motion evil-ace-jump-line-mode (count)
+  :type line
+  (ace-jump-mode 9)
+  (recursive-edit))
+
+(evil-define-motion evil-ace-jump-word-mode (count)
+  :type exclusive
+  (ace-jump-mode 1)
+  (recursive-edit))
+
+(evil-define-motion evil-ace-jump-char-direct-mode (count)
+  :type inclusive
+  (ace-jump-mode 5)
+  (forward-char 1)
+  (recursive-edit))
+
+(add-hook 'ace-jump-mode-end-hook 'exit-recursive-edit)
+
 ;; ;; Lowercase only for ace-jump
 ;; (setq ace-jump-mode-move-keys
 ;;       (loop for i from ?a to ?z collect i))
