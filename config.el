@@ -519,12 +519,12 @@
 
 (my-ac-config)
 
-;; ;; Eclim Auto-complete
-;; (require 'eclim)
-;; (global-eclim-mode)
+;; Eclim Auto-complete
+(require 'eclim)
+(global-eclim-mode)
 
-;; (require 'ac-emacs-eclim-source)
-;; (ac-emacs-eclim-config)
+(require 'ac-emacs-eclim-source)
+(ac-emacs-eclim-config)
 
 ;; Triggered Auto complete
 ;; (setq ac-auto-start nil)
@@ -641,9 +641,6 @@
 
 (require 'evil-leader)
 (global-evil-leader-mode)
-
-(require 'evil-nerd-commenter)
-(evilnc-default-hotkeys)
 
 ;; Unset shortcuts which shadow evil leader
 (eval-after-load "compile"

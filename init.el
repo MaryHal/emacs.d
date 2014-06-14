@@ -32,7 +32,6 @@
                      highlight-parentheses
                      json
                      js2-mode
-                     key-chord
                      flx
                      flx-ido
                      ido-ubiquitous
