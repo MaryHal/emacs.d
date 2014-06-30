@@ -133,10 +133,10 @@
 (setq eval-expression-print-level nil)
 
 ;; Mouse support
-(require 'mouse)
-(xterm-mouse-mode t)
-(defun track-mouse (e))
-(setq mouse-sel-mode t)
+;; (require 'mouse)
+;; (xterm-mouse-mode t)
+;; (defun track-mouse (e))
+;; (setq mouse-sel-mode t)
 
 ;; Seed the random number generator
 (random t)
@@ -200,8 +200,8 @@
 (defadvice load-theme (after load-theme activate compile)
   (if (string= system-type "gnu/linux")
       (if (string= window-system "x")
-          (progn (set-frame-parameter (selected-frame) 'alpha '(90 90))
-                 (add-to-list 'default-frame-alist '(alpha 90 90))
+          (progn (set-frame-parameter (selected-frame) 'alpha '(80 80))
+                 (add-to-list 'default-frame-alist '(alpha 80 80))
                  (set-face-attribute 'default nil :background "black"))
         (progn (when (getenv "DISPLAY")
                    (set-face-attribute 'default nil :background "unspecified-bg")
@@ -307,7 +307,7 @@
 (show-paren-mode t)
 (setq show-paren-delay 0)
 (set-face-background 'show-paren-match-face (face-background 'default))
-(set-face-foreground 'show-paren-match-face "#f00")
+(set-face-foreground 'show-paren-match-face "#dd2222")
 (set-face-attribute 'show-paren-match-face nil :weight 'extra-bold)
 
 (defun hl-parens-hook()
@@ -396,7 +396,7 @@
 
 (require 'projectile)
 
-(setq projectile-indexing-method 'native)
+;; (setq projectile-indexing-method 'native)
 
 (add-to-list 'projectile-globally-ignored-directories "elpa")
 (add-to-list 'projectile-globally-ignored-directories ".cache")
@@ -480,9 +480,6 @@
 ;;             (setq c-comment-start-regexp "(@|/(/|[*][*]?))")
 ;;             (modify-syntax-entry ?@ "< b" java-mode-syntax-table))
 ;; (add-hook 'java-mode-hook 'fix-java-annotations)
-
-;; ;; Java + Eclim
-;; (require 'eclim)
 
 ;; ;; Error Help
 ;; (setq help-at-pt-display-when-idle t)
@@ -568,7 +565,8 @@
 ;; Modeline ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (require 'smart-mode-line)
-;; (setq sml/theme 'respectfull)
+(setq sml/theme 'dark)
+(setq sml/no-confirm-load-theme t)
 (setq sml/shorten-modes t)
 (setq sml/shorten-directory t)
 (setq sml/name-width 20)
@@ -587,21 +585,6 @@
 ;; Anzu (requires smart-mode-line)
 (require 'anzu)
 (global-anzu-mode 1)
-
-;; More smart-mode-line configuration inside "custom.el"
-
-;; Highlight current line
-;; (global-hl-line-mode t)
-;; (set-face-background 'hl-line "#222")
-
-;; pre-evil Stuff
-(setq evil-want-C-u-scroll t)
-(setq evil-find-skip-newlines t)
-(setq evil-move-cursor-back nil)
-(setq evil-cross-lines t)
-(setq evil-intercept-esc 'always)
-
-(setq evil-auto-indent t)
 
 ;; Evil tag colors
 ;; (setq evil-normal-state-tag   (propertize " Normal "   'face '((:background "LimeGreen" :foreground "DarkGreen" :weight bold)))
@@ -623,16 +606,27 @@
 
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; pre-evil Stuff
+(setq evil-want-C-u-scroll t)
+(setq evil-find-skip-newlines t)
+(setq evil-move-cursor-back nil)
+(setq evil-cross-lines t)
+(setq evil-intercept-esc 'always)
+
+(setq evil-auto-indent t)
+
+
 (require 'evil)
 
 ;; Actually activate evil mode
 (evil-mode t)
 
 ;; Reclaim C-z for suspend in terminal
-(evil-set-toggle-key "C-\\")
+;; (evil-set-toggle-key "C-\\")
+(evil-set-toggle-key "<pause>")
 
-(require 'surround)
-(global-surround-mode t)
+; (require 'surround)
+; (global-surround-mode t)
 
 ;; evil-leader
 (setq evil-leader/in-all-states t
@@ -700,37 +694,8 @@
 ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
-;; If emacs is run in a terminal, the clipboard- functions have no
-;; effect. Instead, we use of xsel, see
-;; http://www.vergenet.net/~conrad/software/xsel/ -- "a command-line
-;; program for getting and setting the contents of the X selection"
-(unless window-system
-  (when (getenv "DISPLAY")
-    ;; Callback for when user cuts
-    (defun xsel-cut-function (text &optional push)
-      ;; Insert text to temp-buffer, and "send" content to xsel stdin
-      (with-temp-buffer
-        (insert text)
-        ;; I prefer using the "clipboard" selection (the one the
-        ;; typically is used by c-c/c-v) before the primary selection
-        ;; (that uses mouse-select/middle-button-click)
-        (call-process-region (point-min) (point-max) "xsel" nil 0 nil "--clipboard" "--input")))
-    ;; Call back for when user pastes
-    (defun xsel-paste-function()
-      ;; Find out what is current selection by xsel. If it is different
-      ;; from the top of the kill-ring (car kill-ring), then return
-      ;; it. Else, nil is returned, so whatever is in the top of the
-      ;; kill-ring will be used.
-      (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
-        (unless (string= (car kill-ring) xsel-output)
-          xsel-output )))
-    ;; Attach callbacks to hooks
-    (setq interprogram-cut-function 'xsel-cut-function)
-    (setq interprogram-paste-function 'xsel-paste-function)
-    ;; Idea from
-    ;; http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
-    ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
-    ))
+;; If emacs is run in a terminal, the clipboard- functions have no effect.
+;; http://www.vergenet.net/~conrad/software/xsel/
 
 
 
@@ -963,7 +928,7 @@ the current state and point position."
 ;; Workgroups2
 ;; (global-set-key (kbd "C-c l") 'wg-reload-session)
 ;; (global-set-key (kbd "C-c s") 'wg-save-session)
-;; (global-set-key (kbd "C-c w")   'wg-switch-to-workgroup)
+;; (global-set-key (kbd "C-c w") 'wg-switch-to-workgroup)
 
 (define-key evil-normal-state-map (kbd "g T") 'wg-switch-to-workgroup-left)
 (define-key evil-normal-state-map (kbd "g t") 'wg-switch-to-workgroup-right)
@@ -1099,9 +1064,6 @@ the current state and point position."
                              (interactive)
                              (shell-command "$TERMINAL -e fish")))
 
-;; Selection
-(evil-leader/set-key "v" 'er/expand-region)
-
 ;; Org Mode settings
 (evil-define-key 'normal org-mode-map
   (kbd "RET") 'org-open-at-point
@@ -1155,3 +1117,68 @@ the current state and point position."
   (kbd "M-K") 'org-metaup
   (kbd "M-L") 'org-metaright)
 
+;; Extra ido-mode keybindings
+(defun split-window-vertically-and-switch ()
+  (interactive)
+  (split-window-vertically)
+  (other-window 1))
+
+(defun split-window-horizontally-and-switch ()
+  (interactive)
+  (split-window-horizontally)
+  (other-window 1))
+
+(defun ido-invoke-in-other-window ()
+  "signals ido mode to switch to (or create) another window after exiting"
+  (interactive)
+  (setq ido-exit-minibuffer-target-window 'other)
+  (ido-exit-minibuffer))
+
+(defun ido-invoke-in-horizontal-split ()
+  "signals ido mode to split horizontally and switch after exiting"
+  (interactive)
+  (setq ido-exit-minibuffer-target-window 'horizontal)
+  (ido-exit-minibuffer))
+
+(defun ido-invoke-in-vertical-split ()
+  "signals ido mode to split vertically and switch after exiting"
+  (interactive)
+  (setq ido-exit-minibuffer-target-window 'vertical)
+  (ido-exit-minibuffer))
+
+(defun ido-invoke-in-new-frame ()
+  "signals ido mode to create a new frame after exiting"
+  (interactive)
+  (setq ido-exit-minibuffer-target-window 'frame)
+  (ido-exit-minibuffer))
+
+(defadvice ido-read-internal (around ido-read-internal-with-minibuffer-other-window activate)
+  (let* (ido-exit-minibuffer-target-window
+         (this-buffer (current-buffer))
+         (result ad-do-it))
+    (cond
+     ((equal ido-exit-minibuffer-target-window 'other)
+      (if (= 1 (count-windows))
+          (split-window-horizontally-and-switch)
+        (other-window 1)))
+     ((equal ido-exit-minibuffer-target-window 'horizontal)
+      (split-window-horizontally-and-switch))
+
+     ((equal ido-exit-minibuffer-target-window 'vertical)
+      (split-window-vertically-and-switch))
+     ((equal ido-exit-minibuffer-target-window 'frame)
+      (make-frame)))
+    (switch-to-buffer this-buffer) ;; why? Some ido commands, such as textmate.el's textmate-goto-symbol don't switch the current buffer
+    result))
+
+(defadvice ido-init-completion-maps (after ido-init-completion-maps-with-other-window-keys activate)
+  (mapcar (lambda (map)
+            (define-key map (kbd "C-o") 'ido-invoke-in-other-window)
+            (define-key map (kbd "C-2") 'ido-invoke-in-vertical-split)
+            (define-key map (kbd "C-3") 'ido-invoke-in-horizontal-split)
+            (define-key map (kbd "C-4") 'ido-invoke-in-other-window)
+            (define-key map (kbd "C-5") 'ido-invoke-in-new-frame))
+          (list ido-buffer-completion-map
+                ido-common-completion-map
+                ido-file-completion-map
+                ido-file-dir-completion-map)))

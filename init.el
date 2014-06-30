@@ -30,6 +30,7 @@
                      evil
                      hemisu-theme
                      highlight-parentheses
+                     irony
                      json
                      js2-mode
                      flx
@@ -44,7 +45,6 @@
                      s
                      smart-mode-line
                      smex
-                     surround
                      undo-tree
                      workgroups2))
 
