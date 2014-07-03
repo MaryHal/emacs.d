@@ -3,25 +3,10 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
-;; Package helpers
-(defun require-package (package)
-  "Install given PACKAGE."
-  (unless (package-installed-p package)
-    (unless (assoc package package-archive-contents)
-      (package-refresh-contents))
-    (package-install package)))
-
-(defmacro after (feature &rest body)
-  "After FEATURE is loaded, evaluate BODY."
-  (declare (indent defun))
-  `(eval-after-load ,feature
-     '(progn ,@body)))
-
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-			 ("melpa" . "http://melpa.milkbox.net/packages/")))
+                         ("melpa" . "http://melpa.milkbox.net/packages/")))
 
-(setq package-list '(ace-jump-mode
-                     ag
+(setq package-list '(ag
                      anzu
                      auto-complete
                      emacs-eclim
@@ -30,7 +15,6 @@
                      evil
                      hemisu-theme
                      highlight-parentheses
-                     irony
                      json
                      js2-mode
                      flx

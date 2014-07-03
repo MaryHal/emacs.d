@@ -336,14 +336,6 @@
 
 (setq ido-save-directory-list-file (concat user-emacs-directory "cache/ido.last"))
 
-(defun my-ido-define-keys()
-(define-key ido-file-completion-map (kbd "C-w") 'ido-delete-backward-updir)
-(define-key ido-file-completion-map (kbd "C-x C-w") 'ido-copy-current-file-name)
-(define-key ido-completion-map (kbd "C-n") 'ido-next-match)
-(define-key ido-completion-map (kbd "C-p") 'ido-prev-match))
-
-(add-hook 'ido-setup-hook 'my-ido-define-keys)
-
 ;; Always rescan buffer for imenu
 (set-default 'imenu-auto-rescan t)
 
@@ -352,6 +344,7 @@
 
 ;; Use ido everywhere
 (ido-everywhere 1)
+
 (require 'ido-ubiquitous)
 (ido-ubiquitous-mode t)
 
@@ -373,7 +366,7 @@
 (require 'flx-ido)
 (flx-ido-mode t)
 
-;; disable ido faces to see flx highlights.
+;; Disable ido faces to see flx highlights.
 (setq ido-use-faces nil)
 
 ;; Disable flx highlights
@@ -406,11 +399,11 @@
 
 
 ;; Workgroups2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (require 'workgroups2)
 
 ;; Change workgroups session file
 (setq wg-default-session-file (concat user-emacs-directory "cache/workgroups2"))
-
 (setq wg-use-default-session-file nil)
 
 ;; Change prefix key (before activating WG)
@@ -518,6 +511,7 @@
 
 ;; Eclim Auto-complete
 (require 'eclim)
+(setq eclim-auto-save t)
 (global-eclim-mode)
 
 (require 'ac-emacs-eclim-source)
@@ -582,7 +576,7 @@
 
 (sml/setup)
 
-;; Anzu (requires smart-mode-line)
+;; Anzu
 (require 'anzu)
 (global-anzu-mode 1)
 
@@ -595,16 +589,16 @@
 ;;       evil-motion-state-tag   (propertize " Motion "   'face '((:background "goldenrod4" :foreground "goldenrod1" :weight bold)))
 ;;       evil-operator-state-tag (propertize " Operator " 'face '((:background "RoyalBlue4" :foreground "DarkBlue" :weight bold))))
 
-;; (setq evil-emacs-state-cursor '("red" box))
-;; (setq evil-normal-state-cursor '("green" box))
-;; (setq evil-visual-state-cursor '("orange" box))
-;; (setq evil-insert-state-cursor '("red" bar))
-;; (setq evil-replace-state-cursor '("red" bar))
-;; (setq evil-operator-state-cursor '("red" hollow))
-
 
 
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (setq evil-emacs-state-cursor    '("red" box))
+;; (setq evil-normal-state-cursor   '("green" box))
+;; (setq evil-visual-state-cursor   '("orange" box))
+;; (setq evil-insert-state-cursor   '("red" bar))
+;; (setq evil-replace-state-cursor  '("red" bar))
+;; (setq evil-operator-state-cursor '("red" hollow))
 
 ;; pre-evil Stuff
 (setq evil-want-C-u-scroll t)
@@ -622,8 +616,8 @@
 (evil-mode t)
 
 ;; Reclaim C-z for suspend in terminal
-;; (evil-set-toggle-key "C-\\")
-(evil-set-toggle-key "<pause>")
+(evil-set-toggle-key "C-\\")
+;; (evil-set-toggle-key "<pause>")
 
 ; (require 'surround)
 ; (global-surround-mode t)
@@ -649,21 +643,34 @@
 (setq evil-default-cursor t)
 ;; (setq evil-insert-state-cursor '("#aa0000" hbar))
 
-;; Bury the compilation buffer when compilation is finished and successful.
-(setq compilation-finish-functions 'compile-autoclose)
-(defun compile-autoclose (buffer string)
-  (cond ((string-match "finished" string)
-         (bury-buffer "*compilation*")
-         (winner-undo)
-         (message "Build successful."))
-        (t
-         (message "Compilation exited abnormally: %s" string))))
+
+
+;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; @see http://xugx2007.blogspot.com.au/2007/06/benjamin-rutts-emacs-c-development-tips.html
+(setq compilation-window-height 8)
+(setq compilation-finish-function
+      (lambda (buf str)
+        (if (string-match "exited abnormally" str)
+            ;;there were errors
+            (message "compilation errors, press C-x ` to visit")
+          ;;no errors, make the compilation window go away in 0.5 seconds
+          (when (string-match "*compilation*" (buffer-name buf))
+            ;; @see http://emacswiki.org/emacs/ModeCompile#toc2
+            (bury-buffer "*compilation*")
+            (winner-undo)
+            (message "NO COMPILATION ERRORS!")
+            ))))
 
 (setq special-display-function
       (lambda (buffer &optional args)
         (split-window)
         (switch-to-buffer buffer)
         (get-buffer-window buffer 0)))
+
+
+
+;; Other ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; ag, The Silver Searcher
 (require 'ag)
@@ -854,41 +861,8 @@ the current state and point position."
 
 ;; (Other) Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Ace Jump
-(require 'ace-jump-mode)
-(setq ace-jump-mode-case-fold t)
-(setq ace-jump-mode-scope 'window)
-(ace-jump-mode-enable-mark-sync)
-
-(evil-define-motion evil-ace-jump-char-mode (count)
-  :type exclusive
-  (ace-jump-mode 5)
-  (recursive-edit))
-
-(evil-define-motion evil-ace-jump-line-mode (count)
-  :type line
-  (ace-jump-mode 9)
-  (recursive-edit))
-
-(evil-define-motion evil-ace-jump-word-mode (count)
-  :type exclusive
-  (ace-jump-mode 1)
-  (recursive-edit))
-
-(evil-define-motion evil-ace-jump-char-direct-mode (count)
-  :type inclusive
-  (ace-jump-mode 5)
-  (forward-char 1)
-  (recursive-edit))
-
-(add-hook 'ace-jump-mode-end-hook 'exit-recursive-edit)
-
-;; ;; Lowercase only for ace-jump
-;; (setq ace-jump-mode-move-keys
-;;       (loop for i from ?a to ?z collect i))
-
-;; (global-set-key (kbd "C-c SPC") 'ace-jump-char-mode)
-;; (define-key evil-normal-state-map (kbd "") 'ace-jump-mode)
+;; Remove suspend-frame
+(global-unset-key (kbd "C-z"))
 
 ;; Make end-of-line work in insert
 (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
@@ -907,7 +881,6 @@ the current state and point position."
 (define-key minibuffer-local-completion-map [escape] 'abort-recursive-edit)
 (define-key minibuffer-local-must-match-map [escape] 'abort-recursive-edit)
 (define-key minibuffer-local-isearch-map [escape] 'abort-recursive-edit)
-
 
 ;; Easier version of "C-x k" to kill buffer
 (global-set-key (kbd "C-x C-b") 'buffer-menu)
@@ -929,6 +902,7 @@ the current state and point position."
 ;; (global-set-key (kbd "C-c l") 'wg-reload-session)
 ;; (global-set-key (kbd "C-c s") 'wg-save-session)
 ;; (global-set-key (kbd "C-c w") 'wg-switch-to-workgroup)
+;; (global-set-key (kbd "C-c w") 'wg-create-workgroup)
 
 (define-key evil-normal-state-map (kbd "g T") 'wg-switch-to-workgroup-left)
 (define-key evil-normal-state-map (kbd "g t") 'wg-switch-to-workgroup-right)
@@ -1034,14 +1008,12 @@ the current state and point position."
 
 ;; Evil-leader Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(evil-leader/set-key "SPC" 'ace-jump-mode)
-(global-set-key (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
-
-;; Vim-sneak-like keybinding
-(define-key evil-motion-state-map (kbd "z") 'evil-ace-jump-char-mode)
-
 ;; Alternate
 (evil-leader/set-key "a" 'ff-find-other-file)
+
+(evil-leader/set-key "c" '(lambda()
+                            (interactive)
+                            (file-name-directory (or load-file-name buffer-file-name))))
 
 ;; Eval
 (evil-leader/set-key "eb" 'eval-buffer)
@@ -1057,7 +1029,6 @@ the current state and point position."
 
 ;; Projectile
 (evil-leader/set-key "p"  'projectile-find-file)
-
 
 ;; Terminal
 (evil-leader/set-key "t"  '(lambda()
@@ -1182,3 +1153,11 @@ the current state and point position."
                 ido-common-completion-map
                 ido-file-completion-map
                 ido-file-dir-completion-map)))
+
+(defun my-ido-define-keys()
+  (define-key ido-file-completion-map (kbd "C-w") 'ido-delete-backward-updir)
+  (define-key ido-file-completion-map (kbd "C-x C-w") 'ido-copy-current-file-name)
+  (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
+  (define-key ido-completion-map (kbd "C-p") 'ido-prev-match))
+
+(add-hook 'ido-setup-hook 'my-ido-define-keys)
