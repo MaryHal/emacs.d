@@ -4,11 +4,13 @@
 (setq package-list '(ag
                      anzu
                      company
+                     company-irony
                      diminish
                      evil-leader
                      evil
                      hemisu-theme
                      highlight-parentheses
+                     irony
                      json
                      js2-mode
                      flx
@@ -570,8 +572,37 @@
 
 ;; Auto-complete ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Irony-mode
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'objc-mode-hook 'irony-mode)
+
+;; replace the `completion-at-point' and `complete-symbol' bindings in
+;; irony-mode's buffers by irony-mode's function
+(defun my-irony-mode-hook ()
+  (define-key irony-mode-map [remap completion-at-point]
+    'irony-completion-at-point-async)
+  (define-key irony-mode-map [remap complete-symbol]
+    'irony-completion-at-point-async))
+(add-hook 'irony-mode-hook 'my-irony-mode-hook)
+
+(eval-after-load 'company
+  '(add-to-list 'company-backends 'company-irony))
+
+;; (optional) adds CC special commands to `company-begin-commands' in order to
+;; trigger completion at interesting places, such as after scope operator
+;;     std::|
+(add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+
+(setq-default company-idle-delay 0.1)
+(setq-default company-minimum-prefix-length 2)
+
 (require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
+
+
+
+;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Evil tag colors
 ;; (setq evil-normal-state-tag   (propertize " Normal "   'face '((:background "LimeGreen" :foreground "DarkGreen" :weight bold)))
@@ -581,10 +612,6 @@
 ;;       evil-emacs-state-tag    (propertize " Emacs "    'face '((:background "MediumOrchid" :foreground "DarkMagenta" :weight bold)))
 ;;       evil-motion-state-tag   (propertize " Motion "   'face '((:background "goldenrod4" :foreground "goldenrod1" :weight bold)))
 ;;       evil-operator-state-tag (propertize " Operator " 'face '((:background "RoyalBlue4" :foreground "DarkBlue" :weight bold))))
-
-
-
-;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; (setq evil-emacs-state-cursor    '("red" box))
 ;; (setq evil-normal-state-cursor   '("green" box))
@@ -601,7 +628,6 @@
 (setq evil-intercept-esc 'always)
 
 (setq evil-auto-indent t)
-
 
 (require 'evil)
 

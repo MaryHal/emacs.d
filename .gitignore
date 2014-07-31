@@ -7,6 +7,7 @@ auto-save-list/
 backups/
 cache/*
 elpa/
+irony/
 site-lisp/
 url/
 
