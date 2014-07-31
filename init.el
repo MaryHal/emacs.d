@@ -19,7 +19,8 @@
                      markdown-mode
                      projectile
                      smex
-                     undo-tree))
+                     undo-tree
+                     workgroups2))
 
 ;; Activate all the packages (in particular autoloads)
 (package-initialize)
@@ -509,16 +510,16 @@
 
 ;; Workgroups2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; (require 'workgroups2)
+(require 'workgroups2)
 
-;; ;; Change workgroups session file
-;; (setq wg-default-session-file (concat user-emacs-directory "cache/workgroups2"))
-;; (setq wg-use-default-session-file nil)
+;; Change workgroups session file
+(setq wg-default-session-file (concat user-emacs-directory "cache/workgroups2"))
+(setq wg-use-default-session-file nil)
 
-;; ;; Change prefix key (before activating WG)
-;; (setq wg-prefix-key (kbd "C-c z"))
+;; Change prefix key (before activating WG)
+(setq wg-prefix-key (kbd "C-c z"))
 
-;; (workgroups-mode 1)
+(workgroups-mode 1)
 
 
 
@@ -678,7 +679,7 @@
             ;; @see http://emacswiki.org/emacs/ModeCompile#toc2
             (bury-buffer "*compilation*")
             (winner-undo)
-            (message "NO COMPILATION ERRORS!")
+            (message "Compilation Complete")
             ))))
 
 (setq special-display-function
@@ -950,11 +951,11 @@ the current state and point position."
 ;; Workgroups2
 ;; (global-set-key (kbd "C-c l") 'wg-reload-session)
 ;; (global-set-key (kbd "C-c s") 'wg-save-session)
-;; (global-set-key (kbd "C-c w") 'wg-switch-to-workgroup)
-;; (global-set-key (kbd "C-c w") 'wg-create-workgroup)
+(global-set-key (kbd "C-c w") 'wg-switch-to-workgroup)
+(global-set-key (kbd "C-c w") 'wg-create-workgroup)
 
-;; (define-key evil-normal-state-map (kbd "g T") 'wg-switch-to-workgroup-left)
-;; (define-key evil-normal-state-map (kbd "g t") 'wg-switch-to-workgroup-right)
+(define-key evil-normal-state-map (kbd "g T") 'wg-switch-to-workgroup-left)
+(define-key evil-normal-state-map (kbd "g t") 'wg-switch-to-workgroup-right)
 
 ;; Window Registers
 (global-set-key (kbd "<f9>") '(lambda () (interactive) (jump-to-register 9)
