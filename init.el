@@ -8,14 +8,15 @@
                      diminish
                      evil-leader
                      evil
+                     flx
+                     flx-ido
                      hemisu-theme
                      highlight-parentheses
+                     ido-ubiquitous
                      irony
                      json
                      js2-mode
-                     flx
-                     flx-ido
-                     ido-ubiquitous
+                     lua-mode
                      markdown-mode
                      projectile
                      smex
@@ -52,9 +53,6 @@
 (defun add-to-loadpath (&rest dirs)
   (dolist (dir dirs load-path)
     (add-to-list 'load-path (expand-file-name dir) nil #'string=)))
-
-(defun is-in-terminal()
-  (not (display-graphic-p)))
 
 
 
@@ -179,10 +177,10 @@
 (setq eval-expression-print-level nil)
 
 ;; Mouse support
-(require 'mouse)
-(xterm-mouse-mode t)
-(defun track-mouse (e))
-(setq mouse-sel-mode t)
+;; (require 'mouse)
+;; (xterm-mouse-mode t)
+;; (defun track-mouse (e))
+;; (setq mouse-sel-mode t)
 
 ;; Seed the random number generator
 (random t)
@@ -289,7 +287,7 @@
 
 ;; Appearance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(set-cursor-color "#CCCCCC")
+;; (set-cursor-color "#CCCCCC")
 (set-mouse-color "#CCCCCC")
 
 ;; Default window metrics
@@ -297,7 +295,7 @@
       '((top   . 10) (left   . 2)
         (width . 80) (height . 30)
         (mouse-color  . "#CCCCCC")
-        (cursor-color . "#CCCCCC")
+        ;; (cursor-color . "#CCCCCC")
         ))
 
 ;; Load custom theme
@@ -400,7 +398,7 @@
 (set-fringe-mode 0)
 
 ;; Set margins to 1 if not in terminal
-(when (not (is-in-terminal))
+(when (display-graphic-p)
   (setq-default left-margin-width 1 right-margin-width 1)
          (set-window-buffer nil (current-buffer)))
 
@@ -590,13 +588,24 @@
 (eval-after-load 'company
   '(add-to-list 'company-backends 'company-irony))
 
+(setq-default company-backends (quote (company-files
+                                       company-elisp
+                                       company-css
+                                       company-eclim
+                                       company-clang
+                                       company-capf
+                                       (company-dabbrev-code company-keywords)
+                                       company-dabbrev)))
+
 ;; (optional) adds CC special commands to `company-begin-commands' in order to
 ;; trigger completion at interesting places, such as after scope operator
 ;;     std::|
 (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
 
-(setq-default company-idle-delay 0.1)
-(setq-default company-minimum-prefix-length 2)
+;; Complete immediately
+(setq-default company-idle-delay 0)
+(setq-default company-minimum-prefix-length 1)
+;; (setq-default company-show-numbers t)
 
 (require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
@@ -668,7 +677,10 @@
 ;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; @see http://xugx2007.blogspot.com.au/2007/06/benjamin-rutts-emacs-c-development-tips.html
-(setq compilation-window-height 8)
+
+;; Force split horizontal
+(setq split-width-threshold 0)
+(setq split-height-threshold nil)
 (setq compilation-finish-function
       (lambda (buf str)
         (if (string-match "exited abnormally" str)
@@ -911,8 +923,13 @@ the current state and point position."
 
 ;; (Other) Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Remove suspend-frame
-;; (global-unset-key (kbd "C-z"))
+;; Remove suspend-frame. Three times.
+(global-unset-key (kbd "C-x C-z"))
+(global-unset-key (kbd "C-z"))
+(put 'suspend-frame 'disabled t)
+
+;; Manual completion
+;; (global-set-key "\t" 'company-complete-common)
 
 ;; Make end-of-line work in insert
 (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
