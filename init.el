@@ -10,7 +10,6 @@
                      evil
                      flx
                      flx-ido
-                     hemisu-theme
                      highlight-parentheses
                      ido-ubiquitous
                      irony
@@ -19,9 +18,11 @@
                      lua-mode
                      markdown-mode
                      projectile
+                     smart-mode-line
                      smex
                      undo-tree
-                     workgroups2))
+                     workgroups2
+                     yasnippet))
 
 ;; Activate all the packages (in particular autoloads)
 (package-initialize)
@@ -40,11 +41,8 @@
 
 ;; Custom Configuration
 (setq custom-file "~/.emacs.d/custom.el")
-(defun loadCustomFile()
-  (unless (not (file-exists-p custom-file))
-    (load custom-file)))
-
-(loadCustomFile)
+(unless (not (file-exists-p custom-file))
+  (load custom-file))
 
 
 
@@ -204,7 +202,7 @@
 ;; Write backup files to own directory
 (setq backup-directory-alist
       `((".*" . ,(expand-file-name
-                 (concat user-emacs-directory "backups")))))
+                  (concat user-emacs-directory "backups")))))
 
 ;; Make backups of files, even when they're in version control
 (setq vc-make-backup-files t)
@@ -250,8 +248,8 @@
                  (add-to-list 'default-frame-alist '(alpha 80 80))
                  (set-face-attribute 'default nil :background "black"))
         (progn (when (getenv "DISPLAY")
-                   (set-face-attribute 'default nil :background "unspecified-bg")
-                   ))
+                 (set-face-attribute 'default nil :background "unspecified-bg")
+                 ))
         )))
 
 ;; Window Rebalancing
@@ -299,9 +297,10 @@
         ))
 
 ;; Load custom theme
-(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/hemisu-theme"))
-(add-to-list 'load-path (concat user-emacs-directory "/theme/hemisu-theme"))
-(load-theme 'hemisu-dark t)
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/hemisu-theme"))
+;; (add-to-list 'load-path (concat user-emacs-directory "/theme/hemisu-theme"))
+(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/"))
+(load-theme 'enox t)
 
 ;; Set font
 (if (string= system-type "windows-nt")
@@ -315,7 +314,6 @@
 
 ;; Diminish modeline clutter
 (require 'diminish)
-
 (eval-after-load "anzu"
   '(diminish 'anzu-mode))
 (eval-after-load "company"
@@ -326,48 +324,11 @@
   '(diminish 'projectile-mode))
 (eval-after-load "undo-tree"
   '(diminish 'undo-tree-mode))
+(eval-after-load "yasnippet"
+  '(diminish 'yas-minor-mode))
 
-(setq-default mode-line-format
-              (list
-               " %3l   "
-
-               ;; was this buffer modified since the last save?
-               ;; '(:eval (propertize  ("*")
-               ;;                'face (if (buffer-modified-p)
-               ;;                         mode-line-urgent
-               ;;                       mode-line-highlight)))
-
-               '(:eval (propertize "*"
-                                   'face (if (buffer-modified-p)
-                                             'mode-line-urgent
-                                           'mode-line-highlight)
-                                   'help-echo "Buffer has been modified"))
-
-               ;; the buffer name; the file name as a tool tip
-               " "
-               '"%b" 'face nil
-               " "
-
-               ;; is this buffer read-only?
-               '(:eval (when buffer-read-only
-                         (propertize "[RO]"
-                                     'face nil
-                                     'help-echo "Buffer is read-only")))
-
-               ;; The current major mode for the buffer.
-               "                    "
-               `(:propertize  ("# ") face mode-line-highlight)
-               '"%m"
-               `(:propertize  (" #") face mode-line-highlight)
-
-               ;; global-mode-string
-               ;; (propertize "%M" 'face nil)
-
-               ;; List minor modes
-               ;; I hide so many of them, should I even have this here?
-               minor-mode-alist
-               ))
-
+(require 'smart-mode-line)
+(sml/setup)
 
 ;; Toolbars and such
 ;; (add-hook 'before-make-frame-hook 'turn-off-tool-bar)
@@ -400,7 +361,7 @@
 ;; Set margins to 1 if not in terminal
 (when (display-graphic-p)
   (setq-default left-margin-width 1 right-margin-width 1)
-         (set-window-buffer nil (current-buffer)))
+  (set-window-buffer nil (current-buffer)))
 
 (setq visible-bell nil
       font-lock-maximum-decoration t
@@ -569,9 +530,14 @@
 
 
 
+;; Yasnippet ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require 'yasnippet)
+(yas-global-mode t)
+
 ;; Auto-complete ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Irony-mode
+;; ;; Irony-mode
 (add-hook 'c++-mode-hook 'irony-mode)
 (add-hook 'c-mode-hook 'irony-mode)
 (add-hook 'objc-mode-hook 'irony-mode)
@@ -585,21 +551,24 @@
     'irony-completion-at-point-async))
 (add-hook 'irony-mode-hook 'my-irony-mode-hook)
 
-(eval-after-load 'company
-  '(add-to-list 'company-backends 'company-irony))
+;; (eval-after-load 'company
+;;   '(add-to-list 'company-backends 'company-irony))
 
 (setq-default company-backends (quote (company-files
+                                       company-irony
                                        company-elisp
-                                       company-css
-                                       company-eclim
-                                       company-clang
-                                       company-capf
-                                       (company-dabbrev-code company-keywords)
-                                       company-dabbrev)))
+                                       company-yasnippet
+                                       ;; company-css
+                                       ;; company-eclim
+                                       ;; company-clang
+                                       ;; company-capf
+                                       ;; (company-dabbrev-code company-keywords)
+                                       ;; company-dabbrev
+                                       )))
 
 ;; (optional) adds CC special commands to `company-begin-commands' in order to
 ;; trigger completion at interesting places, such as after scope operator
-;;     std::|
+;; std::|
 (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
 
 ;; Complete immediately
@@ -609,6 +578,45 @@
 
 (require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
+
+;; (require 'auto-complete)
+;; (require 'auto-complete-config)
+
+;; ;; Auto-complete dictionary directories. It should already contain the default dictionaries.
+;; ;; (add-to-list 'ac-dictionary-directories (concat user-emacs-directory "ac-dict/"))
+
+;; (defun my-ac-config ()
+;;   (setq-default ac-sources '(ac-source-abbrev
+;;                              ac-source-dictionary
+;;                              ac-source-filename
+;;                              ac-source-yasnippet
+;;                              ac-source-words-in-same-mode-buffers))
+;;   (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
+;;   (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
+;;   (add-hook 'ruby-mode-hook 'ac-ruby-mode-setup)
+;;   (add-hook 'css-mode-hook 'ac-css-mode-setup)
+;;   (add-hook 'auto-complete-mode-hook 'ac-common-setup)
+;;   (global-auto-complete-mode t))
+
+;; (my-ac-config)
+
+;; ;; Triggered Auto complete
+;; ;; (setq ac-auto-start nil)
+;; ;; (setq ac-quick-help-delay 0.5)
+;; ;; (ac-set-trigger-key "TAB")
+;; ;;(define-key ac-mode-map [(control tab)] 'auto-complete)
+
+;; ;; Automatic Auto Complete
+;; (setq ac-auto-start t
+;;       ac-auto-show-menu t
+;;       ac-quick-help-delay 0.3
+;;       ac-quick-help-height 50)
+
+;; ;; Fuzzy matching
+;; (setq ac-use-fuzzy t)
+
+;; ;; Set history file location
+;; (setq ac-comphist-file (concat user-emacs-directory "cache/ac-comphist.dat"))
 
 
 
@@ -648,8 +656,8 @@
 (evil-set-toggle-key "C-\\")
 ;; (evil-set-toggle-key "<pause>")
 
-; (require 'surround)
-; (global-surround-mode t)
+                                        ; (require 'surround)
+                                        ; (global-surround-mode t)
 
 ;; evil-leader
 (setq evil-leader/in-all-states t
@@ -661,7 +669,7 @@
 
 ;; Unset shortcuts which shadow evil leader
 (eval-after-load "compile"
- (define-key compilation-mode-map (kbd "SPC") nil))
+  (define-key compilation-mode-map (kbd "SPC") nil))
 
 ;; make leader available in visual mode
 (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
@@ -669,8 +677,10 @@
 (define-key evil-emacs-state-map (kbd "SPC") evil-leader--default-map)
 
 ;; Stop evil from overwriting cursor color
-(setq evil-default-cursor t)
+;; (setq evil-default-cursor t)
 ;; (setq evil-insert-state-cursor '("#aa0000" hbar))
+
+(evil-set-initial-state 'package-menu-mode 'normal)
 
 
 
@@ -881,47 +891,67 @@ the current state and point position."
 (defun toggle-maximize-buffer () "Maximize buffer"
   (interactive)
   (if (= 1 (length (window-list)))
-    (jump-to-register '_)
+      (jump-to-register '_)
     (progn
       (set-register '_ (list (current-window-configuration)))
       (delete-other-windows))))
 
 (defun move-text-internal (arg)
-   (cond
-    ((and mark-active transient-mark-mode)
-     (if (> (point) (mark))
-            (exchange-point-and-mark))
-     (let ((column (current-column))
-              (text (delete-and-extract-region (point) (mark))))
-       (forward-line arg)
-       (move-to-column column t)
-       (set-mark (point))
-       (insert text)
-       (exchange-point-and-mark)
-       (setq deactivate-mark nil)))
-    (t
-     (beginning-of-line)
-     (when (or (> arg 0) (not (bobp)))
-       (forward-line)
-       (when (or (< arg 0) (not (eobp)))
-            (transpose-lines arg))
-       (forward-line -1)))))
+  (cond
+   ((and mark-active transient-mark-mode)
+    (if (> (point) (mark))
+        (exchange-point-and-mark))
+    (let ((column (current-column))
+          (text (delete-and-extract-region (point) (mark))))
+      (forward-line arg)
+      (move-to-column column t)
+      (set-mark (point))
+      (insert text)
+      (exchange-point-and-mark)
+      (setq deactivate-mark nil)))
+   (t
+    (beginning-of-line)
+    (when (or (> arg 0) (not (bobp)))
+      (forward-line)
+      (when (or (< arg 0) (not (eobp)))
+        (transpose-lines arg))
+      (forward-line -1)))))
 
 (defun move-text-down (arg)
-   "Move region (transient-mark-mode active) or current line
+  "Move region (transient-mark-mode active) or current line
   arg lines down."
-   (interactive "*p")
-   (move-text-internal arg))
+  (interactive "*p")
+  (move-text-internal arg))
 
 (defun move-text-up (arg)
-   "Move region (transient-mark-mode active) or current line
+  "Move region (transient-mark-mode active) or current line
   arg lines up."
-   (interactive "*p")
-   (move-text-internal (- arg)))
+  (interactive "*p")
+  (move-text-internal (- arg)))
 
 
 
 ;; (Other) Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Make ESC work more or less like it does in Vim
+(defun init/minibuffer-keyboard-quit()
+  "Abort recursive edit.
+
+In Delete Selection mode, if the mark is active, just deactivate it;
+then it takes a second \\[keyboard-quit] to abort the minibuffer."
+  (interactive)
+  (if (and delete-selection-mode transient-mark-mode mark-active)
+      (setq deactivate-mark t)
+    (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
+    (abort-recursive-edit)))
+
+(define-key minibuffer-local-map [escape] 'init/minibuffer-keyboard-quit)
+(define-key minibuffer-local-ns-map [escape] 'init/minibuffer-keyboard-quit)
+(define-key minibuffer-local-completion-map [escape] 'init/minibuffer-keyboard-quit)
+(define-key minibuffer-local-must-match-map [escape] 'init/minibuffer-keyboard-quit)
+(define-key minibuffer-local-isearch-map [escape] 'init/minibuffer-keyboard-quit)
+
+
 
 ;; Remove suspend-frame. Three times.
 (global-unset-key (kbd "C-x C-z"))
@@ -930,24 +960,10 @@ the current state and point position."
 
 ;; Manual completion
 ;; (global-set-key "\t" 'company-complete-common)
+(global-set-key (kbd "M-/") 'hippie-expand)
 
 ;; Make end-of-line work in insert
 (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
-
-;; Redefine ESC for Evil (By default it's meta)
-(define-key evil-insert-state-map (kbd "ESC") 'evil-normal-state)
-(define-key evil-visual-state-map (kbd "ESC") 'evil-normal-state)
-(define-key evil-replace-state-map (kbd "ESC") 'evil-normal-state)
-(define-key evil-operator-state-map (kbd "ESC") 'evil-normal-state)
-(define-key evil-motion-state-map (kbd "ESC") 'evil-normal-state)
-
-(define-key evil-normal-state-map [escape] 'keyboard-quit)
-(define-key evil-visual-state-map [escape] 'keyboard-quit)
-(define-key minibuffer-local-map [escape] 'abort-recursive-edit)
-(define-key minibuffer-local-ns-map [escape] 'abort-recursive-edit)
-(define-key minibuffer-local-completion-map [escape] 'abort-recursive-edit)
-(define-key minibuffer-local-must-match-map [escape] 'abort-recursive-edit)
-(define-key minibuffer-local-isearch-map [escape] 'abort-recursive-edit)
 
 ;; Easier version of "C-x k" to kill buffer
 (global-set-key (kbd "C-x C-b") 'buffer-menu)
@@ -1026,26 +1042,26 @@ the current state and point position."
 
 ;; Visual indentation now reselects visual selection.
 (define-key evil-visual-state-map ">" (lambda ()
-    (interactive)
-    ;; ensure mark is less than point
-    (when (> (mark) (point))
-        (exchange-point-and-mark)
-    )
-    (evil-normal-state)
-    (evil-shift-right (mark) (point))
-    ;; re-select last visual-mode selection
-    (evil-visual-restore)))
+                                        (interactive)
+                                        ;; ensure mark is less than point
+                                        (when (> (mark) (point))
+                                          (exchange-point-and-mark)
+                                          )
+                                        (evil-normal-state)
+                                        (evil-shift-right (mark) (point))
+                                        ;; re-select last visual-mode selection
+                                        (evil-visual-restore)))
 
 (define-key evil-visual-state-map "<" (lambda ()
-    (interactive)
-    ;; ensure mark is less than point
-    (when (> (mark) (point))
-        (exchange-point-and-mark)
-    )
-    (evil-normal-state)
-    (evil-shift-left (mark) (point))
-    ;; re-select last visual-mode selection
-    (evil-visual-restore)))
+                                        (interactive)
+                                        ;; ensure mark is less than point
+                                        (when (> (mark) (point))
+                                          (exchange-point-and-mark)
+                                          )
+                                        (evil-normal-state)
+                                        (evil-shift-left (mark) (point))
+                                        ;; re-select last visual-mode selection
+                                        (evil-visual-restore)))
 
 ;; Alternate escapes
 ;; (require 'key-chord)
