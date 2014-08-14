@@ -671,6 +671,12 @@
 (eval-after-load "compile"
   (define-key compilation-mode-map (kbd "SPC") nil))
 
+(add-hook 'compilation-mode-hook '(lambda ()
+                                    (local-unset-key "g")
+                                    (local-unset-key "h")
+                                    (evil-define-key 'motion compilation-mode-map "r" 'recompile)
+                                    (evil-define-key 'motion compilation-mode-map "h" 'evil-backward-char)))
+
 ;; make leader available in visual mode
 (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
 (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
@@ -689,8 +695,9 @@
 ;; @see http://xugx2007.blogspot.com.au/2007/06/benjamin-rutts-emacs-c-development-tips.html
 
 ;; Force split horizontal
-(setq split-width-threshold 0)
-(setq split-height-threshold nil)
+(setq split-height-threshold most-positive-fixnum)
+(setq split-width-threshold nil)
+
 (setq compilation-finish-function
       (lambda (buf str)
         (if (string-match "exited abnormally" str)
@@ -974,6 +981,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key (kbd "C-c C-v") 'eval-buffer)
 (global-set-key (kbd "C-c C-r") 'eval-region)
 
+;; ;; Window Configuration Registers
+;; (global-set-key (kbd "C-c w") 'window-configuration-to-register)
+;; (global-set-key (kbd "C-c e") 'jump-to-register)
+
 ;; Frames
 ;; (define-key global-map (kbd "C-c f k") 'delete-frame)
 ;; (define-key global-map (kbd "C-c f n") 'make-frame-command)
@@ -984,8 +995,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Workgroups2
 ;; (global-set-key (kbd "C-c l") 'wg-reload-session)
 ;; (global-set-key (kbd "C-c s") 'wg-save-session)
-(global-set-key (kbd "C-c w") 'wg-switch-to-workgroup)
-(global-set-key (kbd "C-c w") 'wg-create-workgroup)
+;; (global-set-key (kbd "C-c w") 'wg-switch-to-workgroup)
+;; (global-set-key (kbd "C-c w") 'wg-create-workgroup)
 
 (define-key evil-normal-state-map (kbd "g T") 'wg-switch-to-workgroup-left)
 (define-key evil-normal-state-map (kbd "g t") 'wg-switch-to-workgroup-right)
