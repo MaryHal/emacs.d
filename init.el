@@ -1101,10 +1101,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
 
 ;; bind evil-forward/backward-args
-(define-key evil-normal-state-map "L" 'evil-forward-arg)
-(define-key evil-normal-state-map "H" 'evil-backward-arg)
-(define-key evil-motion-state-map "L" 'evil-forward-arg)
-(define-key evil-motion-state-map "H" 'evil-backward-arg)
+(define-key evil-normal-state-map "gl" 'evil-forward-arg)
+(define-key evil-normal-state-map "gh" 'evil-backward-arg)
+(define-key evil-motion-state-map "gl" 'evil-forward-arg)
+(define-key evil-motion-state-map "gh" 'evil-backward-arg)
 
 ;; bind evil-jump-out-args
 ;; (define-key evil-normal-state-map "K" 'evil-jump-out-args)
@@ -1129,7 +1129,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Commentin'
 (define-key evil-normal-state-map (kbd "g c c") '(lambda ()
                                                    (interactive)
-                                                   (comment-or-uncomment-region (line-beginning-position) (line-end-position))
+                                                   (comment-or-uncomment-region
+                                                    (line-beginning-position)
+                                                    (line-end-position))
                                                    ))
 (define-key evil-visual-state-map (kbd "g c") 'comment-or-uncomment-region)
 
