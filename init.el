@@ -5,7 +5,7 @@
                      anzu
                      company
                      company-irony
-                     diminish
+                     evil-args
                      evil-leader
                      evil
                      flx
@@ -17,11 +17,12 @@
                      js2-mode
                      lua-mode
                      markdown-mode
+                     popwin
                      projectile
+                     rich-minority ;; Required by smart-mode-line
                      smart-mode-line
                      smex
                      undo-tree
-                     workgroups2
                      yasnippet))
 
 ;; Activate all the packages (in particular autoloads)
@@ -312,23 +313,13 @@
          (add-to-list 'default-frame-alist '(font . "Inconsolata 10")))
   )
 
-;; Diminish modeline clutter
-(require 'diminish)
-(eval-after-load "anzu"
-  '(diminish 'anzu-mode))
-(eval-after-load "company"
-  '(diminish 'company-mode))
-(eval-after-load "highlight-parentheses"
-  '(diminish 'highlight-parentheses-mode))
-(eval-after-load "projectile"
-  '(diminish 'projectile-mode))
-(eval-after-load "undo-tree"
-  '(diminish 'undo-tree-mode))
-(eval-after-load "yasnippet"
-  '(diminish 'yas-minor-mode))
-
 (require 'smart-mode-line)
 (sml/setup)
+
+;; rich-minority-mode
+;; Hide all minor modes
+(setq rm-excluded-modes nil)
+(setq rm-included-modes "")
 
 ;; Toolbars and such
 ;; (add-hook 'before-make-frame-hook 'turn-off-tool-bar)
@@ -347,6 +338,8 @@
 
 ;; No Tabs, just spaces
 (setq-default indent-tabs-mode nil)
+
+(electric-indent-mode t)
 
 ;; Don't add newlines when cursor goes past end of file
 (setq next-line-add-newlines nil)
@@ -469,16 +462,16 @@
 
 ;; Workgroups2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(require 'workgroups2)
+;; (require 'workgroups2)
 
-;; Change workgroups session file
-(setq wg-default-session-file (concat user-emacs-directory "cache/workgroups2"))
-(setq wg-use-default-session-file nil)
+;; ;; Change workgroups session file
+;; (setq wg-default-session-file (concat user-emacs-directory "cache/workgroups2"))
+;; (setq wg-use-default-session-file nil)
 
-;; Change prefix key (before activating WG)
-(setq wg-prefix-key (kbd "C-c z"))
+;; ;; Change prefix key (before activating WG)
+;; (setq wg-prefix-key (kbd "C-c z"))
 
-(workgroups-mode 1)
+;; (workgroups-mode 1)
 
 
 
@@ -656,8 +649,8 @@
 (evil-set-toggle-key "C-\\")
 ;; (evil-set-toggle-key "<pause>")
 
-                                        ; (require 'surround)
-                                        ; (global-surround-mode t)
+;; (require 'surround)
+;; (global-surround-mode t)
 
 ;; evil-leader
 (setq evil-leader/in-all-states t
@@ -666,6 +659,24 @@
 
 (require 'evil-leader)
 (global-evil-leader-mode)
+
+;; List of modes that should start up in Evil state.
+(defvar dotemacs-evil-state-modes
+  '(fundamental-mode
+    text-mode
+    prog-mode
+    sws-mode
+    dired-mode
+    comint-mode
+    log-edit-mode
+    compilation-mode))
+
+(defun my-enable-evil-mode ()
+  (if (apply 'derived-mode-p dotemacs-evil-state-modes)
+      (turn-on-evil-mode)))
+(add-hook 'after-change-major-mode-hook 'my-enable-evil-mode)
+
+(evil-set-initial-state 'package-menu-mode 'normal)
 
 ;; Unset shortcuts which shadow evil leader
 (eval-after-load "compile"
@@ -686,11 +697,12 @@
 ;; (setq evil-default-cursor t)
 ;; (setq evil-insert-state-cursor '("#aa0000" hbar))
 
-(evil-set-initial-state 'package-menu-mode 'normal)
-
 
 
 ;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require 'popwin)
+(popwin-mode t)
 
 ;; @see http://xugx2007.blogspot.com.au/2007/06/benjamin-rutts-emacs-c-development-tips.html
 
@@ -721,7 +733,7 @@
 
 ;; Other ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; ag, The Silver Searcher
+;; Ag, The Silver Searcher
 (require 'ag)
 (setq ag-highlight-search t)
 
@@ -783,6 +795,7 @@
     ;; http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
     ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
     ))
+
 
 
 ;; Keybinding Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -969,6 +982,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; (global-set-key "\t" 'company-complete-common)
 (global-set-key (kbd "M-/") 'hippie-expand)
 
+;; Auto-complete-mode / company keys
+;; (define-key ac-completing-map (kbd "C-n") 'ac-next)
+;; (define-key ac-completing-map (kbd "C-p") 'ac-previous)
+
+(define-key company-active-map (kbd "C-n") 'company-select-next)
+(define-key company-active-map (kbd "C-p") 'company-select-previous)
+
 ;; Make end-of-line work in insert
 (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
 
@@ -982,8 +1002,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key (kbd "C-c C-r") 'eval-region)
 
 ;; ;; Window Configuration Registers
-;; (global-set-key (kbd "C-c w") 'window-configuration-to-register)
-;; (global-set-key (kbd "C-c e") 'jump-to-register)
+(global-set-key (kbd "C-c w") 'window-configuration-to-register)
+(global-set-key (kbd "C-c e") 'jump-to-register)
+
+(global-set-key (kbd "<f9>") '(lambda () (interactive) (jump-to-register 9)
+                                (message "Windows disposition loaded")))
+(global-set-key (kbd "<f10>") '(lambda () (interactive) (window-configuration-to-register 9)
+                                 (message "Windows disposition saved")))
 
 ;; Frames
 ;; (define-key global-map (kbd "C-c f k") 'delete-frame)
@@ -998,23 +1023,17 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; (global-set-key (kbd "C-c w") 'wg-switch-to-workgroup)
 ;; (global-set-key (kbd "C-c w") 'wg-create-workgroup)
 
-(define-key evil-normal-state-map (kbd "g T") 'wg-switch-to-workgroup-left)
-(define-key evil-normal-state-map (kbd "g t") 'wg-switch-to-workgroup-right)
-
-;; Window Registers
-(global-set-key (kbd "<f9>") '(lambda () (interactive) (jump-to-register 9)
-                                (message "Windows disposition loaded")))
-(global-set-key (kbd "<f10>") '(lambda () (interactive) (window-configuration-to-register 9)
-                                 (message "Windows disposition saved")))
+;; (define-key evil-normal-state-map (kbd "g T") 'wg-switch-to-workgroup-left)
+;; (define-key evil-normal-state-map (kbd "g t") 'wg-switch-to-workgroup-right)
 
 ;; Smex
 (global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "C-x C-m") 'smex)
+;; (global-set-key (kbd "C-x C-m") 'smex)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
 ;; Other
-(global-set-key (kbd "RET") 'newline-and-indent)
+;; (global-set-key (kbd "RET") 'newline-and-indent)
 (define-key minibuffer-local-map (kbd "C-w") 'backward-kill-word)
 
 ;; Navigate windows with M-<arrows>
@@ -1073,6 +1092,22 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                         (evil-shift-left (mark) (point))
                                         ;; re-select last visual-mode selection
                                         (evil-visual-restore)))
+
+;; Evil-args
+(require 'evil-args)
+
+;; bind evil-args text objects
+(define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
+(define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
+
+;; bind evil-forward/backward-args
+(define-key evil-normal-state-map "L" 'evil-forward-arg)
+(define-key evil-normal-state-map "H" 'evil-backward-arg)
+(define-key evil-motion-state-map "L" 'evil-forward-arg)
+(define-key evil-motion-state-map "H" 'evil-backward-arg)
+
+;; bind evil-jump-out-args
+;; (define-key evil-normal-state-map "K" 'evil-jump-out-args)
 
 ;; Alternate escapes
 ;; (require 'key-chord)
