@@ -1,3 +1,14 @@
+;; Preload Init ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Things that should be set early just in case something bad happens
+
+;; Turn off backup files
+(setq make-backup-files nil)
+
+
+
+;; Package Management ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
 
@@ -10,6 +21,7 @@
                      evil
                      flx
                      flx-ido
+                     helm
                      highlight-parentheses
                      ido-ubiquitous
                      irony
@@ -284,6 +296,42 @@
 
 
 
+;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require 'popwin)
+
+(setq display-buffer-function 'popwin:display-buffer)
+(push '("helm" :regexp t :height 16) popwin:special-display-config)
+
+(popwin-mode t)
+
+;; @see http://xugx2007.blogspot.com.au/2007/06/benjamin-rutts-emacs-c-development-tips.html
+
+;; Force split horizontal
+;; (setq split-height-threshold most-positive-fixnum)
+;; (setq split-width-threshold nil)
+
+(setq compilation-finish-function
+      (lambda (buf str)
+        (if (string-match "exited abnormally" str)
+            ;;there were errors
+            (message "compilation errors, press C-x ` to visit")
+          ;;no errors, make the compilation window go away in 0.5 seconds
+          (when (string-match "*compilation*" (buffer-name buf))
+            ;; @see http://emacswiki.org/emacs/ModeCompile#toc2
+            (bury-buffer "*compilation*")
+            (winner-undo)
+            (message "Compilation Complete")
+            ))))
+
+(setq special-display-function
+      (lambda (buffer &optional args)
+        (split-window)
+        (switch-to-buffer buffer)
+        (get-buffer-window buffer 0)))
+
+
+
 ;; Appearance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; (set-cursor-color "#CCCCCC")
@@ -313,13 +361,14 @@
          (add-to-list 'default-frame-alist '(font . "Inconsolata 10")))
   )
 
+;; Mode line
 (require 'smart-mode-line)
 (sml/setup)
 
 ;; rich-minority-mode
-;; Hide all minor modes
+;; (rich-minority-mode t)
 (setq rm-excluded-modes nil)
-(setq rm-included-modes "")
+(setq rm-included-modes " Wrap")
 
 ;; Toolbars and such
 ;; (add-hook 'before-make-frame-hook 'turn-off-tool-bar)
@@ -383,6 +432,57 @@
 ;; Anzu
 (require 'anzu)
 (global-anzu-mode 1)
+
+
+
+;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require 'helm)
+
+;; must set before helm-config,  otherwise helm use default
+;; prefix "C-x c", which is inconvenient because you can
+;; accidentially pressed "C-x C-c"
+(setq helm-command-prefix-key "C-c h")
+
+(require 'helm-config)
+(require 'helm-eshell)
+(require 'helm-files)
+(require 'helm-grep)
+
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebihnd tab to do persistent action
+(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
+(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+
+(define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
+(define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
+(define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward)
+
+(setq helm-scroll-amount 4             ;; scroll 4 lines other window using M-<next>/M-<prior>
+      helm-quick-update t              ;; do not display invisible candidates
+      helm-idle-delay 0.01             ;; be idle for this many seconds, before updating in delayed sources.
+      helm-input-idle-delay 0.01       ;; be idle for this many seconds, before updating candidate buffer
+      helm-ff-search-library-in-sexp t ;; search for library in `require' and `declare-function' sexp.
+
+      helm-samewindow nil
+      ;; helm-split-window-default-side 'other ;; open helm buffer in another window
+      ;; helm-split-window-in-side-p t         ;; open helm buffer inside current window, not occupy whole other window
+      helm-buffers-favorite-modes (append helm-buffers-favorite-modes
+                                          '(picture-mode artist-mode))
+      helm-candidate-number-limit 200         ;; limit the number of displayed canidates
+      helm-M-x-requires-pattern 0             ;; show all candidates when set to 0
+      helm-ff-file-name-history-use-recentf t
+      ;; helm-move-to-line-cycle-in-source t     ;; move to end or beginning of source
+      ;;                                         ;; when reaching top or bottom of source.
+
+      ido-use-virtual-buffers t      ;; Needed in helm-buffers-list
+      helm-buffers-fuzzy-matching t  ;; fuzzy matching buffer names when non--nil
+                                     ;; useful in helm-mini that lists buffers
+      )
+
+;; Save current position to mark ring when jumping to a different place
+(add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
+
+(helm-mode t)
 
 
 
@@ -475,6 +575,13 @@
 
 
 
+;; Elscreen ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (require 'elscreen)
+;; (setq elscreen-display-tab nil)
+
+
+
 ;; Language Hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Emacs-Lisp Hooks
@@ -555,8 +662,8 @@
                                        ;; company-eclim
                                        ;; company-clang
                                        ;; company-capf
-                                       ;; (company-dabbrev-code company-keywords)
-                                       ;; company-dabbrev
+                                       (company-dabbrev-code company-keywords)
+                                       company-dabbrev
                                        )))
 
 ;; (optional) adds CC special commands to `company-begin-commands' in order to
@@ -696,38 +803,6 @@
 ;; Stop evil from overwriting cursor color
 ;; (setq evil-default-cursor t)
 ;; (setq evil-insert-state-cursor '("#aa0000" hbar))
-
-
-
-;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(require 'popwin)
-(popwin-mode t)
-
-;; @see http://xugx2007.blogspot.com.au/2007/06/benjamin-rutts-emacs-c-development-tips.html
-
-;; Force split horizontal
-(setq split-height-threshold most-positive-fixnum)
-(setq split-width-threshold nil)
-
-(setq compilation-finish-function
-      (lambda (buf str)
-        (if (string-match "exited abnormally" str)
-            ;;there were errors
-            (message "compilation errors, press C-x ` to visit")
-          ;;no errors, make the compilation window go away in 0.5 seconds
-          (when (string-match "*compilation*" (buffer-name buf))
-            ;; @see http://emacswiki.org/emacs/ModeCompile#toc2
-            (bury-buffer "*compilation*")
-            (winner-undo)
-            (message "Compilation Complete")
-            ))))
-
-(setq special-display-function
-      (lambda (buffer &optional args)
-        (split-window)
-        (switch-to-buffer buffer)
-        (get-buffer-window buffer 0)))
 
 
 
@@ -949,6 +1024,20 @@ the current state and point position."
   (interactive "*p")
   (move-text-internal (- arg)))
 
+(defun create-scratch-buffer nil
+  "create a new scratch buffer to work in. (could be *scratch* - *scratchX*)"
+  (interactive)
+  (let ((n 0)
+        bufname)
+    (while (progn
+             (setq bufname (concat "*scratch"
+                                   (if (= n 0) "" (int-to-string n))
+                                   "*"))
+             (setq n (1+ n))
+             (get-buffer bufname)))
+    (switch-to-buffer (get-buffer-create bufname))
+    (lisp-interaction-mode)))
+
 
 
 ;; (Other) Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -979,7 +1068,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (put 'suspend-frame 'disabled t)
 
 ;; Manual completion
-;; (global-set-key "\t" 'company-complete-common)
+(global-set-key (kbd "TAB") 'company-complete)
 (global-set-key (kbd "M-/") 'hippie-expand)
 
 ;; Auto-complete-mode / company keys
@@ -1107,7 +1196,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-key evil-motion-state-map "gh" 'evil-backward-arg)
 
 ;; bind evil-jump-out-args
-;; (define-key evil-normal-state-map "K" 'evil-jump-out-args)
+;; (define-key evil-normal-state-map "gm" 'evil-jump-out-args)
 
 ;; Alternate escapes
 ;; (require 'key-chord)
