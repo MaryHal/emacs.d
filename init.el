@@ -35,6 +35,7 @@
                      smart-mode-line
                      smex
                      undo-tree
+                     workgroups2
                      yasnippet))
 
 ;; Activate all the packages (in particular autoloads)
@@ -388,6 +389,8 @@
 ;; No Tabs, just spaces
 (setq-default indent-tabs-mode nil)
 
+;; It's Electric!
+;; (electric-pair-mode t)
 (electric-indent-mode t)
 
 ;; Don't add newlines when cursor goes past end of file
@@ -562,16 +565,28 @@
 
 ;; Workgroups2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; (require 'workgroups2)
+(require 'workgroups2)
 
-;; ;; Change workgroups session file
-;; (setq wg-default-session-file (concat user-emacs-directory "cache/workgroups2"))
-;; (setq wg-use-default-session-file nil)
+;; Change workgroups session file
+(setq wg-default-session-file (concat user-emacs-directory "cache/workgroups2"))
+(setq wg-use-default-session-file nil)
 
-;; ;; Change prefix key (before activating WG)
-;; (setq wg-prefix-key (kbd "C-c z"))
+;; Change prefix key (before activating WG)
+(setq wg-prefix-key (kbd "C-c z"))
 
-;; (workgroups-mode 1)
+;; What to do on Emacs exit / workgroups-mode exit?
+(setq wg-emacs-exit-save-behavior           nil)      ; Options: 'save 'ask nil
+(setq wg-workgroups-mode-exit-save-behavior nil)      ; Options: 'save 'ask nil
+
+;; Mode Line changes
+;; Display workgroups in Mode Line?
+(setq wg-mode-line-display-on t)          ; Default: (not (featurep 'powerline))
+(setq wg-flag-modified t)                 ; Display modified flags as well
+(setq wg-mode-line-decor-left-brace "["
+      wg-mode-line-decor-right-brace "]"  ; how to surround it
+      wg-mode-line-decor-divider ":")
+
+(workgroups-mode t)
 
 
 
@@ -1068,7 +1083,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (put 'suspend-frame 'disabled t)
 
 ;; Manual completion
-(global-set-key (kbd "TAB") 'company-complete)
+;;(global-set-key (kbd "TAB") 'company-complete)
 (global-set-key (kbd "M-/") 'hippie-expand)
 
 ;; Auto-complete-mode / company keys
@@ -1091,13 +1106,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key (kbd "C-c C-r") 'eval-region)
 
 ;; ;; Window Configuration Registers
-(global-set-key (kbd "C-c w") 'window-configuration-to-register)
-(global-set-key (kbd "C-c e") 'jump-to-register)
+;; (global-set-key (kbd "C-c w") 'window-configuration-to-register)
+;; (global-set-key (kbd "C-c e") 'jump-to-register)
 
-(global-set-key (kbd "<f9>") '(lambda () (interactive) (jump-to-register 9)
-                                (message "Windows disposition loaded")))
-(global-set-key (kbd "<f10>") '(lambda () (interactive) (window-configuration-to-register 9)
-                                 (message "Windows disposition saved")))
+;; (global-set-key (kbd "<f9>") '(lambda () (interactive) (jump-to-register 9)
+;;                                 (message "Windows disposition loaded")))
+;; (global-set-key (kbd "<f10>") '(lambda () (interactive) (window-configuration-to-register 9)
+;;                                  (message "Windows disposition saved")))
 
 ;; Frames
 ;; (define-key global-map (kbd "C-c f k") 'delete-frame)
@@ -1107,13 +1122,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; (define-key evil-normal-state-map (kbd "g t") 'other-frame)
 
 ;; Workgroups2
-;; (global-set-key (kbd "C-c l") 'wg-reload-session)
-;; (global-set-key (kbd "C-c s") 'wg-save-session)
-;; (global-set-key (kbd "C-c w") 'wg-switch-to-workgroup)
-;; (global-set-key (kbd "C-c w") 'wg-create-workgroup)
+(global-set-key (kbd "C-c l") 'wg-reload-session)
+(global-set-key (kbd "C-c s") 'wg-save-session)
+(global-set-key (kbd "C-c w") 'wg-switch-to-workgroup)
+(global-set-key (kbd "C-c w") 'wg-create-workgroup)
 
-;; (define-key evil-normal-state-map (kbd "g T") 'wg-switch-to-workgroup-left)
-;; (define-key evil-normal-state-map (kbd "g t") 'wg-switch-to-workgroup-right)
+(define-key evil-normal-state-map (kbd "g T") 'wg-switch-to-workgroup-left)
+(define-key evil-normal-state-map (kbd "g t") 'wg-switch-to-workgroup-right)
 
 ;; Smex
 (global-set-key (kbd "M-x") 'smex)
@@ -1129,7 +1144,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (windmove-default-keybindings 'meta)
 (setq windmove-wrap-around nil)
 
-(global-set-key [kp-delete] 'delete-char)
+;; (global-set-key [kp-delete] 'delete-char)
 
 ;; Other evil keybindings
 (evil-define-operator evil-join-previous-line (beg end)
@@ -1142,6 +1157,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-key package-menu-mode-map "j" 'next-line)
 (define-key package-menu-mode-map "k" 'previous-line)
 
+;; Center cursor
 (define-key evil-normal-state-map (kbd "z z") (lambda ()
                                                 (interactive)
                                                 (evil-scroll-line-to-center (line-number-at-pos))))
