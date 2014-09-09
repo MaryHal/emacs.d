@@ -608,6 +608,7 @@
   (setq c-basic-offset 4)
   (c-set-offset 'access-label '-)
   (c-set-offset 'inclass '++)
+  (c-set-offset 'substatement-open 0)
   ;; (c-set-offset 'inclass 'my-c-lineup-inclass)
   )
 
