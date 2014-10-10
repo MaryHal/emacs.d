@@ -464,7 +464,7 @@
    `(helm-ff-executable ((,class (:foreground ,smyx-green))))
    `(helm-ff-file ((,class (:foreground ,smyx-fg))))
    `(helm-ff-symlink ((,class (:foreground ,smyx-blue))))
-   `(helm-ff-prefix ((,class (:weight bold :foreground ,smyx-yellow))))
+   `(helm-ff-prefix ((,class (:weight bold :foreground ,smyx-yellow :background nil))))
    `(helm-ff-invalid-symlink ((,class (:foreground ,smyx-gray :background ,smyx-red))))
 
    ;; hl-line-mode

@@ -20,12 +20,9 @@
                      evil-args
                      evil-leader
                      evil
-                     flx
-                     flx-ido
                      helm
                      helm-projectile
                      highlight-parentheses
-                     ido-ubiquitous
                      irony
                      json
                      js2-mode
@@ -513,8 +510,8 @@
 ;; Use ido everywhere
 (ido-everywhere 1)
 
-(require 'ido-ubiquitous)
-(ido-ubiquitous-mode t)
+;; (require 'ido-ubiquitous)
+;; (ido-ubiquitous-mode t)
 
 ;; Fix ido-ubiquitous for newer packages
 (defmacro ido-ubiquitous-use-new-completing-read (cmd package)
@@ -530,12 +527,12 @@
 ;; Display ido results vertically, rather than horizontally
 (setq ido-decorations (quote ("\n-> " "" "\n " "\n ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
 
-;; Better matching
-(require 'flx-ido)
-(flx-ido-mode t)
+;; ;; Better matching
+;; (require 'flx-ido)
+;; (flx-ido-mode t)
 
-;; Disable ido faces to see flx highlights.
-(setq ido-use-faces nil)
+;; ;; Disable ido faces to see flx highlights.
+;; (setq ido-use-faces nil)
 
 ;; Disable flx highlights
 ;; (setq flx-ido-use-faces nil)
