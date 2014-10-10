@@ -12,7 +12,8 @@
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
 
-(setq package-list '(ag
+(setq package-list '(ace-jump-mode
+                     ag
                      anzu
                      company
                      company-irony
@@ -22,6 +23,7 @@
                      flx
                      flx-ido
                      helm
+                     helm-projectile
                      highlight-parentheses
                      ido-ubiquitous
                      irony
@@ -258,8 +260,8 @@
 (defadvice load-theme (after load-theme activate compile)
   (if (string= system-type "gnu/linux")
       (if (string= window-system "x")
-          (progn (set-frame-parameter (selected-frame) 'alpha '(80 80))
-                 (add-to-list 'default-frame-alist '(alpha 80 80))
+          (progn (set-frame-parameter (selected-frame) 'alpha '(90 90))
+                 (add-to-list 'default-frame-alist '(alpha 90 90))
                  (set-face-attribute 'default nil :background "black"))
         (progn (when (getenv "DISPLAY")
                  (set-face-attribute 'default nil :background "unspecified-bg")
@@ -346,12 +348,6 @@
         ;; (cursor-color . "#CCCCCC")
         ))
 
-;; Load custom theme
-;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/hemisu-theme"))
-;; (add-to-list 'load-path (concat user-emacs-directory "/theme/hemisu-theme"))
-(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/"))
-(load-theme 'enox t)
-
 ;; Set font
 (if (string= system-type "windows-nt")
     ;; If Windows
@@ -362,8 +358,16 @@
          (add-to-list 'default-frame-alist '(font . "Inconsolata 10")))
   )
 
+;; Load custom theme
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/hemisu-theme"))
+;; (add-to-list 'load-path (concat user-emacs-directory "/theme/hemisu-theme"))
+(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/"))
+;; (load-theme 'enox t)
+(load-theme 'smyx t)
+
 ;; Mode line
 (require 'smart-mode-line)
+;; (sml/apply-theme 'respectful)
 (sml/setup)
 
 ;; rich-minority-mode
@@ -477,9 +481,9 @@
       ;; helm-move-to-line-cycle-in-source t     ;; move to end or beginning of source
       ;;                                         ;; when reaching top or bottom of source.
 
-      ido-use-virtual-buffers t      ;; Needed in helm-buffers-list
-      helm-buffers-fuzzy-matching t  ;; fuzzy matching buffer names when non--nil
-                                     ;; useful in helm-mini that lists buffers
+      ;; ido-use-virtual-buffers t      ;; Needed in helm-buffers-list
+      helm-buffers-fuzzy-matching t     ;; fuzzy matching buffer names when non--nil
+                                        ;; useful in helm-mini that lists buffers
       )
 
 ;; Save current position to mark ring when jumping to a different place
@@ -1245,6 +1249,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Evil-leader Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Ace-jump integration is now bundled with evil mode
+(evil-leader/set-key "SPC" 'evil-ace-jump-word-mode)
+
 ;; Alternate
 (evil-leader/set-key "a" 'ff-find-other-file)
 
@@ -1260,12 +1267,17 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (evil-leader/set-key "d" 'ido-dired)
 (evil-leader/set-key "f" 'ido-find-file)
 
-(evil-leader/set-key "o" 'imenu)
-(evil-leader/set-key "u" 'ido-switch-buffer)
-(evil-leader/set-key "x" 'smex)
+;; Buffers
+(evil-leader/set-key "b" 'buffer-menu)
+(evil-leader/set-key "k" 'ido-kill-buffer)
+(evil-leader/set-key "u" 'helm-buffers-list)
+
+(evil-leader/set-key "o" 'helm-imenu)
+(evil-leader/set-key "x" 'helm-M-x)
 
 ;; Projectile
-(evil-leader/set-key "p"  'projectile-find-file)
+(evil-leader/set-key "l" 'helm-projectile)
+(evil-leader/set-key "p" 'helm-projectile-find-file-dwim)
 
 ;; Terminal
 (evil-leader/set-key "t"  '(lambda()

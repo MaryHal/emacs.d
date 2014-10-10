@@ -278,8 +278,10 @@ Smartparens, Speedbar, Undo Tree, Whitespace, and YASnippet.")
    `(flyspell-duplicate ((,class (:inherit nil :underline (:style wave :color ,nox-yellow)))))
    `(flyspell-incorrect ((,class (:inherit nil :underline (:style wave :color ,nox-red)))))
    ;; Ace-jump-mode
-   `(ace-jump-face-foreground ((,class (:foreground ,nox-green))))
-   `(ace-jump-face-background ((,class (:foreground ,nox-comment))))
+   ;; `(ace-jump-face-foreground ((,class (:foreground ,nox-green))))
+   ;; `(ace-jump-face-background ((,class (:foreground ,nox-comment))))
+   `(ace-jump-face-foreground ((,class (:foreground ,nox-red))))
+   `(ace-jump-face-background ((,class (:foreground ,nox-fg-subtle))))
    ;; Smart Mode Line
    `(sml/charging ((,class (:foreground ,nox-green))))
    `(sml/client ((,class (:foreground ,nox-special))))
