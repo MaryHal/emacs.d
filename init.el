@@ -35,7 +35,6 @@
                      projectile
                      rich-minority ;; Required by smart-mode-line
                      smart-mode-line
-                     smex
                      undo-tree
                      workgroups2
                      yasnippet))
@@ -456,9 +455,9 @@
 (require 'helm-files)
 (require 'helm-grep)
 
-(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebihnd tab to do persistent action
-(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
-(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ;; rebind tab to do persistent action
+(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)   ;; make TAB works in terminal
+(define-key helm-map (kbd "C-z")  'helm-select-action)              ;; list actions using C-z
 
 (define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
 (define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
@@ -473,8 +472,8 @@
       helm-samewindow nil
       ;; helm-split-window-default-side 'other ;; open helm buffer in another window
       ;; helm-split-window-in-side-p t         ;; open helm buffer inside current window, not occupy whole other window
-      helm-buffers-favorite-modes (append helm-buffers-favorite-modes
-                                          '(picture-mode artist-mode))
+      ;; helm-buffers-favorite-modes (append helm-buffers-favorite-modes
+      ;;                                     '(picture-mode artist-mode))
       helm-candidate-number-limit 200         ;; limit the number of displayed canidates
       helm-M-x-requires-pattern 0             ;; show all candidates when set to 0
       helm-ff-file-name-history-use-recentf t
@@ -540,12 +539,6 @@
 
 ;; Disable flx highlights
 ;; (setq flx-ido-use-faces nil)
-
-(require 'smex)
-(smex-initialize)
-
-(setq smex-key-advice-ignore-menu-bar t)
-(setq smex-save-file (concat user-emacs-directory "cache/smex-items"))
 
 
 
@@ -1135,11 +1128,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-key evil-normal-state-map (kbd "g T") 'wg-switch-to-workgroup-left)
 (define-key evil-normal-state-map (kbd "g t") 'wg-switch-to-workgroup-right)
 
-;; Smex
-(global-set-key (kbd "M-x") 'smex)
-;; (global-set-key (kbd "C-x C-m") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+(global-set-key (kbd "M-x") 'helm-M-x)
 
 ;; Other
 ;; (global-set-key (kbd "RET") 'newline-and-indent)
@@ -1265,7 +1254,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Files and Directories
 (evil-leader/set-key "d" 'ido-dired)
-(evil-leader/set-key "f" 'ido-find-file)
+(evil-leader/set-key "f" 'helm-find-files)
 
 ;; Buffers
 (evil-leader/set-key "b" 'buffer-menu)
