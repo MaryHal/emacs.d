@@ -460,6 +460,13 @@
    `(helm-visible-mark ((,class (:foreground ,smyx-bg :background ,smyx-yellow-2))))
    `(helm-candidate-number ((,class (:foreground ,smyx-green+4 :background ,smyx-bg-1))))
 
+   `(helm-ff-directory ((,class (:weight bold :foreground ,smyx-red :background nil))))
+   `(helm-ff-executable ((,class (:foreground ,smyx-green))))
+   `(helm-ff-file ((,class (:foreground ,smyx-fg))))
+   `(helm-ff-symlink ((,class (:foreground ,smyx-blue))))
+   `(helm-ff-prefix ((,class (:weight bold :foreground ,smyx-yellow))))
+   `(helm-ff-invalid-symlink ((,class (:foreground ,smyx-gray :background ,smyx-red))))
+
    ;; hl-line-mode
    `(hl-sexp-face ((,class (:background ,smyx-gray-5))))
    `(hl-line-face ((,class (:background ,smyx-gray-5))))
