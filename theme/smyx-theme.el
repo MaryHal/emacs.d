@@ -43,6 +43,7 @@
       ;; smyx palette
       (smyx-fg "#F7F7F7")
 
+      (smyx-bg-2 "#101010")
       (smyx-bg-05 "#151515")
       (smyx-bg-1 "#202020")
       (smyx-bg "#282828")
@@ -126,7 +127,7 @@
    `(buffers-tab ((,class (:background ,smyx-black-2 :foreground ,smyx-white-2))))
 
    ;;; basic coloring
-   `(default ((,class (:foreground ,smyx-fg :background ,smyx-black))))
+   `(default ((,class (:foreground ,smyx-fg :background ,smyx-bg-2))))
    `(cursor ((,class (:background ,smyx-fg))))
    `(escape-glyph-face ((,class (:foreground ,smyx-red))))
    ;; `(fringe ((,class (:foreground ,smyx-fg :background ,smyx-bg+1))))

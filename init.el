@@ -27,6 +27,7 @@
                      json
                      js2-mode
                      lua-mode
+                     magit
                      markdown-mode
                      popwin
                      projectile
@@ -132,6 +133,8 @@
 
 ;; Save a list of recent files visited. (open recent file with C-x f)
 (recentf-mode t)
+
+(setq tramp-default-method "ssh")
 
 ;; Move .recentf location
 (setq recentf-save-file (concat user-emacs-directory "cache/recentf"))
@@ -828,7 +831,8 @@
 
 (setq scroll-margin 8
       scroll-conservatively 9999
-      scroll-preserve-screen-position t)
+      scroll-preserve-screen-position t
+      auto-window-vscroll nil)
 
 ;; Keep cursor away from edges when scrolling up/down
 ;; (require 'smooth-scrolling)
