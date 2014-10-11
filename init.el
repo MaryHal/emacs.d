@@ -1265,6 +1265,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (evil-leader/set-key "o" 'helm-imenu)
 (evil-leader/set-key "x" 'helm-M-x)
 
+;; Git
+(evil-leader/set-key "m" 'magit-status)
+
 ;; Projectile
 (evil-leader/set-key "l" 'helm-projectile)
 (evil-leader/set-key "p" 'helm-projectile-find-file-dwim)
