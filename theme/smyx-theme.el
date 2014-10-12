@@ -95,6 +95,9 @@
       (smyx-blue-7 "#00ffff")
       (smyx-blue-8 "#4F94CD")
 
+      (smyx-purple   "#9f79ee")
+      (smyx-purple-1 "#ab82ff")
+
       (smyx-magenta "#dc8cc3")
 
       (smyx-black "#282828")
@@ -235,7 +238,7 @@
    `(font-lock-string-face ((,class (:foreground ,smyx-yellow))))
 
    ;; `(font-lock-type-face ((,class (:foreground ,smyx-blue))))
-   `(font-lock-type-face ((,class (:foreground ,smyx-red))))
+   `(font-lock-type-face ((,class (:foreground ,smyx-green))))
 
    `(font-lock-variable-name-face ((,class (:foreground ,smyx-blue))))
    `(font-lock-warning-face ((,class (:foreground ,smyx-pink))))
@@ -298,7 +301,6 @@
    `(window-number-face ((,class (:background ,smyx-gray-6 :foreground ,smyx-green))))
 
    ;; company-mode
-   ;; company--
    `(company-tooltip ((,class (:background ,smyx-gray-5 :foreground ,smyx-white))))
    `(company-tooltip-common ((,class (:inherit company-tooltip :foreground ,smyx-green))))
    `(company-tooltip-common-selection ((,class (:inherit company-tooltip-selection :foreground ,smyx-black-3))))
