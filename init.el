@@ -22,6 +22,7 @@
                      evil
                      helm
                      helm-projectile
+                     helm-swoop
                      highlight-parentheses
                      irony
                      json
@@ -1271,6 +1272,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Projectile
 (evil-leader/set-key "l" 'helm-projectile)
 (evil-leader/set-key "p" 'helm-projectile-find-file-dwim)
+
+;; Swoop
+(evil-leader/set-key "s" 'helm-swoop)
 
 ;; Terminal
 (evil-leader/set-key "t"  '(lambda()
