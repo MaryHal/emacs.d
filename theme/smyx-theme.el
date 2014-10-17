@@ -470,6 +470,11 @@
    `(helm-ff-prefix ((,class (:weight bold :foreground ,smyx-yellow :background nil))))
    `(helm-ff-invalid-symlink ((,class (:foreground ,smyx-gray :background ,smyx-red))))
 
+   ;; helm-swoop highlight
+   `(helm-swoop-target-line-face ((,class (:foreground ,smyx-black :background ,smyx-green))))
+   `(helm-swoop-target-line-block-face ((,class (:foreground ,smyx-black :background ,smyx-pink))))
+   `(helm-swoop-target-word-face ((,class (:foreground ,smyx-black :background ,smyx-blue))))
+
    ;; hl-line-mode
    `(hl-sexp-face ((,class (:background ,smyx-gray-5))))
    `(hl-line-face ((,class (:background ,smyx-gray-5))))
