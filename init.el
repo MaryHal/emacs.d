@@ -1089,7 +1089,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Auto-complete-mode / company keys
 ;; (define-key ac-completing-map (kbd "C-n") 'ac-next)
 ;; (define-key ac-completing-map (kbd "C-p") 'ac-previous)
-
 (define-key company-active-map (kbd "C-n") 'company-select-next)
 (define-key company-active-map (kbd "C-p") 'company-select-previous)
 
@@ -1099,48 +1098,21 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Easier version of "C-x k" to kill buffer
 (global-set-key (kbd "C-x C-b") 'buffer-menu)
 (global-set-key (kbd "C-x C-k") 'kill-buffer)
-(global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
-
-;; Evaluate Buffer
-(global-set-key (kbd "C-c C-v") 'eval-buffer)
-(global-set-key (kbd "C-c C-r") 'eval-region)
-
-;; ;; Window Configuration Registers
-;; (global-set-key (kbd "C-c w") 'window-configuration-to-register)
-;; (global-set-key (kbd "C-c e") 'jump-to-register)
-
-;; (global-set-key (kbd "<f9>") '(lambda () (interactive) (jump-to-register 9)
-;;                                 (message "Windows disposition loaded")))
-;; (global-set-key (kbd "<f10>") '(lambda () (interactive) (window-configuration-to-register 9)
-;;                                  (message "Windows disposition saved")))
-
-;; Frames
-;; (define-key global-map (kbd "C-c f k") 'delete-frame)
-;; (define-key global-map (kbd "C-c f n") 'make-frame-command)
-;; (define-key global-map (kbd "C-c f o") 'other-frame)
-
-;; (define-key evil-normal-state-map (kbd "g t") 'other-frame)
 
 ;; Workgroups2
-(global-set-key (kbd "C-c l") 'wg-reload-session)
-(global-set-key (kbd "C-c s") 'wg-save-session)
-(global-set-key (kbd "C-c w") 'wg-switch-to-workgroup)
-(global-set-key (kbd "C-c w") 'wg-create-workgroup)
-
 (define-key evil-normal-state-map (kbd "g T") 'wg-switch-to-workgroup-left)
 (define-key evil-normal-state-map (kbd "g t") 'wg-switch-to-workgroup-right)
 
+;; Replace M-x with Helm's version.
 (global-set-key (kbd "M-x") 'helm-M-x)
 
 ;; Other
-;; (global-set-key (kbd "RET") 'newline-and-indent)
 (define-key minibuffer-local-map (kbd "C-w") 'backward-kill-word)
+(define-key helm-map (kbd "C-w") 'backward-kill-word)
 
 ;; Navigate windows with M-<arrows>
 (windmove-default-keybindings 'meta)
 (setq windmove-wrap-around nil)
-
-;; (global-set-key [kp-delete] 'delete-char)
 
 ;; Other evil keybindings
 (evil-define-operator evil-join-previous-line (beg end)
@@ -1148,15 +1120,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :motion evil-line
   (evil-previous-visual-line)
   (evil-join beg end))
-
-;; Package list: don't need to switch to evil mode if I have these two keys!
-(define-key package-menu-mode-map "j" 'next-line)
-(define-key package-menu-mode-map "k" 'previous-line)
-
-;; Center cursor
-(define-key evil-normal-state-map (kbd "z z") (lambda ()
-                                                (interactive)
-                                                (evil-scroll-line-to-center (line-number-at-pos))))
 
 ;; gj gk by default
 (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
