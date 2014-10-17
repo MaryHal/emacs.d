@@ -1244,7 +1244,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (evil-leader/set-key "SPC" 'evil-ace-jump-word-mode)
 
 ;; Alternate
-(evil-leader/set-key "a" 'ff-find-other-file)
+(evil-leader/set-key "a" 'projectile-find-other-file)
 
 (evil-leader/set-key "c" '(lambda()
                             (interactive)
