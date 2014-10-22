@@ -222,11 +222,13 @@
    `(region ((,class (:foreground ,smyx-bg :background ,smyx-gray-9))))
    `(secondary-selection ((,class (:background ,smyx-bg+2))))
    `(trailing-whitespace ((,class (:background ,smyx-red))))
-   `(vertical-border ((,class (:foreground ,smyx-gray-5 :background ,smyx-black))))
+
+   ;; `(vertical-border ((,class (:foreground ,smyx-gray-5 :background ,smyx-black))))
+   `(vertical-border ((,class (:foreground ,smyx-black :background ,smyx-black))))
 
    ;;; font lock
    `(font-lock-builtin-face ((,class (:foreground ,smyx-orange))))
-   `(font-lock-comment-face ((,class (:foreground ,smyx-gray-9 :italic t))))
+   `(font-lock-comment-face ((,class (:foreground ,smyx-gray-9))))
    ;; `(font-lock-comment-delimiter-face ((,class (:foreground ,smyx-green))))
    `(font-lock-constant-face ((,class (:foreground ,smyx-red))))
    ;; `(font-lock-doc-face ((,class (:foreground ,smyx-green+0))))
