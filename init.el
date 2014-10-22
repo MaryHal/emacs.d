@@ -191,8 +191,8 @@
 (setq eval-expression-print-level nil)
 
 ;; Mouse support
-;; (require 'mouse)
-;; (xterm-mouse-mode t)
+(require 'mouse)
+(xterm-mouse-mode t)
 ;; (defun track-mouse (e))
 ;; (setq mouse-sel-mode t)
 
@@ -249,10 +249,10 @@
       (when (= p (point)) ad-do-it))))
 
 ;; Ignore wiki packages during package-list-packages
-(defadvice package--add-to-archive-contents
-  (around package-filter-wiki-packages (package archive) activate compile)
-  (unless (string-match-p "\\[wiki\\]$" (package-desc-doc (cdr package)))
-    ad-do-it))
+;; (defadvice package--add-to-archive-contents
+;;   (around package-filter-wiki-packages (package archive) activate compile)
+;;   (unless (string-match-p "\\[wiki\\]$" (package-desc-doc (cdr package)))
+;;     ad-do-it))
 
 ;; Transparency after load theme...
 ;; On Linux, if in terminal, clear the background. If GUI, set background to black and set
@@ -420,9 +420,9 @@
 (require 'paren)
 (show-paren-mode t)
 (setq show-paren-delay 0)
-(set-face-background 'show-paren-match-face (face-background 'default))
-(set-face-foreground 'show-paren-match-face "#dd2222")
-(set-face-attribute 'show-paren-match-face nil :weight 'extra-bold)
+;; (set-face-background 'show-paren-match-face (face-background 'default))
+;; (set-face-foreground 'show-paren-match-face "#dd2222")
+;; (set-face-attribute 'show-paren-match-face nil :weight 'extra-bold)
 
 (defun hl-parens-hook()
   (highlight-parentheses-mode 1))
@@ -693,64 +693,18 @@
 (require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
 
-;; (require 'auto-complete)
-;; (require 'auto-complete-config)
-
-;; ;; Auto-complete dictionary directories. It should already contain the default dictionaries.
-;; ;; (add-to-list 'ac-dictionary-directories (concat user-emacs-directory "ac-dict/"))
-
-;; (defun my-ac-config ()
-;;   (setq-default ac-sources '(ac-source-abbrev
-;;                              ac-source-dictionary
-;;                              ac-source-filename
-;;                              ac-source-yasnippet
-;;                              ac-source-words-in-same-mode-buffers))
-;;   (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
-;;   (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
-;;   (add-hook 'ruby-mode-hook 'ac-ruby-mode-setup)
-;;   (add-hook 'css-mode-hook 'ac-css-mode-setup)
-;;   (add-hook 'auto-complete-mode-hook 'ac-common-setup)
-;;   (global-auto-complete-mode t))
-
-;; (my-ac-config)
-
-;; ;; Triggered Auto complete
-;; ;; (setq ac-auto-start nil)
-;; ;; (setq ac-quick-help-delay 0.5)
-;; ;; (ac-set-trigger-key "TAB")
-;; ;;(define-key ac-mode-map [(control tab)] 'auto-complete)
-
-;; ;; Automatic Auto Complete
-;; (setq ac-auto-start t
-;;       ac-auto-show-menu t
-;;       ac-quick-help-delay 0.3
-;;       ac-quick-help-height 50)
-
-;; ;; Fuzzy matching
-;; (setq ac-use-fuzzy t)
-
-;; ;; Set history file location
-;; (setq ac-comphist-file (concat user-emacs-directory "cache/ac-comphist.dat"))
-
 
 
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Evil tag colors
-;; (setq evil-normal-state-tag   (propertize " Normal "   'face '((:background "LimeGreen" :foreground "DarkGreen" :weight bold)))
-;;       evil-insert-state-tag   (propertize " Insert "   'face '((:background "grey80" :foreground "NavyBlue" :weight bold)))
-;;       evil-visual-state-tag   (propertize " Visual "   'face '((:background "DarkOrange" :foreground "Red4" :weight bold)))
-;;       evil-replace-state-tag  (propertize " Replace "  'face '((:background "red3" :foreground "grey80" :weight bold)))
-;;       evil-emacs-state-tag    (propertize " Emacs "    'face '((:background "MediumOrchid" :foreground "DarkMagenta" :weight bold)))
-;;       evil-motion-state-tag   (propertize " Motion "   'face '((:background "goldenrod4" :foreground "goldenrod1" :weight bold)))
-;;       evil-operator-state-tag (propertize " Operator " 'face '((:background "RoyalBlue4" :foreground "DarkBlue" :weight bold))))
-
-;; (setq evil-emacs-state-cursor    '("red" box))
-;; (setq evil-normal-state-cursor   '("green" box))
-;; (setq evil-visual-state-cursor   '("orange" box))
-;; (setq evil-insert-state-cursor   '("red" bar))
-;; (setq evil-replace-state-cursor  '("red" bar))
-;; (setq evil-operator-state-cursor '("red" hollow))
+;; (setq-default evil-normal-state-tag   (propertize " Normal "  )
+;;               evil-insert-state-tag   (propertize " Insert "  )
+;;               evil-visual-state-tag   (propertize " Visual "  )
+;;               evil-replace-state-tag  (propertize " Replace " )
+;;               evil-emacs-state-tag    (propertize " Emacs "   )
+;;               evil-motion-state-tag   (propertize " Motion "  )
+;;               evil-operator-state-tag (propertize " Operator "))
 
 ;; pre-evil Stuff
 (setq evil-want-C-u-scroll t)
@@ -842,12 +796,9 @@
 
 ;; Clipboard ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; http://hugoheden.wordpress.com/2009/03/08/copypaste-with-emacs-in-terminal/
-;; I prefer using the "clipboard" selection (the one the
-;; typically is used by c-c/c-v) before the primary selection
-;; (that uses mouse-select/middle-button-click)
 (setq x-select-enable-clipboard t)
-(setq x-select-enable-primary nil)
+(setq x-select-enable-primary t)
+(setq save-interprogram-paste-before-kill t)
 
 ;; (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
 
@@ -1111,7 +1062,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (define-key helm-map (kbd "C-w") 'backward-kill-word)
 
 ;; Navigate windows with M-<arrows>
-(windmove-default-keybindings 'meta)
+;; (windmove-default-keybindings 'meta)
 (setq windmove-wrap-around nil)
 
 ;; Other evil keybindings
@@ -1217,8 +1168,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (evil-leader/set-key "eb" 'eval-buffer)
 (evil-leader/set-key "er" 'eval-region)
 
-;; Files and Directories
-(evil-leader/set-key "d" 'ido-dired)
+;; Files
 (evil-leader/set-key "f" 'helm-find-files)
 
 ;; Buffers
@@ -1233,6 +1183,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (evil-leader/set-key "m" 'magit-status)
 
 ;; Projectile
+(require 'helm-projectile)
 (evil-leader/set-key "l" 'helm-projectile)
 (evil-leader/set-key "p" 'helm-projectile-find-file-dwim)
 
