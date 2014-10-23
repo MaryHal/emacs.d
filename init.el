@@ -1,9 +1,15 @@
+
+;;; Code:
+
 ;; Preload Init ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Things that should be set early just in case something bad happens
 
 ;; Turn off backup files
 (setq make-backup-files nil)
+
+(defconst user-custom-file (concat user-emacs-directory "custom.el"))
+(defconst user-cache-directory (concat user-emacs-directory "cache/"))
 
 
 
@@ -12,31 +18,29 @@
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
 
-(setq package-list '(ace-jump-mode
-                     ag
-                     anzu
-                     company
-                     company-irony
-                     evil-args
-                     evil-leader
-                     evil
-                     helm
-                     helm-projectile
-                     helm-swoop
-                     highlight-parentheses
-                     irony
-                     json
-                     js2-mode
-                     lua-mode
-                     magit
-                     markdown-mode
-                     popwin
-                     projectile
-                     rich-minority ;; Required by smart-mode-line
-                     smart-mode-line
-                     undo-tree
-                     workgroups2
-                     yasnippet))
+(defvar package-list '(ace-jump-mode
+                       ag
+                       anzu
+                       company
+                       company-irony
+                       evil-args
+                       evil-leader
+                       evil
+                       helm
+                       helm-projectile
+                       helm-swoop
+                       highlight-parentheses
+                       irony
+                       js2-mode
+                       lua-mode
+                       magit
+                       markdown-mode
+                       popwin
+                       projectile
+                       rich-minority ;; Required by smart-mode-line
+                       smart-mode-line
+                       undo-tree
+                       workgroups2))
 
 ;; Activate all the packages (in particular autoloads)
 (package-initialize)
@@ -53,8 +57,8 @@
   (when (not (package-installed-p package))
     (package-install package)))
 
-;; Custom Configuration
-(setq custom-file "~/.emacs.d/custom.el")
+;; Customize Configuration
+(setq custom-file user-custom-file)
 (unless (not (file-exists-p custom-file))
   (load custom-file))
 
@@ -76,6 +80,7 @@
 (setq gc-cons-threshold (* 10 1024 1024))
 
 ;; Auto refresh buffers
+(require 'autorevert)
 (global-auto-revert-mode t)
 
 ;; Also auto refresh dired, but be quiet about it
@@ -114,7 +119,7 @@
 ;; is deprecated in 23.2.
 (if (boundp 'buffer-file-coding-system)
     (setq-default buffer-file-coding-system 'utf-8)
-  (setq default-buffer-file-coding-system 'utf-8))
+  (setq buffer-file-coding-system 'utf-8))
 
 ;; Show active region
 (transient-mark-mode t)
@@ -132,13 +137,13 @@
 ;; Lines should be 80 characters wide, not 72
 (setq fill-column 80)
 
-;; Save a list of recent files visited. (open recent file with C-x f)
-(recentf-mode t)
-
+(require 'tramp)
 (setq tramp-default-method "ssh")
 
-;; Move .recentf location
-(setq recentf-save-file (concat user-emacs-directory "cache/recentf"))
+;; Save a list of recent files visited.
+(require 'recentf)
+(recentf-mode t)
+(setq recentf-save-file (concat user-cache-directory "recentf"))
 (setq recentf-max-saved-items 100)
 (setq recentf-max-menu-items 50)
 
@@ -153,12 +158,6 @@
 
 ;; Don't break lines for me, please
 (setq-default truncate-lines t)
-
-;; org-mode: Don't ruin S-arrow to switch windows please (use M-+ and M-- instead to toggle)
-(setq org-replace-disputed-keys t)
-
-;; Fontify org-mode code blocks
-(setq org-src-fontify-natively t)
 
 ;; Useful frame title, that show either a file or a buffer name (if the buffer isn't visiting a file)
 ;; (setq frame-title-format
@@ -182,6 +181,7 @@
       uniquify-after-kill-buffer-p t)
 
 ;; A saner ediff
+(require 'ediff)
 (setq ediff-diff-options "-w")
 (setq ediff-split-window-function 'split-window-horizontally)
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
@@ -204,7 +204,7 @@
 ;; Backups ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Disable backup
-;; (setq backup-inhibited t)
+(setq backup-inhibited t)
 
 ;; Disable auto save
 (auto-save-mode nil)
@@ -218,7 +218,7 @@
 ;; Write backup files to own directory
 (setq backup-directory-alist
       `((".*" . ,(expand-file-name
-                  (concat user-emacs-directory "backups")))))
+                  (concat user-cache-directory "backups")))))
 
 ;; Make backups of files, even when they're in version control
 (setq vc-make-backup-files t)
@@ -290,12 +290,12 @@
   (balance-windows))
 (ad-activate 'delete-window)
 
-;; Don't kill scratch buffer, just bury it.
-(defadvice kill-buffer (around my-advice-for-kill-buffer activate)
-  (let ((buffer-to-kill (ad-get-arg 0)))
-    (if (equal buffer-to-kill "*Scratch*")
-        (bury-buffer)
-      ad-do-it)))
+;; ;; Don't kill scratch buffer, just bury it.
+;; (defadvice kill-buffer (around my-advice-for-kill-buffer activate)
+;;   (let ((buffer-to-kill (ad-get-arg 0)))
+;;     (if (equal buffer-to-kill "*scratch*")
+;;         (bury-buffer)
+;;       ad-do-it)))
 
 
 
@@ -303,35 +303,10 @@
 
 (require 'popwin)
 
-(setq display-buffer-function 'popwin:display-buffer)
+;; (setq display-buffer-alist 'popwin:display-buffer)
 (push '("helm" :regexp t :height 16) popwin:special-display-config)
 
 (popwin-mode t)
-
-;; @see http://xugx2007.blogspot.com.au/2007/06/benjamin-rutts-emacs-c-development-tips.html
-
-;; Force split horizontal
-;; (setq split-height-threshold most-positive-fixnum)
-;; (setq split-width-threshold nil)
-
-(setq compilation-finish-function
-      (lambda (buf str)
-        (if (string-match "exited abnormally" str)
-            ;;there were errors
-            (message "compilation errors, press C-x ` to visit")
-          ;;no errors, make the compilation window go away in 0.5 seconds
-          (when (string-match "*compilation*" (buffer-name buf))
-            ;; @see http://emacswiki.org/emacs/ModeCompile#toc2
-            (bury-buffer "*compilation*")
-            (winner-undo)
-            (message "Compilation Complete")
-            ))))
-
-(setq special-display-function
-      (lambda (buffer &optional args)
-        (split-window)
-        (switch-to-buffer buffer)
-        (get-buffer-window buffer 0)))
 
 
 
@@ -351,16 +326,12 @@
 ;; Set font
 (if (string= system-type "windows-nt")
     ;; If Windows
-    (progn (setq myFrameFont "Consolas 10")
-           (add-to-list 'default-frame-alist '(font . "Consolas 10")))
+    (progn (add-to-list 'default-frame-alist '(font . "Consolas 10")))
   ;; If not Windows
-  (progn (setq myFrameFont "Inconsolata 10")
-         (add-to-list 'default-frame-alist '(font . "Inconsolata 10")))
+  (progn (add-to-list 'default-frame-alist '(font . "Inconsolata 10")))
   )
 
 ;; Load custom theme
-;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/hemisu-theme"))
-;; (add-to-list 'load-path (concat user-emacs-directory "/theme/hemisu-theme"))
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/"))
 ;; (load-theme 'enox t)
 (load-theme 'smyx t)
@@ -373,9 +344,10 @@
 (sml/setup)
 
 ;; rich-minority-mode
+(require 'rich-minority)
 ;; (rich-minority-mode t)
-(setq rm-excluded-modes nil)
-(setq rm-included-modes " Wrap")
+(setq rm-blacklist nil)
+(setq rm-whitelist " Wrap")
 
 ;; Toolbars and such
 ;; (add-hook 'before-make-frame-hook 'turn-off-tool-bar)
@@ -397,7 +369,7 @@
 
 ;; It's Electric!
 ;; (electric-pair-mode t)
-(electric-indent-mode t)
+;; (electric-indent-mode t)
 
 ;; Don't add newlines when cursor goes past end of file
 (setq next-line-add-newlines nil)
@@ -416,7 +388,6 @@
 
 (setq visible-bell nil
       font-lock-maximum-decoration t
-      color-theme-is-global t
       truncate-partial-width-windows nil)
 
 (require 'paren)
@@ -434,13 +405,21 @@
 (setq-default show-trailing-whitespace t)
 (setq-default indicate-empty-lines t)
 
-(setq whitespace-style '(trailing lines space-before-tab
-                                  indentation space-after-tab)
-      whitespace-line-column 100)
-
 ;; Anzu
 (require 'anzu)
 (global-anzu-mode 1)
+
+
+;; Org ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Org mode stuff
+(require 'org)
+
+;; org-mode: Don't ruin S-arrow to switch windows please (use M-+ and M-- instead to toggle)
+(setq org-replace-disputed-keys t)
+
+;; Fontify org-mode code blocks
+(setq org-src-fontify-natively t)
 
 
 
@@ -448,11 +427,7 @@
 
 (require 'helm)
 
-;; must set before helm-config,  otherwise helm use default
-;; prefix "C-x c", which is inconvenient because you can
-;; accidentially pressed "C-x C-c"
-(setq helm-command-prefix-key "C-c h")
-
+(require 'helm-command)
 (require 'helm-config)
 (require 'helm-eshell)
 (require 'helm-files)
@@ -472,7 +447,7 @@
       helm-input-idle-delay 0.01       ;; be idle for this many seconds, before updating candidate buffer
       helm-ff-search-library-in-sexp t ;; search for library in `require' and `declare-function' sexp.
 
-      helm-samewindow nil
+      helm-full-frame nil
       ;; helm-split-window-default-side 'other ;; open helm buffer in another window
       ;; helm-split-window-in-side-p t         ;; open helm buffer inside current window, not occupy whole other window
       ;; helm-buffers-favorite-modes (append helm-buffers-favorite-modes
@@ -505,7 +480,7 @@
       ido-use-filename-at-point nil
       ido-max-prospects 10)
 
-(setq ido-save-directory-list-file (concat user-emacs-directory "cache/ido.last"))
+(setq ido-save-directory-list-file (concat user-cache-directory "ido.last"))
 
 ;; Always rescan buffer for imenu
 (set-default 'imenu-auto-rescan t)
@@ -532,12 +507,12 @@
 
 ;; Projectile ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq projectile-enable-caching t)
-
-(defvar projectile-cache-file (concat user-emacs-directory "cache/projectile.cache"))
-(defvar projectile-known-projects-file (concat user-emacs-directory "cache/projectile-bookmarks.eld"))
+(defvar projectile-cache-file (concat user-cache-directory "projectile.cache"))
+(defvar projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld"))
 
 (require 'projectile)
+
+(setq projectile-enable-caching t)
 
 ;; (setq projectile-indexing-method 'native)
 
@@ -555,7 +530,7 @@
 (require 'workgroups2)
 
 ;; Change workgroups session file
-(setq wg-default-session-file (concat user-emacs-directory "cache/workgroups2"))
+(setq wg-default-session-file (concat user-cache-directory "workgroups2"))
 (setq wg-use-default-session-file nil)
 
 ;; Change prefix key (before activating WG)
@@ -590,9 +565,11 @@
 
 
 ;; C Mode Hooks
+
+(setq-default c-default-style "bsd")
+(setq-default c-basic-offset 4)
+
 (defun c-mode-common-custom ()
-  (setq c-default-style "bsd")
-  (setq c-basic-offset 4)
   (c-set-offset 'access-label '-)
   (c-set-offset 'inclass '++)
   (c-set-offset 'substatement-open 0)
@@ -602,18 +579,19 @@
 (add-hook 'c-mode-common-hook 'c-mode-common-custom)
 
 ;; Markdown Mode Hooks
+(require 'markdown-mode)
 (defun my-markdown-mode-hook()
-  (setq markdown-imenu-generic-expression
-        '(("title" "^\\(.*\\)[\n]=+$" 1)
-          ("h2-" "^\\(.*\\)[\n]-+$" 1)
-          ("h1" "^# \\(.*\\)$" 1)
-          ("h2" "^## \\(.*\\)$" 1)
-          ("h3" "^### \\(.*\\)$" 1)
-          ("h4" "^#### \\(.*\\)$" 1)
-          ("h5" "^##### \\(.*\\)$" 1)
-          ("h6" "^###### \\(.*\\)$" 1)
-          ("fn" "^\\[\\^\\(.*\\)\\]" 1)
-          ))
+  (defvar markdown-imenu-generic-expression
+    '(("title" "^\\(.*\\)[\n]=+$" 1)
+      ("h2-" "^\\(.*\\)[\n]-+$" 1)
+      ("h1" "^# \\(.*\\)$" 1)
+      ("h2" "^## \\(.*\\)$" 1)
+      ("h3" "^### \\(.*\\)$" 1)
+      ("h4" "^#### \\(.*\\)$" 1)
+      ("h5" "^##### \\(.*\\)$" 1)
+      ("h6" "^###### \\(.*\\)$" 1)
+      ("fn" "^\\[\\^\\(.*\\)\\]" 1)
+      ))
   (setq imenu-generic-expression markdown-imenu-generic-expression))
 
 (add-hook 'markdown-mode-hook 'my-markdown-mode-hook)
@@ -635,12 +613,22 @@
 
 ;; Yasnippet ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(require 'yasnippet)
-(yas-global-mode t)
+;; (require 'yasnippet)
+;; (yas-global-mode t)
+
+
+
+;; Flycheck ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (require 'flycheck)
+;; (global-flycheck-mode t)
+
+
 
 ;; Auto-complete ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; ;; Irony-mode
+;; Irony-mode
+(require 'irony)
 (add-hook 'c++-mode-hook 'irony-mode)
 (add-hook 'c-mode-hook 'irony-mode)
 (add-hook 'objc-mode-hook 'irony-mode)
@@ -657,7 +645,7 @@
 (setq-default company-backends (quote (company-files
                                        company-irony
                                        company-elisp
-                                       company-yasnippet
+                                       ;; company-yasnippet
                                        ;; company-css
                                        ;; company-eclim
                                        ;; company-clang
@@ -694,7 +682,6 @@
 
 ;; pre-evil Stuff
 (setq evil-want-C-u-scroll t)
-(setq evil-find-skip-newlines t)
 (setq evil-move-cursor-back nil)
 (setq evil-cross-lines t)
 (setq evil-intercept-esc 'always)
@@ -706,14 +693,12 @@
 ;; Actually activate evil mode
 (evil-mode t)
 
-;; Reclaim C-z for suspend in terminal
+;; Toggle evil-mode
 (evil-set-toggle-key "C-\\")
 ;; (evil-set-toggle-key "<pause>")
 
-;; (require 'surround)
-;; (global-surround-mode t)
-
 ;; evil-leader
+(require 'evil-leader)
 (setq evil-leader/in-all-states t
       evil-leader/leader "SPC"
       evil-leader/non-normal-prefix "s-")
@@ -754,10 +739,6 @@
 (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
 (define-key evil-emacs-state-map (kbd "SPC") evil-leader--default-map)
 
-;; Stop evil from overwriting cursor color
-;; (setq evil-default-cursor t)
-;; (setq evil-insert-state-cursor '("#aa0000" hbar))
-
 
 
 ;; Other ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -774,9 +755,6 @@
       scroll-conservatively 9999
       scroll-preserve-screen-position t
       auto-window-vscroll nil)
-
-;; Keep cursor away from edges when scrolling up/down
-;; (require 'smooth-scrolling)
 
 
 
@@ -899,30 +877,30 @@
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
 
-(defun rotate-windows ()
-  "Rotate your windows"
-  (interactive)
-  (cond ((not (> (count-windows)1))
-         (message "You can't rotate a single window!"))
-        (t
-         (setq i 1)
-         (setq numWindows (count-windows))
-         (while (< i numWindows)
-           (let* (
-                  (w1 (elt (window-list) i))
-                  (w2 (elt (window-list) (+ (% i numWindows) 1)))
+;; (defun rotate-windows ()
+;;   "Rotate your windows"
+;;   (interactive)
+;;   (cond ((not (> (count-windows)1))
+;;          (message "You can't rotate a single window!"))
+;;         (t
+;;          (setq i 1)
+;;          (setq numWindows (count-windows))
+;;          (while (< i numWindows)
+;;            (let* (
+;;                   (w1 (elt (window-list) i))
+;;                   (w2 (elt (window-list) (+ (% i numWindows) 1)))
 
-                  (b1 (window-buffer w1))
-                  (b2 (window-buffer w2))
+;;                   (b1 (window-buffer w1))
+;;                   (b2 (window-buffer w2))
 
-                  (s1 (window-start w1))
-                  (s2 (window-start w2))
-                  )
-             (set-window-buffer w1 b2)
-             (set-window-buffer w2 b1)
-             (set-window-start w1 s2)
-             (set-window-start w2 s1)
-             (setq i (1+ i)))))))
+;;                   (s1 (window-start w1))
+;;                   (s2 (window-start w2))
+;;                   )
+;;              (set-window-buffer w1 b2)
+;;              (set-window-buffer w2 b1)
+;;              (set-window-start w1 s2)
+;;              (set-window-start w2 s1)
+;;              (setq i (1+ i)))))))
 
 ;; insert one or several line below without changing current evil state
 (defun evil-insert-line-below (count)
@@ -1239,3 +1217,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (kbd "M-J") 'org-metadown
   (kbd "M-K") 'org-metaup
   (kbd "M-L") 'org-metaright)
+
+(provide 'init)
+;;; init.el ends here
