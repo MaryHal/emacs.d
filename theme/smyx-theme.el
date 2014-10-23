@@ -460,7 +460,7 @@
                            :weight bold
                            :box nil))))
    ;; `(helm-selection ((,class (:background ,smyx-bg+1 :underline nil))))
-   `(helm-selection ((,class (:background ,smyx-bg-05 :underline nil))))
+   `(helm-selection ((,class (:background ,smyx-fg :foreground ,smyx-bg :underline nil))))
    `(helm-selection-line ((,class (:background ,smyx-bg+1))))
    `(helm-visible-mark ((,class (:foreground ,smyx-bg :background ,smyx-yellow-2))))
    `(helm-candidate-number ((,class (:foreground ,smyx-green+4 :background ,smyx-bg-1))))

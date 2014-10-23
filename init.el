@@ -274,19 +274,19 @@
 
 ;; Rebalance windows after splitting right
 (defadvice split-window-right
-  (after rebalance-windows activate)
+    (after rebalance-windows activate)
   (balance-windows))
 (ad-activate 'split-window-right)
 
 ;; Rebalance windows after splitting horizontally
 (defadvice split-window-horizontally
-  (after rebalance-windows activate)
+    (after rebalance-windows activate)
   (balance-windows))
 (ad-activate 'split-window-horizontally)
 
 ;; Balance windows after window close
 (defadvice delete-window
-  (after rebalance-windows activate)
+    (after rebalance-windows activate)
   (balance-windows))
 (ad-activate 'delete-window)
 
@@ -368,6 +368,8 @@
 ;; Mode line
 (require 'smart-mode-line)
 ;; (sml/apply-theme 'respectful)
+;; (setq sml/col-number-format  "%2c")
+;; (setq sml/line-number-format "%4l")
 (sml/setup)
 
 ;; rich-minority-mode
@@ -483,7 +485,7 @@
 
       ;; ido-use-virtual-buffers t      ;; Needed in helm-buffers-list
       helm-buffers-fuzzy-matching t     ;; fuzzy matching buffer names when non--nil
-                                        ;; useful in helm-mini that lists buffers
+      ;; useful in helm-mini that lists buffers
       )
 
 ;; Save current position to mark ring when jumping to a different place
@@ -514,32 +516,17 @@
 ;; Use ido everywhere
 (ido-everywhere 1)
 
-;; (require 'ido-ubiquitous)
-;; (ido-ubiquitous-mode t)
-
-;; Fix ido-ubiquitous for newer packages
-(defmacro ido-ubiquitous-use-new-completing-read (cmd package)
-  `(eval-after-load ,package
-     '(defadvice ,cmd (around ido-ubiquitous-new activate)
-        (let ((ido-ubiquitous-enable-compatibility nil))
-          ad-do-it))))
-
-;;(ido-ubiquitous-use-new-completing-read webjump 'webjump)
-;;(ido-ubiquitous-use-new-completing-read yas/expand 'yasnippet)
-;;(ido-ubiquitous-use-new-completing-read yas/visit-snippet-file 'yasnippet)
-
 ;; Display ido results vertically, rather than horizontally
-(setq ido-decorations (quote ("\n-> " "" "\n " "\n ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
-
-;; ;; Better matching
-;; (require 'flx-ido)
-;; (flx-ido-mode t)
-
-;; ;; Disable ido faces to see flx highlights.
-;; (setq ido-use-faces nil)
-
-;; Disable flx highlights
-;; (setq flx-ido-use-faces nil)
+(setq ido-decorations (quote ("\n-> "
+                              ""
+                              "\n "
+                              "\n ..."
+                              "[" "]"
+                              " [No match]"
+                              " [Matched]"
+                              " [Not readable]"
+                              " [Too big]"
+                              " [Confirm]")))
 
 
 
@@ -556,6 +543,8 @@
 
 (add-to-list 'projectile-globally-ignored-directories "elpa")
 (add-to-list 'projectile-globally-ignored-directories ".cache")
+
+(setq projectile-completion-system 'helm)
 
 (projectile-global-mode t)
 
@@ -664,9 +653,6 @@
   (define-key irony-mode-map [remap complete-symbol]
     'irony-completion-at-point-async))
 (add-hook 'irony-mode-hook 'my-irony-mode-hook)
-
-;; (eval-after-load 'company
-;;   '(add-to-list 'company-backends 'company-irony))
 
 (setq-default company-backends (quote (company-files
                                        company-irony
@@ -841,6 +827,12 @@
 
 ;; Keybinding Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun sudo-edit (&optional arg)
+  (interactive "p")
+  (if (or arg (not buffer-file-name))
+      (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
+    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+
 (defun my-window-killer ()
   "closes the window, and deletes the buffer if it's the last window open."
   (interactive)
@@ -950,12 +942,12 @@ the current state and point position."
 
 ;; from https://gist.github.com/3402786
 (defun toggle-maximize-buffer () "Maximize buffer"
-  (interactive)
-  (if (= 1 (length (window-list)))
-      (jump-to-register '_)
-    (progn
-      (set-register '_ (list (current-window-configuration)))
-      (delete-other-windows))))
+       (interactive)
+       (if (= 1 (length (window-list)))
+           (jump-to-register '_)
+         (progn
+           (set-register '_ (list (current-window-configuration)))
+           (delete-other-windows))))
 
 (defun move-text-internal (arg)
   (cond
@@ -1156,6 +1148,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Ace-jump integration is now bundled with evil mode
 (evil-leader/set-key "SPC" 'evil-ace-jump-word-mode)
+(evil-leader/set-key "l"   'evil-ace-jump-line-mode)
 
 ;; Alternate
 (evil-leader/set-key "a" 'projectile-find-other-file)
@@ -1184,8 +1177,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Projectile
 (require 'helm-projectile)
-(evil-leader/set-key "l" 'helm-projectile)
-(evil-leader/set-key "p" 'helm-projectile-find-file-dwim)
+(evil-leader/set-key "p" 'helm-projectile)
 
 ;; Swoop
 (evil-leader/set-key "s" 'helm-swoop)
@@ -1247,77 +1239,3 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (kbd "M-J") 'org-metadown
   (kbd "M-K") 'org-metaup
   (kbd "M-L") 'org-metaright)
-
-;; Extra ido-mode keybindings
-(defun split-window-vertically-and-switch ()
-  (interactive)
-  (split-window-vertically)
-  (other-window 1))
-
-(defun split-window-horizontally-and-switch ()
-  (interactive)
-  (split-window-horizontally)
-  (other-window 1))
-
-(defun ido-invoke-in-other-window ()
-  "signals ido mode to switch to (or create) another window after exiting"
-  (interactive)
-  (setq ido-exit-minibuffer-target-window 'other)
-  (ido-exit-minibuffer))
-
-(defun ido-invoke-in-horizontal-split ()
-  "signals ido mode to split horizontally and switch after exiting"
-  (interactive)
-  (setq ido-exit-minibuffer-target-window 'horizontal)
-  (ido-exit-minibuffer))
-
-(defun ido-invoke-in-vertical-split ()
-  "signals ido mode to split vertically and switch after exiting"
-  (interactive)
-  (setq ido-exit-minibuffer-target-window 'vertical)
-  (ido-exit-minibuffer))
-
-(defun ido-invoke-in-new-frame ()
-  "signals ido mode to create a new frame after exiting"
-  (interactive)
-  (setq ido-exit-minibuffer-target-window 'frame)
-  (ido-exit-minibuffer))
-
-(defadvice ido-read-internal (around ido-read-internal-with-minibuffer-other-window activate)
-  (let* (ido-exit-minibuffer-target-window
-         (this-buffer (current-buffer))
-         (result ad-do-it))
-    (cond
-     ((equal ido-exit-minibuffer-target-window 'other)
-      (if (= 1 (count-windows))
-          (split-window-horizontally-and-switch)
-        (other-window 1)))
-     ((equal ido-exit-minibuffer-target-window 'horizontal)
-      (split-window-horizontally-and-switch))
-
-     ((equal ido-exit-minibuffer-target-window 'vertical)
-      (split-window-vertically-and-switch))
-     ((equal ido-exit-minibuffer-target-window 'frame)
-      (make-frame)))
-    (switch-to-buffer this-buffer) ;; why? Some ido commands, such as textmate.el's textmate-goto-symbol don't switch the current buffer
-    result))
-
-(defadvice ido-init-completion-maps (after ido-init-completion-maps-with-other-window-keys activate)
-  (mapcar (lambda (map)
-            (define-key map (kbd "C-o") 'ido-invoke-in-other-window)
-            (define-key map (kbd "C-2") 'ido-invoke-in-vertical-split)
-            (define-key map (kbd "C-3") 'ido-invoke-in-horizontal-split)
-            (define-key map (kbd "C-4") 'ido-invoke-in-other-window)
-            (define-key map (kbd "C-5") 'ido-invoke-in-new-frame))
-          (list ido-buffer-completion-map
-                ido-common-completion-map
-                ido-file-completion-map
-                ido-file-dir-completion-map)))
-
-(defun my-ido-define-keys()
-  (define-key ido-file-completion-map (kbd "C-w") 'ido-delete-backward-updir)
-  (define-key ido-file-completion-map (kbd "C-x C-w") 'ido-copy-current-file-name)
-  (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
-  (define-key ido-completion-map (kbd "C-p") 'ido-prev-match))
-
-(add-hook 'ido-setup-hook 'my-ido-define-keys)
