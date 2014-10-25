@@ -133,7 +133,7 @@
    `(default ((,class (:foreground ,smyx-fg :background ,smyx-bg-2))))
    `(cursor ((,class (:background ,smyx-fg))))
    `(escape-glyph-face ((,class (:foreground ,smyx-red))))
-   ;; `(fringe ((,class (:foreground ,smyx-fg :background ,smyx-bg+1))))
+   `(fringe ((,class (:foreground ,smyx-fg :background ,smyx-bg-2))))
    `(header-line ((,class (:foreground ,smyx-yellow
                                        :background ,smyx-bg-1
                                        :box (:line-width -1 :style released-button)))))
@@ -276,6 +276,9 @@
    `(newsticker-treeview-selection-face ((,class (:foreground ,smyx-yellow))))
 
    ;;; external
+
+   ;; anzu
+   `(anzu-mode-line ((,class (:foreground ,smyx-red :weight bold))))
 
    ;; full-ack
    `(ack-separator ((,class (:foreground ,smyx-fg))))
