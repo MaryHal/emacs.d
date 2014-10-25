@@ -16,7 +16,7 @@
 ;; Package Management ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+                         ("melpa" . "http://melpa.org/packages/")))
 
 (defvar package-list '(ace-jump-mode
                        ag
@@ -248,12 +248,6 @@
     (dotimes (i 10)
       (when (= p (point)) ad-do-it))))
 
-;; Ignore wiki packages during package-list-packages
-;; (defadvice package--add-to-archive-contents
-;;   (around package-filter-wiki-packages (package archive) activate compile)
-;;   (unless (string-match-p "\\[wiki\\]$" (package-desc-doc (cdr package)))
-;;     ad-do-it))
-
 ;; Transparency after load theme...
 ;; On Linux, if in terminal, clear the background. If GUI, set background to black and set
 ;; frame transparency.
@@ -262,7 +256,9 @@
       (if (string= window-system "x")
           (progn (set-frame-parameter (selected-frame) 'alpha '(90 90))
                  (add-to-list 'default-frame-alist '(alpha 90 90))
-                 (set-face-attribute 'default nil :background "black"))
+                 (set-face-attribute 'default nil :background "black")
+                 (set-face-attribute 'fringe nil :background "black")
+                 )
         (progn (when (getenv "DISPLAY")
                  (set-face-attribute 'default nil :background "unspecified-bg")
                  ))
@@ -289,13 +285,6 @@
     (after rebalance-windows activate)
   (balance-windows))
 (ad-activate 'delete-window)
-
-;; ;; Don't kill scratch buffer, just bury it.
-;; (defadvice kill-buffer (around my-advice-for-kill-buffer activate)
-;;   (let ((buffer-to-kill (ad-get-arg 0)))
-;;     (if (equal buffer-to-kill "*scratch*")
-;;         (bury-buffer)
-;;       ad-do-it)))
 
 
 
@@ -339,8 +328,8 @@
 ;; Mode line
 (require 'smart-mode-line)
 ;; (sml/apply-theme 'respectful)
-;; (setq sml/col-number-format  "%2c")
-;; (setq sml/line-number-format "%4l")
+(setq-default sml/line-number-format " %3l")
+(setq-default sml/col-number-format  "%2c")
 (sml/setup)
 
 ;; rich-minority-mode
@@ -380,6 +369,8 @@
 
 ;; Fringe and window margins
 (set-fringe-mode 0)
+;; (set-fringe-mode (cons 6 6))
+;; (setq-default left-fringe-width 8)
 
 ;; Set margins to 1 if not in terminal
 (when (display-graphic-p)
@@ -408,6 +399,7 @@
 ;; Anzu
 (require 'anzu)
 (global-anzu-mode 1)
+
 
 
 ;; Org ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -618,13 +610,6 @@
 
 
 
-;; Flycheck ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; (require 'flycheck)
-;; (global-flycheck-mode t)
-
-
-
 ;; Auto-complete ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Irony-mode
@@ -695,7 +680,6 @@
 
 ;; Toggle evil-mode
 (evil-set-toggle-key "C-\\")
-;; (evil-set-toggle-key "<pause>")
 
 ;; evil-leader
 (require 'evil-leader)
@@ -784,7 +768,7 @@
         ;; typically is used by c-c/c-v) before the primary selection
         ;; (that uses mouse-select/middle-button-click)
         (call-process-region (point-min) (point-max) "xsel" nil 0 nil "--clipboard" "--input")))
-    ;; Call back for when user pastes
+    ;; Callback for when user pastes
     (defun xsel-paste-function()
       ;; Find out what is current selection by xsel. If it is different
       ;; from the top of the kill-ring (car kill-ring), then return
@@ -877,30 +861,30 @@
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
 
-;; (defun rotate-windows ()
-;;   "Rotate your windows"
-;;   (interactive)
-;;   (cond ((not (> (count-windows)1))
-;;          (message "You can't rotate a single window!"))
-;;         (t
-;;          (setq i 1)
-;;          (setq numWindows (count-windows))
-;;          (while (< i numWindows)
-;;            (let* (
-;;                   (w1 (elt (window-list) i))
-;;                   (w2 (elt (window-list) (+ (% i numWindows) 1)))
+(defun rotate-windows ()
+  "Rotate your windows"
+  (interactive)
+  (cond ((not (> (count-windows)1))
+         (message "You can't rotate a single window!"))
+        (t
+         (setq i 1)
+         (setq numWindows (count-windows))
+         (while (< i numWindows)
+           (let* (
+                  (w1 (elt (window-list) i))
+                  (w2 (elt (window-list) (+ (% i numWindows) 1)))
 
-;;                   (b1 (window-buffer w1))
-;;                   (b2 (window-buffer w2))
+                  (b1 (window-buffer w1))
+                  (b2 (window-buffer w2))
 
-;;                   (s1 (window-start w1))
-;;                   (s2 (window-start w2))
-;;                   )
-;;              (set-window-buffer w1 b2)
-;;              (set-window-buffer w2 b1)
-;;              (set-window-start w1 s2)
-;;              (set-window-start w2 s1)
-;;              (setq i (1+ i)))))))
+                  (s1 (window-start w1))
+                  (s2 (window-start w2))
+                  )
+             (set-window-buffer w1 b2)
+             (set-window-buffer w2 b1)
+             (set-window-start w1 s2)
+             (set-window-start w2 s1)
+             (setq i (1+ i)))))))
 
 ;; insert one or several line below without changing current evil state
 (defun evil-insert-line-below (count)
@@ -1094,11 +1078,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; bind evil-jump-out-args
 ;; (define-key evil-normal-state-map "gm" 'evil-jump-out-args)
 
-;; Alternate escapes
-;; (require 'key-chord)
-;; (key-chord-mode 1)
-;; (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
-
 ;; "Unimpaired"
 (define-key evil-normal-state-map (kbd "[ SPC") 'evil-insert-line-above)
 (define-key evil-normal-state-map (kbd "] SPC") 'evil-insert-line-below)
@@ -1218,5 +1197,4 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (kbd "M-K") 'org-metaup
   (kbd "M-L") 'org-metaright)
 
-(provide 'init)
 ;;; init.el ends here

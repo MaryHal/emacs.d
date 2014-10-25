@@ -6,7 +6,7 @@ tramp
 
 auto-save-list/
 backups/
-cache/*
+cache/
 elpa/
 irony/
 site-lisp/
@@ -19,3 +19,4 @@ session.*
 .DS_Store
 
 .emacs.d
+old.el
