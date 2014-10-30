@@ -20,12 +20,14 @@
 
 (defvar package-list '(ace-jump-mode
                        ag
+                       aggressive-indent
                        anzu
                        company
                        company-irony
+                       evil
                        evil-args
                        evil-leader
-                       evil
+                       evil-surround
                        helm
                        helm-projectile
                        helm-swoop
@@ -191,8 +193,8 @@
 (setq eval-expression-print-level nil)
 
 ;; Mouse support
-(require 'mouse)
-(xterm-mouse-mode t)
+;; (require 'mouse)
+;; (xterm-mouse-mode t)
 ;; (defun track-mouse (e))
 ;; (setq mouse-sel-mode t)
 
@@ -294,6 +296,8 @@
 
 ;; (setq display-buffer-alist 'popwin:display-buffer)
 (push '("helm" :regexp t :height 16) popwin:special-display-config)
+(push "*Shell Command Output*" popwin:special-display-config)
+(push '(compilation-mode :noselect t) popwin:special-display-config)
 
 (popwin-mode t)
 
@@ -308,8 +312,6 @@
 (setq default-frame-alist
       '((top   . 10) (left   . 2)
         (width . 80) (height . 30)
-        (mouse-color  . "#CCCCCC")
-        ;; (cursor-color . "#CCCCCC")
         ))
 
 ;; Set font
@@ -357,7 +359,7 @@
 (setq-default indent-tabs-mode nil)
 
 ;; It's Electric!
-;; (electric-pair-mode t)
+(electric-pair-mode t)
 ;; (electric-indent-mode t)
 
 ;; Don't add newlines when cursor goes past end of file
@@ -367,10 +369,11 @@
 ;; Don't Blink Cursor
 (blink-cursor-mode -1)
 
-;; Fringe and window margins
-(set-fringe-mode 0)
-;; (set-fringe-mode (cons 6 6))
-;; (setq-default left-fringe-width 8)
+;; Fringe size
+(set-fringe-mode (cons 0 0))
+
+;; Empty line indicators in the fringe
+(setq-default indicate-empty-lines nil)
 
 ;; Set margins to 1 if not in terminal
 (when (display-graphic-p)
@@ -394,7 +397,9 @@
 
 ;; Whitespace-style
 (setq-default show-trailing-whitespace t)
-(setq-default indicate-empty-lines t)
+
+(require 'aggressive-indent)
+(global-aggressive-indent-mode t)
 
 ;; Anzu
 (require 'anzu)
@@ -722,6 +727,9 @@
 (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
 (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
 (define-key evil-emacs-state-map (kbd "SPC") evil-leader--default-map)
+
+(require 'evil-surround)
+(global-evil-surround-mode t)
 
 
 
