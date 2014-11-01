@@ -118,7 +118,7 @@
       (smyx-white-2 "#F8F8F8")
       (smyx-white-3 "#fffafa"))
 
- (custom-theme-set-faces
+  (custom-theme-set-faces
    'smyx
    '(button ((t (:underline t))))
    `(link ((,class (:foreground ,smyx-yellow :underline t :weight bold))))
@@ -517,6 +517,11 @@
    ;; linum-mode
    `(linum ((,class (:foreground ,smyx-gray-9 :background ,smyx-bg))))
 
+   ;; git-gutter
+   `(git-gutter:modified ((,class (:foreground ,smyx-blue))))
+   `(git-gutter:added    ((,class (:foreground ,smyx-pink))))
+   `(git-gutter:deleted  ((,class (:foreground ,smyx-red))))
+
    ;; magit
    `(magit-section-title ((,class (:foreground ,smyx-pink-1))))
    `(magit-branch ((,class (:foreground ,smyx-yellow-5))))
@@ -598,7 +603,7 @@
      ((,class (:inherit font-lock-comment-face))))
    `(org-archived ((,class (:slant italic))))
    `(org-checkbox ((,class (:background ,smyx-gray-2 :foreground ,smyx-black
-                                   :box (:line-width 1 :style released-button)))))
+                                        :box (:line-width 1 :style released-button)))))
    `(org-date ((,class (:foreground ,smyx-green :underline t))))
    `(org-done ((,class (:bold t :weight bold :foreground ,smyx-green
                               :box (:line-width 1 :style none)))))
@@ -693,12 +698,10 @@
    ;; SLIME
    `(slime-repl-inputed-output-face ((,class (:foreground ,smyx-red))))
 
-  ;; elscreen
-     `(elscreen-tab-other-screen-face (
-        (,class (:foreground ,smyx-gray :background ,smyx-black))))
+   ;; elscreen
+   `(elscreen-tab-other-screen-face ((,class (:foreground ,smyx-gray :background ,smyx-black))))
 
-     `(elscreen-tab-current-screen-face (
-        (,class (:foreground ,smyx-gray-5 :background ,smyx-gray))))
+   `(elscreen-tab-current-screen-face ((,class (:foreground ,smyx-gray-5 :background ,smyx-gray))))
 
 
   ;;; ansi-term
@@ -759,7 +762,7 @@
    `(wl-highlight-message-unimportant-header-contents ((,class (:foreground ,smyx-fg))))
    `(wl-highlight-summary-answered-face ((,class (:foreground ,smyx-blue))))
    `(wl-highlight-summary-disposed-face ((,class (:foreground ,smyx-fg
-                                                         :slant italic))))
+                                                              :slant italic))))
    `(wl-highlight-summary-new-face ((,class (:foreground ,smyx-blue))))
    `(wl-highlight-summary-normal-face ((,class (:foreground ,smyx-fg))))
    `(wl-highlight-summary-thread-top-face ((,class (:foreground ,smyx-yellow))))
@@ -795,7 +798,7 @@
   (custom-theme-set-variables
    'smyx
    `(ansi-color-names-vector [,smyx-bg ,smyx-red-2 ,smyx-green ,smyx-orange
-                                          ,smyx-blue-1 ,smyx-magenta ,smyx-cyan ,smyx-fg])
+                                       ,smyx-blue-1 ,smyx-magenta ,smyx-cyan ,smyx-fg])
    ;; fill-column-indicator
    `(fci-rule-color ,smyx-bg-05)))
 

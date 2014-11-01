@@ -28,6 +28,7 @@
                        evil-args
                        evil-leader
                        evil-surround
+                       git-gutter
                        helm
                        helm-projectile
                        helm-swoop
@@ -375,10 +376,13 @@
 ;; Empty line indicators in the fringe
 (setq-default indicate-empty-lines nil)
 
-;; Set margins to 1 if not in terminal
-(when (display-graphic-p)
-  (setq-default left-margin-width 1 right-margin-width 1)
-  (set-window-buffer nil (current-buffer)))
+;; Set margins to 1
+(setq-default left-margin-width 1
+              right-margin-width 1)
+(set-window-buffer nil (current-buffer))
+
+(require 'git-gutter)
+(global-git-gutter-mode t)
 
 (setq visible-bell nil
       font-lock-maximum-decoration t
@@ -398,8 +402,8 @@
 ;; Whitespace-style
 (setq-default show-trailing-whitespace t)
 
-(require 'aggressive-indent)
-(global-aggressive-indent-mode t)
+;; (require 'aggressive-indent)
+;; (global-aggressive-indent-mode t)
 
 ;; Anzu
 (require 'anzu)
@@ -1150,7 +1154,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Terminal
 (evil-leader/set-key "t"  '(lambda()
                              (interactive)
-                             (shell-command "$TERMINAL -e fish")))
+                             (shell-command "$TERMINAL")))
 
 ;; Org Mode settings
 (evil-define-key 'normal org-mode-map
