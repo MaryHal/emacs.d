@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: fore
+# key: fore
+# --
+for (${1:Thing} : ${2:Container}) {
+    $0
+}

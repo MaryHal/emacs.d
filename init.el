@@ -43,7 +43,8 @@
                        rich-minority ;; Required by smart-mode-line
                        smart-mode-line
                        undo-tree
-                       workgroups2))
+                       workgroups2
+                       yasnippet))
 
 ;; Activate all the packages (in particular autoloads)
 (package-initialize)
@@ -360,7 +361,7 @@
 (setq-default indent-tabs-mode nil)
 
 ;; It's Electric!
-(electric-pair-mode t)
+;; (electric-pair-mode t)
 ;; (electric-indent-mode t)
 
 ;; Don't add newlines when cursor goes past end of file
@@ -383,6 +384,10 @@
 
 (require 'git-gutter)
 (global-git-gutter-mode t)
+
+;; (require 'diff-hl)
+;; (global-diff-hl-mode t)
+;; (diff-hl-margin-minor-mode t)
 
 (setq visible-bell nil
       font-lock-maximum-decoration t
@@ -614,8 +619,11 @@
 
 ;; Yasnippet ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; (require 'yasnippet)
-;; (yas-global-mode t)
+(require 'yasnippet)
+
+(setq yas-snippet-dirs (concat user-emacs-directory "snippets"))
+
+(yas-global-mode t)
 
 
 
