@@ -449,16 +449,21 @@
 
 
 
-;; (req-package smart-mode-line
-;;              :require rich-minority
-;;              :config (progn (setq-default sml/line-number-format " %3l")
-;;                             (setq-default sml/col-number-format  "%2c")
-;;
-;;                             (line-number-mode t)   ;; have line numbers and
-;;                             (column-number-mode t) ;; column numbers in the mode line
-;;
-;;                             (sml/setup)
-;;                             ))
+(req-package smart-mode-line
+  :config (progn (setq-default sml/line-number-format " %3l")
+                 (setq-default sml/col-number-format  "%2c")
+
+                 (line-number-mode t)   ;; have line numbers and
+                 (column-number-mode t) ;; column numbers in the mode line
+
+                 (sml/setup)
+                 ))
+
+(req-package rich-minority
+  :config (progn (setq rm-blacklist nil)
+                 (setq rm-whitelist " Wrap")
+                 ;; (rich-minority-mode t)
+                 ))
 
 (req-package menu-bar
   :config
@@ -543,6 +548,9 @@
 
 (req-package anzu
   :config (global-anzu-mode t))
+
+(req-package aggressive-indent
+  :config (global-aggressive-indent-mode t))
 
 
 
@@ -907,7 +915,7 @@ the current state and point position."
 
 ;; Language Hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(req-package cc-vars
+(req-package cc-mode
   :config (progn
             (setq-default c-default-style "bsd")
             (setq-default c-basic-offset 4)
@@ -945,6 +953,9 @@ the current state and point position."
 ;;              :config (js2-highlight-level 3))
 
 (req-package lua-mode)
+
+(req-package sgml-mode
+  :mode (("\\.html\\'" . html-mode)))
 
 
 
@@ -1002,6 +1013,15 @@ the current state and point position."
                  ))
 
 
+
+;; Org ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(req-package org
+  :config (progn (setq org-replace-disputed-keys t)
+
+                 ;; Fontify org-mode code blocks
+                 (setq org-src-fontify-natively t)
+                 ))
 
 ;; Extra Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
