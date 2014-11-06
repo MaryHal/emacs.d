@@ -137,30 +137,30 @@
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
 
-(defun rotate-windows ()
-  "Rotate your windows"
-  (interactive)
-  (cond ((not (> (count-windows)1))
-         (message "You can't rotate a single window!"))
-        (t
-         (setq i 1)
-         (setq numWindows (count-windows))
-         (while (< i numWindows)
-           (let* (
-                  (w1 (elt (window-list) i))
-                  (w2 (elt (window-list) (+ (% i numWindows) 1)))
+;; (defun rotate-windows ()
+;;   "Rotate your windows"
+;;   (interactive)
+;;   (cond ((not (> (count-windows)1))
+;;          (message "You can't rotate a single window!"))
+;;         (t
+;;          (setq i 1)
+;;          (setq numWindows (count-windows))
+;;          (while (< i numWindows)
+;;            (let* (
+;;                   (w1 (elt (window-list) i))
+;;                   (w2 (elt (window-list) (+ (% i numWindows) 1)))
 
-                  (b1 (window-buffer w1))
-                  (b2 (window-buffer w2))
+;;                   (b1 (window-buffer w1))
+;;                   (b2 (window-buffer w2))
 
-                  (s1 (window-start w1))
-                  (s2 (window-start w2))
-                  )
-             (set-window-buffer w1 b2)
-             (set-window-buffer w2 b1)
-             (set-window-start w1 s2)
-             (set-window-start w2 s1)
-             (setq i (1+ i)))))))
+;;                   (s1 (window-start w1))
+;;                   (s2 (window-start w2))
+;;                   )
+;;              (set-window-buffer w1 b2)
+;;              (set-window-buffer w2 b1)
+;;              (set-window-start w1 s2)
+;;              (set-window-start w2 s1)
+;;              (setq i (1+ i)))))))
 
 ;; from https://gist.github.com/3402786
 (defun toggle-maximize-buffer () "Maximize buffer"
@@ -339,34 +339,34 @@
                  (setq eval-expression-print-level nil)
                  ))
 
-(req-package jka-compr-hook
+(req-package jka-cmpr-hook
   :config (auto-compression-mode))
 
 (req-package delsel
   :config (delete-selection-mode t))
 
 (req-package tramp
-  :init (setq tramp-default-method "ssh"))
+  :config (setq tramp-default-method "ssh"))
 
 (req-package recentf
-  :config (recentf-mode t)
-  :init (progn (setq recentf-save-file (concat user-cache-directory "recentf"))
-               (setq recentf-max-saved-items 100)
-               (setq recentf-max-menu-items 50)
-               ))
+  :config (progn (setq recentf-save-file (concat user-cache-directory "recentf"))
+                 (setq recentf-max-saved-items 100)
+                 (setq recentf-max-menu-items 50)
+                 (recentf-mode t)
+                 ))
 
 (req-package uniquify
-  :init (progn (setq uniquify-buffer-name-style 'forward
-                     uniquify-separator "/"
-                     uniquify-ignore-buffers-re "^\\*" ;; leave special buffers alone
-                     uniquify-after-kill-buffer-p t)
-               ))
+  :config (progn (setq uniquify-buffer-name-style 'forward
+                       uniquify-separator "/"
+                       uniquify-ignore-buffers-re "^\\*" ;; leave special buffers alone
+                       uniquify-after-kill-buffer-p t)
+                 ))
 
 (req-package ediff
-  :init (progn (setq ediff-diff-options "-w")
-               (setq ediff-split-window-function 'split-window-horizontally)
-               (setq ediff-window-setup-function 'ediff-setup-windows-plain)
-               ))
+  :config (progn (setq ediff-diff-options "-w")
+                 (setq ediff-split-window-function 'split-window-horizontally)
+                 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+                 ))
 
 ;; (req-package mouse
 ;;              :config (progn (xterm-mouse-mode t)
@@ -605,6 +605,7 @@
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package evil
+  :require workgroups2
   :pre-load (progn (setq evil-want-C-u-scroll t)
                    (setq evil-move-cursor-back nil)
                    (setq evil-cross-lines t)
@@ -659,24 +660,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (define-key minibuffer-local-must-match-map [escape] 'init/minibuffer-keyboard-quit)
                  (define-key minibuffer-local-isearch-map [escape] 'init/minibuffer-keyboard-quit)
 
-                 ;; insert one or several line below without changing current evil state
-                 (defun evil-insert-line-below (count)
-                   "Insert one of several lines below the current point's line without changing
-the current state and point position."
-                   (interactive "p")
-                   (save-excursion
-                     (evil-save-state (evil-open-below count))))
-
-                 ;; insert one or several line above without changing current evil state
-                 (defun evil-insert-line-above (count)
-                   "Insert one of several lines above the current point's line without changing
-the current state and point position."
-                   (interactive "p")
-                   (save-excursion
-                     (evil-save-state (evil-open-above count))))
-
                  ;; Make end-of-line work in insert
                  (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
+
+                 ;; gj gk by default
+                 (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
+                 (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
 
                  ;; Other evil keybindings
                  (evil-define-operator evil-join-previous-line (beg end)
@@ -684,10 +673,6 @@ the current state and point position."
                    :motion evil-line
                    (evil-previous-visual-line)
                    (evil-join beg end))
-
-                 ;; gj gk by default
-                 (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
-                 (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
 
                  ;; Let K match J
                  (define-key evil-normal-state-map (kbd "K") 'evil-join-previous-line)
@@ -721,9 +706,16 @@ the current state and point position."
                                                          ;; re-select last visual-mode selection
                                                          (evil-visual-restore)))
 
+                 ;; Workgroups2
+                 (define-key evil-normal-state-map (kbd "g T") 'wg-switch-to-workgroup-left)
+                 (define-key evil-normal-state-map (kbd "g t") 'wg-switch-to-workgroup-right)
+
+                 (define-key evil-motion-state-map (kbd "g t") 'wg-switch-to-workgroup-right)
+
+                 (evil-ex-define-cmd "tabnew"   'wg-create-workgroup)
+                 (evil-ex-define-cmd "tabclose" 'wg-kill-workgroup)
+
                  ;; "Unimpaired"
-                 (define-key evil-normal-state-map (kbd "[ SPC") 'evil-insert-line-above)
-                 (define-key evil-normal-state-map (kbd "] SPC") 'evil-insert-line-below)
                  (define-key evil-normal-state-map (kbd "[ b") 'previous-buffer)
                  (define-key evil-normal-state-map (kbd "] b") 'next-buffer)
                  (define-key evil-normal-state-map (kbd "[ q") 'previous-error)
@@ -757,10 +749,6 @@ the current state and point position."
                  (define-key evil-emacs-state-map (kbd "SPC") evil-leader--default-map)
 
                  (evil-leader/set-key "a" 'projectile-find-other-file)
-
-                 (evil-leader/set-key "c" '(lambda()
-                                             (interactive)
-                                             (file-name-directory (or load-file-name buffer-file-name))))
 
                  ;; Eval
                  (evil-leader/set-key "eb" 'eval-buffer)
@@ -916,6 +904,32 @@ the current state and point position."
 
 
 
+;; Workgroups2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(req-package workgroups2
+  :config (progn (setq wg-default-session-file (concat user-cache-directory "workgroups2"))
+                 (setq wg-use-default-session-file nil)
+
+                 ;; Change prefix key (before activating WG)
+                 (setq wg-prefix-key (kbd "C-c z"))
+
+                 ;; What to do on Emacs exit / workgroups-mode exit?
+                 (setq wg-emacs-exit-save-behavior nil) ;; Options: 'save 'ask nil
+                 (setq wg-workgroups-mode-exit-save-behavior nil) ;; Options: 'save 'ask nil
+
+                 ;; Mode Line changes
+                 ;; Display workgroups in Mode Line?
+                 (setq wg-mode-line-display-on t) ;; Default: (not (featurep 'powerline))
+                 (setq wg-flag-modified t) ;; Display modified flags as well
+                 (setq wg-mode-line-decor-left-brace "["
+                       wg-mode-line-decor-right-brace "]" ;; how to surround it
+                       wg-mode-line-decor-divider ":")
+
+                 (workgroups-mode t)
+                 ))
+
+
+
 ;; Language Hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package cc-mode
@@ -967,7 +981,7 @@ the current state and point position."
 ;; Auto-completion ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package company
-  :require (irony company-irony)
+  :require (irony company-irony yasnippet)
   :config (progn (setq-default company-idle-delay 0)
                  (setq-default company-minimum-prefix-length 1)
                  ;; (setq-default company-show-numbers t)
@@ -988,7 +1002,7 @@ the current state and point position."
                  (setq-default company-backends (quote (company-files
                                                         company-irony
                                                         company-elisp
-                                                        ;; company-yasnippet
+                                                        company-yasnippet
                                                         ;; company-css
                                                         ;; company-eclim
                                                         ;; company-clang
