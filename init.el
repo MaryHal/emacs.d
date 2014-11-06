@@ -12,6 +12,8 @@
 (setq custom-file user-custom-file)
 (load user-custom-file t)
 
+
+
 ;; Preload Init ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Things that should be set early just in case something bad happens
@@ -242,10 +244,6 @@
                  ))
         )))
 
-;; Window Rebalancing
-(setq split-height-threshold nil)
-(setq split-width-threshold 0)
-
 ;; Rebalance windows after splitting right
 (defadvice split-window-right
     (after rebalance-windows activate)
@@ -315,6 +313,10 @@
 
 ;; Answering just 'y' or 'n' will do
 (defalias 'yes-or-no-p 'y-or-n-p)
+
+;; Window Rebalancing
+(setq split-height-threshold nil)
+(setq split-width-threshold 0)
 
 (req-package autorevert
   :config (progn (setq global-auto-revert-non-file-buffers t)
@@ -409,7 +411,8 @@
 ;; Dired ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package dired
-  :init (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso")
+  :commands dired
+  :config (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso")
   )
 
 
@@ -817,11 +820,7 @@ the current state and point position."
 (req-package helm
   :bind (("M-x" . helm-M-x)
          )
-  :config (progn (require 'helm-command)
-                 (require 'helm-config)
-                 (require 'helm-files)
-
-                 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ;; rebind tab to do persistent action
+  :config (progn (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ;; rebind tab to do persistent action
                  (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)   ;; make TAB works in terminal
                  (define-key helm-map (kbd "C-z")  'helm-select-action)              ;; list actions using C-z
                  (define-key helm-map (kbd "C-w") 'backward-kill-word)
@@ -853,6 +852,10 @@ the current state and point position."
 
                  (helm-mode t)
                  ))
+
+(req-package helm-swoop
+  :require helm
+  :config (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch))
 
 
 
@@ -952,7 +955,9 @@ the current state and point position."
 ;; (req-package js2-mode
 ;;              :config (js2-highlight-level 3))
 
-(req-package lua-mode)
+(req-package lua-mode
+  :mode ("\\.lua$" . lua-mode)
+  )
 
 (req-package sgml-mode
   :mode (("\\.html\\'" . html-mode)))
