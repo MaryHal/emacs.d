@@ -18,5 +18,5 @@ session.*
 *.elc
 .DS_Store
 
-.emacs.d
 old.el
+old_init.el
