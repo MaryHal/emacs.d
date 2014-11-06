@@ -317,54 +317,54 @@
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 (req-package autorevert
-             :config (progn (setq global-auto-revert-non-file-buffers t)
-                            (setq auto-revert-verbose nil)
+  :config (progn (setq global-auto-revert-non-file-buffers t)
+                 (setq auto-revert-verbose nil)
 
-                            (global-auto-revert-mode t)
-                            ))
+                 (global-auto-revert-mode t)
+                 ))
 
 (req-package simple
-             :config (progn (setq shift-select-mode nil)
+  :config (progn (setq shift-select-mode nil)
 
-                            ;; ;; Show active region
-                            ;; (transient-mark-mode t)
-                            ;; (make-variable-buffer-local 'transient-mark-mode)
-                            ;; (put 'transient-mark-mode 'permanent-local t)
-                            ;; (setq-default transient-mark-mode t)
+                 ;; ;; Show active region
+                 ;; (transient-mark-mode t)
+                 ;; (make-variable-buffer-local 'transient-mark-mode)
+                 ;; (put 'transient-mark-mode 'permanent-local t)
+                 ;; (setq-default transient-mark-mode t)
 
-                            ;; Nic says eval-expression-print-level needs to be set to 0 (turned off) so
-                            ;; that you can always see what's happening.
-                            (setq eval-expression-print-level nil)
-                            ))
+                 ;; Nic says eval-expression-print-level needs to be set to 0 (turned off) so
+                 ;; that you can always see what's happening.
+                 (setq eval-expression-print-level nil)
+                 ))
 
 (req-package jka-compr-hook
-             :config (auto-compression-mode))
+  :config (auto-compression-mode))
 
 (req-package delsel
-             :config (delete-selection-mode t))
+  :config (delete-selection-mode t))
 
 (req-package tramp
-             :init (setq tramp-default-method "ssh"))
+  :init (setq tramp-default-method "ssh"))
 
 (req-package recentf
-             :config (recentf-mode t)
-             :init (progn (setq recentf-save-file (concat user-cache-directory "recentf"))
-                          (setq recentf-max-saved-items 100)
-                          (setq recentf-max-menu-items 50)
-                          ))
+  :config (recentf-mode t)
+  :init (progn (setq recentf-save-file (concat user-cache-directory "recentf"))
+               (setq recentf-max-saved-items 100)
+               (setq recentf-max-menu-items 50)
+               ))
 
 (req-package uniquify
-             :init (progn (setq uniquify-buffer-name-style 'forward
-                                uniquify-separator "/"
-                                uniquify-ignore-buffers-re "^\\*" ;; leave special buffers alone
-                                uniquify-after-kill-buffer-p t)
-                          ))
+  :init (progn (setq uniquify-buffer-name-style 'forward
+                     uniquify-separator "/"
+                     uniquify-ignore-buffers-re "^\\*" ;; leave special buffers alone
+                     uniquify-after-kill-buffer-p t)
+               ))
 
 (req-package ediff
-             :init (progn (setq ediff-diff-options "-w")
-                          (setq ediff-split-window-function 'split-window-horizontally)
-                          (setq ediff-window-setup-function 'ediff-setup-windows-plain)
-                          ))
+  :init (progn (setq ediff-diff-options "-w")
+               (setq ediff-split-window-function 'split-window-horizontally)
+               (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+               ))
 
 ;; (req-package mouse
 ;;              :config (progn (xterm-mouse-mode t)
@@ -409,20 +409,20 @@
 ;; Dired ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package dired
-             :init (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso")
-             )
+  :init (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso")
+  )
 
 
 
 ;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package popwin
-             :config (progn (push '("helm" :regexp t :height 16) popwin:special-display-config)
-                            (push "*Shell Command Output*" popwin:special-display-config)
-                            (push '(compilation-mode :noselect t) popwin:special-display-config)
+  :config (progn (push '("helm" :regexp t :height 16) popwin:special-display-config)
+                 (push "*Shell Command Output*" popwin:special-display-config)
+                 (push '(compilation-mode :noselect t) popwin:special-display-config)
 
-                            (popwin-mode t)
-                       ))
+                 (popwin-mode t)
+                 ))
 
 
 
@@ -453,28 +453,28 @@
 ;;              :require rich-minority
 ;;              :config (progn (setq-default sml/line-number-format " %3l")
 ;;                             (setq-default sml/col-number-format  "%2c")
-
+;;
 ;;                             (line-number-mode t)   ;; have line numbers and
 ;;                             (column-number-mode t) ;; column numbers in the mode line
-
+;;
 ;;                             (sml/setup)
 ;;                             ))
 
 (req-package menu-bar
-             :config
-             (menu-bar-mode -1))
+  :config
+  (menu-bar-mode -1))
 
 (req-package tool-bar
-             :config
-             (tool-bar-mode -1))
+  :config
+  (tool-bar-mode -1))
 
 (req-package tooltip
-             :config
-             (tooltip-mode -1))
+  :config
+  (tooltip-mode -1))
 
 (req-package scroll-bar
-             :config
-             (scroll-bar-mode -1))
+  :config
+  (scroll-bar-mode -1))
 
 ;; No splash screen please
 (setq inhibit-splash-screen t)
@@ -513,11 +513,11 @@
 ;;              :config (electric-indent-mode t))
 
 (req-package fringe
-             :config (progn (set-fringe-mode (cons 0 0))
+  :config (progn (set-fringe-mode (cons 0 0))
 
-                            ;; Empty line indicators in the fringe
-                            (setq-default indicate-empty-lines nil)
-                            ))
+                 ;; Empty line indicators in the fringe
+                 (setq-default indicate-empty-lines nil)
+                 ))
 
 ;; Set margins to 1
 (setq-default left-margin-width 1
@@ -525,24 +525,24 @@
 (set-window-buffer nil (current-buffer))
 
 (req-package git-gutter
-             :config (global-git-gutter-mode t))
+  :config (global-git-gutter-mode t))
 
 (req-package paren
-             :config (progn (show-paren-mode t)
-                            (setq show-paren-delay 0)
-                            ))
+  :config (progn (show-paren-mode t)
+                 (setq show-paren-delay 0)
+                 ))
 
 (req-package highlight-parentheses
-             :config (progn (defun hl-parens-hook()
-                         (highlight-parentheses-mode 1))
-                       (add-hook 'prog-mode-hook 'hl-parens-hook)
-                       ))
+  :config (progn (defun hl-parens-hook()
+                   (highlight-parentheses-mode 1))
+                 (add-hook 'prog-mode-hook 'hl-parens-hook)
+                 ))
 
 ;; Whitespace-style
 (setq-default show-trailing-whitespace t)
 
 (req-package anzu
-             :config (global-anzu-mode t))
+  :config (global-anzu-mode t))
 
 
 
@@ -594,358 +594,352 @@
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package evil
-             :pre-load (progn (setq evil-want-C-u-scroll t)
-                              (setq evil-move-cursor-back nil)
-                              (setq evil-cross-lines t)
-                              (setq evil-intercept-esc 'always)
+  :pre-load (progn (setq evil-want-C-u-scroll t)
+                   (setq evil-move-cursor-back nil)
+                   (setq evil-cross-lines t)
+                   (setq evil-intercept-esc 'always)
 
-                              (setq evil-auto-indent t)
-                         )
-             :config (progn (evil-mode t)
+                   (setq evil-auto-indent t)
+                   )
+  :config (progn (evil-mode t)
 
-                       ;; Toggle evil-mode
-                       (evil-set-toggle-key "C-\\")
+                 ;; Toggle evil-mode
+                 (evil-set-toggle-key "C-\\")
 
-                       ;; List of modes that should start up in Evil state.
-                       (defvar dotemacs-evil-state-modes
-                         '(fundamental-mode
-                           text-mode
-                           prog-mode
-                           sws-mode
-                           dired-mode
-                           comint-mode
-                           log-edit-mode
-                           compilation-mode))
+                 ;; List of modes that should start up in Evil state.
+                 (defvar dotemacs-evil-state-modes
+                   '(fundamental-mode
+                     text-mode
+                     prog-mode
+                     sws-mode
+                     dired-mode
+                     comint-mode
+                     log-edit-mode
+                     compilation-mode))
 
-                       (defun my-enable-evil-mode ()
-                         (if (apply 'derived-mode-p dotemacs-evil-state-modes)
-                             (turn-on-evil-mode)))
-                       (add-hook 'after-change-major-mode-hook 'my-enable-evil-mode)
+                 (defun my-enable-evil-mode ()
+                   (if (apply 'derived-mode-p dotemacs-evil-state-modes)
+                       (turn-on-evil-mode)))
+                 (add-hook 'after-change-major-mode-hook 'my-enable-evil-mode)
 
-                       (evil-set-initial-state 'package-menu-mode 'normal)
+                 (evil-set-initial-state 'package-menu-mode 'normal)
 
-                       (add-hook 'compilation-mode-hook '(lambda ()
-                                                           (local-unset-key "g")
-                                                           (local-unset-key "h")
-                                                           (evil-define-key 'motion compilation-mode-map "r" 'recompile)
-                                                           (evil-define-key 'motion compilation-mode-map "h" 'evil-backward-char)))
+                 (add-hook 'compilation-mode-hook '(lambda ()
+                                                     (local-unset-key "g")
+                                                     (local-unset-key "h")
+                                                     (evil-define-key 'motion compilation-mode-map "r" 'recompile)
+                                                     (evil-define-key 'motion compilation-mode-map "h" 'evil-backward-char)))
 
-                       ;; Make ESC work more or less like it does in Vim
-                       (defun init/minibuffer-keyboard-quit()
-                         "Abort recursive edit.
+                 ;; Make ESC work more or less like it does in Vim
+                 (defun init/minibuffer-keyboard-quit()
+                   "Abort recursive edit.
 
 In Delete Selection mode, if the mark is active, just deactivate it;
 then it takes a second \\[keyboard-quit] to abort the minibuffer."
-                         (interactive)
-                         (if (and delete-selection-mode transient-mark-mode mark-active)
-                             (setq deactivate-mark t)
-                           (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
-                           (abort-recursive-edit)))
+                   (interactive)
+                   (if (and delete-selection-mode transient-mark-mode mark-active)
+                       (setq deactivate-mark t)
+                     (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
+                     (abort-recursive-edit)))
 
-                       (define-key minibuffer-local-map [escape] 'init/minibuffer-keyboard-quit)
-                       (define-key minibuffer-local-ns-map [escape] 'init/minibuffer-keyboard-quit)
-                       (define-key minibuffer-local-completion-map [escape] 'init/minibuffer-keyboard-quit)
-                       (define-key minibuffer-local-must-match-map [escape] 'init/minibuffer-keyboard-quit)
-                       (define-key minibuffer-local-isearch-map [escape] 'init/minibuffer-keyboard-quit)
+                 (define-key minibuffer-local-map [escape] 'init/minibuffer-keyboard-quit)
+                 (define-key minibuffer-local-ns-map [escape] 'init/minibuffer-keyboard-quit)
+                 (define-key minibuffer-local-completion-map [escape] 'init/minibuffer-keyboard-quit)
+                 (define-key minibuffer-local-must-match-map [escape] 'init/minibuffer-keyboard-quit)
+                 (define-key minibuffer-local-isearch-map [escape] 'init/minibuffer-keyboard-quit)
 
-                       ;; insert one or several line below without changing current evil state
-                       (defun evil-insert-line-below (count)
-                         "Insert one of several lines below the current point's line without changing
+                 ;; insert one or several line below without changing current evil state
+                 (defun evil-insert-line-below (count)
+                   "Insert one of several lines below the current point's line without changing
 the current state and point position."
-                         (interactive "p")
-                         (save-excursion
-                           (evil-save-state (evil-open-below count))))
+                   (interactive "p")
+                   (save-excursion
+                     (evil-save-state (evil-open-below count))))
 
-                       ;; insert one or several line above without changing current evil state
-                       (defun evil-insert-line-above (count)
-                         "Insert one of several lines above the current point's line without changing
+                 ;; insert one or several line above without changing current evil state
+                 (defun evil-insert-line-above (count)
+                   "Insert one of several lines above the current point's line without changing
 the current state and point position."
-                         (interactive "p")
-                         (save-excursion
-                           (evil-save-state (evil-open-above count))))
+                   (interactive "p")
+                   (save-excursion
+                     (evil-save-state (evil-open-above count))))
 
-                       ;; Make end-of-line work in insert
-                       (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
+                 ;; Make end-of-line work in insert
+                 (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
 
-                       ;; Other evil keybindings
-                       (evil-define-operator evil-join-previous-line (beg end)
-                         "Join the previous line with the current line."
-                         :motion evil-line
-                         (evil-previous-visual-line)
-                         (evil-join beg end))
+                 ;; Other evil keybindings
+                 (evil-define-operator evil-join-previous-line (beg end)
+                   "Join the previous line with the current line."
+                   :motion evil-line
+                   (evil-previous-visual-line)
+                   (evil-join beg end))
 
-                       ;; gj gk by default
-                       (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
-                       (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
+                 ;; gj gk by default
+                 (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
+                 (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
 
-                       ;; Let K match J
-                       (define-key evil-normal-state-map (kbd "K") 'evil-join-previous-line)
+                 ;; Let K match J
+                 (define-key evil-normal-state-map (kbd "K") 'evil-join-previous-line)
 
-                       ;; Make Y work like D
-                       (define-key evil-normal-state-map (kbd "Y") (kbd "y$"))
+                 ;; Make Y work like D
+                 (define-key evil-normal-state-map (kbd "Y") (kbd "y$"))
 
-                       ;; Kill buffer if only window with buffer open, otherwise just close the window.
-                       (define-key evil-normal-state-map (kbd "Q") 'my-window-killer)
+                 ;; Kill buffer if only window with buffer open, otherwise just close the window.
+                 (define-key evil-normal-state-map (kbd "Q") 'my-window-killer)
 
-                       ;; Visual indentation now reselects visual selection.
-                       (define-key evil-visual-state-map ">" (lambda ()
-                                                               (interactive)
-                                                               ;; ensure mark is less than point
-                                                               (when (> (mark) (point))
-                                                                 (exchange-point-and-mark)
-                                                                 )
-                                                               (evil-normal-state)
-                                                               (evil-shift-right (mark) (point))
-                                                               ;; re-select last visual-mode selection
-                                                               (evil-visual-restore)))
+                 ;; Visual indentation now reselects visual selection.
+                 (define-key evil-visual-state-map ">" (lambda ()
+                                                         (interactive)
+                                                         ;; ensure mark is less than point
+                                                         (when (> (mark) (point))
+                                                           (exchange-point-and-mark)
+                                                           )
+                                                         (evil-normal-state)
+                                                         (evil-shift-right (mark) (point))
+                                                         ;; re-select last visual-mode selection
+                                                         (evil-visual-restore)))
 
-                       (define-key evil-visual-state-map "<" (lambda ()
-                                                               (interactive)
-                                                               ;; ensure mark is less than point
-                                                               (when (> (mark) (point))
-                                                                 (exchange-point-and-mark)
-                                                                 )
-                                                               (evil-normal-state)
-                                                               (evil-shift-left (mark) (point))
-                                                               ;; re-select last visual-mode selection
-                                                               (evil-visual-restore)))
+                 (define-key evil-visual-state-map "<" (lambda ()
+                                                         (interactive)
+                                                         ;; ensure mark is less than point
+                                                         (when (> (mark) (point))
+                                                           (exchange-point-and-mark)
+                                                           )
+                                                         (evil-normal-state)
+                                                         (evil-shift-left (mark) (point))
+                                                         ;; re-select last visual-mode selection
+                                                         (evil-visual-restore)))
 
-                       ;; "Unimpaired"
-                       (define-key evil-normal-state-map (kbd "[ SPC") 'evil-insert-line-above)
-                       (define-key evil-normal-state-map (kbd "] SPC") 'evil-insert-line-below)
-                       (define-key evil-normal-state-map (kbd "[ b") 'previous-buffer)
-                       (define-key evil-normal-state-map (kbd "] b") 'next-buffer)
-                       (define-key evil-normal-state-map (kbd "[ q") 'previous-error)
-                       (define-key evil-normal-state-map (kbd "] q") 'next-error)
+                 ;; "Unimpaired"
+                 (define-key evil-normal-state-map (kbd "[ SPC") 'evil-insert-line-above)
+                 (define-key evil-normal-state-map (kbd "] SPC") 'evil-insert-line-below)
+                 (define-key evil-normal-state-map (kbd "[ b") 'previous-buffer)
+                 (define-key evil-normal-state-map (kbd "] b") 'next-buffer)
+                 (define-key evil-normal-state-map (kbd "[ q") 'previous-error)
+                 (define-key evil-normal-state-map (kbd "] q") 'next-error)
 
-                       ;; Bubble Text up and down. Works with regions.
-                       (define-key evil-normal-state-map (kbd "[ e") 'move-text-up)
-                       (define-key evil-normal-state-map (kbd "] e") 'move-text-down)
+                 ;; Bubble Text up and down. Works with regions.
+                 (define-key evil-normal-state-map (kbd "[ e") 'move-text-up)
+                 (define-key evil-normal-state-map (kbd "] e") 'move-text-down)
 
-                       ;; Commentin'
-                       (define-key evil-normal-state-map (kbd "g c c") '(lambda ()
-                                                                          (interactive)
-                                                                          (comment-or-uncomment-region
-                                                                           (line-beginning-position)
-                                                                           (line-end-position))
-                                                                          ))
-                       (define-key evil-visual-state-map (kbd "g c") 'comment-or-uncomment-region)
-                       ))
+                 ;; Commentin'
+                 (define-key evil-normal-state-map (kbd "g c c") '(lambda ()
+                                                                    (interactive)
+                                                                    (comment-or-uncomment-region
+                                                                     (line-beginning-position)
+                                                                     (line-end-position))
+                                                                    ))
+                 (define-key evil-visual-state-map (kbd "g c") 'comment-or-uncomment-region)
+                 ))
 
 (req-package evil-leader
-             :require (evil helm helm-projectile helm-swoop magit projectile)
-             :config (progn (setq evil-leader/in-all-states t
-                                  evil-leader/leader "SPC"
-                                  evil-leader/non-normal-prefix "s-")
+  :require (evil helm helm-projectile helm-swoop magit projectile)
+  :config (progn (setq evil-leader/in-all-states t
+                       evil-leader/leader "SPC"
+                       evil-leader/non-normal-prefix "s-")
 
-                            (global-evil-leader-mode t)
+                 (global-evil-leader-mode t)
 
-                            ;; make leader available in visual mode
-                            (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
-                            (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
-                            (define-key evil-emacs-state-map (kbd "SPC") evil-leader--default-map)
+                 ;; make leader available in visual mode
+                 (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
+                 (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
+                 (define-key evil-emacs-state-map (kbd "SPC") evil-leader--default-map)
 
-                            (evil-leader/set-key "a" 'projectile-find-other-file)
+                 (evil-leader/set-key "a" 'projectile-find-other-file)
 
-                            (evil-leader/set-key "c" '(lambda()
-                                                        (interactive)
-                                                        (file-name-directory (or load-file-name buffer-file-name))))
+                 (evil-leader/set-key "c" '(lambda()
+                                             (interactive)
+                                             (file-name-directory (or load-file-name buffer-file-name))))
 
-                            ;; Eval
-                            (evil-leader/set-key "eb" 'eval-buffer)
-                            (evil-leader/set-key "er" 'eval-region)
+                 ;; Eval
+                 (evil-leader/set-key "eb" 'eval-buffer)
+                 (evil-leader/set-key "er" 'eval-region)
 
-                            ;; Files
-                            (evil-leader/set-key "f" 'helm-find-files)
+                 ;; Files
+                 (evil-leader/set-key "f" 'helm-find-files)
 
-                            ;; Buffers
-                            (evil-leader/set-key "b" 'buffer-menu)
-                            (evil-leader/set-key "k" 'ido-kill-buffer)
-                            (evil-leader/set-key "u" 'helm-buffers-list)
+                 ;; Buffers
+                 (evil-leader/set-key "b" 'buffer-menu)
+                 (evil-leader/set-key "k" 'ido-kill-buffer)
+                 (evil-leader/set-key "u" 'helm-buffers-list)
 
-                            (evil-leader/set-key "o" 'helm-imenu)
-                            (evil-leader/set-key "x" 'helm-M-x)
+                 (evil-leader/set-key "o" 'helm-imenu)
+                 (evil-leader/set-key "x" 'helm-M-x)
 
-                            ;; Git
-                            (evil-leader/set-key "m" 'magit-status)
+                 ;; Git
+                 (evil-leader/set-key "m" 'magit-status)
 
-                            ;; Projectile
-                            (evil-leader/set-key "p" 'helm-projectile)
+                 ;; Projectile
+                 (evil-leader/set-key "p" 'helm-projectile)
 
-                            ;; Swoop
-                            (evil-leader/set-key "s" 'helm-swoop)
+                 ;; Swoop
+                 (evil-leader/set-key "s" 'helm-swoop)
 
-                            ;; Terminal
-                            (evil-leader/set-key "t"  '(lambda()
-                                                         (interactive)
-                                                         (shell-command "$TERMINAL")))
-                       ))
+                 ;; Terminal
+                 (evil-leader/set-key "t"  '(lambda()
+                                              (interactive)
+                                              (shell-command "$TERMINAL")))
+                 ))
 
 (req-package evil-surround
-             :require evil
-             :config (global-evil-surround-mode t))
+  :require evil
+  :config (global-evil-surround-mode t))
 
 (req-package evil-args
-             :require evil
-             :config (progn
-                       ;; bind evil-args text objects
-                       (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
-                       (define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
+  :require evil
+  :config (progn
+            ;; bind evil-args text objects
+            (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
+            (define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
 
-                       ;; bind evil-forward/backward-args
-                       (define-key evil-normal-state-map "gl" 'evil-forward-arg)
-                       (define-key evil-normal-state-map "gh" 'evil-backward-arg)
-                       (define-key evil-motion-state-map "gl" 'evil-forward-arg)
-                       (define-key evil-motion-state-map "gh" 'evil-backward-arg)
+            ;; bind evil-forward/backward-args
+            (define-key evil-normal-state-map "gl" 'evil-forward-arg)
+            (define-key evil-normal-state-map "gh" 'evil-backward-arg)
+            (define-key evil-motion-state-map "gl" 'evil-forward-arg)
+            (define-key evil-motion-state-map "gh" 'evil-backward-arg)
 
-                       ;; bind evil-jump-out-args
-                       ;; (define-key evil-normal-state-map "gm" 'evil-jump-out-args)
-                       ))
+            ;; bind evil-jump-out-args
+            ;; (define-key evil-normal-state-map "gm" 'evil-jump-out-args)
+            ))
 
 
 
 ;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package helm
-             :bind (("M-x" . helm-M-x)
-                     )
-             :config (progn (require 'helm-command)
-                            (require 'helm-config)
-                            (require 'helm-eshell)
-                            (require 'helm-files)
-                            (require 'helm-grep)
+  :bind (("M-x" . helm-M-x)
+         )
+  :config (progn (require 'helm-command)
+                 (require 'helm-config)
+                 (require 'helm-files)
 
-                            (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ;; rebind tab to do persistent action
-                            (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)   ;; make TAB works in terminal
-                            (define-key helm-map (kbd "C-z")  'helm-select-action)              ;; list actions using C-z
-                            (define-key helm-map (kbd "C-w") 'backward-kill-word)
+                 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ;; rebind tab to do persistent action
+                 (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)   ;; make TAB works in terminal
+                 (define-key helm-map (kbd "C-z")  'helm-select-action)              ;; list actions using C-z
+                 (define-key helm-map (kbd "C-w") 'backward-kill-word)
 
-                            (define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
-                            (define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
-                            (define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward)
+                 (setq helm-scroll-amount 4             ;; scroll 4 lines other window using M-<next>/M-<prior>
+                       helm-quick-update t              ;; do not display invisible candidates
+                       helm-idle-delay 0.01             ;; be idle for this many seconds, before updating in delayed sources.
+                       helm-input-idle-delay 0.01       ;; be idle for this many seconds, before updating candidate buffer
+                       helm-ff-search-library-in-sexp t ;; search for library in `require' and `declare-function' sexp.
 
-                            (setq helm-scroll-amount 4             ;; scroll 4 lines other window using M-<next>/M-<prior>
-                                  helm-quick-update t              ;; do not display invisible candidates
-                                  helm-idle-delay 0.01             ;; be idle for this many seconds, before updating in delayed sources.
-                                  helm-input-idle-delay 0.01       ;; be idle for this many seconds, before updating candidate buffer
-                                  helm-ff-search-library-in-sexp t ;; search for library in `require' and `declare-function' sexp.
+                       helm-full-frame nil
+                       ;; helm-split-window-default-side 'other ;; open helm buffer in another window
+                       ;; helm-split-window-in-side-p t         ;; open helm buffer inside current window, not occupy whole other window
+                       ;; helm-buffers-favorite-modes (append helm-buffers-favorite-modes
+                       ;;                                     '(picture-mode artist-mode))
+                       helm-candidate-number-limit 200         ;; limit the number of displayed canidates
+                       helm-M-x-requires-pattern 0             ;; show all candidates when set to 0
+                       helm-ff-file-name-history-use-recentf t
+                       ;; helm-move-to-line-cycle-in-source t     ;; move to end or beginning of source
+                       ;;                                         ;; when reaching top or bottom of source.
 
-                                  helm-full-frame nil
-                                  ;; helm-split-window-default-side 'other ;; open helm buffer in another window
-                                  ;; helm-split-window-in-side-p t         ;; open helm buffer inside current window, not occupy whole other window
-                                  ;; helm-buffers-favorite-modes (append helm-buffers-favorite-modes
-                                  ;;                                     '(picture-mode artist-mode))
-                                  helm-candidate-number-limit 200         ;; limit the number of displayed canidates
-                                  helm-M-x-requires-pattern 0             ;; show all candidates when set to 0
-                                  helm-ff-file-name-history-use-recentf t
-                                  ;; helm-move-to-line-cycle-in-source t     ;; move to end or beginning of source
-                                  ;;                                         ;; when reaching top or bottom of source.
+                       ;; ido-use-virtual-buffers t      ;; Needed in helm-buffers-list
+                       helm-buffers-fuzzy-matching t     ;; fuzzy matching buffer names when non--nil
+                       ;; useful in helm-mini that lists buffers
+                       )
 
-                                  ;; ido-use-virtual-buffers t      ;; Needed in helm-buffers-list
-                                  helm-buffers-fuzzy-matching t     ;; fuzzy matching buffer names when non--nil
-                                  ;; useful in helm-mini that lists buffers
-                                  )
+                 ;; Save current position to mark ring when jumping to a different place
+                 (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
 
-                            ;; Save current position to mark ring when jumping to a different place
-                            (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
-
-                            (helm-mode t)
-                       ))
+                 (helm-mode t)
+                 ))
 
 
 
 ;; Ido-mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package ido
-             :config (progn (ido-mode t)
-                            (setq ido-enable-prefix nil
-                                  ido-enable-flex-matching t
-                                  ido-create-new-buffer 'always
-                                  ido-use-filename-at-point nil
-                                  ido-max-prospects 10)
+  :config (progn (ido-mode t)
+                 (setq ido-enable-prefix nil
+                       ido-enable-flex-matching t
+                       ido-create-new-buffer 'always
+                       ido-use-filename-at-point nil
+                       ido-max-prospects 10)
 
-                            (setq ido-save-directory-list-file (concat user-cache-directory "ido.last"))
+                 (setq ido-save-directory-list-file (concat user-cache-directory "ido.last"))
 
-                            ;; Always rescan buffer for imenu
-                            (set-default 'imenu-auto-rescan t)
+                 ;; Always rescan buffer for imenu
+                 (set-default 'imenu-auto-rescan t)
 
-                            (add-to-list 'ido-ignore-directories "target")
-                            (add-to-list 'ido-ignore-directories "node_modules")
+                 (add-to-list 'ido-ignore-directories "target")
+                 (add-to-list 'ido-ignore-directories "node_modules")
 
-                            ;; Use ido everywhere
-                            (ido-everywhere 1)
+                 ;; Use ido everywhere
+                 (ido-everywhere 1)
 
-                            ;; Display ido results vertically, rather than horizontally
-                            (setq ido-decorations (quote ("\n-> "
-                                                          ""
-                                                          "\n "
-                                                          "\n ..."
-                                                          "[" "]"
-                                                          " [No match]"
-                                                          " [Matched]"
-                                                          " [Not readable]"
-                                                          " [Too big]"
-                                                          " [Confirm]")))
-                            ))
+                 ;; Display ido results vertically, rather than horizontally
+                 (setq ido-decorations (quote ("\n-> "
+                                               ""
+                                               "\n "
+                                               "\n ..."
+                                               "[" "]"
+                                               " [No match]"
+                                               " [Matched]"
+                                               " [Not readable]"
+                                               " [Too big]"
+                                               " [Confirm]")))
+                 ))
 
 
 
 ;; Projectile ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package projectile
-             :config (progn
-                       (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
-                       (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld"))
+  :config (progn
+            (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
+            (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld"))
 
-                       (setq projectile-enable-caching t)
+            (setq projectile-enable-caching t)
 
-                       ;; (setq projectile-indexing-method 'native)
+            ;; (setq projectile-indexing-method 'native)
 
-                       (add-to-list 'projectile-globally-ignored-directories "elpa")
-                       (add-to-list 'projectile-globally-ignored-directories ".cache")
+            (add-to-list 'projectile-globally-ignored-directories "elpa")
+            (add-to-list 'projectile-globally-ignored-directories ".cache")
 
-                       (setq projectile-completion-system 'helm)
+            (setq projectile-completion-system 'helm)
 
-                       (projectile-global-mode t)
-                       ))
+            (projectile-global-mode t)
+            ))
 
 
 
 ;; Language Hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package cc-vars
-             :config (progn
-                       (setq-default c-default-style "bsd")
-                       (setq-default c-basic-offset 4)
+  :config (progn
+            (setq-default c-default-style "bsd")
+            (setq-default c-basic-offset 4)
 
-                       (defun c-mode-common-custom ()
-                         (c-set-offset 'access-label '-)
-                         (c-set-offset 'inclass '++)
-                         (c-set-offset 'substatement-open 0)
-                         ;; (c-set-offset 'inclass 'my-c-lineup-inclass)
-                         )
+            (defun c-mode-common-custom ()
+              (c-set-offset 'access-label '-)
+              (c-set-offset 'inclass '++)
+              (c-set-offset 'substatement-open 0)
+              ;; (c-set-offset 'inclass 'my-c-lineup-inclass)
+              )
 
-                       (add-hook 'c-mode-common-hook 'c-mode-common-custom)
-                       ))
+            (add-hook 'c-mode-common-hook 'c-mode-common-custom)
+            ))
 
 (req-package markdown-mode
-             :config (progn
-                       (defun my-markdown-mode-hook()
-                         (defvar markdown-imenu-generic-expression
-                           '(("title" "^\\(.*\\)[\n]=+$" 1)
-                             ("h2-" "^\\(.*\\)[\n]-+$" 1)
-                             ("h1" "^# \\(.*\\)$" 1)
-                             ("h2" "^## \\(.*\\)$" 1)
-                             ("h3" "^### \\(.*\\)$" 1)
-                             ("h4" "^#### \\(.*\\)$" 1)
-                             ("h5" "^##### \\(.*\\)$" 1)
-                             ("h6" "^###### \\(.*\\)$" 1)
-                             ("fn" "^\\[\\^\\(.*\\)\\]" 1)
-                             ))
-                         (setq imenu-generic-expression markdown-imenu-generic-expression))
+  :config (progn
+            (defun my-markdown-mode-hook()
+              (defvar markdown-imenu-generic-expression
+                '(("title" "^\\(.*\\)[\n]=+$" 1)
+                  ("h2-" "^\\(.*\\)[\n]-+$" 1)
+                  ("h1" "^# \\(.*\\)$" 1)
+                  ("h2" "^## \\(.*\\)$" 1)
+                  ("h3" "^### \\(.*\\)$" 1)
+                  ("h4" "^#### \\(.*\\)$" 1)
+                  ("h5" "^##### \\(.*\\)$" 1)
+                  ("h6" "^###### \\(.*\\)$" 1)
+                  ("fn" "^\\[\\^\\(.*\\)\\]" 1)
+                  ))
+              (setq imenu-generic-expression markdown-imenu-generic-expression))
 
-                       (add-hook 'markdown-mode-hook 'my-markdown-mode-hook)
-                       ))
+            (add-hook 'markdown-mode-hook 'my-markdown-mode-hook)
+            ))
 
 ;; (req-package js2-mode
 ;;              :config (js2-highlight-level 3))
@@ -957,55 +951,55 @@ the current state and point position."
 ;; Auto-completion ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package company
-             :require (irony company-irony)
-             :config (progn (setq-default company-idle-delay 0)
-                            (setq-default company-minimum-prefix-length 1)
-                            ;; (setq-default company-show-numbers t)
+  :require (irony company-irony)
+  :config (progn (setq-default company-idle-delay 0)
+                 (setq-default company-minimum-prefix-length 1)
+                 ;; (setq-default company-show-numbers t)
 
-                            (add-hook 'c++-mode-hook 'irony-mode)
-                            (add-hook 'c-mode-hook 'irony-mode)
-                            (add-hook 'objc-mode-hook 'irony-mode)
+                 (add-hook 'c++-mode-hook 'irony-mode)
+                 (add-hook 'c-mode-hook 'irony-mode)
+                 (add-hook 'objc-mode-hook 'irony-mode)
 
-                            ;; replace the `completion-at-point' and `complete-symbol' bindings in
-                            ;; irony-mode's buffers by irony-mode's function
-                            (defun my-irony-mode-hook ()
-                              (define-key irony-mode-map [remap completion-at-point]
-                                'irony-completion-at-point-async)
-                              (define-key irony-mode-map [remap complete-symbol]
-                                'irony-completion-at-point-async))
-                            (add-hook 'irony-mode-hook 'my-irony-mode-hook)
+                 ;; replace the `completion-at-point' and `complete-symbol' bindings in
+                 ;; irony-mode's buffers by irony-mode's function
+                 (defun my-irony-mode-hook ()
+                   (define-key irony-mode-map [remap completion-at-point]
+                     'irony-completion-at-point-async)
+                   (define-key irony-mode-map [remap complete-symbol]
+                     'irony-completion-at-point-async))
+                 (add-hook 'irony-mode-hook 'my-irony-mode-hook)
 
-                            (setq-default company-backends (quote (company-files
-                                                                   company-irony
-                                                                   company-elisp
-                                                                   ;; company-yasnippet
-                                                                   ;; company-css
-                                                                   ;; company-eclim
-                                                                   ;; company-clang
-                                                                   ;; company-capf
-                                                                   (company-dabbrev-code company-keywords)
-                                                                   company-dabbrev
-                                                                   )))
+                 (setq-default company-backends (quote (company-files
+                                                        company-irony
+                                                        company-elisp
+                                                        ;; company-yasnippet
+                                                        ;; company-css
+                                                        ;; company-eclim
+                                                        ;; company-clang
+                                                        ;; company-capf
+                                                        (company-dabbrev-code company-keywords)
+                                                        company-dabbrev
+                                                        )))
 
-                            ;; (optional) adds CC special commands to `company-begin-commands' in order to
-                            ;; trigger completion at interesting places, such as after scope operator
-                            ;; std::|
-                            (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+                 ;; (optional) adds CC special commands to `company-begin-commands' in order to
+                 ;; trigger completion at interesting places, such as after scope operator
+                 ;; std::|
+                 (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
 
-                            (global-company-mode t)
+                 (global-company-mode t)
 
-                            (define-key company-active-map (kbd "C-n") 'company-select-next)
-                            (define-key company-active-map (kbd "C-p") 'company-select-previous)
-                       ))
+                 (define-key company-active-map (kbd "C-n") 'company-select-next)
+                 (define-key company-active-map (kbd "C-p") 'company-select-previous)
+                 ))
 
 
 
 ;; Yasnippet ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package yasnippet
-             :config (progn (setq yas-snippet-dirs (concat user-emacs-directory "snippets"))
-                            (yas-global-mode t)
-                            ))
+  :config (progn (setq yas-snippet-dirs (concat user-emacs-directory "snippets"))
+                 (yas-global-mode t)
+                 ))
 
 
 
