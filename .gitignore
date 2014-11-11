@@ -20,3 +20,5 @@ session.*
 
 old.el
 old_init.el
+/projectile-bookmarks.eld
+/projectile.cache

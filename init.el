@@ -806,8 +806,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package helm
-  :bind (("M-x" . helm-M-x)
-         )
+  ;; :bind (("M-x" . helm-M-x)
+  ;;        )
   :config (progn (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ;; rebind tab to do persistent action
                  (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)   ;; make TAB works in terminal
                  (define-key helm-map (kbd "C-z")  'helm-select-action)              ;; list actions using C-z
@@ -886,10 +886,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Projectile ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package projectile
+  ;; :pre-load (progn
+  ;;             (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
+  ;;             (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
   :config (progn
-            (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
-            (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld"))
-
             (setq projectile-enable-caching t)
 
             ;; (setq projectile-indexing-method 'native)
