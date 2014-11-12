@@ -369,10 +369,10 @@
                  ))
 
 ;; (req-package mouse
-;;              :config (progn (xterm-mouse-mode t)
-;;                             (defun track-mouse (e))
-;;                             (setq mouse-sel-mode t)
-;;                             ))
+;;   :config (progn (xterm-mouse-mode t)
+;;                  (defun track-mouse (e))
+;;                  (setq mouse-sel-mode t)
+;;                  ))
 
 ;; Seed the random number generator
 (random t)
@@ -780,6 +780,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                               (shell-command "$TERMINAL")))
                  ))
 
+(req-package evil-escape
+  :require (evil key-chord)
+  :config (evil-escape-mode t))
+
 (req-package evil-surround
   :require evil
   :config (global-evil-surround-mode t))
@@ -981,7 +985,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Auto-completion ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package company
-  :require (irony company-irony yasnippet)
+  :require (irony company-irony)
   :config (progn (setq-default company-idle-delay 0)
                  (setq-default company-minimum-prefix-length 1)
                  ;; (setq-default company-show-numbers t)
