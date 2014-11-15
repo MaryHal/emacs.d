@@ -341,7 +341,7 @@
 (req-package recentf
   :config (progn (setq recentf-save-file (concat user-cache-directory "recentf"))
                  (setq recentf-max-saved-items 100)
-                 (setq recentf-max-menu-items 50)
+                 (setq recentf-max-menu-items 15)
                  (recentf-mode t)
                  ))
 
@@ -726,52 +726,55 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ))
 
 (req-package evil-leader
-  :require (evil expand-region helm helm-projectile helm-swoop magit projectile)
+  :require (ace-jump-mode evil expand-region helm helm-projectile helm-swoop magit projectile)
   :init (progn (setq evil-leader/in-all-states t
-                 evil-leader/leader "SPC"
-                 evil-leader/non-normal-prefix "s-")
+                     evil-leader/leader "SPC"
+                     evil-leader/non-normal-prefix "s-")
 
-           (global-evil-leader-mode t)
+               (global-evil-leader-mode t)
 
-           ;; make leader available in visual mode
-           (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
-           (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
-           (define-key evil-emacs-state-map (kbd "SPC") evil-leader--default-map)
+               ;; make leader available in visual mode
+               (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
+               (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
+               (define-key evil-emacs-state-map (kbd "SPC") evil-leader--default-map)
 
-           (evil-leader/set-key "a" 'projectile-find-other-file)
+               (evil-leader/set-key "a" 'projectile-find-other-file)
 
-           ;; Eval
-           (evil-leader/set-key "eb" 'eval-buffer)
-           (evil-leader/set-key "er" 'eval-region)
+               ;; Eval
+               (evil-leader/set-key "eb" 'eval-buffer)
+               (evil-leader/set-key "er" 'eval-region)
 
-           ;; Files
-           (evil-leader/set-key "f" 'helm-find-files)
+               ;; Files
+               (evil-leader/set-key "f" 'helm-find-files)
 
-           ;; Buffers
-           (evil-leader/set-key "b" 'buffer-menu)
-           (evil-leader/set-key "k" 'ido-kill-buffer)
-           (evil-leader/set-key "u" 'helm-buffers-list)
+               ;; Buffers
+               (evil-leader/set-key "b" 'buffer-menu)
+               (evil-leader/set-key "k" 'ido-kill-buffer)
+               (evil-leader/set-key "u" 'helm-buffers-list)
 
-           (evil-leader/set-key "o" 'helm-imenu)
-           (evil-leader/set-key "x" 'helm-M-x)
+               (evil-leader/set-key "o" 'helm-imenu)
+               (evil-leader/set-key "x" 'helm-M-x)
 
-           ;; Git
-           (evil-leader/set-key "m" 'magit-status)
+               ;; Git
+               (evil-leader/set-key "m" 'magit-status)
 
-           ;; Projectile
-           (evil-leader/set-key "p" 'helm-projectile)
+               ;; Projectile
+               (evil-leader/set-key "p" 'helm-projectile)
 
-           ;; Swoop
-           (evil-leader/set-key "s" 'helm-swoop)
+               ;; Swoop
+               (evil-leader/set-key "s" 'helm-swoop)
 
-           ;; Expand region
-           (evil-leader/set-key "v" 'er/expand-region)
+               ;; Ace-jump-mode (has evil-integration built in!)
+               (evil-leader/set-key "SPC" 'ace-jump-word-mode)
 
-           ;; Terminal
-           (evil-leader/set-key "t"  '(lambda()
-                                        (interactive)
-                                        (shell-command "$TERMINAL")))
-           ))
+               ;; Expand region
+               (evil-leader/set-key "v" 'er/expand-region)
+
+               ;; Terminal
+               (evil-leader/set-key "t"  '(lambda()
+                                            (interactive)
+                                            (shell-command "$TERMINAL")))
+               ))
 
 (req-package evil-escape
   :require (evil key-chord)
@@ -1025,8 +1028,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Yasnippet ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package yasnippet
-  :config (progn (setq yas-snippet-dirs (concat user-emacs-directory "snippets"))
-                 (yas-global-mode t)
+  :init (progn (setq yas-snippet-dirs (concat user-emacs-directory "snippets")))
+  :config (progn (yas-global-mode t)
                  ))
 
 
