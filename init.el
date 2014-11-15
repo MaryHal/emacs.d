@@ -603,6 +603,102 @@
 
                    (setq evil-auto-indent t)
                    )
+  :init (progn
+          ;; Make ESC work more or less like it does in Vim
+          (defun init/minibuffer-keyboard-quit()
+            "Abort recursive edit.
+
+In Delete Selection mode, if the mark is active, just deactivate it;
+then it takes a second \\[keyboard-quit] to abort the minibuffer."
+            (interactive)
+            (if (and delete-selection-mode transient-mark-mode mark-active)
+                (setq deactivate-mark t)
+              (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
+              (abort-recursive-edit)))
+
+          (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-map)
+          (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-ns-map)
+          (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-completion-map)
+          (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-must-match-map)
+          (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-isearch-map)
+
+          ;; Make end-of-line work in insert
+          (bind-key (kbd "C-e") 'end-of-line evil-insert-state-map)
+
+          ;; gj gk by default
+          (bind-key (kbd "j") 'evil-next-visual-line evil-normal-state-map)
+          (bind-key (kbd "k") 'evil-previous-visual-line evil-normal-state-map)
+
+          ;; Other evil keybindings
+          (evil-define-operator evil-join-previous-line (beg end)
+            "Join the previous line with the current line."
+            :motion evil-line
+            (evil-previous-visual-line)
+            (evil-join beg end))
+
+          ;; Let K match J
+          (bind-key (kbd "K") 'evil-join-previous-line evil-normal-state-map)
+
+          ;; Make Y work like D
+          (bind-key (kbd "Y") (kbd "y$") evil-normal-state-map)
+
+          ;; Kill buffer if only window with buffer open, otherwise just close the window.
+          (bind-key (kbd "Q") 'my-window-killer evil-normal-state-map)
+
+          ;; Visual indentation now reselects visual selection.
+          (bind-key ">" (lambda ()
+                          (interactive)
+                          ;; ensure mark is less than point
+                          (when (> (mark) (point))
+                            (exchange-point-and-mark)
+                            )
+                          (evil-normal-state)
+                          (evil-shift-right (mark) (point))
+                          ;; re-select last visual-mode selection
+                          (evil-visual-restore))
+                    evil-visual-state-map)
+
+          (bind-key "<" (lambda ()
+                          (interactive)
+                          ;; ensure mark is less than point
+                          (when (> (mark) (point))
+                            (exchange-point-and-mark)
+                            )
+                          (evil-normal-state)
+                          (evil-shift-left (mark) (point))
+                          ;; re-select last visual-mode selection
+                          (evil-visual-restore))
+                    evil-visual-state-map)
+
+          ;; Workgroups2
+          (bind-key (kbd "g T") 'wg-switch-to-workgroup-left evil-normal-state-map)
+          (bind-key (kbd "g t") 'wg-switch-to-workgroup-right evil-normal-state-map)
+
+          (bind-key (kbd "g t") 'wg-switch-to-workgroup-right evil-motion-state-map)
+
+          (evil-ex-define-cmd "tabnew"   'wg-create-workgroup)
+          (evil-ex-define-cmd "tabclose" 'wg-kill-workgroup)
+
+          ;; "Unimpaired"
+          (bind-key (kbd "[ b") 'previous-buffer evil-normal-state-map)
+          (bind-key (kbd "] b") 'next-buffer evil-normal-state-map)
+          (bind-key (kbd "[ q") 'previous-error evil-normal-state-map)
+          (bind-key (kbd "] q") 'next-error evil-normal-state-map)
+
+          ;; Bubble Text up and down. Works with regions.
+          (bind-key (kbd "[ e") 'move-text-up evil-normal-state-map)
+          (bind-key (kbd "] e") 'move-text-down evil-normal-state-map)
+
+          ;; Commentin'
+          (bind-key (kbd "g c c") '(lambda ()
+                                     (interactive)
+                                     (comment-or-uncomment-region
+                                      (line-beginning-position)
+                                      (line-end-position))
+                                     )
+                    evil-normal-state-map)
+          (bind-key (kbd "g c") 'comment-or-uncomment-region evil-visual-state-map)
+          )
   :config (progn (evil-mode t)
 
                  ;; Toggle evil-mode
@@ -631,150 +727,59 @@
                                                      (local-unset-key "h")
                                                      (evil-define-key 'motion compilation-mode-map "r" 'recompile)
                                                      (evil-define-key 'motion compilation-mode-map "h" 'evil-backward-char)))
-
-                 ;; Make ESC work more or less like it does in Vim
-                 (defun init/minibuffer-keyboard-quit()
-                   "Abort recursive edit.
-
-In Delete Selection mode, if the mark is active, just deactivate it;
-then it takes a second \\[keyboard-quit] to abort the minibuffer."
-                   (interactive)
-                   (if (and delete-selection-mode transient-mark-mode mark-active)
-                       (setq deactivate-mark t)
-                     (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
-                     (abort-recursive-edit)))
-
-                 (define-key minibuffer-local-map [escape] 'init/minibuffer-keyboard-quit)
-                 (define-key minibuffer-local-ns-map [escape] 'init/minibuffer-keyboard-quit)
-                 (define-key minibuffer-local-completion-map [escape] 'init/minibuffer-keyboard-quit)
-                 (define-key minibuffer-local-must-match-map [escape] 'init/minibuffer-keyboard-quit)
-                 (define-key minibuffer-local-isearch-map [escape] 'init/minibuffer-keyboard-quit)
-
-                 ;; Make end-of-line work in insert
-                 (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
-
-                 ;; gj gk by default
-                 (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
-                 (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
-
-                 ;; Other evil keybindings
-                 (evil-define-operator evil-join-previous-line (beg end)
-                   "Join the previous line with the current line."
-                   :motion evil-line
-                   (evil-previous-visual-line)
-                   (evil-join beg end))
-
-                 ;; Let K match J
-                 (define-key evil-normal-state-map (kbd "K") 'evil-join-previous-line)
-
-                 ;; Make Y work like D
-                 (define-key evil-normal-state-map (kbd "Y") (kbd "y$"))
-
-                 ;; Kill buffer if only window with buffer open, otherwise just close the window.
-                 (define-key evil-normal-state-map (kbd "Q") 'my-window-killer)
-
-                 ;; Visual indentation now reselects visual selection.
-                 (define-key evil-visual-state-map ">" (lambda ()
-                                                         (interactive)
-                                                         ;; ensure mark is less than point
-                                                         (when (> (mark) (point))
-                                                           (exchange-point-and-mark)
-                                                           )
-                                                         (evil-normal-state)
-                                                         (evil-shift-right (mark) (point))
-                                                         ;; re-select last visual-mode selection
-                                                         (evil-visual-restore)))
-
-                 (define-key evil-visual-state-map "<" (lambda ()
-                                                         (interactive)
-                                                         ;; ensure mark is less than point
-                                                         (when (> (mark) (point))
-                                                           (exchange-point-and-mark)
-                                                           )
-                                                         (evil-normal-state)
-                                                         (evil-shift-left (mark) (point))
-                                                         ;; re-select last visual-mode selection
-                                                         (evil-visual-restore)))
-
-                 ;; Workgroups2
-                 (define-key evil-normal-state-map (kbd "g T") 'wg-switch-to-workgroup-left)
-                 (define-key evil-normal-state-map (kbd "g t") 'wg-switch-to-workgroup-right)
-
-                 (define-key evil-motion-state-map (kbd "g t") 'wg-switch-to-workgroup-right)
-
-                 (evil-ex-define-cmd "tabnew"   'wg-create-workgroup)
-                 (evil-ex-define-cmd "tabclose" 'wg-kill-workgroup)
-
-                 ;; "Unimpaired"
-                 (define-key evil-normal-state-map (kbd "[ b") 'previous-buffer)
-                 (define-key evil-normal-state-map (kbd "] b") 'next-buffer)
-                 (define-key evil-normal-state-map (kbd "[ q") 'previous-error)
-                 (define-key evil-normal-state-map (kbd "] q") 'next-error)
-
-                 ;; Bubble Text up and down. Works with regions.
-                 (define-key evil-normal-state-map (kbd "[ e") 'move-text-up)
-                 (define-key evil-normal-state-map (kbd "] e") 'move-text-down)
-
-                 ;; Commentin'
-                 (define-key evil-normal-state-map (kbd "g c c") '(lambda ()
-                                                                    (interactive)
-                                                                    (comment-or-uncomment-region
-                                                                     (line-beginning-position)
-                                                                     (line-end-position))
-                                                                    ))
-                 (define-key evil-visual-state-map (kbd "g c") 'comment-or-uncomment-region)
                  ))
 
 (req-package evil-leader
   :require (ace-jump-mode evil expand-region helm helm-projectile helm-swoop magit projectile)
-  :init (progn (setq evil-leader/in-all-states t
-                     evil-leader/leader "SPC"
-                     evil-leader/non-normal-prefix "s-")
+  :init (progn
+          ;; make leader available in visual mode
+          (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
+          (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
+          (define-key evil-emacs-state-map (kbd "SPC") evil-leader--default-map)
 
-               (global-evil-leader-mode t)
+          (evil-leader/set-key "a" 'projectile-find-other-file)
 
-               ;; make leader available in visual mode
-               (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
-               (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
-               (define-key evil-emacs-state-map (kbd "SPC") evil-leader--default-map)
+          ;; Eval
+          (evil-leader/set-key "eb" 'eval-buffer)
+          (evil-leader/set-key "er" 'eval-region)
 
-               (evil-leader/set-key "a" 'projectile-find-other-file)
+          ;; Files
+          (evil-leader/set-key "f" 'helm-find-files)
 
-               ;; Eval
-               (evil-leader/set-key "eb" 'eval-buffer)
-               (evil-leader/set-key "er" 'eval-region)
+          ;; Buffers
+          (evil-leader/set-key "b" 'buffer-menu)
+          (evil-leader/set-key "k" 'ido-kill-buffer)
+          (evil-leader/set-key "u" 'helm-buffers-list)
 
-               ;; Files
-               (evil-leader/set-key "f" 'helm-find-files)
+          (evil-leader/set-key "o" 'helm-imenu)
+          (evil-leader/set-key "x" 'helm-M-x)
 
-               ;; Buffers
-               (evil-leader/set-key "b" 'buffer-menu)
-               (evil-leader/set-key "k" 'ido-kill-buffer)
-               (evil-leader/set-key "u" 'helm-buffers-list)
+          ;; Git
+          (evil-leader/set-key "m" 'magit-status)
 
-               (evil-leader/set-key "o" 'helm-imenu)
-               (evil-leader/set-key "x" 'helm-M-x)
+          ;; Projectile
+          (evil-leader/set-key "p" 'helm-projectile)
 
-               ;; Git
-               (evil-leader/set-key "m" 'magit-status)
+          ;; Swoop
+          (evil-leader/set-key "s" 'helm-swoop)
 
-               ;; Projectile
-               (evil-leader/set-key "p" 'helm-projectile)
+          ;; Ace-jump-mode (has evil-integration built in!)
+          (evil-leader/set-key "SPC" 'ace-jump-word-mode)
 
-               ;; Swoop
-               (evil-leader/set-key "s" 'helm-swoop)
+          ;; Expand region
+          (evil-leader/set-key "v" 'er/expand-region)
 
-               ;; Ace-jump-mode (has evil-integration built in!)
-               (evil-leader/set-key "SPC" 'ace-jump-word-mode)
+          ;; Terminal
+          (evil-leader/set-key "t"  '(lambda()
+                                       (interactive)
+                                       (shell-command "$TERMINAL")))
+          )
+  :config (progn (setq evil-leader/in-all-states t
+                       evil-leader/leader "SPC"
+                       evil-leader/non-normal-prefix "s-")
 
-               ;; Expand region
-               (evil-leader/set-key "v" 'er/expand-region)
-
-               ;; Terminal
-               (evil-leader/set-key "t"  '(lambda()
-                                            (interactive)
-                                            (shell-command "$TERMINAL")))
-               ))
+                 (global-evil-leader-mode t)
+                 ))
 
 (req-package evil-escape
   :require (evil key-chord)
@@ -786,20 +791,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (req-package evil-args
   :require evil
-  :config (progn
-            ;; bind evil-args text objects
-            (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
-            (define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
+  :init (progn
+          ;; bind evil-args text objects
+          (bind-key "a" 'evil-inner-arg evil-inner-text-objects-map)
+          (bind-key "a" 'evil-outer-arg evil-outer-text-objects-map)
 
-            ;; bind evil-forward/backward-args
-            (define-key evil-normal-state-map "gl" 'evil-forward-arg)
-            (define-key evil-normal-state-map "gh" 'evil-backward-arg)
-            (define-key evil-motion-state-map "gl" 'evil-forward-arg)
-            (define-key evil-motion-state-map "gh" 'evil-backward-arg)
+          ;; bind evil-forward/backward-args
+          (bind-key "gl" 'evil-forward-arg evil-normal-state-map)
+          (bind-key "gh" 'evil-backward-arg evil-normal-state-map)
+          (bind-key "gl" 'evil-forward-arg evil-motion-state-map)
+          (bind-key "gh" 'evil-backward-arg evil-motion-state-map)
 
-            ;; bind evil-jump-out-args
-            ;; (define-key evil-normal-state-map "gm" 'evil-jump-out-args)
-            ))
+          ;; bind evil-jump-out-args
+          ;; (bind-key "gm" 'evil-jump-out-args evil-normal-state-map)
+          ))
 
 
 
@@ -808,42 +813,43 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (req-package helm
   ;; :bind (("M-x" . helm-M-x)
   ;;        )
-  :config (progn (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ;; rebind tab to do persistent action
-                 (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)   ;; make TAB works in terminal
-                 (define-key helm-map (kbd "C-z")  'helm-select-action)              ;; list actions using C-z
-                 (define-key helm-map (kbd "C-w") 'backward-kill-word)
+  :init (progn (bind-key (kbd "<tab>") 'helm-execute-persistent-action helm-map) ;; rebind tab to do persistent action
+               (bind-key (kbd "C-i") 'helm-execute-persistent-action helm-map)   ;; make TAB works in terminal
+               (bind-key (kbd "C-z")  'helm-select-action helm-map)              ;; list actions using C-z
+               (bind-key (kbd "C-w") 'backward-kill-word helm-map)
+               )
+  :config (progn 
+            (setq helm-scroll-amount 4             ;; scroll 4 lines other window using M-<next>/M-<prior>
+                  helm-quick-update t              ;; do not display invisible candidates
+                  helm-idle-delay 0.01             ;; be idle for this many seconds, before updating in delayed sources.
+                  helm-input-idle-delay 0.01       ;; be idle for this many seconds, before updating candidate buffer
+                  helm-ff-search-library-in-sexp t ;; search for library in `require' and `declare-function' sexp.
 
-                 (setq helm-scroll-amount 4             ;; scroll 4 lines other window using M-<next>/M-<prior>
-                       helm-quick-update t              ;; do not display invisible candidates
-                       helm-idle-delay 0.01             ;; be idle for this many seconds, before updating in delayed sources.
-                       helm-input-idle-delay 0.01       ;; be idle for this many seconds, before updating candidate buffer
-                       helm-ff-search-library-in-sexp t ;; search for library in `require' and `declare-function' sexp.
+                  helm-full-frame nil
+                  ;; helm-split-window-default-side 'other ;; open helm buffer in another window
+                  ;; helm-split-window-in-side-p t         ;; open helm buffer inside current window, not occupy whole other window
+                  ;; helm-buffers-favorite-modes (append helm-buffers-favorite-modes
+                  ;;                                     '(picture-mode artist-mode))
+                  helm-candidate-number-limit 200         ;; limit the number of displayed canidates
+                  helm-M-x-requires-pattern 0             ;; show all candidates when set to 0
+                  helm-ff-file-name-history-use-recentf t
+                  ;; helm-move-to-line-cycle-in-source t     ;; move to end or beginning of source
+                  ;;                                         ;; when reaching top or bottom of source.
 
-                       helm-full-frame nil
-                       ;; helm-split-window-default-side 'other ;; open helm buffer in another window
-                       ;; helm-split-window-in-side-p t         ;; open helm buffer inside current window, not occupy whole other window
-                       ;; helm-buffers-favorite-modes (append helm-buffers-favorite-modes
-                       ;;                                     '(picture-mode artist-mode))
-                       helm-candidate-number-limit 200         ;; limit the number of displayed canidates
-                       helm-M-x-requires-pattern 0             ;; show all candidates when set to 0
-                       helm-ff-file-name-history-use-recentf t
-                       ;; helm-move-to-line-cycle-in-source t     ;; move to end or beginning of source
-                       ;;                                         ;; when reaching top or bottom of source.
+                  ;; ido-use-virtual-buffers t      ;; Needed in helm-buffers-list
+                  helm-buffers-fuzzy-matching t     ;; fuzzy matching buffer names when non--nil
+                  ;; useful in helm-mini that lists buffers
+                  )
 
-                       ;; ido-use-virtual-buffers t      ;; Needed in helm-buffers-list
-                       helm-buffers-fuzzy-matching t     ;; fuzzy matching buffer names when non--nil
-                       ;; useful in helm-mini that lists buffers
-                       )
+            ;; Save current position to mark ring when jumping to a different place
+            (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
 
-                 ;; Save current position to mark ring when jumping to a different place
-                 (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
-
-                 (helm-mode t)
-                 ))
+            (helm-mode t)
+            ))
 
 (req-package helm-swoop
   :require helm
-  :config (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch))
+  :init (bind-key (kbd "M-i") 'helm-swoop-from-isearch isearch-mode-map))
 
 
 
@@ -983,6 +989,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (req-package company
   :require (irony company-irony)
+  :init (progn (bind-key (kbd "C-n") 'company-select-next company-active-map)
+               (bind-key (kbd "C-p") 'company-select-previous company-active-map)
+               )
   :config (progn (setq-default company-idle-delay 0)
                  (setq-default company-minimum-prefix-length 1)
                  ;; (setq-default company-show-numbers t)
@@ -1018,9 +1027,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
 
                  (global-company-mode t)
-
-                 (define-key company-active-map (kbd "C-n") 'company-select-next)
-                 (define-key company-active-map (kbd "C-p") 'company-select-previous)
                  ))
 
 
@@ -1051,8 +1057,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (put 'suspend-frame 'disabled t)
 
 ;; Easier version of "C-x k" to kill buffer
-(global-set-key (kbd "C-x C-b") 'buffer-menu)
-(global-set-key (kbd "C-x C-k") 'kill-buffer)
+(bind-key (kbd "C-x C-b") 'buffer-menu)
+(bind-key (kbd "C-x C-k") 'kill-buffer)
 
 
 
