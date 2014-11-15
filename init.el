@@ -26,36 +26,26 @@
 ;; Package Management (req-package) ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (eval-when-compile (package-initialize))
-(require 'cl)
 
-;; this code block is just a bootstrapping helper
-;; for clean emacs installation with copy of this configs repo.
-;; i noticed, that clean emacs installation has empty
-;; package-archive-contents variable.
-;; it happening because you have not any packages descriptions into
-;; ~/.emacs.d/elpa/archives directory. so there is no information
-;; about req-package at first emacs launch.
-;; that's why i check package-archive-contents and fetch descriptions
-;; in case this variable is empty and then i'm tring to install it
-;; using package-install function.
-(defun package-try-install (package)
-  "installs package if not installed"
-  (let* ((ARCHIVES (if (null package-archive-contents)
-                       (progn (package-refresh-contents)
-                              package-archive-contents)
-                     package-archive-contents))
-         (AVAIL (some (lambda (elem)
-                        (eq (car elem) package))
-                      ARCHIVES)))
-    (if AVAIL
-        (package-install package))))
+(defun require-package (package)
+  "refresh package archives, check package presence and install if it's not installed"
+  (if (null (require package nil t))
+      (progn (let* ((ARCHIVES (if (null package-archive-contents)
+                                  (progn (package-refresh-contents)
+                                         package-archive-contents)
+                                package-archive-contents))
+                    (AVAIL (assoc package ARCHIVES)))
+               (if AVAIL
+                   (package-install package)))
+             (require package))))
 
-(if (null (require 'req-package "req-package" t))
-    ;; requre failed, it might be first start.
-    ;; try to fetch archives and install req-package.
-    ;; then require again.
-    (progn (package-try-install 'req-package)
-           (require 'req-package)))
+;; ;; el-get
+;; (require-package 'el-get)
+;; (add-to-list 'el-get-recipe-path "~/.emacs.d/el-get/el-get/recipes")
+;; (el-get 'sync)
+
+;; req-package
+(require-package 'req-package)
 
 
 
@@ -736,49 +726,52 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ))
 
 (req-package evil-leader
-  :require (evil helm helm-projectile helm-swoop magit projectile)
-  :config (progn (setq evil-leader/in-all-states t
-                       evil-leader/leader "SPC"
-                       evil-leader/non-normal-prefix "s-")
+  :require (evil expand-region helm helm-projectile helm-swoop magit projectile)
+  :init (progn (setq evil-leader/in-all-states t
+                 evil-leader/leader "SPC"
+                 evil-leader/non-normal-prefix "s-")
 
-                 (global-evil-leader-mode t)
+           (global-evil-leader-mode t)
 
-                 ;; make leader available in visual mode
-                 (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
-                 (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
-                 (define-key evil-emacs-state-map (kbd "SPC") evil-leader--default-map)
+           ;; make leader available in visual mode
+           (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
+           (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
+           (define-key evil-emacs-state-map (kbd "SPC") evil-leader--default-map)
 
-                 (evil-leader/set-key "a" 'projectile-find-other-file)
+           (evil-leader/set-key "a" 'projectile-find-other-file)
 
-                 ;; Eval
-                 (evil-leader/set-key "eb" 'eval-buffer)
-                 (evil-leader/set-key "er" 'eval-region)
+           ;; Eval
+           (evil-leader/set-key "eb" 'eval-buffer)
+           (evil-leader/set-key "er" 'eval-region)
 
-                 ;; Files
-                 (evil-leader/set-key "f" 'helm-find-files)
+           ;; Files
+           (evil-leader/set-key "f" 'helm-find-files)
 
-                 ;; Buffers
-                 (evil-leader/set-key "b" 'buffer-menu)
-                 (evil-leader/set-key "k" 'ido-kill-buffer)
-                 (evil-leader/set-key "u" 'helm-buffers-list)
+           ;; Buffers
+           (evil-leader/set-key "b" 'buffer-menu)
+           (evil-leader/set-key "k" 'ido-kill-buffer)
+           (evil-leader/set-key "u" 'helm-buffers-list)
 
-                 (evil-leader/set-key "o" 'helm-imenu)
-                 (evil-leader/set-key "x" 'helm-M-x)
+           (evil-leader/set-key "o" 'helm-imenu)
+           (evil-leader/set-key "x" 'helm-M-x)
 
-                 ;; Git
-                 (evil-leader/set-key "m" 'magit-status)
+           ;; Git
+           (evil-leader/set-key "m" 'magit-status)
 
-                 ;; Projectile
-                 (evil-leader/set-key "p" 'helm-projectile)
+           ;; Projectile
+           (evil-leader/set-key "p" 'helm-projectile)
 
-                 ;; Swoop
-                 (evil-leader/set-key "s" 'helm-swoop)
+           ;; Swoop
+           (evil-leader/set-key "s" 'helm-swoop)
 
-                 ;; Terminal
-                 (evil-leader/set-key "t"  '(lambda()
-                                              (interactive)
-                                              (shell-command "$TERMINAL")))
-                 ))
+           ;; Expand region
+           (evil-leader/set-key "v" 'er/expand-region)
+
+           ;; Terminal
+           (evil-leader/set-key "t"  '(lambda()
+                                        (interactive)
+                                        (shell-command "$TERMINAL")))
+           ))
 
 (req-package evil-escape
   :require (evil key-chord)
@@ -925,6 +918,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ;; Display workgroups in Mode Line?
                  (setq wg-mode-line-display-on t) ;; Default: (not (featurep 'powerline))
                  (setq wg-flag-modified t) ;; Display modified flags as well
+
                  (setq wg-mode-line-decor-left-brace "["
                        wg-mode-line-decor-right-brace "]" ;; how to surround it
                        wg-mode-line-decor-divider ":")
