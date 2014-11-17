@@ -459,8 +459,8 @@
      ((,class (:foreground ,smyx-yellow
                            ;; :background ,smyx-bg-1
                            :background nil
-                           :underline nil
                            :weight bold
+                           :underline ,smyx-yellow
                            :box nil))))
    ;; `(helm-selection ((,class (:background ,smyx-bg+1 :underline nil))))
    `(helm-selection ((,class (:background ,smyx-fg :foreground ,smyx-bg :underline nil))))
