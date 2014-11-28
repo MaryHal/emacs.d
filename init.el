@@ -504,8 +504,8 @@
       scroll-preserve-screen-position t
       auto-window-vscroll nil)
 
-;; (req-package elec-pair
-;;              :config (electric-pair-mode t))
+(req-package elec-pair
+  :config (electric-pair-mode t))
 
 ;; (req-package electric
 ;;              :config (electric-indent-mode t))
@@ -544,6 +544,10 @@
 
 (req-package aggressive-indent
   :config (global-aggressive-indent-mode t))
+
+;; (req-package multiple-cursors
+;;   :init (progn (setq mc/unsupported-minor-modes '(company-mode auto-complete-mode flyspell-mode jedi-mode))
+;;                ))
 
 
 
@@ -595,7 +599,7 @@
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package evil
-  :require workgroups2
+  :require (workgroups2)
   :pre-load (progn (setq evil-want-C-u-scroll t)
                    (setq evil-move-cursor-back nil)
                    (setq evil-cross-lines t)
@@ -698,6 +702,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                      )
                     evil-normal-state-map)
           (bind-key (kbd "g c") 'comment-or-uncomment-region evil-visual-state-map)
+
+          ;; ;; Multiple cursors should use emacs state instead of insert state.
+          ;; (add-hook 'multiple-cursors-mode-enabled-hook 'evil-emacs-state)
+          ;; (add-hook 'multiple-cursors-mode-disabled-hook 'evil-normal-state)
+
+          ;; (define-key evil-normal-state-map (kbd "g r") 'mc/mark-all-like-this)
+          ;; (bind-key (kbd "C->") 'mc/mark-next-like-this)
+          ;; (bind-key (kbd "C-<") 'mc/mark-previous-like-this)
           )
   :config (progn (evil-mode t)
 
@@ -730,7 +742,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ))
 
 (req-package evil-leader
-  :require (evil helm helm-projectile helm-swoop magit projectile)
+  :require (ace-jump-mode evil expand-region helm helm-projectile helm-swoop magit projectile)
   :init (progn
           ;; make leader available in visual mode
           (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
@@ -763,11 +775,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           ;; Swoop
           (evil-leader/set-key "s" 'helm-swoop)
 
-          ;; ;; Ace-jump-mode (has evil-integration built in!)
-          ;; (evil-leader/set-key "SPC" 'ace-jump-word-mode)
+          ;; Ace-jump-mode (has evil-integration built in!)
+          (evil-leader/set-key "SPC" 'ace-jump-word-mode)
 
-          ;; ;; Expand region
-          ;; (evil-leader/set-key "v" 'er/expand-region)
+          ;; Expand region
+          (evil-leader/set-key "v" 'er/expand-region)
 
           ;; Terminal
           (evil-leader/set-key "t"  '(lambda()
