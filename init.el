@@ -539,16 +539,27 @@
 ;; Whitespace-style
 (setq-default show-trailing-whitespace t)
 
+(req-package ace-jump-mode
+  :init (progn (bind-key "C-c c" 'ace-jump-word-mode)
+               (bind-key "C-c x" 'ace-jump-mode-pop-mark)
+               ))
+
 (req-package anzu
   :config (global-anzu-mode t))
 
 (req-package aggressive-indent
   :config (global-aggressive-indent-mode t))
 
+(req-package expand-region
+  :init (progn (bind-key "C-=" 'er/expand-region)
+            ))
+
 ;; (req-package multiple-cursors
 ;;   :init (progn (setq mc/unsupported-minor-modes '(company-mode auto-complete-mode flyspell-mode jedi-mode))
 ;;                ))
 
+(req-package magit
+  :init (progn (bind-key "C-c m" 'magit-status)))
 
 
 ;; Clipboard ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -625,6 +636,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-completion-map)
           (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-must-match-map)
           (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-isearch-map)
+
+          ;; Delete forward like Emacs.
+          (bind-key (kbd "C-d") 'evil-delete-char evil-insert-state-map)
 
           ;; Make end-of-line work in insert
           (bind-key (kbd "C-e") 'end-of-line evil-insert-state-map)
@@ -711,35 +725,35 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           ;; (bind-key (kbd "C->") 'mc/mark-next-like-this)
           ;; (bind-key (kbd "C-<") 'mc/mark-previous-like-this)
           )
-  :config (progn (evil-mode t)
+  :config (progn ;; (evil-mode t)
 
-                 ;; Toggle evil-mode
-                 (evil-set-toggle-key "C-\\")
+            ;; Toggle evil-mode
+            (evil-set-toggle-key "C-\\")
 
-                 ;; ;; List of modes that should start up in Evil state.
-                 ;; (defvar dotemacs-evil-state-modes
-                 ;;   '(fundamental-mode
-                 ;;     text-mode
-                 ;;     prog-mode
-                 ;;     sws-mode
-                 ;;     dired-mode
-                 ;;     comint-mode
-                 ;;     log-edit-mode
-                 ;;     compilation-mode))
+            ;; ;; List of modes that should start up in Evil state.
+            ;; (defvar dotemacs-evil-state-modes
+            ;;   '(fundamental-mode
+            ;;     text-mode
+            ;;     prog-mode
+            ;;     sws-mode
+            ;;     dired-mode
+            ;;     comint-mode
+            ;;     log-edit-mode
+            ;;     compilation-mode))
 
-                 ;; (defun my-enable-evil-mode ()
-                 ;;   (if (apply 'derived-mode-p dotemacs-evil-state-modes)
-                 ;;       (turn-on-evil-mode)))
-                 ;; (add-hook 'after-change-major-mode-hook 'my-enable-evil-mode)
+            ;; (defun my-enable-evil-mode ()
+            ;;   (if (apply 'derived-mode-p dotemacs-evil-state-modes)
+            ;;       (turn-on-evil-mode)))
+            ;; (add-hook 'after-change-major-mode-hook 'my-enable-evil-mode)
 
-                 (evil-set-initial-state 'package-menu-mode 'normal)
+            (evil-set-initial-state 'package-menu-mode 'normal)
 
-                 ;; (add-hook 'compilation-mode-hook '(lambda ()
-                 ;;                                     (local-unset-key "g")
-                 ;;                                     (local-unset-key "h")
-                 ;;                                     (evil-define-key 'motion compilation-mode-map "r" 'recompile)
-                 ;;                                     (evil-define-key 'motion compilation-mode-map "h" 'evil-backward-char)))
-                 ))
+            ;; (add-hook 'compilation-mode-hook '(lambda ()
+            ;;                                     (local-unset-key "g")
+            ;;                                     (local-unset-key "h")
+            ;;                                     (evil-define-key 'motion compilation-mode-map "r" 'recompile)
+            ;;                                     (evil-define-key 'motion compilation-mode-map "h" 'evil-backward-char)))
+            ))
 
 (req-package evil-leader
   :require (ace-jump-mode evil expand-region helm helm-projectile helm-swoop magit projectile)
@@ -825,6 +839,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                (bind-key (kbd "C-w")   'backward-kill-word             helm-map)
 
                (bind-key (kbd "M-x") 'helm-M-x)
+               (bind-key (kbd "C-x C-f") 'helm-find-files)
+
+               (bind-key "C-c C-u" 'helm-buffers-list)
+               (bind-key "C-c C-o" 'helm-imenu)
                )
   :config (progn
             (setq helm-scroll-amount 4             ;; scroll 4 lines other window using M-<next>/M-<prior>
@@ -899,10 +917,17 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Projectile ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(req-package helm-projectile
+  :require "helm"
+  :init (progn (bind-key "C-c C-p" 'helm-projectile)
+               ))
+
 (req-package projectile
   ;; :pre-load (progn
   ;;             (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
   ;;             (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
+  :init (progn (bind-key "C-c C-a" 'projectile-find-other-file)
+               )
   :config (progn (setq projectile-enable-caching t)
 
                  ;; (setq projectile-indexing-method 'native)
@@ -1066,6 +1091,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Easier version of "C-x k" to kill buffer
 (bind-key (kbd "C-x C-b") 'buffer-menu)
 (bind-key (kbd "C-x C-k") 'kill-buffer)
+
+;; Eval
+(bind-key "C-c v" 'eval-buffer)
+(bind-key "C-c r" 'eval-region)
+
+(bind-key "C-c k"  '(lambda()
+                        (interactive)
+                        (shell-command "$TERMINAL")))
 
 
 
