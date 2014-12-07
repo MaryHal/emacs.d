@@ -561,6 +561,9 @@
                (bind-key "C-c C-x" 'ace-jump-mode-pop-mark)
                ))
 
+(req-package ace-window
+  :init (progn (bind-key "M-p" 'ace-window)))
+
 (req-package anzu
   :config (global-anzu-mode t))
 
@@ -574,14 +577,19 @@
 (req-package guide-key
   :config (progn (guide-key-mode t)
                  (setq guide-key/guide-key-sequence '("C-x" "C-c"))
+                 (setq guide-key/recursive-key-sequence-flag t)
                  ))
 
-;; (req-package multiple-cursors
-;;   :init (progn (setq mc/unsupported-minor-modes '(company-mode auto-complete-mode flyspell-mode jedi-mode))
-;;                ))
+(req-package multiple-cursors
+  :init (progn (setq mc/unsupported-minor-modes '(company-mode auto-complete-mode flyspell-mode jedi-mode))
+               (bind-key (kbd "C->") 'mc/mark-next-like-this)
+               (bind-key (kbd "C-<") 'mc/mark-previous-like-this)
+               (bind-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+               ))
 
 (req-package magit
   :init (progn (bind-key "C-c m" 'magit-status)))
+
 
 
 ;; Clipboard ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -731,14 +739,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             (bind-key (kbd "] e") 'move-text-down evil-normal-state-map)
 
             ;; Commentin'
-            (bind-key (kbd "g c c") '(lambda ()
-                                       (interactive)
-                                       (comment-or-uncomment-region
-                                        (line-beginning-position)
-                                        (line-end-position))
-                                       )
-                      evil-normal-state-map)
-            (bind-key (kbd "g c") 'comment-or-uncomment-region evil-visual-state-map)
+            (bind-key (kbd "g c c") 'comment-eclipse evil-normal-state-map)
+            (bind-key (kbd "g c")   'comment-eclipse evil-visual-state-map)
 
             ;; ;; Multiple cursors should use emacs state instead of insert state.
             ;; (add-hook 'multiple-cursors-mode-enabled-hook 'evil-emacs-state)
@@ -866,8 +868,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                (bind-key (kbd "M-x") 'helm-M-x)
                (bind-key (kbd "C-x C-f") 'helm-find-files)
 
-               (bind-key "C-c C-u" 'helm-buffers-list)
-               (bind-key "C-c C-o" 'helm-imenu)
+               (bind-key "C-c u" 'helm-buffers-list)
+               (bind-key "C-c o" 'helm-imenu)
+               (bind-key "C-c y" 'helm-show-kill-ring)
                )
   :config (progn
             (setq helm-scroll-amount 4             ;; scroll 4 lines other window using M-<next>/M-<prior>
@@ -1119,8 +1122,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (bind-key (kbd "C-x C-k") 'kill-buffer)
 
 ;; Eval
-(bind-key "C-c v" 'eval-buffer)
-(bind-key "C-c r" 'eval-region)
+(bind-key "C-c C-v" 'eval-buffer)
+(bind-key "C-c C-r" 'eval-region)
 
 (bind-key "C-c k"  '(lambda()
                       (interactive)
