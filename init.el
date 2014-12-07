@@ -576,7 +576,7 @@
 
 (req-package guide-key
   :config (progn (guide-key-mode t)
-                 (setq guide-key/guide-key-sequence '("C-x" "C-c"))
+                 (setq guide-key/guide-key-sequence '("C-x" "C-c" "SPC"))
                  (setq guide-key/recursive-key-sequence-flag t)
                  ))
 
@@ -739,8 +739,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             (bind-key (kbd "] e") 'move-text-down evil-normal-state-map)
 
             ;; Commentin'
-            (bind-key (kbd "g c c") 'comment-eclipse evil-normal-state-map)
-            (bind-key (kbd "g c")   'comment-eclipse evil-visual-state-map)
+            (bind-key (kbd "g c c") '(lambda ()
+                                       (interactive)
+                                       (comment-or-uncomment-region
+                                        (line-beginning-position)
+                                        (line-end-position))
+                                       )
+                      evil-normal-state-map)
+            (bind-key (kbd "g c") 'comment-or-uncomment-region evil-visual-state-map)
 
             ;; ;; Multiple cursors should use emacs state instead of insert state.
             ;; (add-hook 'multiple-cursors-mode-enabled-hook 'evil-emacs-state)
@@ -854,7 +860,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             ))
   )
 
-;; (setup-evil)
+(setup-evil)
 
 
 ;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
