@@ -225,6 +225,12 @@
                   (point))))
     (comment-or-uncomment-region start end)))
 
+;; Very simple. Just open a terminal in the cwd using the $TERMINAL environment variable.
+(defun open-terminal ()
+  (interactive)
+  (shell-command "$TERMINAL")
+  )
+
 
 
 ;; Advice ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -235,9 +241,8 @@
     (dotimes (i 10)
       (when (= p (point)) ad-do-it))))
 
-;; Transparency after load theme...
-;; On Linux, if in terminal, clear the background. If GUI, set background to black and set
-;; frame transparency.
+;; On Linux, if in terminal, clear the background. If GUI, set background to black and set frame
+;; transparency.
 (defadvice load-theme (after load-theme activate compile)
   (if (string= system-type "gnu/linux")
       (if (string= window-system "x")
@@ -294,6 +299,8 @@
 (set-keyboard-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
 
+(setq fill-column 100)
+
 ;; Easily navigate sillycased words
 (global-subword-mode t)
 
@@ -341,8 +348,8 @@
                  ;; (put 'transient-mark-mode 'permanent-local t)
                  ;; (setq-default transient-mark-mode t)
 
-                 ;; Nic says eval-expression-print-level needs to be set to 0 (turned off) so
-                 ;; that you can always see what's happening.
+                 ;; Nic says eval-expression-print-level needs to be set to 0 (turned off) so that
+                 ;; you can always see what's happening.
                  (setq eval-expression-print-level nil)
                  ))
 
@@ -562,7 +569,9 @@
                ))
 
 (req-package ace-window
-  :init (progn (bind-key "M-p" 'ace-window)))
+  :init (progn (bind-key "M-p" 'ace-window)
+               (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+               ))
 
 (req-package anzu
   :config (global-anzu-mode t))
@@ -680,10 +689,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
             ;; Other evil keybindings
             (evil-define-operator evil-join-previous-line (beg end)
-                                  "Join the previous line with the current line."
-                                  :motion evil-line
-                                  (evil-previous-visual-line)
-                                  (evil-join beg end))
+              "Join the previous line with the current line."
+              :motion evil-line
+              (evil-previous-visual-line)
+              (evil-join beg end))
 
             ;; Let K match J
             (bind-key (kbd "K") 'evil-join-previous-line evil-normal-state-map)
@@ -811,6 +820,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             (evil-leader/set-key "o" 'helm-imenu)
             (evil-leader/set-key "x" 'helm-M-x)
 
+            ;; Kill ring
+            (evil-leader/set-key "y" 'helm-show-kill-ring)
+
             ;; Git
             (evil-leader/set-key "m" 'magit-status)
 
@@ -827,9 +839,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             (evil-leader/set-key "v" 'er/expand-region)
 
             ;; Terminal
-            (evil-leader/set-key "t"  '(lambda()
-                                         (interactive)
-                                         (shell-command "$TERMINAL")))
+            (evil-leader/set-key "t"  'open-terminal)
+
+            ;; Help!
+            (evil-leader/set-key "h f" 'describe-function)
+            (evil-leader/set-key "h k" 'describe-key)
+            (evil-leader/set-key "h m" 'describe-mode)
+            (evil-leader/set-key "h v" 'describe-variable)
             )
     :config (progn (setq evil-leader/in-all-states t
                          evil-leader/leader "SPC"
@@ -1131,9 +1147,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (bind-key "C-c C-v" 'eval-buffer)
 (bind-key "C-c C-r" 'eval-region)
 
-(bind-key "C-c k"  '(lambda()
-                      (interactive)
-                      (shell-command "$TERMINAL")))
+(bind-key "C-c k" 'open-terminal)
 
 (bind-key (kbd "C-;") 'comment-eclipse)
 
