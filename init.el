@@ -826,6 +826,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             ;; Git
             (evil-leader/set-key "m" 'magit-status)
 
+            (evil-set-initial-state 'magit-mode 'normal)
+            (evil-set-initial-state 'magit-status-mode 'normal)
+            (evil-set-initial-state 'magit-diff-mode 'normal)
+            (evil-set-initial-state 'magit-log-mode 'normal)
+            (evil-define-key 'normal magit-mode-map
+              "j" 'magit-goto-next-section
+              "k" 'magit-goto-previous-section)
+            (evil-define-key 'normal magit-log-mode-map
+              "j" 'magit-goto-next-section
+              "k" 'magit-goto-previous-section)
+            (evil-define-key 'normal magit-diff-mode-map
+              "j" 'magit-goto-next-section
+              "k" 'magit-goto-previous-section)
+
             ;; Projectile
             (evil-leader/set-key "p" 'helm-projectile)
 
@@ -845,6 +859,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             (evil-leader/set-key "h f" 'describe-function)
             (evil-leader/set-key "h k" 'describe-key)
             (evil-leader/set-key "h m" 'describe-mode)
+            (evil-leader/set-key "h p" 'describe-personal-keybindings)
             (evil-leader/set-key "h v" 'describe-variable)
             )
     :config (progn (setq evil-leader/in-all-states t
