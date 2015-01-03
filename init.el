@@ -278,9 +278,12 @@
 
 ;; Sane Defaults ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Emacs will run garbage collection after `gc-cons-threshold' bytes of consing.
-;; The default value is 800,000 bytes, or ~ 0.7 MiB.
-;; By increasing to 10 MiB we reduce the number of pauses due to garbage collection.
+;; (setq epa-file-select-keys nil)
+
+;; Emacs will run garbage collection after `gc-cons-threshold' bytes
+;; of consing. The default value is 800,000 bytes, or ~ 0.7 MiB. By
+;; increasing to 10 MiB we reduce the number of pauses due to garbage
+;; collection.
 (setq gc-cons-threshold (* 10 1024 1024))
 
 ;; Show keystrokes in progress
@@ -299,7 +302,7 @@
 (set-keyboard-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
 
-(setq fill-column 100)
+(setq-default fill-column 100)
 
 ;; Easily navigate sillycased words
 (global-subword-mode t)
@@ -560,7 +563,13 @@
                  (add-hook 'prog-mode-hook 'hl-parens-hook)
                  ))
 
-;; Whitespace-style
+;; Trailing whitespace
+
+(defun disable-show-trailing-whitespace()
+  (setq show-trailing-whitespace nil))
+
+(add-hook 'term-mode-hook 'disable-show-trailing-whitespace)
+
 (setq-default show-trailing-whitespace t)
 
 (req-package ace-jump-mode
@@ -826,19 +835,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             ;; Git
             (evil-leader/set-key "m" 'magit-status)
 
-            (evil-set-initial-state 'magit-mode 'normal)
-            (evil-set-initial-state 'magit-status-mode 'normal)
-            (evil-set-initial-state 'magit-diff-mode 'normal)
-            (evil-set-initial-state 'magit-log-mode 'normal)
-            (evil-define-key 'normal magit-mode-map
-              "j" 'magit-goto-next-section
-              "k" 'magit-goto-previous-section)
-            (evil-define-key 'normal magit-log-mode-map
-              "j" 'magit-goto-next-section
-              "k" 'magit-goto-previous-section)
-            (evil-define-key 'normal magit-diff-mode-map
-              "j" 'magit-goto-next-section
-              "k" 'magit-goto-previous-section)
+            ;; ;; Evil-magit integration
+            ;; (evil-set-initial-state 'magit-mode 'normal)
+            ;; (evil-set-initial-state 'magit-status-mode 'normal)
+            ;; (evil-set-initial-state 'magit-diff-mode 'normal)
+            ;; (evil-set-initial-state 'magit-log-mode 'normal)
+            ;; (evil-define-key 'normal magit-mode-map
+            ;;   "j" 'magit-goto-next-section
+            ;;   "k" 'magit-goto-previous-section)
+            ;; (evil-define-key 'normal magit-log-mode-map
+            ;;   "j" 'magit-goto-next-section
+            ;;   "k" 'magit-goto-previous-section)
+            ;; (evil-define-key 'normal magit-diff-mode-map
+            ;;   "j" 'magit-goto-next-section
+            ;;   "k" 'magit-goto-previous-section)
 
             ;; Projectile
             (evil-leader/set-key "p" 'helm-projectile)
@@ -869,9 +879,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                    (global-evil-leader-mode t)
                    ))
 
-  (req-package evil-surround
-    :require evil
-    :config (global-evil-surround-mode t))
+  ;; (req-package evil-surround
+  ;;   :require evil
+  ;;   :config (global-evil-surround-mode t))
 
   (req-package evil-args
     :require evil
@@ -1017,17 +1027,17 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (setq wg-prefix-key (kbd "C-c z"))
 
                  ;; What to do on Emacs exit / workgroups-mode exit?
-                 (setq wg-emacs-exit-save-behavior nil) ;; Options: 'save 'ask nil
+                 (setq wg-emacs-exit-save-behavior nil)           ;; Options: 'save 'ask nil
                  (setq wg-workgroups-mode-exit-save-behavior nil) ;; Options: 'save 'ask nil
 
                  ;; Mode Line changes
                  ;; Display workgroups in Mode Line?
                  (setq wg-mode-line-display-on t) ;; Default: (not (featurep 'powerline))
-                 (setq wg-flag-modified t) ;; Display modified flags as well
+                 (setq wg-flag-modified t)        ;; Display modified flags as well
 
-                 (setq wg-mode-line-decor-left-brace "["
-                       wg-mode-line-decor-right-brace "]" ;; how to surround it
-                       wg-mode-line-decor-divider ":")
+                 (setq wg-mode-line-decor-left-brace  "["
+                       wg-mode-line-decor-right-brace "]"
+                       wg-mode-line-decor-divider     ":")
 
                  (workgroups-mode t)
                  ))
@@ -1131,7 +1141,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (req-package yasnippet
   :init (progn (setq yas-snippet-dirs (concat user-emacs-directory "snippets")))
-  :config (progn (yas-global-mode t)
+  :config (progn (add-hook 'prog-mode-hook 'yas-minor-mode)
+                 (add-hook 'markdown-mode-hook 'yas-minor-mode)
                  ))
 
 
