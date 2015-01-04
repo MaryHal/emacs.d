@@ -1141,7 +1141,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (req-package yasnippet
   :init (progn (setq yas-snippet-dirs (concat user-emacs-directory "snippets")))
-  :config (progn (add-hook 'prog-mode-hook 'yas-minor-mode)
+  :config (progn (yas-reload-all)
+                 (add-hook 'prog-mode-hook 'yas-minor-mode)
                  (add-hook 'markdown-mode-hook 'yas-minor-mode)
                  ))
 
