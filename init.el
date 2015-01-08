@@ -526,7 +526,7 @@
 (blink-cursor-mode -1)
 
 ;; Smoother Scrolling
-(setq scroll-margin 8
+(setq scroll-margin 2
       scroll-conservatively 9999
       scroll-preserve-screen-position t
       auto-window-vscroll nil)
@@ -773,6 +773,17 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             ;; (define-key evil-normal-state-map (kbd "g r") 'mc/mark-all-like-this)
             ;; (bind-key (kbd "C->") 'mc/mark-next-like-this)
             ;; (bind-key (kbd "C-<") 'mc/mark-previous-like-this)
+
+            ;; replace with [r]eally [q]uit
+            (bind-key (kbd "C-x r q") 'save-buffers-kill-terminal)
+            (bind-key (kbd "C-x C-c") (lambda ()
+                                        (interactive)
+                                        (message "Thou shall not quit!")))
+
+            (defadvice evil-quit (around advice-for-evil-quit activate)
+              (message "Thou shall not quit!"))
+            (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
+              (message "Thou shall not quit!"))
             )
     :config (progn (evil-mode t)
 
@@ -1159,12 +1170,22 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 
 
+;; Other Modes ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(req-package erc
+  :config (progn (setq-default erc-nick "MaryHadALittle")))
+
+
+
 ;; Extra Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Remove suspend-frame. Three times.
 (global-unset-key (kbd "C-x C-z"))
 (global-unset-key (kbd "C-z"))
 (put 'suspend-frame 'disabled t)
+
+;; Unset some keys I never use
+(global-unset-key (kbd "C-x m"))
 
 ;; Easier version of "C-x k" to kill buffer
 (bind-key (kbd "C-x C-b") 'buffer-menu)
