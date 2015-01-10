@@ -785,35 +785,36 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
               (message "Thou shall not quit!"))
             )
-    :config (progn (evil-mode t)
+    :config (progn
+              ;; (evil-mode t)
 
-                   ;; Toggle evil-mode
-                   (evil-set-toggle-key "C-\\")
+              ;; Toggle evil-mode
+              (evil-set-toggle-key "C-\\")
 
-                   ;; ;; List of modes that should start up in Evil state.
-                   ;; (defvar dotemacs-evil-state-modes
-                   ;;   '(fundamental-mode
-                   ;;     text-mode
-                   ;;     prog-mode
-                   ;;     sws-mode
-                   ;;     dired-mode
-                   ;;     comint-mode
-                   ;;     log-edit-mode
-                   ;;     compilation-mode))
+              ;; ;; List of modes that should start up in Evil state.
+              ;; (defvar dotemacs-evil-state-modes
+              ;;   '(fundamental-mode
+              ;;     text-mode
+              ;;     prog-mode
+              ;;     sws-mode
+              ;;     dired-mode
+              ;;     comint-mode
+              ;;     log-edit-mode
+              ;;     compilation-mode))
 
-                   ;; (defun my-enable-evil-mode ()
-                   ;;   (if (apply 'derived-mode-p dotemacs-evil-state-modes)
-                   ;;       (turn-on-evil-mode)))
-                   ;; (add-hook 'after-change-major-mode-hook 'my-enable-evil-mode)
+              ;; (defun my-enable-evil-mode ()
+              ;;   (if (apply 'derived-mode-p dotemacs-evil-state-modes)
+              ;;       (turn-on-evil-mode)))
+              ;; (add-hook 'after-change-major-mode-hook 'my-enable-evil-mode)
 
-                   (evil-set-initial-state 'package-menu-mode 'normal)
+              (evil-set-initial-state 'package-menu-mode 'normal)
 
-                   ;; (add-hook 'compilation-mode-hook '(lambda ()
-                   ;;                                     (local-unset-key "g")
-                   ;;                                     (local-unset-key "h")
-                   ;;                                     (evil-define-key 'motion compilation-mode-map "r" 'recompile)
-                   ;;                                     (evil-define-key 'motion compilation-mode-map "h" 'evil-backward-char)))
-                   ))
+              ;; (add-hook 'compilation-mode-hook '(lambda ()
+              ;;                                     (local-unset-key "g")
+              ;;                                     (local-unset-key "h")
+              ;;                                     (evil-define-key 'motion compilation-mode-map "r" 'recompile)
+              ;;                                     (evil-define-key 'motion compilation-mode-map "h" 'evil-backward-char)))
+              ))
 
   (req-package evil-leader
     :require (ace-jump-mode evil expand-region helm helm-projectile helm-swoop magit projectile)
@@ -1103,8 +1104,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Auto-completion ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(req-package ycmd
+  :config (progn (ycmd-setup)
+                 (setq-default ycmd-server-command '("python2" "/home/sanford/.ycmd/ycmd/__main__.py"))
+                 (setq-default ycmd-global-config "/home/sanford/.ycmd/ycm_extra_conf.py")
+                 ))
+
 (req-package company
-  :require (irony company-irony)
+  :require (ycmd company-ycmd)
   :init (progn (bind-key (kbd "C-n") 'company-select-next     company-active-map)
                (bind-key (kbd "C-p") 'company-select-previous company-active-map)
                )
@@ -1112,36 +1119,17 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (setq-default company-minimum-prefix-length 1)
                  ;; (setq-default company-show-numbers t)
 
-                 (add-hook 'c++-mode-hook 'irony-mode)
-                 (add-hook 'c-mode-hook 'irony-mode)
-                 (add-hook 'objc-mode-hook 'irony-mode)
-
-                 ;; replace the `completion-at-point' and `complete-symbol' bindings in
-                 ;; irony-mode's buffers by irony-mode's function
-                 (defun my-irony-mode-hook ()
-                   (define-key irony-mode-map [remap completion-at-point]
-                     'irony-completion-at-point-async)
-                   (define-key irony-mode-map [remap complete-symbol]
-                     'irony-completion-at-point-async))
-                 (add-hook 'irony-mode-hook 'my-irony-mode-hook)
-                 ;; (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-
                  (setq-default company-backends (quote (company-files
-                                                        company-irony
                                                         company-elisp
                                                         company-yasnippet
                                                         ;; company-css
                                                         ;; company-eclim
                                                         ;; company-clang
                                                         ;; company-capf
-                                                        (company-dabbrev-code company-keywords)
-                                                        company-dabbrev
+                                                        ;; (company-dabbrev-code company-keywords)
+                                                        ;; company-dabbrev
                                                         )))
-
-                 ;; (optional) adds CC special commands to `company-begin-commands' in order to
-                 ;; trigger completion at interesting places, such as after scope operator
-                 ;; std::|
-                 (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+                 (company-ycmd-setup)
 
                  (global-company-mode t)
                  ))
@@ -1173,7 +1161,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Other Modes ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package erc
-  :config (progn (setq-default erc-nick "MaryHadALittle")))
+  :config (progn (setq-default erc-nick "MaryHadALittle")
+                 (setq-default erc-auto-set-away nil)
+                 ))
 
 
 
