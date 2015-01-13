@@ -657,262 +657,266 @@
 
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun setup-evil()
-  (req-package evil
-    :require (workgroups2)
-    :pre-load (progn (setq evil-want-C-u-scroll t)
-                     (setq evil-move-cursor-back nil)
-                     (setq evil-cross-lines t)
-                     (setq evil-intercept-esc 'always)
+(req-package evil
+  :require (workgroups2)
+  :pre-load (progn (setq evil-want-C-u-scroll t)
+                   (setq evil-move-cursor-back nil)
+                   (setq evil-cross-lines t)
+                   (setq evil-intercept-esc 'always)
 
-                     (setq evil-auto-indent t)
-                     )
-    :init (progn
-            ;; Make ESC work more or less like it does in Vim
-            (defun init/minibuffer-keyboard-quit()
-              "Abort recursive edit.
+                   (setq evil-auto-indent t)
+                   )
+  :init (progn
+          ;; Make ESC work more or less like it does in Vim
+          (defun init/minibuffer-keyboard-quit()
+            "Abort recursive edit.
 
 In Delete Selection mode, if the mark is active, just deactivate it;
 then it takes a second \\[keyboard-quit] to abort the minibuffer."
-              (interactive)
-              (if (and delete-selection-mode transient-mark-mode mark-active)
-                  (setq deactivate-mark t)
-                (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
-                (abort-recursive-edit)))
+            (interactive)
+            (if (and delete-selection-mode transient-mark-mode mark-active)
+                (setq deactivate-mark t)
+              (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
+              (abort-recursive-edit)))
 
-            (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-map)
-            (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-ns-map)
-            (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-completion-map)
-            (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-must-match-map)
-            (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-isearch-map)
+          (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-map)
+          (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-ns-map)
+          (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-completion-map)
+          (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-must-match-map)
+          (bind-key [escape] 'init/minibuffer-keyboard-quit minibuffer-local-isearch-map)
 
-            ;; Delete forward like Emacs.
-            (bind-key (kbd "C-d") 'evil-delete-char evil-insert-state-map)
+          ;; Delete forward like Emacs.
+          (bind-key (kbd "C-d") 'evil-delete-char evil-insert-state-map)
 
-            ;; Make end-of-line work in insert
-            (bind-key (kbd "C-e") 'end-of-line evil-insert-state-map)
+          ;; Make end-of-line work in insert
+          (bind-key (kbd "C-e") 'end-of-line evil-insert-state-map)
 
-            ;; gj gk by default
-            (bind-key (kbd "j") 'evil-next-visual-line     evil-normal-state-map)
-            (bind-key (kbd "k") 'evil-previous-visual-line evil-normal-state-map)
+          ;; gj gk by default
+          (bind-key (kbd "j") 'evil-next-visual-line     evil-normal-state-map)
+          (bind-key (kbd "k") 'evil-previous-visual-line evil-normal-state-map)
 
-            ;; Other evil keybindings
-            (evil-define-operator evil-join-previous-line (beg end)
-              "Join the previous line with the current line."
-              :motion evil-line
-              (evil-previous-visual-line)
-              (evil-join beg end))
+          ;; Other evil keybindings
+          (evil-define-operator evil-join-previous-line (beg end)
+            "Join the previous line with the current line."
+            :motion evil-line
+            (evil-previous-visual-line)
+            (evil-join beg end))
 
-            ;; Let K match J
-            (bind-key (kbd "K") 'evil-join-previous-line evil-normal-state-map)
+          ;; Let K match J
+          (bind-key (kbd "K") 'evil-join-previous-line evil-normal-state-map)
 
-            ;; Make Y work like D
-            (bind-key (kbd "Y") (kbd "y$") evil-normal-state-map)
+          ;; Make Y work like D
+          (bind-key (kbd "Y") (kbd "y$") evil-normal-state-map)
 
-            ;; Kill buffer if only window with buffer open, otherwise just close the window.
-            (bind-key (kbd "Q") 'my-window-killer evil-normal-state-map)
+          ;; Kill buffer if only window with buffer open, otherwise just close the window.
+          (bind-key (kbd "Q") 'my-window-killer evil-normal-state-map)
 
-            ;; Visual indentation now reselects visual selection.
-            (bind-key ">" (lambda ()
-                            (interactive)
-                            ;; ensure mark is less than point
-                            (when (> (mark) (point))
-                              (exchange-point-and-mark)
-                              )
-                            (evil-normal-state)
-                            (evil-shift-right (mark) (point))
-                            ;; re-select last visual-mode selection
-                            (evil-visual-restore))
-                      evil-visual-state-map)
+          ;; Visual indentation now reselects visual selection.
+          (bind-key ">" (lambda ()
+                          (interactive)
+                          ;; ensure mark is less than point
+                          (when (> (mark) (point))
+                            (exchange-point-and-mark)
+                            )
+                          (evil-normal-state)
+                          (evil-shift-right (mark) (point))
+                          ;; re-select last visual-mode selection
+                          (evil-visual-restore))
+                    evil-visual-state-map)
 
-            (bind-key "<" (lambda ()
-                            (interactive)
-                            ;; ensure mark is less than point
-                            (when (> (mark) (point))
-                              (exchange-point-and-mark)
-                              )
-                            (evil-normal-state)
-                            (evil-shift-left (mark) (point))
-                            ;; re-select last visual-mode selection
-                            (evil-visual-restore))
-                      evil-visual-state-map)
+          (bind-key "<" (lambda ()
+                          (interactive)
+                          ;; ensure mark is less than point
+                          (when (> (mark) (point))
+                            (exchange-point-and-mark)
+                            )
+                          (evil-normal-state)
+                          (evil-shift-left (mark) (point))
+                          ;; re-select last visual-mode selection
+                          (evil-visual-restore))
+                    evil-visual-state-map)
 
-            ;; Workgroups2
-            (bind-key (kbd "g T") 'wg-switch-to-workgroup-left  evil-normal-state-map)
-            (bind-key (kbd "g t") 'wg-switch-to-workgroup-right evil-normal-state-map)
+          ;; Workgroups2
+          (bind-key (kbd "g T") 'wg-switch-to-workgroup-left  evil-normal-state-map)
+          (bind-key (kbd "g t") 'wg-switch-to-workgroup-right evil-normal-state-map)
 
-            (bind-key (kbd "g t") 'wg-switch-to-workgroup-right evil-motion-state-map)
+          (bind-key (kbd "g t") 'wg-switch-to-workgroup-right evil-motion-state-map)
 
-            (evil-ex-define-cmd "tabnew"   'wg-create-workgroup)
-            (evil-ex-define-cmd "tabclose" 'wg-kill-workgroup)
+          (evil-ex-define-cmd "tabnew"   'wg-create-workgroup)
+          (evil-ex-define-cmd "tabclose" 'wg-kill-workgroup)
 
-            ;; "Unimpaired"
-            (bind-key (kbd "[ b") 'previous-buffer evil-normal-state-map)
-            (bind-key (kbd "] b") 'next-buffer     evil-normal-state-map)
-            (bind-key (kbd "[ q") 'previous-error  evil-normal-state-map)
-            (bind-key (kbd "] q") 'next-error      evil-normal-state-map)
+          ;; "Unimpaired"
+          (bind-key (kbd "[ b") 'previous-buffer evil-normal-state-map)
+          (bind-key (kbd "] b") 'next-buffer     evil-normal-state-map)
+          (bind-key (kbd "[ q") 'previous-error  evil-normal-state-map)
+          (bind-key (kbd "] q") 'next-error      evil-normal-state-map)
 
-            ;; Bubble Text up and down. Works with regions.
-            (bind-key (kbd "[ e") 'move-text-up   evil-normal-state-map)
-            (bind-key (kbd "] e") 'move-text-down evil-normal-state-map)
+          ;; Bubble Text up and down. Works with regions.
+          (bind-key (kbd "[ e") 'move-text-up   evil-normal-state-map)
+          (bind-key (kbd "] e") 'move-text-down evil-normal-state-map)
 
-            ;; Commentin'
-            (bind-key (kbd "g c c") '(lambda ()
-                                       (interactive)
-                                       (comment-or-uncomment-region
-                                        (line-beginning-position)
-                                        (line-end-position))
-                                       )
-                      evil-normal-state-map)
-            (bind-key (kbd "g c") 'comment-or-uncomment-region evil-visual-state-map)
+          ;; Commentin'
+          (bind-key (kbd "g c c") '(lambda ()
+                                     (interactive)
+                                     (comment-or-uncomment-region
+                                      (line-beginning-position)
+                                      (line-end-position))
+                                     )
+                    evil-normal-state-map)
+          (bind-key (kbd "g c") 'comment-or-uncomment-region evil-visual-state-map)
 
-            ;; ;; Multiple cursors should use emacs state instead of insert state.
-            ;; (add-hook 'multiple-cursors-mode-enabled-hook 'evil-emacs-state)
-            ;; (add-hook 'multiple-cursors-mode-disabled-hook 'evil-normal-state)
+          ;; ;; Multiple cursors should use emacs state instead of insert state.
+          ;; (add-hook 'multiple-cursors-mode-enabled-hook 'evil-emacs-state)
+          ;; (add-hook 'multiple-cursors-mode-disabled-hook 'evil-normal-state)
 
-            ;; (define-key evil-normal-state-map (kbd "g r") 'mc/mark-all-like-this)
-            ;; (bind-key (kbd "C->") 'mc/mark-next-like-this)
-            ;; (bind-key (kbd "C-<") 'mc/mark-previous-like-this)
+          ;; (define-key evil-normal-state-map (kbd "g r") 'mc/mark-all-like-this)
+          ;; (bind-key (kbd "C->") 'mc/mark-next-like-this)
+          ;; (bind-key (kbd "C-<") 'mc/mark-previous-like-this)
 
-            ;; replace with [r]eally [q]uit
-            (bind-key (kbd "C-x r q") 'save-buffers-kill-terminal)
-            (bind-key (kbd "C-x C-c") (lambda ()
-                                        (interactive)
-                                        (message "Thou shall not quit!")))
+          ;; replace with [r]eally [q]uit
+          (bind-key (kbd "C-x r q") 'save-buffers-kill-terminal)
+          (bind-key (kbd "C-x C-c") (lambda ()
+                                      (interactive)
+                                      (message "Thou shall not quit!")))
 
-            (defadvice evil-quit (around advice-for-evil-quit activate)
-              (message "Thou shall not quit!"))
-            (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
-              (message "Thou shall not quit!"))
-            )
-    :config (progn (evil-mode t)
+          (defadvice evil-quit (around advice-for-evil-quit activate)
+            (message "Thou shall not quit!"))
+          (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
+            (message "Thou shall not quit!"))
+          )
+  :config (progn (evil-mode t)
 
-                   ;; Toggle evil-mode
-                   (evil-set-toggle-key "C-\\")
+                 ;; Toggle evil-mode
+                 (evil-set-toggle-key "C-\\")
 
-                   ;; ;; List of modes that should start up in Evil state.
-                   ;; (defvar dotemacs-evil-state-modes
-                   ;;   '(fundamental-mode
-                   ;;     text-mode
-                   ;;     prog-mode
-                   ;;     sws-mode
-                   ;;     dired-mode
-                   ;;     comint-mode
-                   ;;     log-edit-mode
-                   ;;     compilation-mode))
+                 ;; ;; List of modes that should start up in Evil state.
+                 ;; (defvar dotemacs-evil-state-modes
+                 ;;   '(fundamental-mode
+                 ;;     text-mode
+                 ;;     prog-mode
+                 ;;     sws-mode
+                 ;;     dired-mode
+                 ;;     comint-mode
+                 ;;     log-edit-mode
+                 ;;     compilation-mode))
 
-                   ;; (defun my-enable-evil-mode ()
-                   ;;   (if (apply 'derived-mode-p dotemacs-evil-state-modes)
-                   ;;       (turn-on-evil-mode)))
-                   ;; (add-hook 'after-change-major-mode-hook 'my-enable-evil-mode)
+                 ;; (defun my-enable-evil-mode ()
+                 ;;   (if (apply 'derived-mode-p dotemacs-evil-state-modes)
+                 ;;       (turn-on-evil-mode)))
+                 ;; (add-hook 'after-change-major-mode-hook 'my-enable-evil-mode)
 
-                   (evil-set-initial-state 'package-menu-mode 'normal)
+                 (evil-set-initial-state 'package-menu-mode 'normal)
 
-                   ;; (add-hook 'compilation-mode-hook '(lambda ()
-                   ;;                                     (local-unset-key "g")
-                   ;;                                     (local-unset-key "h")
-                   ;;                                     (evil-define-key 'motion compilation-mode-map "r" 'recompile)
-                   ;;                                     (evil-define-key 'motion compilation-mode-map "h" 'evil-backward-char)))
-                   ))
+                 ;; (add-hook 'compilation-mode-hook '(lambda ()
+                 ;;                                     (local-unset-key "g")
+                 ;;                                     (local-unset-key "h")
+                 ;;                                     (evil-define-key 'motion compilation-mode-map "r" 'recompile)
+                 ;;                                     (evil-define-key 'motion compilation-mode-map "h" 'evil-backward-char)))
+                 ))
 
-  (req-package evil-leader
-    :require (ace-jump-mode evil expand-region helm helm-projectile helm-swoop magit projectile)
-    :init (progn
-            ;; make leader available in visual mode
-            (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
-            (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
-            ;; (define-key evil-emacs-state-map (kbd "SPC") evil-leader--default-map)
+(req-package evil-leader
+  :require (ace-jump-mode evil expand-region helm helm-projectile helm-swoop magit projectile)
+  :init (progn (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
+               (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
+               ;; (define-key evil-emacs-state-map (kbd "SPC") evil-leader--default-map)
 
-            (evil-leader/set-key "a" 'projectile-find-other-file)
+               (evil-leader/set-key "!" 'shell-command)
 
-            ;; Eval
-            (evil-leader/set-key "eb" 'eval-buffer)
-            (evil-leader/set-key "er" 'eval-region)
+               (evil-leader/set-key "a" 'projectile-find-other-file)
 
-            ;; Files
-            (evil-leader/set-key "f" 'helm-find-files)
+               ;; Eval
+               (evil-leader/set-key "eb" 'eval-buffer)
+               (evil-leader/set-key "er" 'eval-region)
 
-            ;; Buffers
-            (evil-leader/set-key "b" 'buffer-menu)
-            (evil-leader/set-key "k" 'ido-kill-buffer)
-            (evil-leader/set-key "u" 'helm-buffers-list)
+               ;; Errors
+               (evil-leader/set-key "en" 'next-error)
+               (evil-leader/set-key "ep" 'previous-error)
 
-            (evil-leader/set-key "o" 'helm-imenu)
-            (evil-leader/set-key "x" 'helm-M-x)
+               ;; Files
+               (evil-leader/set-key "f" 'helm-find-files)
 
-            ;; Kill ring
-            (evil-leader/set-key "y" 'helm-show-kill-ring)
+               ;; Buffers
+               (evil-leader/set-key "b" 'buffer-menu)
+               (evil-leader/set-key "k" 'ido-kill-buffer)
+               (evil-leader/set-key "u" 'helm-buffers-list)
 
-            ;; Git
-            (evil-leader/set-key "m" 'magit-status)
+               (evil-leader/set-key "o" 'helm-imenu)
+               (evil-leader/set-key "x" 'helm-M-x)
 
-            ;; ;; Evil-magit integration
-            ;; (evil-set-initial-state 'magit-mode 'normal)
-            ;; (evil-set-initial-state 'magit-status-mode 'normal)
-            ;; (evil-set-initial-state 'magit-diff-mode 'normal)
-            ;; (evil-set-initial-state 'magit-log-mode 'normal)
-            ;; (evil-define-key 'normal magit-mode-map
-            ;;   "j" 'magit-goto-next-section
-            ;;   "k" 'magit-goto-previous-section)
-            ;; (evil-define-key 'normal magit-log-mode-map
-            ;;   "j" 'magit-goto-next-section
-            ;;   "k" 'magit-goto-previous-section)
-            ;; (evil-define-key 'normal magit-diff-mode-map
-            ;;   "j" 'magit-goto-next-section
-            ;;   "k" 'magit-goto-previous-section)
+               ;; Kill ring
+               (evil-leader/set-key "y" 'helm-show-kill-ring)
 
-            ;; Projectile
-            (evil-leader/set-key "p" 'helm-projectile)
+               ;; Git
+               (evil-leader/set-key "m" 'magit-status)
 
-            ;; Swoop
-            (evil-leader/set-key "s" 'helm-swoop)
+               ;; ;; Evil-magit integration
+               ;; (evil-set-initial-state 'magit-mode 'normal)
+               ;; (evil-set-initial-state 'magit-status-mode 'normal)
+               ;; (evil-set-initial-state 'magit-diff-mode 'normal)
+               ;; (evil-set-initial-state 'magit-log-mode 'normal)
+               ;; (evil-define-key 'normal magit-mode-map
+               ;;   "j" 'magit-goto-next-section
+               ;;   "k" 'magit-goto-previous-section)
+               ;; (evil-define-key 'normal magit-log-mode-map
+               ;;   "j" 'magit-goto-next-section
+               ;;   "k" 'magit-goto-previous-section)
+               ;; (evil-define-key 'normal magit-diff-mode-map
+               ;;   "j" 'magit-goto-next-section
+               ;;   "k" 'magit-goto-previous-section)
 
-            ;; Ace-jump-mode (has evil-integration built in!)
-            (evil-leader/set-key "SPC" 'ace-jump-word-mode)
+               ;; Projectile
+               (evil-leader/set-key "p" 'helm-projectile)
 
-            ;; Expand region
-            (evil-leader/set-key "v" 'er/expand-region)
+               ;; Swoop
+               (evil-leader/set-key "s" 'helm-swoop)
 
-            ;; Terminal
-            (evil-leader/set-key "t"  'open-terminal)
+               ;; Ace-jump-mode (has evil-integration built in!)
+               (evil-leader/set-key "SPC" 'ace-jump-word-mode)
 
-            ;; Help!
-            (evil-leader/set-key "h f" 'describe-function)
-            (evil-leader/set-key "h k" 'describe-key)
-            (evil-leader/set-key "h m" 'describe-mode)
-            (evil-leader/set-key "h p" 'describe-personal-keybindings)
-            (evil-leader/set-key "h v" 'describe-variable)
-            )
-    :config (progn (setq evil-leader/in-all-states t
-                         evil-leader/leader "SPC"
-                         evil-leader/non-normal-prefix "s-")
+               ;; Expand region
+               (evil-leader/set-key "v" 'er/expand-region)
 
-                   (global-evil-leader-mode t)
-                   ))
+               ;; Terminal
+               (evil-leader/set-key "t"  'open-terminal)
 
-  ;; (req-package evil-surround
-  ;;   :require evil
-  ;;   :config (global-evil-surround-mode t))
+               ;; Help!
+               (evil-leader/set-key "hc" 'describe-char)
+               (evil-leader/set-key "hf" 'describe-function)
+               (evil-leader/set-key "hk" 'describe-key)
+               (evil-leader/set-key "hl" 'describe-package)
+               (evil-leader/set-key "hm" 'describe-mode)
+               (evil-leader/set-key "hp" 'describe-personal-keybindings)
+               (evil-leader/set-key "hv" 'describe-variable)
+               )
 
-  (req-package evil-args
-    :require evil
-    :init (progn
-            ;; bind evil-args text objects
-            (bind-key "a" 'evil-inner-arg evil-inner-text-objects-map)
-            (bind-key "a" 'evil-outer-arg evil-outer-text-objects-map)
+  :config (progn (setq evil-leader/in-all-states t
+                       evil-leader/leader "SPC"
+                       evil-leader/non-normal-prefix "s-")
 
-            ;; bind evil-forward/backward-args
-            (bind-key "gl" 'evil-forward-arg  evil-normal-state-map)
-            (bind-key "gh" 'evil-backward-arg evil-normal-state-map)
-            (bind-key "gl" 'evil-forward-arg  evil-motion-state-map)
-            (bind-key "gh" 'evil-backward-arg evil-motion-state-map)
+                 (global-evil-leader-mode t)
+                 ))
 
-            ;; bind evil-jump-out-args
-            ;; (bind-key "gm" 'evil-jump-out-args evil-normal-state-map)
-            ))
-  )
+;; (req-package evil-surround
+;;   :require evil
+;;   :config (global-evil-surround-mode t))
 
-(setup-evil)
+(req-package evil-args
+  :require evil
+  :init (progn
+          ;; bind evil-args text objects
+          (bind-key "a" 'evil-inner-arg evil-inner-text-objects-map)
+          (bind-key "a" 'evil-outer-arg evil-outer-text-objects-map)
+
+          ;; bind evil-forward/backward-args
+          (bind-key "gl" 'evil-forward-arg  evil-normal-state-map)
+          (bind-key "gh" 'evil-backward-arg evil-normal-state-map)
+          (bind-key "gl" 'evil-forward-arg  evil-motion-state-map)
+          (bind-key "gh" 'evil-backward-arg evil-motion-state-map)
+
+          ;; bind evil-jump-out-args
+          ;; (bind-key "gm" 'evil-jump-out-args evil-normal-state-map)
+          ))
+
 
 
 ;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
