@@ -658,7 +658,7 @@
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package evil
-  :require (workgroups2)
+  :require (workgroups2 evil-anzu)
   :pre-load (progn (setq evil-want-C-u-scroll t)
                    (setq evil-move-cursor-back nil)
                    (setq evil-cross-lines t)
@@ -818,7 +818,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :require (ace-jump-mode evil expand-region helm helm-projectile helm-swoop magit projectile)
   :init (progn (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
                (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
-               ;; (define-key evil-emacs-state-map (kbd "SPC") evil-leader--default-map)
+               ;; (define-key evil-emacs-state-map (kbd "C-S-SPC") evil-leader--default-map)
 
                (evil-leader/set-key "!" 'shell-command)
 
@@ -880,13 +880,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                (evil-leader/set-key "t"  'open-terminal)
 
                ;; Help!
-               (evil-leader/set-key "hc" 'describe-char)
-               (evil-leader/set-key "hf" 'describe-function)
-               (evil-leader/set-key "hk" 'describe-key)
-               (evil-leader/set-key "hl" 'describe-package)
-               (evil-leader/set-key "hm" 'describe-mode)
-               (evil-leader/set-key "hp" 'describe-personal-keybindings)
-               (evil-leader/set-key "hv" 'describe-variable)
+               (evil-leader/set-key
+                 "hc" 'describe-char
+                 "hf" 'describe-function
+                 "hk" 'describe-key
+                 "hl" 'describe-package
+                 "hm" 'describe-mode
+                 "hp" 'describe-personal-keybindings
+                 "hv" 'describe-variable)
                )
 
   :config (progn (setq evil-leader/in-all-states t
