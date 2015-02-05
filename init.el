@@ -228,7 +228,7 @@
 ;; Very simple. Just open a terminal in the cwd using the $TERMINAL environment variable.
 (defun open-terminal ()
   (interactive)
-  (shell-command "$TERMINAL")
+  (shell-command "eval $TERMINAL")
   )
 
 
@@ -524,6 +524,7 @@
 
 ;; Don't Blink Cursor
 (blink-cursor-mode -1)
+(setq visible-cursor nil)
 
 ;; Smoother Scrolling
 (setq scroll-margin 2
@@ -658,7 +659,7 @@
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package evil
-  :require (workgroups2 evil-anzu)
+  :require (workgroups2)
   :pre-load (progn (setq evil-want-C-u-scroll t)
                    (setq evil-move-cursor-back nil)
                    (setq evil-cross-lines t)
@@ -834,6 +835,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                ;; Files
                (evil-leader/set-key "f" 'helm-find-files)
+               (evil-leader/set-key "z" (lambda ()
+                                          (interactive)
+                                          (shell-command
+                                           (concat "eval $TERMINAL -e fish -c elfzf"))
+                                          ))
 
                ;; Buffers
                (evil-leader/set-key "b" 'buffer-menu)
@@ -923,10 +929,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package helm
-  :init (progn (bind-key (kbd "<tab>") 'helm-execute-persistent-action helm-map) ;; rebind tab to do persistent action
-               (bind-key (kbd "C-i")   'helm-execute-persistent-action helm-map) ;; make TAB works in terminal
-               (bind-key (kbd "C-z")   'helm-select-action             helm-map) ;; list actions using C-z
-               (bind-key (kbd "C-w")   'backward-kill-word             helm-map)
+  :init (progn (bind-key (kbd "C-z")   'helm-select-action  helm-map) ;; list actions using C-z
+               (bind-key (kbd "C-w")   'backward-kill-word  helm-map)
+
+               (bind-key (kbd "<tab>") 'helm-execute-persistent-action helm-map) ;; rebind tab to do persistent action
+               (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ;; make TAB work in terminal
 
                (bind-key (kbd "M-x") 'helm-M-x)
                (bind-key (kbd "C-x C-f") 'helm-find-files)
@@ -1203,6 +1210,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (bind-key "C-c k" 'open-terminal)
 
 (bind-key (kbd "C-;") 'comment-eclipse)
+
 
 
 ;; Finishing Up ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
