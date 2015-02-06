@@ -926,6 +926,18 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 
 
+;; Hydra ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(req-package hydra
+  :init (progn
+          (defhydra hydra-zoom (global-map "<f2>")
+            "zoom"
+            ("i" text-scale-increase "in")
+            ("o" text-scale-decrease "out"))
+          ))
+
+
+
 ;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package helm
