@@ -256,23 +256,23 @@
                  ))
         )))
 
-;; Rebalance windows after splitting right
-(defadvice split-window-right
-    (after rebalance-windows activate)
-  (balance-windows))
-(ad-activate 'split-window-right)
+;; ;; Rebalance windows after splitting right
+;; (defadvice split-window-right
+;;     (after rebalance-windows activate)
+;;   (balance-windows))
+;; (ad-activate 'split-window-right)
 
-;; Rebalance windows after splitting horizontally
-(defadvice split-window-horizontally
-    (after rebalance-windows activate)
-  (balance-windows))
-(ad-activate 'split-window-horizontally)
+;; ;; Rebalance windows after splitting horizontally
+;; (defadvice split-window-horizontally
+;;     (after rebalance-windows activate)
+;;   (balance-windows))
+;; (ad-activate 'split-window-horizontally)
 
-;; Balance windows after window close
-(defadvice delete-window
-    (after rebalance-windows activate)
-  (balance-windows))
-(ad-activate 'delete-window)
+;; ;; Balance windows after window close
+;; (defadvice delete-window
+;;     (after rebalance-windows activate)
+;;   (balance-windows))
+;; (ad-activate 'delete-window)
 
 
 
@@ -600,7 +600,11 @@
                  ))
 
 (req-package multiple-cursors
-  :init (progn (setq mc/unsupported-minor-modes '(company-mode auto-complete-mode flyspell-mode jedi-mode))
+  :init (progn (setq mc/unsupported-minor-modes '(company-mode
+                                                  auto-complete-mode
+                                                  flyspell-mode
+                                                  jedi-mode))
+
                (bind-key (kbd "C->") 'mc/mark-next-like-this)
                (bind-key (kbd "C-<") 'mc/mark-previous-like-this)
                (bind-key (kbd "C-c C-<") 'mc/mark-all-like-this)
@@ -622,10 +626,9 @@
 ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
-;; If emacs is run in a terminal, the clipboard- functions have no
-;; effect. Instead, we use of xsel, see
-;; http://www.vergenet.net/~conrad/software/xsel/ -- "a command-line
-;; program for getting and setting the contents of the X selection"
+;; If emacs is run in a terminal, the clipboard- functions have no effect. Instead, we use of xsel,
+;; see http://www.vergenet.net/~conrad/software/xsel/ -- "a command-line program for getting and
+;; setting the contents of the X selection"
 (unless window-system
   (when (getenv "DISPLAY")
     ;; Callback for when user cuts
@@ -633,24 +636,24 @@
       ;; Insert text to temp-buffer, and "send" content to xsel stdin
       (with-temp-buffer
         (insert text)
-        ;; I prefer using the "clipboard" selection (the one the
-        ;; typically is used by c-c/c-v) before the primary selection
-        ;; (that uses mouse-select/middle-button-click)
-        (call-process-region (point-min) (point-max) "xsel" nil 0 nil "--clipboard" "--input")))
+        ;; I prefer using the "clipboard" selection (the one the typically is used by c-c/c-v)
+        ;; before the primary selection (that uses mouse-select/middle-button-click)
+        (call-process-region (point-min) (point-max)
+                             "xsel"
+                             nil 0
+                             nil "--clipboard" "--input")))
     ;; Callback for when user pastes
     (defun xsel-paste-function()
-      ;; Find out what is current selection by xsel. If it is different
-      ;; from the top of the kill-ring (car kill-ring), then return
-      ;; it. Else, nil is returned, so whatever is in the top of the
-      ;; kill-ring will be used.
+      ;; Find out what is current selection by xsel. If it is different from the top of the
+      ;; kill-ring (car kill-ring), then return it. Else, nil is returned, so whatever is in the top
+      ;; of the kill-ring will be used.
       (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
         (unless (string= (car kill-ring) xsel-output)
           xsel-output )))
     ;; Attach callbacks to hooks
     (setq interprogram-cut-function 'xsel-cut-function)
     (setq interprogram-paste-function 'xsel-paste-function)
-    ;; Idea from
-    ;; http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
+    ;; Idea from http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
     ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
     ))
 
@@ -709,7 +712,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           ;; Make Y work like D
           (bind-key (kbd "Y") (kbd "y$") evil-normal-state-map)
 
-          ;; Kill buffer if only window with buffer open, otherwise just close the window.
+          ;; Kill buffer if only window with buffer open, otherwise just close
+          ;; the window.
           (bind-key (kbd "Q") 'my-window-killer evil-normal-state-map)
 
           ;; Visual indentation now reselects visual selection.
@@ -816,7 +820,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ))
 
 (req-package evil-leader
-  :require (ace-jump-mode evil expand-region helm helm-projectile helm-swoop magit projectile)
+  :require (ace-jump-mode evil expand-region helm helm-projectile
+                          helm-swoop magit projectile)
   :init (progn (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
                (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
                ;; (define-key evil-emacs-state-map (kbd "C-S-SPC") evil-leader--default-map)
@@ -835,11 +840,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                ;; Files
                (evil-leader/set-key "f" 'helm-find-files)
-               (evil-leader/set-key "z" (lambda ()
-                                          (interactive)
-                                          (shell-command
-                                           (concat "eval $TERMINAL -e fish -c elfzf"))
-                                          ))
 
                ;; Buffers
                (evil-leader/set-key "b" 'buffer-menu)
@@ -930,10 +930,22 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (req-package hydra
   :init (progn
-          (defhydra hydra-zoom (global-map "<f2>")
-            "zoom"
-            ("i" text-scale-increase "in")
-            ("o" text-scale-decrease "out"))
+          (bind-key (kbd "<f2>") (defhydra hydra-zoom ()
+                                   "zoom"
+                                   ("i" text-scale-increase "in")
+                                   ("o" text-scale-decrease "out")))
+
+          (bind-key (kbd "C-z") (defhydra hydra-vi
+                                    (:pre
+                                     (set-cursor-color "#40e0d0")
+                                     :post
+                                     (progn (set-cursor-color "#ffffff")))
+                                  "vi"
+                                  ("l" forward-char)
+                                  ("h" backward-char)
+                                  ("j" next-line)
+                                  ("k" previous-line)
+                                  ("q" nil "quit")))
           ))
 
 
@@ -941,11 +953,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package helm
-  :init (progn (bind-key (kbd "C-z")   'helm-select-action  helm-map) ;; list actions using C-z
+  :init (progn (bind-key (kbd "C-z")   'helm-select-action  helm-map)
                (bind-key (kbd "C-w")   'backward-kill-word  helm-map)
 
-               (bind-key (kbd "<tab>") 'helm-execute-persistent-action helm-map) ;; rebind tab to do persistent action
-               (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ;; make TAB work in terminal
+               ;; Tab -> do persistent action
+               (bind-key (kbd "<tab>") 'helm-execute-persistent-action helm-map)
+               (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)
 
                (bind-key (kbd "M-x") 'helm-M-x)
                (bind-key (kbd "C-x C-f") 'helm-find-files)
@@ -1199,6 +1212,15 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (req-package erc
   :config (progn (setq-default erc-nick "MaryHadALittle")))
 
+(defun load-minimap ()
+  (interactive)
+  (add-to-loadpath "~/.emacs.d/site-lisp/sublimity")
+  (require 'sublimity)
+  (require 'sublimity-map)
+  (sublimity-mode 1)
+  (sublimity-map-set-delay nil)
+  )
+
 
 
 ;; Extra Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1228,3 +1250,5 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Finishing Up ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package-finish)
+
+(server-start)
