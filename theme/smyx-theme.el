@@ -234,7 +234,7 @@
    ;; `(font-lock-doc-face ((,class (:foreground ,smyx-green+0))))
    `(font-lock-doc-string-face ((,class (:foreground ,smyx-yellow))))
    `(font-lock-function-name-face ((,class (:foreground ,smyx-blue))))
-   `(font-lock-keyword-face ((,class (:foreground ,smyx-green))))
+   `(font-lock-keyword-face ((,class (:foreground ,smyx-green :weight bold))))
    `(font-lock-negation-char-face ((,class (:foreground ,smyx-red))))
    `(font-lock-preprocessor-face ((,class (:foreground ,smyx-gray-3))))
    `(font-lock-string-face ((,class (:foreground ,smyx-yellow))))

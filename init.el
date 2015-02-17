@@ -228,8 +228,7 @@
 ;; Very simple. Just open a terminal in the cwd using the $TERMINAL environment variable.
 (defun open-terminal ()
   (interactive)
-  (shell-command "eval $TERMINAL")
-  )
+  (shell-command "eval $TERMINAL"))
 
 
 
@@ -587,7 +586,8 @@
   :config (global-anzu-mode t))
 
 (req-package aggressive-indent
-  :config (global-aggressive-indent-mode t))
+  ;; :config (global-aggressive-indent-mode t)
+  )
 
 (req-package expand-region
   :init (progn (bind-key "C-=" 'er/expand-region)
@@ -998,7 +998,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (req-package helm-swoop
   :require helm
-  :init (bind-key (kbd "M-i") 'helm-swoop-from-isearch isearch-mode-map))
+  :init (progn (bind-key (kbd "M-i") 'helm-swoop-from-isearch isearch-mode-map)
+
+               ;; disable pre-input
+               (setq helm-swoop-pre-input-function
+                     (lambda () ""))
+               ))
 
 
 
@@ -1212,13 +1217,15 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (req-package erc
   :config (progn (setq-default erc-nick "MaryHadALittle")))
 
-(defun load-minimap ()
+(defun load-minimap-package ()
   (interactive)
   (add-to-loadpath "~/.emacs.d/site-lisp/sublimity")
   (require 'sublimity)
   (require 'sublimity-map)
   (sublimity-mode 1)
   (sublimity-map-set-delay nil)
+  (setq sublimity-map-size 30)
+  (setq sublimity-map-fraction 0.3)
   )
 
 
