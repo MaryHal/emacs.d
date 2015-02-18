@@ -531,12 +531,6 @@
       scroll-preserve-screen-position t
       auto-window-vscroll nil)
 
-(req-package elec-pair
-  :config (electric-pair-mode t))
-
-;; (req-package electric
-;;              :config (electric-indent-mode t))
-
 (req-package fringe
   :config (progn (set-fringe-mode (cons 0 0))
 
@@ -563,6 +557,13 @@
                  (add-hook 'prog-mode-hook 'hl-parens-hook)
                  ))
 
+(req-package elec-pair
+  :config (electric-pair-mode t))
+
+(req-package electric
+  :config (electric-indent-mode t))
+
+
 ;; Trailing whitespace
 
 (defun disable-show-trailing-whitespace()
@@ -585,9 +586,9 @@
 (req-package anzu
   :config (global-anzu-mode t))
 
-(req-package aggressive-indent
-  ;; :config (global-aggressive-indent-mode t)
-  )
+;; (req-package aggressive-indent
+;;   :config (global-aggressive-indent-mode t)
+;;   )
 
 (req-package expand-region
   :init (progn (bind-key "C-=" 'er/expand-region)
@@ -778,18 +779,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           ;; (bind-key (kbd "C->") 'mc/mark-next-like-this)
           ;; (bind-key (kbd "C-<") 'mc/mark-previous-like-this)
 
-          ;; replace with [r]eally [q]uit
-          (bind-key (kbd "C-x r q") 'save-buffers-kill-terminal)
-          (bind-key (kbd "C-x C-c") (lambda ()
-                                      (interactive)
-                                      (message "Thou shall not quit!")))
-
           (defadvice evil-quit (around advice-for-evil-quit activate)
             (message "Thou shall not quit!"))
           (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
             (message "Thou shall not quit!"))
           )
-  :config (progn (evil-mode t)
+  :config (progn (bind-key (kbd "<f12>") 'evil-local-mode)
+
+                 ;; (evil-mode t)
 
                  ;; Toggle evil-mode
                  (evil-set-toggle-key "C-\\")
@@ -945,6 +942,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                   ("h" backward-char)
                                   ("j" next-line)
                                   ("k" previous-line)
+                                  ("m" set-mark-command "mark")
+                                  ("a" move-beginning-of-line "beg")
+                                  ("e" move-end-of-line "end")
+                                  ("d" delete-region "del" :color blue)
+                                  ("y" kill-ring-save "yank" :color blue)
                                   ("q" nil "quit")))
           ))
 
@@ -963,9 +965,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                (bind-key (kbd "M-x") 'helm-M-x)
                (bind-key (kbd "C-x C-f") 'helm-find-files)
 
-               (bind-key "C-c u" 'helm-buffers-list)
-               (bind-key "C-c o" 'helm-imenu)
-               (bind-key "C-c y" 'helm-show-kill-ring)
+               (bind-key "C-c C-u" 'helm-buffers-list)
+               (bind-key "C-c C-o" 'helm-imenu)
+               (bind-key "C-c C-y" 'helm-show-kill-ring)
                )
   :config (progn
             (setq helm-scroll-amount 4             ;; scroll 4 lines other window using M-<next>/M-<prior>
@@ -1234,11 +1236,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Remove suspend-frame. Three times.
 (global-unset-key (kbd "C-x C-z"))
-(global-unset-key (kbd "C-z"))
+;; (global-unset-key (kbd "C-z"))
 (put 'suspend-frame 'disabled t)
+
 
 ;; Unset some keys I never use
 (global-unset-key (kbd "C-x m"))
+
+;; replace with [r]eally [q]uit
+(bind-key (kbd "C-x r q") 'save-buffers-kill-terminal)
+(bind-key (kbd "C-x C-c") (lambda ()
+                            (interactive)
+                            (message "Thou shall not quit!")))
+
+(bind-key (kbd "M-n") 'set-mark-command)
 
 ;; Easier version of "C-x k" to kill buffer
 (bind-key (kbd "C-x C-b") 'buffer-menu)
@@ -1248,7 +1259,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (bind-key "C-c C-v" 'eval-buffer)
 (bind-key "C-c C-r" 'eval-region)
 
-(bind-key "C-c k" 'open-terminal)
+(bind-key "C-c C-k" 'open-terminal)
 
 (bind-key (kbd "C-;") 'comment-eclipse)
 
