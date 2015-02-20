@@ -208,22 +208,23 @@
     (switch-to-buffer (get-buffer-create bufname))
     (lisp-interaction-mode)))
 
-;; Comment "like eclipse"(apparently):
-;; Comment a region if selected, if not, comment the line.
-(defun comment-eclipse ()
-  (interactive)
-  (let ((start (line-beginning-position))
-        (end (line-end-position)))
-    (when (region-active-p)
-      (setq start (save-excursion
-                    (goto-char (region-beginning))
-                    (beginning-of-line)
-                    (point))
-            end (save-excursion
-                  (goto-char (region-end))
-                  (end-of-line)
-                  (point))))
-    (comment-or-uncomment-region start end)))
+(defun comment-line-or-region (n)
+  "Comment or uncomment current line and leave point after it.
+With positive prefix, apply to N lines including current one.
+With negative prefix, apply to -N lines above.
+If region is active, apply to active region instead."
+  (interactive "p")
+  (if (use-region-p)
+      (comment-or-uncomment-region
+       (region-beginning) (region-end))
+    (let ((range
+           (list (line-beginning-position)
+                 (goto-char (line-end-position n)))))
+      (comment-or-uncomment-region
+       (apply #'min range)
+       (apply #'max range)))
+    ;; (forward-line 1)
+    (back-to-indentation)))
 
 ;; Very simple. Just open a terminal in the cwd using the $TERMINAL environment variable.
 (defun open-terminal ()
@@ -951,15 +952,16 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                   ("q" nil "quit")
                                   ))
 
+          ;; Evil-leader-like
           (bind-key (kbd "C-c h") (defhydra hydra-helm
                                     (:color teal)
                                     "helm"
-                                    ("x" helm-M-x)
-                                    ("f" helm-find-files)
+                                    ("x" helm-M-x "M-x")
+                                    ("f" helm-find-files "Find Files")
 
-                                    ("u" helm-buffers-list)
-                                    ("o" helm-imenu)
-                                    ("y" helm-show-kill-ring)
+                                    ("u" helm-buffers-list "Buffer List")
+                                    ("o" helm-imenu "Imenu")
+                                    ("y" helm-show-kill-ring "Kill Ring")
                                     ("q" nil "quit")
                                     ))
           ))
@@ -1070,8 +1072,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   ;; :pre-load (progn
   ;;             (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
   ;;             (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
-  :init (progn (bind-key "C-c C-a" 'projectile-find-other-file)
-               )
+  :init (progn (bind-key "C-c C-a" 'projectile-find-other-file))
   :config (progn (setq projectile-enable-caching t)
 
                  ;; (setq projectile-indexing-method 'native)
@@ -1275,7 +1276,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (bind-key "C-c C-k" 'open-terminal)
 
-(bind-key (kbd "C-;") 'comment-eclipse)
+(bind-key (kbd "M-;") 'comment-line-or-region)
 
 
 
