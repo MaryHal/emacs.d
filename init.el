@@ -47,6 +47,9 @@
 ;; req-package
 (require-package 'req-package)
 
+(req-package paradox
+  :init (progn (setq paradox-execute-asynchronously t))
+
 
 
 ;; Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
