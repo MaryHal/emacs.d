@@ -926,6 +926,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Hydra ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package hydra
+  :require helm
   :init (progn
           (bind-key (kbd "<f2>") (defhydra hydra-zoom ()
                                    "zoom"
@@ -947,7 +948,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                   ("e" move-end-of-line "end")
                                   ("d" delete-region "del" :color blue)
                                   ("y" kill-ring-save "yank" :color blue)
-                                  ("q" nil "quit")))
+                                  ("q" nil "quit")
+                                  ))
+
+          (bind-key (kbd "C-c h") (defhydra hydra-helm
+                                    (:color teal)
+                                    "helm"
+                                    ("x" helm-M-x)
+                                    ("f" helm-find-files)
+
+                                    ("u" helm-buffers-list)
+                                    ("o" helm-imenu)
+                                    ("y" helm-show-kill-ring)
+                                    ("q" nil "quit")
+                                    ))
           ))
 
 
