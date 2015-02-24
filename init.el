@@ -48,7 +48,7 @@
 (require-package 'req-package)
 
 (req-package paradox
-  :init (progn (setq paradox-execute-asynchronously t))
+  :config (progn (setq paradox-execute-asynchronously t)))
 
 
 
@@ -766,14 +766,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           (bind-key (kbd "] e") #'move-text-down evil-normal-state-map)
 
           ;; Commentin'
-          (bind-key (kbd "g c c") (lambda ()
-                                     (interactive)
-                                     (comment-or-uncomment-region
-                                      (line-beginning-position)
-                                      (line-end-position))
-                                     )
+          (bind-key (kbd "g c c") #'comment-line-or-region
                     evil-normal-state-map)
-          (bind-key (kbd "g c") #'comment-or-uncomment-region evil-visual-state-map)
+          (bind-key (kbd "g c") #'comment-line-or-region evil-visual-state-map)
 
           ;; ;; Multiple cursors should use emacs state instead of insert state.
           ;; (add-hook 'multiple-cursors-mode-enabled-hook #'evil-emacs-state)
@@ -972,7 +967,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                (bind-key (kbd "M-x") #'helm-M-x)
                (bind-key (kbd "C-x C-f") #'helm-find-files)
 
-               (bind-key "C-c C-u" #'helm-buffers-list)
+               (bind-key "C-x b" #'helm-buffers-list)
                (bind-key "C-c C-o" #'helm-imenu)
                (bind-key "C-c C-y" #'helm-show-kill-ring)
                )
@@ -1268,7 +1263,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (bind-key (kbd "C-c C-k") #'open-terminal)
 
 (bind-key (kbd "M-;") #'comment-line-or-region)
-
+(bind-key (kbd "M-i") #'back-to-indentation)
 
 
 ;; Finishing Up ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
