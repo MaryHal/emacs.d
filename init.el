@@ -605,6 +605,7 @@ If region is active, apply to active region instead."
                  ))
 
 (req-package multiple-cursors
+  :pre-load (setq mc/list-file (concat user-cache-directory "mc-lists.el"))
   :init (progn (setq mc/unsupported-minor-modes '(company-mode
                                                   auto-complete-mode
                                                   flyspell-mode
@@ -1055,16 +1056,16 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                ))
 
 (req-package projectile
-  ;; :pre-load (progn
-  ;;             (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
-  ;;             (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
+  :pre-load (progn
+              (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
+              (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
   :init (progn (bind-key "C-c C-a" #'projectile-find-other-file))
   :config (progn (setq projectile-enable-caching t)
 
                  ;; (setq projectile-indexing-method 'native)
 
-                 (add-to-list 'projectile-globally-ignored-directories "elpa")
-                 (add-to-list 'projectile-globally-ignored-directories ".cache")
+                 ;; (add-to-list 'projectile-globally-ignored-directories "elpa")
+                 ;; (add-to-list 'projectile-globally-ignored-directories ".cache")
 
                  (setq projectile-completion-system 'helm)
 
@@ -1262,7 +1263,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (bind-key (kbd "C-c C-k") #'open-terminal)
 
-(bind-key (kbd "M-;") #'comment-line-or-region)
+(bind-key (kbd "C-;") #'comment-line-or-region)
 (bind-key (kbd "M-i") #'back-to-indentation)
 
 
