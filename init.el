@@ -249,8 +249,8 @@ If region is active, apply to active region instead."
 (defadvice load-theme (after load-theme activate compile)
   (if (string= system-type "gnu/linux")
       (if (string= window-system "x")
-          (progn (set-frame-parameter (selected-frame) 'alpha '(90 90))
-                 (add-to-list 'default-frame-alist '(alpha 90 90))
+          (progn (set-frame-parameter (selected-frame) 'alpha '(65 65))
+                 (add-to-list 'default-frame-alist '(alpha 65 65))
                  (set-face-attribute 'default nil :background "black")
                  (set-face-attribute 'fringe nil :background "black")
                  )
@@ -556,13 +556,14 @@ If region is active, apply to active region instead."
                  ))
 
 (req-package highlight-parentheses
-  :config (progn (defun hl-parens-hook()
-                   (highlight-parentheses-mode 1))
-                 (add-hook 'prog-mode-hook #'hl-parens-hook)
-                 ))
+  :config (progn
+            (defun hl-parens-hook()
+              (highlight-parentheses-mode 1))
+            (add-hook 'prog-mode-hook #'hl-parens-hook)
+            ))
 
-(req-package elec-pair
-  :config (electric-pair-mode t))
+;; (req-package elec-pair
+;;   :config (electric-pair-mode t))
 
 (req-package electric
   :config (electric-indent-mode t))
