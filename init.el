@@ -579,12 +579,12 @@ If region is active, apply to active region instead."
 (setq-default show-trailing-whitespace t)
 
 (req-package ace-jump-mode
-  :init (progn (bind-key "C-c SPC" #'ace-jump-word-mode)
-               (bind-key "C-c C-x" #'ace-jump-mode-pop-mark)
+  :init (progn (bind-key (kbd "C-c SPC") #'ace-jump-word-mode)
+               (bind-key (kbd "C-c C-x") #'ace-jump-mode-pop-mark)
                ))
 
 (req-package ace-window
-  :init (progn (bind-key "M-p" #'ace-window)
+  :init (progn (bind-key (kbd "M-p") #'ace-window)
                (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
                ))
 
@@ -596,8 +596,15 @@ If region is active, apply to active region instead."
 ;;   )
 
 (req-package expand-region
-  :init (progn (bind-key "C-=" #'er/expand-region)
+  :init (progn (bind-key (kbd "C-=") #'er/expand-region)
                ))
+
+;; (req-package key-chord
+;;   :init (progn (key-chord-mode 1))
+;;   :config (progn
+;;             (key-chord-define-global "VV" #'other-window)
+;;             )
+;;   )
 
 (req-package guide-key
   :config (progn (guide-key-mode t)
@@ -618,7 +625,7 @@ If region is active, apply to active region instead."
                ))
 
 (req-package magit
-  :init (progn (bind-key "C-c m" #'magit-status)))
+  :init (progn (bind-key (kbd "C-c m") #'magit-status)))
 
 
 
@@ -724,28 +731,28 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           (bind-key (kbd "Q") #'my-window-killer evil-normal-state-map)
 
           ;; Visual indentation now reselects visual selection.
-          (bind-key ">" (lambda ()
-                          (interactive)
-                          ;; ensure mark is less than point
-                          (when (> (mark) (point))
-                            (exchange-point-and-mark)
-                            )
-                          (evil-normal-state)
-                          (evil-shift-right (mark) (point))
-                          ;; re-select last visual-mode selection
-                          (evil-visual-restore))
+          (bind-key (kbd ">") (lambda ()
+                                (interactive)
+                                ;; ensure mark is less than point
+                                (when (> (mark) (point))
+                                  (exchange-point-and-mark)
+                                  )
+                                (evil-normal-state)
+                                (evil-shift-right (mark) (point))
+                                ;; re-select last visual-mode selection
+                                (evil-visual-restore))
                     evil-visual-state-map)
 
-          (bind-key "<" (lambda ()
-                          (interactive)
-                          ;; ensure mark is less than point
-                          (when (> (mark) (point))
-                            (exchange-point-and-mark)
-                            )
-                          (evil-normal-state)
-                          (evil-shift-left (mark) (point))
-                          ;; re-select last visual-mode selection
-                          (evil-visual-restore))
+          (bind-key (kbd "<") (lambda ()
+                                (interactive)
+                                ;; ensure mark is less than point
+                                (when (> (mark) (point))
+                                  (exchange-point-and-mark)
+                                  )
+                                (evil-normal-state)
+                                (evil-shift-left (mark) (point))
+                                ;; re-select last visual-mode selection
+                                (evil-visual-restore))
                     evil-visual-state-map)
 
           ;; Workgroups2
@@ -818,8 +825,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ))
 
 (req-package evil-leader
-  :require (ace-jump-mode evil expand-region helm helm-projectile
-                          helm-swoop magit projectile)
+  :require (ace-jump-mode ace-window evil expand-region helm
+                          helm-projectile helm-swoop magit
+                          projectile)
   :init (progn (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
                (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
                ;; (define-key evil-emacs-state-map (kbd "C-S-SPC") evil-leader--default-map)
@@ -861,6 +869,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                ;; Ace-jump-mode (has evil-integration built in!)
                (evil-leader/set-key "SPC" #'ace-jump-word-mode)
+               (evil-leader/set-key "l"   #'ace-window)
 
                ;; Expand region
                (evil-leader/set-key "v" #'er/expand-region)
@@ -894,17 +903,17 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :require evil
   :init (progn
           ;; bind evil-args text objects
-          (bind-key "a" #'evil-inner-arg evil-inner-text-objects-map)
-          (bind-key "a" #'evil-outer-arg evil-outer-text-objects-map)
+          (bind-key (kbd "a") #'evil-inner-arg evil-inner-text-objects-map)
+          (bind-key (kbd "a") #'evil-outer-arg evil-outer-text-objects-map)
 
           ;; bind evil-forward/backward-args
-          (bind-key "gl" #'evil-forward-arg  evil-normal-state-map)
-          (bind-key "gh" #'evil-backward-arg evil-normal-state-map)
-          (bind-key "gl" #'evil-forward-arg  evil-motion-state-map)
-          (bind-key "gh" #'evil-backward-arg evil-motion-state-map)
+          (bind-key (kbd "gl") #'evil-forward-arg  evil-normal-state-map)
+          (bind-key (kbd "gh") #'evil-backward-arg evil-normal-state-map)
+          (bind-key (kbd "gl") #'evil-forward-arg  evil-motion-state-map)
+          (bind-key (kbd "gh") #'evil-backward-arg evil-motion-state-map)
 
           ;; bind evil-jump-out-args
-          ;; (bind-key "gm" 'evil-jump-out-args evil-normal-state-map)
+          ;; (bind-key (kbd "gm") 'evil-jump-out-args evil-normal-state-map)
           ))
 
 
@@ -920,10 +929,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                    ("o" text-scale-decrease "out")))
 
           (bind-key (kbd "C-z") (defhydra hydra-vi
-                                    (:pre
-                                     (set-cursor-color "#40e0d0")
-                                     :post
-                                     (progn (set-cursor-color "#ffffff")))
+                                  (:pre
+                                   (set-cursor-color "#40e0d0")
+                                   :post
+                                   (progn (set-cursor-color "#ffffff")))
                                   "vi"
                                   ("l" forward-char)
                                   ("h" backward-char)
@@ -969,9 +978,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                (bind-key (kbd "M-x") #'helm-M-x)
                (bind-key (kbd "C-x C-f") #'helm-find-files)
 
-               (bind-key "C-x b" #'helm-buffers-list)
-               (bind-key "C-c C-o" #'helm-imenu)
-               (bind-key "C-c C-y" #'helm-show-kill-ring)
+               (bind-key (kbd "C-x b") #'helm-buffers-list)
+               (bind-key (kbd "C-c o") #'helm-imenu)
+               (bind-key (kbd "C-c y") #'helm-show-kill-ring)
                )
   :config (progn
             (setq helm-scroll-amount 4             ;; scroll 4 lines other window using M-<next>/M-<prior>
@@ -1005,6 +1014,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (req-package helm-swoop
   :require helm
   :init (progn (bind-key (kbd "M-i") #'helm-swoop-from-isearch isearch-mode-map)
+               (bind-key (kbd "C-c s") #'helm-swoop)
 
                ;; disable pre-input
                (setq helm-swoop-pre-input-function
@@ -1053,14 +1063,15 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (req-package helm-projectile
   :require "helm"
-  :init (progn (bind-key "C-c C-p" #'helm-projectile)
-               ))
+  :init (progn
+          ;; (bind-key (kbd "C-c p") #'helm-projectile)
+          ))
 
 (req-package projectile
   :pre-load (progn
               (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
               (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
-  :init (progn (bind-key "C-c C-a" #'projectile-find-other-file))
+  :init (progn (bind-key (kbd "C-c a") #'projectile-find-other-file))
   :config (progn (setq projectile-enable-caching t)
 
                  ;; (setq projectile-indexing-method 'native)
@@ -1182,7 +1193,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                                         ;; company-clang
                                                         ;; company-capf
                                                         (company-dabbrev-code company-keywords)
-                                                        company-dabbrev
+                                                        ;; company-dabbrev
                                                         )))
 
                  ;; (optional) adds CC special commands to `company-begin-commands' in order to
@@ -1252,20 +1263,21 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                             (interactive)
                             (message "Thou shall not quit!")))
 
-(bind-key (kbd "M-n") #'set-mark-command)
+;; (bind-key (kbd "M-n") #'set-mark-command)
 
 ;; Easier version of "C-x k" to kill buffer
 (bind-key (kbd "C-x C-b") #'buffer-menu)
 (bind-key (kbd "C-x C-k") #'kill-buffer)
 
 ;; Eval
-(bind-key (kbd "C-c C-v") #'eval-buffer)
-(bind-key (kbd "C-c C-r") #'eval-region)
+(bind-key (kbd "C-c v") #'eval-buffer)
+(bind-key (kbd "C-c r") #'eval-region)
 
-(bind-key (kbd "C-c C-k") #'open-terminal)
+(bind-key (kbd "C-c k") #'open-terminal)
 
 (bind-key (kbd "C-;") #'comment-line-or-region)
 (bind-key (kbd "M-i") #'back-to-indentation)
+
 
 
 ;; Finishing Up ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
