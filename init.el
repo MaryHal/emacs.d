@@ -579,12 +579,12 @@ If region is active, apply to active region instead."
 (setq-default show-trailing-whitespace t)
 
 (req-package ace-jump-mode
-  :init (progn (bind-key (kbd "C-c SPC") #'ace-jump-word-mode)
-               (bind-key (kbd "C-c C-x") #'ace-jump-mode-pop-mark)
+  :init (progn (bind-key "C-c SPC" #'ace-jump-word-mode)
+               (bind-key "C-c C-x" #'ace-jump-mode-pop-mark)
                ))
 
 (req-package ace-window
-  :init (progn (bind-key (kbd "M-p") #'ace-window)
+  :init (progn (bind-key "M-o" #'ace-window)
                (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
                ))
 
@@ -596,7 +596,7 @@ If region is active, apply to active region instead."
 ;;   )
 
 (req-package expand-region
-  :init (progn (bind-key (kbd "C-=") #'er/expand-region)
+  :init (progn (bind-key "C-=" #'er/expand-region)
                ))
 
 ;; (req-package key-chord
@@ -619,13 +619,13 @@ If region is active, apply to active region instead."
                                                   flyspell-mode
                                                   jedi-mode))
 
-               (bind-key (kbd "C->") #'mc/mark-next-like-this)
-               (bind-key (kbd "C-<") #'mc/mark-previous-like-this)
-               (bind-key (kbd "C-c C-<") #'mc/mark-all-like-this)
+               (bind-key "C->"      #'mc/mark-next-like-this)
+               (bind-key "C-<"      #'mc/mark-previous-like-this)
+               (bind-key "C-c C-<"  #'mc/mark-all-like-this)
                ))
 
 (req-package magit
-  :init (progn (bind-key (kbd "C-c m") #'magit-status)))
+  :init (progn (bind-key "C-c m" #'magit-status)))
 
 
 
@@ -704,14 +704,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-isearch-map)
 
           ;; Delete forward like Emacs.
-          (bind-key (kbd "C-d") #'evil-delete-char evil-insert-state-map)
+          (bind-key "C-d" #'evil-delete-char evil-insert-state-map)
 
           ;; Make end-of-line work in insert
-          (bind-key (kbd "C-e") #'end-of-line evil-insert-state-map)
+          (bind-key "C-e" #'end-of-line evil-insert-state-map)
 
           ;; gj gk by default
-          (bind-key (kbd "j") #'evil-next-visual-line     evil-normal-state-map)
-          (bind-key (kbd "k") #'evil-previous-visual-line evil-normal-state-map)
+          (bind-key "j" #'evil-next-visual-line     evil-normal-state-map)
+          (bind-key "k" #'evil-previous-visual-line evil-normal-state-map)
 
           ;; Other evil keybindings
           (evil-define-operator evil-join-previous-line (beg end)
@@ -721,17 +721,17 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             (evil-join beg end))
 
           ;; Let K match J
-          (bind-key (kbd "K") #'evil-join-previous-line evil-normal-state-map)
+          (bind-key "K" #'evil-join-previous-line evil-normal-state-map)
 
           ;; Make Y work like D
-          (bind-key (kbd "Y") (kbd "y$") evil-normal-state-map)
+          (bind-key "Y" (kbd "y$") evil-normal-state-map)
 
           ;; Kill buffer if only window with buffer open, otherwise just close
           ;; the window.
-          (bind-key (kbd "Q") #'my-window-killer evil-normal-state-map)
+          (bind-key "Q" #'my-window-killer evil-normal-state-map)
 
           ;; Visual indentation now reselects visual selection.
-          (bind-key (kbd ">") (lambda ()
+          (bind-key ">" (lambda ()
                                 (interactive)
                                 ;; ensure mark is less than point
                                 (when (> (mark) (point))
@@ -743,7 +743,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                 (evil-visual-restore))
                     evil-visual-state-map)
 
-          (bind-key (kbd "<") (lambda ()
+          (bind-key "<" (lambda ()
                                 (interactive)
                                 ;; ensure mark is less than point
                                 (when (> (mark) (point))
@@ -756,43 +756,43 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                     evil-visual-state-map)
 
           ;; Workgroups2
-          (bind-key (kbd "g T") #'wg-switch-to-workgroup-left  evil-normal-state-map)
-          (bind-key (kbd "g t") #'wg-switch-to-workgroup-right evil-normal-state-map)
+          (bind-key "g T" #'wg-switch-to-workgroup-left  evil-normal-state-map)
+          (bind-key "g t" #'wg-switch-to-workgroup-right evil-normal-state-map)
 
-          (bind-key (kbd "g t") #'wg-switch-to-workgroup-right evil-motion-state-map)
+          (bind-key "g t" #'wg-switch-to-workgroup-right evil-motion-state-map)
 
           (evil-ex-define-cmd "tabnew"   #'wg-create-workgroup)
           (evil-ex-define-cmd "tabclose" #'wg-kill-workgroup)
 
           ;; "Unimpaired"
-          (bind-key (kbd "[ b") #'previous-buffer evil-normal-state-map)
-          (bind-key (kbd "] b") #'next-buffer     evil-normal-state-map)
-          (bind-key (kbd "[ q") #'previous-error  evil-normal-state-map)
-          (bind-key (kbd "] q") #'next-error      evil-normal-state-map)
+          (bind-key "[ b" #'previous-buffer evil-normal-state-map)
+          (bind-key "] b" #'next-buffer     evil-normal-state-map)
+          (bind-key "[ q" #'previous-error  evil-normal-state-map)
+          (bind-key "] q" #'next-error      evil-normal-state-map)
 
           ;; Bubble Text up and down. Works with regions.
-          (bind-key (kbd "[ e") #'move-text-up   evil-normal-state-map)
-          (bind-key (kbd "] e") #'move-text-down evil-normal-state-map)
+          (bind-key "[ e" #'move-text-up   evil-normal-state-map)
+          (bind-key "] e" #'move-text-down evil-normal-state-map)
 
           ;; Commentin'
-          (bind-key (kbd "g c c") #'comment-line-or-region
+          (bind-key "g c c" #'comment-line-or-region
                     evil-normal-state-map)
-          (bind-key (kbd "g c") #'comment-line-or-region evil-visual-state-map)
+          (bind-key "g c" #'comment-line-or-region evil-visual-state-map)
 
           ;; ;; Multiple cursors should use emacs state instead of insert state.
           ;; (add-hook 'multiple-cursors-mode-enabled-hook #'evil-emacs-state)
           ;; (add-hook 'multiple-cursors-mode-disabled-hook #'evil-normal-state)
 
           ;; (define-key evil-normal-state-map (kbd "g r") 'mc/mark-all-like-this)
-          ;; (bind-key (kbd "C->") 'mc/mark-next-like-this)
-          ;; (bind-key (kbd "C-<") 'mc/mark-previous-like-this)
+          ;; (bind-key "C->" 'mc/mark-next-like-this)
+          ;; (bind-key "C-<" 'mc/mark-previous-like-this)
 
           (defadvice evil-quit (around advice-for-evil-quit activate)
             (message "Thou shall not quit!"))
           (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
             (message "Thou shall not quit!"))
           )
-  :config (progn (bind-key (kbd "<f12>") #'evil-local-mode)
+  :config (progn (bind-key "<f12>" #'evil-local-mode)
 
                  ;; (evil-mode t)
 
@@ -903,17 +903,17 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :require evil
   :init (progn
           ;; bind evil-args text objects
-          (bind-key (kbd "a") #'evil-inner-arg evil-inner-text-objects-map)
-          (bind-key (kbd "a") #'evil-outer-arg evil-outer-text-objects-map)
+          (bind-key "a" #'evil-inner-arg evil-inner-text-objects-map)
+          (bind-key "a" #'evil-outer-arg evil-outer-text-objects-map)
 
           ;; bind evil-forward/backward-args
-          (bind-key (kbd "gl") #'evil-forward-arg  evil-normal-state-map)
-          (bind-key (kbd "gh") #'evil-backward-arg evil-normal-state-map)
-          (bind-key (kbd "gl") #'evil-forward-arg  evil-motion-state-map)
-          (bind-key (kbd "gh") #'evil-backward-arg evil-motion-state-map)
+          (bind-key "gl" #'evil-forward-arg  evil-normal-state-map)
+          (bind-key "gh" #'evil-backward-arg evil-normal-state-map)
+          (bind-key "gl" #'evil-forward-arg  evil-motion-state-map)
+          (bind-key "gh" #'evil-backward-arg evil-motion-state-map)
 
           ;; bind evil-jump-out-args
-          ;; (bind-key (kbd "gm") 'evil-jump-out-args evil-normal-state-map)
+          ;; (bind-key "gm" 'evil-jump-out-args evil-normal-state-map)
           ))
 
 
@@ -921,14 +921,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Hydra ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package hydra
-  :require helm
   :init (progn
-          (bind-key (kbd "<f2>") (defhydra hydra-zoom ()
+          (bind-key "<f2>" (defhydra hydra-zoom ()
                                    "zoom"
                                    ("i" text-scale-increase "in")
                                    ("o" text-scale-decrease "out")))
 
-          (bind-key (kbd "C-z") (defhydra hydra-vi
+          (bind-key "C-z" (defhydra hydra-vi
                                   (:pre
                                    (set-cursor-color "#40e0d0")
                                    :post
@@ -945,19 +944,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                   ("y" kill-ring-save "yank" :color blue)
                                   ("q" nil "quit")
                                   ))
-
-          ;; Evil-leader-like
-          (bind-key (kbd "C-c h") (defhydra hydra-helm
-                                    (:color teal)
-                                    "helm"
-                                    ("x" helm-M-x "M-x")
-                                    ("f" helm-find-files "Find Files")
-
-                                    ("u" helm-buffers-list "Buffer List")
-                                    ("o" helm-imenu "Imenu")
-                                    ("y" helm-show-kill-ring "Kill Ring")
-                                    ("q" nil "quit")
-                                    ))
           ))
 
 
@@ -965,22 +951,22 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package helm
-  :init (progn (bind-key (kbd "C-z")   #'helm-select-action  helm-map)
-               (bind-key (kbd "C-w")   #'backward-kill-word  helm-map)
+  :init (progn (bind-key "C-z"   #'helm-select-action  helm-map)
+               (bind-key "C-w"   #'backward-kill-word  helm-map)
 
                ;; Tab -> do persistent action
-               (bind-key (kbd "<tab>") #'helm-execute-persistent-action helm-map)
+               (bind-key "<tab>" #'helm-execute-persistent-action helm-map)
 
                ;; Make Tab work in terminal. Cannot use "bind-key" since it would detect that we
                ;; already bound tab.
                (define-key helm-map (kbd "C-i") #'helm-execute-persistent-action)
 
-               (bind-key (kbd "M-x") #'helm-M-x)
-               (bind-key (kbd "C-x C-f") #'helm-find-files)
+               (bind-key "M-x" #'helm-M-x)
+               (bind-key "C-x C-f" #'helm-find-files)
 
-               (bind-key (kbd "C-x b") #'helm-buffers-list)
-               (bind-key (kbd "C-c o") #'helm-imenu)
-               (bind-key (kbd "C-c y") #'helm-show-kill-ring)
+               (bind-key "C-x b" #'helm-buffers-list)
+               (bind-key "C-c o" #'helm-imenu)
+               (bind-key "C-c y" #'helm-show-kill-ring)
                )
   :config (progn
             (setq helm-scroll-amount 4             ;; scroll 4 lines other window using M-<next>/M-<prior>
@@ -1013,8 +999,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (req-package helm-swoop
   :require helm
-  :init (progn (bind-key (kbd "M-i") #'helm-swoop-from-isearch isearch-mode-map)
-               (bind-key (kbd "C-c s") #'helm-swoop)
+  :init (progn (bind-key "M-i" #'helm-swoop-from-isearch isearch-mode-map)
+               (bind-key "C-c s" #'helm-swoop)
 
                ;; disable pre-input
                (setq helm-swoop-pre-input-function
@@ -1061,17 +1047,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Projectile ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(req-package helm-projectile
-  :require "helm"
-  :init (progn
-          ;; (bind-key (kbd "C-c p") #'helm-projectile)
-          ))
-
 (req-package projectile
   :pre-load (progn
               (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
               (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
-  :init (progn (bind-key (kbd "C-c a") #'projectile-find-other-file))
+  :init (progn (bind-key "C-c a" #'projectile-find-other-file))
   :config (progn (setq projectile-enable-caching t)
 
                  ;; (setq projectile-indexing-method 'native)
@@ -1083,6 +1063,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  (projectile-global-mode t)
                  ))
+
+(req-package helm-projectile
+  :require (helm projectile)
+  :init (progn
+          (helm-projectile-on)
+          ;; (bind-key "C-c p" #'helm-projectile)
+          ))
 
 
 
@@ -1163,8 +1150,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (req-package company
   :require (irony company-irony)
-  :init (progn (bind-key (kbd "C-n") #'company-select-next     company-active-map)
-               (bind-key (kbd "C-p") #'company-select-previous company-active-map)
+  :init (progn (bind-key "C-n" #'company-select-next     company-active-map)
+               (bind-key "C-p" #'company-select-previous company-active-map)
                )
   :config (progn (setq-default company-idle-delay 0)
                  (setq-default company-minimum-prefix-length 1)
@@ -1256,27 +1243,28 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Unset some keys I never use
 (global-unset-key (kbd "C-x m"))
+(global-unset-key (kbd "C-x f"))
 
 ;; replace with [r]eally [q]uit
-(bind-key (kbd "C-x r q") #'save-buffers-kill-terminal)
-(bind-key (kbd "C-x C-c") (lambda ()
+(bind-key "C-x r q" #'save-buffers-kill-terminal)
+(bind-key "C-x C-c" (lambda ()
                             (interactive)
                             (message "Thou shall not quit!")))
 
-;; (bind-key (kbd "M-n") #'set-mark-command)
+;; (bind-key "M-n" #'set-mark-command)
 
 ;; Easier version of "C-x k" to kill buffer
-(bind-key (kbd "C-x C-b") #'buffer-menu)
-(bind-key (kbd "C-x C-k") #'kill-buffer)
+(bind-key "C-x C-b"  #'buffer-menu)
+(bind-key "C-x C-k"  #'kill-buffer)
 
 ;; Eval
-(bind-key (kbd "C-c v") #'eval-buffer)
-(bind-key (kbd "C-c r") #'eval-region)
+(bind-key "C-c v"    #'eval-buffer)
+(bind-key "C-c r"    #'eval-region)
 
-(bind-key (kbd "C-c k") #'open-terminal)
+(bind-key "C-c k"    #'open-terminal)
 
-(bind-key (kbd "C-;") #'comment-line-or-region)
-(bind-key (kbd "M-i") #'back-to-indentation)
+(bind-key "C-;"      #'comment-line-or-region)
+(bind-key "M-i"      #'back-to-indentation)
 
 
 
