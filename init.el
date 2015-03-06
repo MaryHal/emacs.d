@@ -580,6 +580,7 @@ If region is active, apply to active region instead."
 
 (req-package ace-jump-mode
   :init (progn (bind-key "C-c SPC" #'ace-jump-word-mode)
+               (bind-key "H-SPC" #'ace-jump-word-mode)
                (bind-key "C-c C-x" #'ace-jump-mode-pop-mark)
                ))
 
@@ -1051,7 +1052,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :pre-load (progn
               (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
               (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
-  :init (progn (bind-key "C-c a" #'projectile-find-other-file))
+  :init (progn (bind-key "H-p" #'projectile-command-map)
+               (bind-key "C-c a" #'projectile-find-other-file))
   :config (progn (setq projectile-enable-caching t)
 
                  ;; (setq projectile-indexing-method 'native)
@@ -1068,7 +1070,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :require (helm projectile)
   :init (progn
           (helm-projectile-on)
-          ;; (bind-key "C-c p" #'helm-projectile)
           ))
 
 
