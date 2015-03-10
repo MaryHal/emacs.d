@@ -456,6 +456,7 @@ If region is active, apply to active region instead."
       '((top   . 10) (left   . 2)
         (width . 80) (height . 30)
         (vertical-scroll-bars . nil)
+        (left-fringe . 0) (right-fringe . 0)
         ))
 
 ;; Set font
@@ -582,6 +583,13 @@ If region is active, apply to active region instead."
   :init (progn (bind-key "C-c SPC" #'ace-jump-word-mode)
                (bind-key "H-SPC" #'ace-jump-word-mode)
                (bind-key "C-c C-x" #'ace-jump-mode-pop-mark)
+
+               ;; ;; Lowercase keys only please.
+               ;; (setq ace-jump-mode-move-keys
+               ;;       (loop for i from ?a to ?z collect i))
+
+               ;; Only jump in this window.
+               (setq ace-jump-mode-scope 'window) 
                ))
 
 (req-package ace-window
@@ -609,7 +617,7 @@ If region is active, apply to active region instead."
 
 (req-package guide-key
   :config (progn (guide-key-mode t)
-                 (setq guide-key/guide-key-sequence '("C-x" "C-c" "SPC"))
+                 (setq guide-key/guide-key-sequence '("C-x" "C-c" "SPC" "H-p"))
                  (setq guide-key/recursive-key-sequence-flag t)
                  ))
 
@@ -795,7 +803,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           )
   :config (progn (bind-key "<f12>" #'evil-local-mode)
 
-                 ;; (evil-mode t)
+                 (evil-mode t)
 
                  ;; Toggle evil-mode
                  (evil-set-toggle-key "C-\\")
@@ -863,7 +871,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                (evil-leader/set-key "m" #'magit-status)
 
                ;; Projectile
-               (evil-leader/set-key "p" #'helm-projectile)
+               (evil-leader/set-key "p" #'projectile-command-map)
 
                ;; Swoop
                (evil-leader/set-key "s" #'helm-swoop)
@@ -1004,8 +1012,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                (bind-key "C-c s" #'helm-swoop)
 
                ;; disable pre-input
-               (setq helm-swoop-pre-input-function
-                     (lambda () ""))
+               (setq helm-swoop-pre-input-function (lambda () ""))
                ))
 
 
@@ -1068,8 +1075,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (req-package helm-projectile
   :require (helm projectile)
-  :init (progn
-          (helm-projectile-on)
+  :init (progn (helm-projectile-on)
           ))
 
 
@@ -1266,6 +1272,54 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (bind-key "C-;"      #'comment-line-or-region)
 (bind-key "M-i"      #'back-to-indentation)
+
+(defun hyper-keybindings ()
+  (bind-key "H-!" #'shell-command)
+
+  (bind-key "H-a" #'projectile-find-other-file)
+
+  ;; Eval
+  (bind-key "H-e b" #'eval-buffer)
+  (bind-key "H-e r" #'eval-region)
+
+  ;; Errors
+  (bind-key "H-e n" #'next-error)
+  (bind-key "H-e p" #'previous-error)
+
+  ;; Files
+  (bind-key "H-f" #'helm-find-files)
+
+  ;; Buffers
+  (bind-key "H-b" #'buffer-menu)
+  (bind-key "H-k" #'ido-kill-buffer)
+  (bind-key "H-u" #'helm-buffers-list)
+
+  (bind-key "H-o" #'helm-imenu)
+  (bind-key "H-x" #'helm-M-x)
+
+  ;; Kill ring
+  (bind-key "H-y" #'helm-show-kill-ring)
+
+  ;; Git
+  (bind-key "H-m" #'magit-status)
+
+  ;; ;; Projectile
+  ;; (bind-key "H-p" #'helm-projectile)
+
+  ;; Swoop
+  (bind-key "H-s" #'helm-swoop)
+
+  ;; Ace-jump-mode (has evil-integration built in!)
+  (bind-key "H-SPC" #'ace-jump-word-mode)
+  (bind-key "H-l"   #'ace-window)
+
+  ;; Expand region
+  (bind-key "H-v" #'er/expand-region)
+
+  ;; Terminal
+  (bind-key "H-t" #'open-terminal)
+  )
+(hyper-keybindings)
 
 
 
