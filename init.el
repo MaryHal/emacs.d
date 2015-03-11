@@ -589,7 +589,7 @@ If region is active, apply to active region instead."
                ;;       (loop for i from ?a to ?z collect i))
 
                ;; Only jump in this window.
-               (setq ace-jump-mode-scope 'window) 
+               (setq ace-jump-mode-scope 'window)
                ))
 
 (req-package ace-window
@@ -685,7 +685,7 @@ If region is active, apply to active region instead."
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package evil
-  :require (workgroups2)
+  :require (multiple-cursors workgroups2)
   :pre-load (progn (setq evil-want-C-u-scroll t)
                    (setq evil-move-cursor-back nil)
                    (setq evil-cross-lines t)
@@ -803,7 +803,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           )
   :config (progn (bind-key "<f12>" #'evil-local-mode)
 
-                 (evil-mode t)
+                 ;; (evil-mode t)
 
                  ;; Toggle evil-mode
                  (evil-set-toggle-key "C-\\")
@@ -839,7 +839,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                           projectile)
   :init (progn (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
                (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
-               ;; (define-key evil-emacs-state-map (kbd "C-S-SPC") evil-leader--default-map)
+               (define-key evil-emacs-state-map  (kbd "H-z") evil-leader--default-map)
+
+               ;; (global-evil-leader-mode t)
 
                (evil-leader/set-key "!" #'shell-command)
 
@@ -1200,6 +1202,19 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 
 
+;; Flycheck ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (req-package flycheck
+;;   :init (progn
+;;           ;; Remove newline checks, since they would trigger an immediate check
+;;           ;; when we want the idle-change-delay to be in effect while editing.
+;;           (setq flycheck-check-syntax-automatically '(save
+;;                                                       idle-change
+;;                                                       mode-enabled))
+;;           ))
+
+
+
 ;; Yasnippet ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package yasnippet
@@ -1247,7 +1262,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; (global-unset-key (kbd "C-z"))
 (put 'suspend-frame 'disabled t)
 
-
 ;; Unset some keys I never use
 (global-unset-key (kbd "C-x m"))
 (global-unset-key (kbd "C-x f"))
@@ -1258,7 +1272,45 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                             (interactive)
                             (message "Thou shall not quit!")))
 
-;; (bind-key "M-n" #'set-mark-command)
+(defun copy-to-end-of-line ()
+  (interactive)
+  (kill-ring-save (point)
+                  (line-end-position))
+  (message "Copied to end of line"))
+
+(defun copy-whole-lines (arg)
+  "Copy lines (as many as prefix argument) in the kill ring"
+  (interactive "p")
+  (kill-ring-save (line-beginning-position)
+                  (line-beginning-position (+ 1 arg)))
+  (message "%d line%s copied" arg (if (= 1 arg) "" "s")))
+
+(defun copy-line (arg)
+  "Copy to end of line, or as many lines as prefix argument"
+  (interactive "P")
+  (if (null arg)
+      (copy-to-end-of-line)
+    (copy-whole-lines (prefix-numeric-value arg))))
+
+(defun save-region-or-current-line (arg)
+  (interactive "P")
+  (if (region-active-p)
+      (kill-ring-save (region-beginning) (region-end))
+    (copy-line arg)))
+
+;; Alter M-w so if there's no region, just grab 'till the end of the line.
+(bind-key "M-w" #'save-region-or-current-line)
+
+;; Join below
+(bind-key "C-j" (lambda ()
+                  (interactive)
+                  (join-line -1)))
+
+;; Join above
+(bind-key "M-j" #'join-line)
+
+;; Move windows
+(windmove-default-keybindings 'meta)
 
 ;; Easier version of "C-x k" to kill buffer
 (bind-key "C-x C-b"  #'buffer-menu)
@@ -1272,6 +1324,18 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (bind-key "C-;"      #'comment-line-or-region)
 (bind-key "M-i"      #'back-to-indentation)
+
+;; Character-targeted movements
+(req-package misc
+  :init (progn
+          (bind-key "M-z" #'zap-up-to-char)
+          ))
+
+(req-package jump-char
+  :init (progn
+          (bind-key "M-m" #'jump-char-forward)
+          (bind-key "M-M" #'jump-char-backward)
+          ))
 
 (defun hyper-keybindings ()
   (bind-key "H-!" #'shell-command)
