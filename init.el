@@ -197,6 +197,32 @@
   (interactive "*p")
   (move-text-internal (- arg)))
 
+(defun copy-to-end-of-line ()
+  (interactive)
+  (kill-ring-save (point)
+                  (line-end-position))
+  (message "Copied to end of line"))
+
+(defun copy-whole-lines (arg)
+  "Copy lines (as many as prefix argument) in the kill ring"
+  (interactive "p")
+  (kill-ring-save (line-beginning-position)
+                  (line-beginning-position (+ 1 arg)))
+  (message "%d line%s copied" arg (if (= 1 arg) "" "s")))
+
+(defun copy-line (arg)
+  "Copy to end of line, or as many lines as prefix argument"
+  (interactive "P")
+  (if (null arg)
+      (copy-to-end-of-line)
+    (copy-whole-lines (prefix-numeric-value arg))))
+
+(defun save-region-or-current-line (arg)
+  (interactive "P")
+  (if (region-active-p)
+      (kill-ring-save (region-beginning) (region-end))
+    (copy-line arg)))
+
 (defun create-scratch-buffer nil
   "create a new scratch buffer to work in. (could be *scratch* - *scratchX*)"
   (interactive)
@@ -631,6 +657,9 @@ If region is active, apply to active region instead."
                (bind-key "C->"      #'mc/mark-next-like-this)
                (bind-key "C-<"      #'mc/mark-previous-like-this)
                (bind-key "C-c C-<"  #'mc/mark-all-like-this)
+
+               (global-unset-key (kbd "M-<down-mouse-1>"))
+               (bind-key "M-<mouse-1>" 'mc/add-cursor-on-click)
                ))
 
 (req-package magit
@@ -685,7 +714,7 @@ If region is active, apply to active region instead."
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (req-package evil
-  :require (multiple-cursors workgroups2)
+  :require (workgroups2)
   :pre-load (progn (setq evil-want-C-u-scroll t)
                    (setq evil-move-cursor-back nil)
                    (setq evil-cross-lines t)
@@ -1271,32 +1300,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (bind-key "C-x C-c" (lambda ()
                             (interactive)
                             (message "Thou shall not quit!")))
-
-(defun copy-to-end-of-line ()
-  (interactive)
-  (kill-ring-save (point)
-                  (line-end-position))
-  (message "Copied to end of line"))
-
-(defun copy-whole-lines (arg)
-  "Copy lines (as many as prefix argument) in the kill ring"
-  (interactive "p")
-  (kill-ring-save (line-beginning-position)
-                  (line-beginning-position (+ 1 arg)))
-  (message "%d line%s copied" arg (if (= 1 arg) "" "s")))
-
-(defun copy-line (arg)
-  "Copy to end of line, or as many lines as prefix argument"
-  (interactive "P")
-  (if (null arg)
-      (copy-to-end-of-line)
-    (copy-whole-lines (prefix-numeric-value arg))))
-
-(defun save-region-or-current-line (arg)
-  (interactive "P")
-  (if (region-active-p)
-      (kill-ring-save (region-beginning) (region-end))
-    (copy-line arg)))
 
 ;; Alter M-w so if there's no region, just grab 'till the end of the line.
 (bind-key "M-w" #'save-region-or-current-line)
