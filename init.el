@@ -23,10 +23,11 @@
 
 
 
-;; Package Management (req-package) ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Package Management (use-package) ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (eval-when-compile (package-initialize))
 
+;; Bootstrap!
 (defun require-package (package)
   "refresh package archives, check package presence and install if it's not installed"
   (if (null (require package nil t))
@@ -45,9 +46,10 @@
 ;; (el-get 'sync)
 
 ;; req-package
-(require-package 'req-package)
+(require-package 'use-package)
 
-(req-package paradox
+(use-package paradox
+  :ensure t
   :config (progn (setq paradox-execute-asynchronously t)))
 
 
@@ -275,8 +277,8 @@ If region is active, apply to active region instead."
 (defadvice load-theme (after load-theme activate compile)
   (if (string= system-type "gnu/linux")
       (if (string= window-system "x")
-          (progn (set-frame-parameter (selected-frame) 'alpha '(65 65))
-                 (add-to-list 'default-frame-alist '(alpha 65 65))
+          (progn (set-frame-parameter (selected-frame) 'alpha '(90 90))
+                 (add-to-list 'default-frame-alist '(alpha 90 90))
                  (set-face-attribute 'default nil :background "black")
                  (set-face-attribute 'fringe nil :background "black")
                  )
@@ -364,14 +366,14 @@ If region is active, apply to active region instead."
 (setq split-height-threshold nil)
 (setq split-width-threshold 0)
 
-(req-package autorevert
+(use-package autorevert
   :config (progn (setq global-auto-revert-non-file-buffers t)
                  (setq auto-revert-verbose nil)
 
                  (global-auto-revert-mode t)
                  ))
 
-(req-package simple
+(use-package simple
   :config (progn (setq shift-select-mode nil)
 
                  ;; ;; Show active region
@@ -385,36 +387,36 @@ If region is active, apply to active region instead."
                  (setq eval-expression-print-level nil)
                  ))
 
-(req-package jka-cmpr-hook
+(use-package jka-cmpr-hook
   :config (auto-compression-mode))
 
-(req-package delsel
+(use-package delsel
   :config (delete-selection-mode t))
 
-(req-package tramp
+(use-package tramp
   :config (setq tramp-default-method "ssh"))
 
-(req-package recentf
+(use-package recentf
   :config (progn (setq recentf-save-file (concat user-cache-directory "recentf"))
                  (setq recentf-max-saved-items 100)
                  (setq recentf-max-menu-items 15)
                  (recentf-mode t)
                  ))
 
-(req-package uniquify
+(use-package uniquify
   :config (progn (setq uniquify-buffer-name-style 'forward
                        uniquify-separator "/"
                        uniquify-ignore-buffers-re "^\\*" ;; leave special buffers alone
                        uniquify-after-kill-buffer-p t)
                  ))
 
-(req-package ediff
+(use-package ediff
   :config (progn (setq ediff-diff-options "-w")
                  (setq ediff-split-window-function 'split-window-horizontally)
                  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
                  ))
 
-;; (req-package mouse
+;; (use-package mouse
 ;;   :config (progn (xterm-mouse-mode t)
 ;;                  (defun track-mouse (e))
 ;;                  (setq mouse-sel-mode t)
@@ -454,9 +456,22 @@ If region is active, apply to active region instead."
 
 
 
+;; Other Packages ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; String manipulation library
+(use-package s
+  :defer t
+  :ensure t)
+
+;; Modern list library
+(use-package dash
+  :defer t
+  :ensure t)
+
+
 ;; Dired ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(req-package dired
+(use-package dired
   :commands dired
   :config (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso")
   )
@@ -465,7 +480,8 @@ If region is active, apply to active region instead."
 
 ;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(req-package popwin
+(use-package popwin
+  :ensure t
   :config (progn (push '("helm" :regexp t :height 16) popwin:special-display-config)
                  (push "*Shell Command Output*" popwin:special-display-config)
                  (push '(compilation-mode :noselect t) popwin:special-display-config)
@@ -494,12 +510,12 @@ If region is active, apply to active region instead."
   )
 
 ;; Load custom theme
-(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/"))
-;; (load-theme 'enox t)
+
+(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/smyx/"))
 (load-theme 'smyx t)
 
-
-(req-package smart-mode-line
+(use-package smart-mode-line
+  :ensure t
   :config (progn (setq-default sml/line-number-format " %3l")
                  (setq-default sml/col-number-format  "%2c")
 
@@ -509,27 +525,24 @@ If region is active, apply to active region instead."
                  (sml/setup)
                  ))
 
-(req-package rich-minority
+(use-package rich-minority
+  :ensure t
   :config (progn (setq rm-blacklist nil)
                  (setq rm-whitelist " Wrap")
                  ;; (rich-minority-mode t)
                  ))
 
-(req-package menu-bar
-  :config
-  (menu-bar-mode -1))
+(use-package menu-bar
+  :config (menu-bar-mode -1))
 
-(req-package tool-bar
-  :config
-  (tool-bar-mode -1))
+(use-package tool-bar
+  :config (tool-bar-mode -1))
 
-(req-package tooltip
-  :config
-  (tooltip-mode -1))
+(use-package tooltip
+  :config (tooltip-mode -1))
 
-(req-package scroll-bar
-  :config
-  (scroll-bar-mode -1))
+(use-package scroll-bar
+  :config (scroll-bar-mode -1))
 
 ;; No splash screen please
 (setq inhibit-splash-screen t)
@@ -562,7 +575,7 @@ If region is active, apply to active region instead."
       scroll-preserve-screen-position t
       auto-window-vscroll nil)
 
-(req-package fringe
+(use-package fringe
   :config (progn (set-fringe-mode (cons 0 0))
 
                  ;; Empty line indicators in the fringe
@@ -574,25 +587,27 @@ If region is active, apply to active region instead."
               right-margin-width 1)
 (set-window-buffer nil (current-buffer))
 
-(req-package git-gutter
+(use-package git-gutter
+  :ensure t
   :config (global-git-gutter-mode t))
 
-(req-package paren
+(use-package paren
   :config (progn (show-paren-mode t)
                  (setq show-paren-delay 0)
                  ))
 
-(req-package highlight-parentheses
+(use-package highlight-parentheses
+  :ensure t
   :config (progn
             (defun hl-parens-hook()
               (highlight-parentheses-mode 1))
             (add-hook 'prog-mode-hook #'hl-parens-hook)
             ))
 
-;; (req-package elec-pair
+;; (use-package elec-pair
 ;;   :config (electric-pair-mode t))
 
-(req-package electric
+(use-package electric
   :config (electric-indent-mode t))
 
 
@@ -605,7 +620,9 @@ If region is active, apply to active region instead."
 
 (setq-default show-trailing-whitespace t)
 
-(req-package ace-jump-mode
+(use-package ace-jump-mode
+  :ensure t
+  :commands ace-jump-word-mode
   :init (progn (bind-key "C-c SPC" #'ace-jump-word-mode)
                (bind-key "H-SPC" #'ace-jump-word-mode)
                (bind-key "C-c C-x" #'ace-jump-mode-pop-mark)
@@ -618,36 +635,41 @@ If region is active, apply to active region instead."
                (setq ace-jump-mode-scope 'window)
                ))
 
-(req-package ace-window
+(use-package ace-window
+  :ensure t
   :init (progn (bind-key "M-o" #'ace-window)
                (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
                ))
 
-(req-package anzu
+(use-package anzu
+  :ensure t
   :config (global-anzu-mode t))
 
-;; (req-package aggressive-indent
-;;   :config (global-aggressive-indent-mode t)
-;;   )
+(use-package aggressive-indent
+  :disabled t
+  :config (global-aggressive-indent-mode t))
 
-(req-package expand-region
+(use-package expand-region
+  :ensure t
   :init (progn (bind-key "C-=" #'er/expand-region)
                ))
 
-;; (req-package key-chord
-;;   :init (progn (key-chord-mode 1))
-;;   :config (progn
-;;             (key-chord-define-global "VV" #'other-window)
-;;             )
-;;   )
+(use-package key-chord
+  :disabled t
+  :init (progn (key-chord-mode 1))
+  :config (progn
+            (key-chord-define-global "VV" #'other-window)
+            ))
 
-(req-package guide-key
+(use-package guide-key
+  :ensure t
   :config (progn (guide-key-mode t)
                  (setq guide-key/guide-key-sequence '("C-x" "C-c" "SPC" "H-p"))
                  (setq guide-key/recursive-key-sequence-flag t)
                  ))
 
-(req-package multiple-cursors
+(use-package multiple-cursors
+  :ensure t
   :preface (setq mc/list-file (concat user-cache-directory "mc-lists.el"))
   :init (progn (setq mc/unsupported-minor-modes '(company-mode
                                                   auto-complete-mode
@@ -662,7 +684,8 @@ If region is active, apply to active region instead."
                (bind-key "M-<mouse-1>" 'mc/add-cursor-on-click)
                ))
 
-(req-package magit
+(use-package magit
+  :ensure t
   :init (progn (bind-key "C-c m" #'magit-status)))
 
 
@@ -711,10 +734,205 @@ If region is active, apply to active region instead."
 
 
 
+;; Hydra ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package hydra
+  :ensure t
+  :init (progn
+          (bind-key "<f2>" (defhydra hydra-zoom ()
+                                   "zoom"
+                                   ("i" text-scale-increase "in")
+                                   ("o" text-scale-decrease "out")))
+
+          (bind-key "C-z" (defhydra hydra-vi
+                                  (:pre
+                                   (set-cursor-color "#40e0d0")
+                                   :post
+                                   (progn (set-cursor-color "#ffffff")))
+                                  "vi"
+                                  ("l" forward-char)
+                                  ("h" backward-char)
+                                  ("j" next-line)
+                                  ("k" previous-line)
+                                  ("m" set-mark-command "mark")
+                                  ("a" move-beginning-of-line "beg")
+                                  ("e" move-end-of-line "end")
+                                  ("d" delete-region "del" :color blue)
+                                  ("y" kill-ring-save "yank" :color blue)
+                                  ("q" nil "quit")
+                                  ))
+          ))
+
+
+
+;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package helm
+  :ensure t
+  ;; :init (progn  )
+  :config (progn
+            ;; (setq-default helm-mode-line-string "")
+
+            (setq helm-scroll-amount 4             ;; scroll 4 lines other window using M-<next>/M-<prior>
+                  helm-quick-update t              ;; do not display invisible candidates
+                  helm-idle-delay 0.01             ;; be idle for this many seconds, before updating in delayed sources.
+                  helm-input-idle-delay 0.01       ;; be idle for this many seconds, before updating candidate buffer
+                  helm-ff-search-library-in-sexp t ;; search for library in `require' and `declare-function' sexp.
+
+                  helm-full-frame nil
+                  ;; helm-split-window-default-side 'other ;; open helm buffer in another window
+                  ;; helm-split-window-in-side-p t         ;; open helm buffer inside current window, not occupy whole other window
+                  ;; helm-buffers-favorite-modes (append helm-buffers-favorite-modes
+                  ;;                                     '(picture-mode artist-mode))
+                  helm-candidate-number-limit 200         ;; limit the number of displayed canidates
+                  helm-M-x-requires-pattern 0             ;; show all candidates when set to 0
+                  helm-ff-file-name-history-use-recentf t
+                  ;; helm-move-to-line-cycle-in-source t     ;; move to end or beginning of source
+                  ;;                                         ;; when reaching top or bottom of source.
+
+                  ;; ido-use-virtual-buffers t      ;; Needed in helm-buffers-list
+                  helm-buffers-fuzzy-matching t     ;; fuzzy matching buffer names when non--nil
+                  ;; useful in helm-mini that lists buffers
+
+                  helm-display-header-line nil
+                  )
+
+            ;; ;; "Remove" source header text
+            ;; (set-face-attribute 'helm-source-header nil :height 1.0)
+
+            ;; Save current position to mark ring when jumping to a different place
+            (add-hook 'helm-goto-line-before-hook #'helm-save-current-pos-to-mark-ring)
+
+            (helm-mode t)
+
+            (bind-key "C-z"   #'helm-select-action  helm-map)
+            (bind-key "C-w"   #'backward-kill-word  helm-map)
+
+            ;; Tab -> do persistent action
+            (bind-key "<tab>" #'helm-execute-persistent-action helm-map)
+
+            ;; Make Tab work in terminal. Cannot use "bind-key" since it would detect that we
+            ;; already bound tab.
+            (define-key helm-map (kbd "C-i") #'helm-execute-persistent-action)
+
+            (bind-key "M-x" #'helm-M-x)
+            (bind-key "C-x C-f" #'helm-find-files)
+
+            (bind-key "C-x b" #'helm-buffers-list)
+            (bind-key "C-c u" #'helm-buffers-list)
+
+            (bind-key "C-c o" #'helm-imenu)
+            (bind-key "C-c y" #'helm-show-kill-ring)
+            ))
+
+(use-package helm-swoop
+  :ensure t
+  :init (progn (bind-key "M-i" #'helm-swoop-from-isearch isearch-mode-map)
+               (bind-key "C-c s" #'helm-swoop)
+
+               ;; disable pre-input
+               (setq helm-swoop-pre-input-function (lambda () ""))
+               ))
+
+
+
+;; Ido-mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package ido
+  :ensure t
+  :config (progn (ido-mode t)
+                 (setq ido-enable-prefix nil
+                       ido-enable-flex-matching t
+                       ido-create-new-buffer 'always
+                       ido-use-filename-at-point nil
+                       ido-max-prospects 10)
+
+                 (setq ido-save-directory-list-file (concat user-cache-directory "ido.last"))
+
+                 ;; Always rescan buffer for imenu
+                 (set-default 'imenu-auto-rescan t)
+
+                 (add-to-list 'ido-ignore-directories "target")
+                 (add-to-list 'ido-ignore-directories "node_modules")
+
+                 ;; Use ido everywhere
+                 (ido-everywhere 1)
+
+                 ;; Display ido results vertically, rather than horizontally
+                 (setq ido-decorations (quote ("\n-> "
+                                               ""
+                                               "\n "
+                                               "\n ..."
+                                               "[" "]"
+                                               " [No match]"
+                                               " [Matched]"
+                                               " [Not readable]"
+                                               " [Too big]"
+                                               " [Confirm]")))
+                 ))
+
+
+
+;; Projectile ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package projectile
+  :ensure t
+  :preface (progn
+              (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
+              (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
+  :init (progn (bind-key "H-p" #'projectile-command-map)
+               (bind-key "C-c a" #'projectile-find-other-file))
+  :config (progn (setq projectile-enable-caching t)
+
+                 ;; (setq projectile-indexing-method 'native)
+
+                 ;; (add-to-list 'projectile-globally-ignored-directories "elpa")
+                 ;; (add-to-list 'projectile-globally-ignored-directories ".cache")
+
+                 (setq projectile-completion-system 'helm)
+
+                 (projectile-global-mode t)
+                 ))
+
+(use-package helm-projectile
+  :ensure t
+  :init (progn (helm-projectile-on)
+          ))
+
+
+
+;; Workgroups2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package workgroups2
+  :ensure t
+  :config (progn (setq wg-default-session-file (concat user-cache-directory "workgroups2"))
+                 (setq wg-use-default-session-file nil)
+
+                 ;; Change prefix key (before activating WG)
+                 (setq wg-prefix-key (kbd "C-c z"))
+
+                 ;; What to do on Emacs exit / workgroups-mode exit?
+                 (setq wg-emacs-exit-save-behavior nil)           ;; Options: 'save 'ask nil
+                 (setq wg-workgroups-mode-exit-save-behavior nil) ;; Options: 'save 'ask nil
+
+                 ;; Mode Line changes
+                 ;; Display workgroups in Mode Line?
+                 (setq wg-mode-line-display-on t) ;; Default: (not (featurep 'powerline))
+                 (setq wg-flag-modified t)        ;; Display modified flags as well
+
+                 (setq wg-mode-line-decor-left-brace  "["
+                       wg-mode-line-decor-right-brace "]"
+                       wg-mode-line-decor-divider     ":")
+
+                 (workgroups-mode t)
+                 ))
+
+
+
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(req-package evil
-  :require (workgroups2)
+(use-package evil
+  :ensure t
   :preface (progn (setq evil-want-C-u-scroll t)
                    (setq evil-move-cursor-back nil)
                    (setq evil-cross-lines t)
@@ -772,11 +990,26 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-must-match-map)
                  (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-isearch-map)
 
-                 ;; Delete forward like Emacs.
-                 (bind-key "C-d" #'evil-delete-char evil-insert-state-map)
+                 ;; Being Emacs-y
+                 (bind-key "C-a" #'evil-beginning-of-line  evil-insert-state-map)
+                 (bind-key "C-a" #'evil-beginning-of-line  evil-motion-state-map)
 
-                 ;; Make end-of-line work in insert
-                 (bind-key "C-e" #'end-of-line evil-insert-state-map)
+                 (bind-key "C-b" #'evil-backward-char      evil-insert-state-map)
+                 (bind-key "C-d" #'evil-delete-char        evil-insert-state-map)
+
+                 (bind-key "C-e" #'evil-end-of-line        evil-insert-state-map)
+                 (bind-key "C-e" #'evil-end-of-line        evil-motion-state-map)
+
+                 (bind-key "C-f" #'evil-forward-char       evil-insert-state-map)
+
+                 ;; (bind-key "C-k" #'evil-kill-line          evil-insert-state-map)
+                 ;; (bind-key "C-k" #'evil-kill-line          evil-motion-state-map)
+
+                 ;; ;; Delete forward like Emacs.
+                 ;; (bind-key "C-d" #'evil-delete-char evil-insert-state-map)
+
+                 ;; ;; Make end-of-line work in insert
+                 ;; (bind-key "C-e" #'end-of-line evil-insert-state-map)
 
                  ;; gj gk by default
                  (bind-key "j" #'evil-next-visual-line     evil-normal-state-map)
@@ -824,14 +1057,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                  (evil-visual-restore))
                            evil-visual-state-map)
 
-                 ;; Workgroups2
-                 (bind-key "g T" #'wg-switch-to-workgroup-left  evil-normal-state-map)
-                 (bind-key "g t" #'wg-switch-to-workgroup-right evil-normal-state-map)
+                 ;; ;; Workgroups2
+                 ;; (bind-key "g T" #'wg-switch-to-workgroup-left  evil-normal-state-map)
+                 ;; (bind-key "g t" #'wg-switch-to-workgroup-right evil-normal-state-map)
 
-                 (bind-key "g t" #'wg-switch-to-workgroup-right evil-motion-state-map)
+                 ;; (bind-key "g t" #'wg-switch-to-workgroup-right evil-motion-state-map)
 
-                 (evil-ex-define-cmd "tabnew"   #'wg-create-workgroup)
-                 (evil-ex-define-cmd "tabclose" #'wg-kill-workgroup)
+                 ;; (evil-ex-define-cmd "tabnew"   #'wg-create-workgroup)
+                 ;; (evil-ex-define-cmd "tabclose" #'wg-kill-workgroup)
 
                  ;; "Unimpaired"
                  (bind-key "[ b" #'previous-buffer evil-normal-state-map)
@@ -862,10 +1095,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                    (message "Thou shall not quit!"))
                  ))
 
-(req-package evil-leader
-  :require (ace-jump-mode ace-window evil expand-region helm
-                          helm-projectile helm-swoop magit
-                          projectile)
+(use-package evil-leader
+  :ensure t
   ;; :init (progn)
   :config (progn (setq evil-leader/in-all-states t
                        evil-leader/leader "SPC"
@@ -916,7 +1147,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  ;; Ace-jump-mode (has evil-integration built in!)
                  (evil-leader/set-key "SPC" #'ace-jump-word-mode)
-                 (evil-leader/set-key "l"   #'ace-window)
+                 (evil-leader/set-key "l"   #'helm-locate)
 
                  ;; Expand region
                  (evil-leader/set-key "v" #'er/expand-region)
@@ -935,12 +1166,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                    "hv" #'describe-variable)
                  ))
 
-;; (req-package evil-surround
-;;   :require evil
-;;   :config (global-evil-surround-mode t))
+(use-package evil-surround
+  :disabled t
+  :config (global-evil-surround-mode t))
 
-(req-package evil-args
-  :require evil
+(use-package evil-args
+  :ensure t
   :init (progn
           ;; bind evil-args text objects
           (bind-key "a" #'evil-inner-arg evil-inner-text-objects-map)
@@ -958,192 +1189,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 
 
-;; Hydra ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(req-package hydra
-  :init (progn
-          (bind-key "<f2>" (defhydra hydra-zoom ()
-                                   "zoom"
-                                   ("i" text-scale-increase "in")
-                                   ("o" text-scale-decrease "out")))
-
-          (bind-key "C-z" (defhydra hydra-vi
-                                  (:pre
-                                   (set-cursor-color "#40e0d0")
-                                   :post
-                                   (progn (set-cursor-color "#ffffff")))
-                                  "vi"
-                                  ("l" forward-char)
-                                  ("h" backward-char)
-                                  ("j" next-line)
-                                  ("k" previous-line)
-                                  ("m" set-mark-command "mark")
-                                  ("a" move-beginning-of-line "beg")
-                                  ("e" move-end-of-line "end")
-                                  ("d" delete-region "del" :color blue)
-                                  ("y" kill-ring-save "yank" :color blue)
-                                  ("q" nil "quit")
-                                  ))
-          ))
-
-
-
-;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(req-package helm
-  ;; :init (progn  )
-  :config (progn
-            (setq helm-scroll-amount 4             ;; scroll 4 lines other window using M-<next>/M-<prior>
-                  helm-quick-update t              ;; do not display invisible candidates
-                  helm-idle-delay 0.01             ;; be idle for this many seconds, before updating in delayed sources.
-                  helm-input-idle-delay 0.01       ;; be idle for this many seconds, before updating candidate buffer
-                  helm-ff-search-library-in-sexp t ;; search for library in `require' and `declare-function' sexp.
-
-                  helm-full-frame nil
-                  ;; helm-split-window-default-side 'other ;; open helm buffer in another window
-                  ;; helm-split-window-in-side-p t         ;; open helm buffer inside current window, not occupy whole other window
-                  ;; helm-buffers-favorite-modes (append helm-buffers-favorite-modes
-                  ;;                                     '(picture-mode artist-mode))
-                  helm-candidate-number-limit 200         ;; limit the number of displayed canidates
-                  helm-M-x-requires-pattern 0             ;; show all candidates when set to 0
-                  helm-ff-file-name-history-use-recentf t
-                  ;; helm-move-to-line-cycle-in-source t     ;; move to end or beginning of source
-                  ;;                                         ;; when reaching top or bottom of source.
-
-                  ;; ido-use-virtual-buffers t      ;; Needed in helm-buffers-list
-                  helm-buffers-fuzzy-matching t     ;; fuzzy matching buffer names when non--nil
-                  ;; useful in helm-mini that lists buffers
-                  )
-
-            ;; Save current position to mark ring when jumping to a different place
-            (add-hook 'helm-goto-line-before-hook #'helm-save-current-pos-to-mark-ring)
-
-            (helm-mode t)
-
-            (bind-key "C-z"   #'helm-select-action  helm-map)
-            (bind-key "C-w"   #'backward-kill-word  helm-map)
-
-            ;; Tab -> do persistent action
-            (bind-key "<tab>" #'helm-execute-persistent-action helm-map)
-
-            ;; Make Tab work in terminal. Cannot use "bind-key" since it would detect that we
-            ;; already bound tab.
-            (define-key helm-map (kbd "C-i") #'helm-execute-persistent-action)
-
-            (bind-key "M-x" #'helm-M-x)
-            (bind-key "C-x C-f" #'helm-find-files)
-
-            (bind-key "C-x b" #'helm-buffers-list)
-            (bind-key "C-c u" #'helm-buffers-list)
-
-            (bind-key "C-c o" #'helm-imenu)
-            (bind-key "C-c y" #'helm-show-kill-ring)
-            ))
-
-(req-package helm-swoop
-  :require helm
-  :init (progn (bind-key "M-i" #'helm-swoop-from-isearch isearch-mode-map)
-               (bind-key "C-c s" #'helm-swoop)
-
-               ;; disable pre-input
-               (setq helm-swoop-pre-input-function (lambda () ""))
-               ))
-
-
-
-;; Ido-mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(req-package ido
-  :config (progn (ido-mode t)
-                 (setq ido-enable-prefix nil
-                       ido-enable-flex-matching t
-                       ido-create-new-buffer 'always
-                       ido-use-filename-at-point nil
-                       ido-max-prospects 10)
-
-                 (setq ido-save-directory-list-file (concat user-cache-directory "ido.last"))
-
-                 ;; Always rescan buffer for imenu
-                 (set-default 'imenu-auto-rescan t)
-
-                 (add-to-list 'ido-ignore-directories "target")
-                 (add-to-list 'ido-ignore-directories "node_modules")
-
-                 ;; Use ido everywhere
-                 (ido-everywhere 1)
-
-                 ;; Display ido results vertically, rather than horizontally
-                 (setq ido-decorations (quote ("\n-> "
-                                               ""
-                                               "\n "
-                                               "\n ..."
-                                               "[" "]"
-                                               " [No match]"
-                                               " [Matched]"
-                                               " [Not readable]"
-                                               " [Too big]"
-                                               " [Confirm]")))
-                 ))
-
-
-
-;; Projectile ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(req-package projectile
-  :preface (progn
-              (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
-              (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
-  :init (progn (bind-key "H-p" #'projectile-command-map)
-               (bind-key "C-c a" #'projectile-find-other-file))
-  :config (progn (setq projectile-enable-caching t)
-
-                 ;; (setq projectile-indexing-method 'native)
-
-                 ;; (add-to-list 'projectile-globally-ignored-directories "elpa")
-                 ;; (add-to-list 'projectile-globally-ignored-directories ".cache")
-
-                 (setq projectile-completion-system 'helm)
-
-                 (projectile-global-mode t)
-                 ))
-
-(req-package helm-projectile
-  :require (helm projectile)
-  :init (progn (helm-projectile-on)
-          ))
-
-
-
-;; Workgroups2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(req-package workgroups2
-  :config (progn (setq wg-default-session-file (concat user-cache-directory "workgroups2"))
-                 (setq wg-use-default-session-file nil)
-
-                 ;; Change prefix key (before activating WG)
-                 (setq wg-prefix-key (kbd "C-c z"))
-
-                 ;; What to do on Emacs exit / workgroups-mode exit?
-                 (setq wg-emacs-exit-save-behavior nil)           ;; Options: 'save 'ask nil
-                 (setq wg-workgroups-mode-exit-save-behavior nil) ;; Options: 'save 'ask nil
-
-                 ;; Mode Line changes
-                 ;; Display workgroups in Mode Line?
-                 (setq wg-mode-line-display-on t) ;; Default: (not (featurep 'powerline))
-                 (setq wg-flag-modified t)        ;; Display modified flags as well
-
-                 (setq wg-mode-line-decor-left-brace  "["
-                       wg-mode-line-decor-right-brace "]"
-                       wg-mode-line-decor-divider     ":")
-
-                 (workgroups-mode t)
-                 ))
-
-
-
 ;; Language Hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(req-package cc-mode
+(use-package cc-mode
   :config (progn (setq-default c-default-style "bsd")
                  (setq-default c-basic-offset 4)
 
@@ -1157,7 +1205,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (add-hook 'c-mode-common-hook #'c-mode-common-custom)
                  ))
 
-(req-package markdown-mode
+(use-package markdown-mode
+  :ensure t
   :config (progn (defun my-markdown-mode-hook()
                    (defvar markdown-imenu-generic-expression
                      '(("title" "^\\(.*\\)[\n]=+$" 1)
@@ -1175,22 +1224,30 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (add-hook 'markdown-mode-hook #'my-markdown-mode-hook)
                  ))
 
-;; (req-package js2-mode
-;;              :config (js2-highlight-level 3))
+(use-package js2-mode
+  :disabled t
+  :config (js2-highlight-level 3))
 
-(req-package lua-mode
-  :mode ("\\.lua$" . lua-mode)
-  )
+(use-package lua-mode
+  :ensure t
+  :mode ("\\.lua$" . lua-mode))
 
-(req-package sgml-mode
-  :mode (("\\.html\\'" . html-mode)))
+(use-package sgml-mode
+  :ensure t
+  :mode ("\\.html\\'" . html-mode))
 
 
 
 ;; Auto-completion ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(req-package company
-  :require (irony company-irony)
+(use-package irony
+  :ensure t)
+
+(use-package company-irony
+  :ensure t)
+
+(use-package company
+  :ensure t
   :init (progn (bind-key "C-n" #'company-select-next     company-active-map)
                (bind-key "C-p" #'company-select-previous company-active-map)
                )
@@ -1236,20 +1293,22 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Flycheck ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; (req-package flycheck
-;;   :init (progn
-;;           ;; Remove newline checks, since they would trigger an immediate check
-;;           ;; when we want the idle-change-delay to be in effect while editing.
-;;           (setq flycheck-check-syntax-automatically '(save
-;;                                                       idle-change
-;;                                                       mode-enabled))
-;;           ))
+(use-package flycheck
+  :disabled t
+  :init (progn
+          ;; Remove newline checks, since they would trigger an immediate check
+          ;; when we want the idle-change-delay to be in effect while editing.
+          (setq flycheck-check-syntax-automatically '(save
+                                                      idle-change
+                                                      mode-enabled))
+          ))
 
 
 
 ;; Yasnippet ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(req-package yasnippet
+(use-package yasnippet
+  :ensure t
   :init (progn (setq yas-snippet-dirs (concat user-emacs-directory "snippets")))
   :config (progn (yas-reload-all)
                  (add-hook 'prog-mode-hook #'yas-minor-mode)
@@ -1260,7 +1319,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Org ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(req-package org
+(use-package org
   :config (progn (setq org-replace-disputed-keys t)
 
                  ;; Fontify org-mode code blocks
@@ -1271,19 +1330,19 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Other Modes ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(req-package erc
+(use-package erc
   :config (progn (setq-default erc-nick "MaryHadALittle")))
 
-(defun load-minimap-package ()
-  (interactive)
-  (add-to-loadpath "~/.emacs.d/site-lisp/sublimity")
-  (require 'sublimity)
-  (require 'sublimity-map)
-  (sublimity-mode 1)
-  (sublimity-map-set-delay nil)
-  (setq sublimity-map-size 30)
-  (setq sublimity-map-fraction 0.3)
-  )
+;; (defun load-minimap-package ()
+;;   (interactive)
+;;   (add-to-loadpath "~/.emacs.d/site-lisp/sublimity")
+;;   (require 'sublimity)
+;;   (require 'sublimity-map)
+;;   (sublimity-mode 1)
+;;   (sublimity-map-set-delay nil)
+;;   (setq sublimity-map-size 30)
+;;   (setq sublimity-map-fraction 0.3)
+;;   )
 
 
 
@@ -1332,69 +1391,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (bind-key "M-i"      #'back-to-indentation)
 
 ;; Character-targeted movements
-(req-package misc
+(use-package misc
   :init (progn
           (bind-key "M-z" #'zap-up-to-char)
           ))
 
-(req-package jump-char
+(use-package jump-char
+  :ensure t
   :init (progn
           (bind-key "M-m" #'jump-char-forward)
           (bind-key "M-M" #'jump-char-backward)
           ))
 
-(defun hyper-keybindings ()
-  (bind-key "H-!" #'shell-command)
-
-  (bind-key "H-a" #'projectile-find-other-file)
-
-  ;; Eval
-  (bind-key "H-e b" #'eval-buffer)
-  (bind-key "H-e r" #'eval-region)
-
-  ;; Errors
-  (bind-key "H-e n" #'next-error)
-  (bind-key "H-e p" #'previous-error)
-
-  ;; Files
-  (bind-key "H-f" #'helm-find-files)
-
-  ;; Buffers
-  (bind-key "H-b" #'buffer-menu)
-  (bind-key "H-k" #'ido-kill-buffer)
-  (bind-key "H-u" #'helm-buffers-list)
-
-  (bind-key "H-o" #'helm-imenu)
-  (bind-key "H-x" #'helm-M-x)
-
-  ;; Kill ring
-  (bind-key "H-y" #'helm-show-kill-ring)
-
-  ;; Git
-  (bind-key "H-m" #'magit-status)
-
-  ;; ;; Projectile
-  ;; (bind-key "H-p" #'helm-projectile)
-
-  ;; Swoop
-  (bind-key "H-s" #'helm-swoop)
-
-  ;; Ace-jump-mode (has evil-integration built in!)
-  (bind-key "H-SPC" #'ace-jump-word-mode)
-  (bind-key "H-l"   #'ace-window)
-
-  ;; Expand region
-  (bind-key "H-v" #'er/expand-region)
-
-  ;; Terminal
-  (bind-key "H-t" #'open-terminal)
-  )
-;; (hyper-keybindings)
-
 
 
 ;; Finishing Up ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(req-package-finish)
-
-(server-start)
+;; (server-start)
