@@ -622,23 +622,21 @@ If region is active, apply to active region instead."
 
 (use-package ace-jump-mode
   :ensure t
-  :commands ace-jump-word-mode
-  :init (progn (bind-key "C-c SPC" #'ace-jump-word-mode)
-               (bind-key "H-SPC" #'ace-jump-word-mode)
-               (bind-key "C-c C-x" #'ace-jump-mode-pop-mark)
+  :bind (("C-c SPC" . ace-jump-word-mode)
+         ("C-c C-x" . ace-jump-mode-pop-mark))
+  :init (progn
+          ;; ;; Lowercase keys only please.
+          ;; (setq ace-jump-mode-move-keys
+          ;;       (loop for i from ?a to ?z collect i))
 
-               ;; ;; Lowercase keys only please.
-               ;; (setq ace-jump-mode-move-keys
-               ;;       (loop for i from ?a to ?z collect i))
-
-               ;; Only jump in this window.
-               (setq ace-jump-mode-scope 'window)
-               ))
+          ;; Only jump in this window.
+          (setq ace-jump-mode-scope 'window)
+          ))
 
 (use-package ace-window
   :ensure t
-  :init (progn (bind-key "M-o" #'ace-window)
-               (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  :bind (("M-o" . ace-window))
+  :init (progn (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
                ))
 
 (use-package anzu
@@ -651,8 +649,8 @@ If region is active, apply to active region instead."
 
 (use-package expand-region
   :ensure t
-  :init (progn (bind-key "C-=" #'er/expand-region)
-               ))
+  :bind (("C-=" . er/expand-region))
+  :init (progn ))
 
 (use-package key-chord
   :disabled t
@@ -664,8 +662,11 @@ If region is active, apply to active region instead."
 (use-package guide-key
   :ensure t
   :config (progn (guide-key-mode t)
-                 (setq guide-key/guide-key-sequence '("C-x" "C-c" "SPC" "H-p"))
+                 (setq guide-key/guide-key-sequence '("C-x" "C-c" "SPC"))
                  (setq guide-key/recursive-key-sequence-flag t)
+
+                 ;; Alignment and extra spacing
+                 (setq guide-key/align-command-by-space-flag t)
                  ))
 
 (use-package multiple-cursors
@@ -686,7 +687,9 @@ If region is active, apply to active region instead."
 
 (use-package magit
   :ensure t
-  :init (progn (bind-key "C-c m" #'magit-status)))
+  :bind (("C-c m" . magit-status))
+  ;; :init (progn )
+  )
 
 
 
@@ -769,7 +772,7 @@ If region is active, apply to active region instead."
 
 (use-package helm
   :ensure t
-  ;; :init (progn  )
+  :defer t
   :config (progn
             ;; (setq-default helm-mode-line-string "")
 
@@ -827,6 +830,7 @@ If region is active, apply to active region instead."
 
 (use-package helm-swoop
   :ensure t
+  :defer t
   :init (progn (bind-key "M-i" #'helm-swoop-from-isearch isearch-mode-map)
                (bind-key "C-c s" #'helm-swoop)
 
@@ -880,8 +884,7 @@ If region is active, apply to active region instead."
   :preface (progn
               (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
               (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
-  :init (progn (bind-key "H-p" #'projectile-command-map)
-               (bind-key "C-c a" #'projectile-find-other-file))
+  :init (progn (bind-key "C-c a" #'projectile-find-other-file))
   :config (progn (setq projectile-enable-caching t)
 
                  ;; (setq projectile-indexing-method 'native)
@@ -904,7 +907,7 @@ If region is active, apply to active region instead."
 ;; Workgroups2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package workgroups2
-  :ensure t
+  :disabled t
   :config (progn (setq wg-default-session-file (concat user-cache-directory "workgroups2"))
                  (setq wg-use-default-session-file nil)
 
@@ -1097,7 +1100,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-leader
   :ensure t
-  ;; :init (progn)
   :config (progn (setq evil-leader/in-all-states t
                        evil-leader/leader "SPC"
                        evil-leader/non-normal-prefix "s-")
@@ -1172,6 +1174,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-args
   :ensure t
+  :defer t
   :init (progn
           ;; bind evil-args text objects
           (bind-key "a" #'evil-inner-arg evil-inner-text-objects-map)
@@ -1392,16 +1395,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Character-targeted movements
 (use-package misc
-  :init (progn
-          (bind-key "M-z" #'zap-up-to-char)
-          ))
+  :bind (("M-z" . zap-up-to-char))
+          )
 
 (use-package jump-char
   :ensure t
-  :init (progn
-          (bind-key "M-m" #'jump-char-forward)
-          (bind-key "M-M" #'jump-char-backward)
-          ))
+  :bind (("M-m" . jump-char-forward)
+         ("M-M" . jump-char-backward))
+          )
 
 
 
