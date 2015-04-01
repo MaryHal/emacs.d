@@ -1,6 +1,10 @@
 
 ;;; Code:
 
+(defconst emacs-start-time (current-time))
+(unless noninteractive
+  (message "Loading %s..." load-file-name))
+
 (require 'package)
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("melpa" . "http://melpa.org/packages/")))
@@ -31,7 +35,8 @@
 (defun require-package (package)
   "refresh package archives, check package presence and install if it's not installed"
   (if (null (require package nil t))
-      (progn (let* ((ARCHIVES (if (null package-archive-contents)
+      (progn (package-initialize)
+             (let* ((ARCHIVES (if (null package-archive-contents)
                                   (progn (package-refresh-contents)
                                          package-archive-contents)
                                 package-archive-contents))
@@ -50,6 +55,7 @@
 
 (use-package paradox
   :ensure t
+  :defer t
   :config (progn (setq paradox-execute-asynchronously t)))
 
 
@@ -394,9 +400,11 @@ If region is active, apply to active region instead."
   :config (delete-selection-mode t))
 
 (use-package tramp
+  :defer t
   :config (setq tramp-default-method "ssh"))
 
 (use-package recentf
+  :defer t
   :config (progn (setq recentf-save-file (concat user-cache-directory "recentf"))
                  (setq recentf-max-saved-items 100)
                  (setq recentf-max-menu-items 15)
@@ -404,6 +412,7 @@ If region is active, apply to active region instead."
                  ))
 
 (use-package uniquify
+  :defer t
   :config (progn (setq uniquify-buffer-name-style 'forward
                        uniquify-separator "/"
                        uniquify-ignore-buffers-re "^\\*" ;; leave special buffers alone
@@ -411,16 +420,18 @@ If region is active, apply to active region instead."
                  ))
 
 (use-package ediff
+  :defer t
   :config (progn (setq ediff-diff-options "-w")
                  (setq ediff-split-window-function 'split-window-horizontally)
                  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
                  ))
 
-;; (use-package mouse
-;;   :config (progn (xterm-mouse-mode t)
-;;                  (defun track-mouse (e))
-;;                  (setq mouse-sel-mode t)
-;;                  ))
+(use-package mouse
+  :disabled t
+  :config (progn (xterm-mouse-mode t)
+                 (defun track-mouse (e))
+                 (setq mouse-sel-mode t)
+                 ))
 
 ;; Seed the random number generator
 (random t)
@@ -482,6 +493,7 @@ If region is active, apply to active region instead."
 
 (use-package popwin
   :ensure t
+  :defer t
   :config (progn (push '("helm" :regexp t :height 16) popwin:special-display-config)
                  (push "*Shell Command Output*" popwin:special-display-config)
                  (push '(compilation-mode :noselect t) popwin:special-display-config)
@@ -587,10 +599,6 @@ If region is active, apply to active region instead."
               right-margin-width 1)
 (set-window-buffer nil (current-buffer))
 
-(use-package git-gutter
-  :ensure t
-  :config (global-git-gutter-mode t))
-
 (use-package paren
   :config (progn (show-paren-mode t)
                  (setq show-paren-delay 0)
@@ -650,7 +658,8 @@ If region is active, apply to active region instead."
 (use-package expand-region
   :ensure t
   :bind (("C-=" . er/expand-region))
-  :init (progn ))
+  ;; :init (progn )
+  )
 
 (use-package key-chord
   :disabled t
@@ -685,11 +694,19 @@ If region is active, apply to active region instead."
                (bind-key "M-<mouse-1>" 'mc/add-cursor-on-click)
                ))
 
+
+
+;; Version Control;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (use-package magit
   :ensure t
   :bind (("C-c m" . magit-status))
-  ;; :init (progn )
   )
+
+(use-package git-gutter
+  :ensure t
+  :defer t
+  :config (global-git-gutter-mode t))
 
 
 
@@ -704,36 +721,36 @@ If region is active, apply to active region instead."
 ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
-;; If emacs is run in a terminal, the clipboard- functions have no effect. Instead, we use of xsel,
-;; see http://www.vergenet.net/~conrad/software/xsel/ -- "a command-line program for getting and
-;; setting the contents of the X selection"
-(unless window-system
-  (when (getenv "DISPLAY")
-    ;; Callback for when user cuts
-    (defun xsel-cut-function (text &optional push)
-      ;; Insert text to temp-buffer, and "send" content to xsel stdin
-      (with-temp-buffer
-        (insert text)
-        ;; I prefer using the "clipboard" selection (the one the typically is used by c-c/c-v)
-        ;; before the primary selection (that uses mouse-select/middle-button-click)
-        (call-process-region (point-min) (point-max)
-                             "xsel"
-                             nil 0
-                             nil "--clipboard" "--input")))
-    ;; Callback for when user pastes
-    (defun xsel-paste-function()
-      ;; Find out what is current selection by xsel. If it is different from the top of the
-      ;; kill-ring (car kill-ring), then return it. Else, nil is returned, so whatever is in the top
-      ;; of the kill-ring will be used.
-      (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
-        (unless (string= (car kill-ring) xsel-output)
-          xsel-output )))
-    ;; Attach callbacks to hooks
-    (setq interprogram-cut-function #'xsel-cut-function)
-    (setq interprogram-paste-function #'xsel-paste-function)
-    ;; Idea from http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
-    ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
-    ))
+;; ;; If emacs is run in a terminal, the clipboard- functions have no effect. Instead, we use of xsel,
+;; ;; see http://www.vergenet.net/~conrad/software/xsel/ -- "a command-line program for getting and
+;; ;; setting the contents of the X selection"
+;; (unless window-system
+;;   (when (getenv "DISPLAY")
+;;     ;; Callback for when user cuts
+;;     (defun xsel-cut-function (text &optional push)
+;;       ;; Insert text to temp-buffer, and "send" content to xsel stdin
+;;       (with-temp-buffer
+;;         (insert text)
+;;         ;; I prefer using the "clipboard" selection (the one the typically is used by c-c/c-v)
+;;         ;; before the primary selection (that uses mouse-select/middle-button-click)
+;;         (call-process-region (point-min) (point-max)
+;;                              "xsel"
+;;                              nil 0
+;;                              nil "--clipboard" "--input")))
+;;     ;; Callback for when user pastes
+;;     (defun xsel-paste-function()
+;;       ;; Find out what is current selection by xsel. If it is different from the top of the
+;;       ;; kill-ring (car kill-ring), then return it. Else, nil is returned, so whatever is in the top
+;;       ;; of the kill-ring will be used.
+;;       (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
+;;         (unless (string= (car kill-ring) xsel-output)
+;;           xsel-output )))
+;;     ;; Attach callbacks to hooks
+;;     (setq interprogram-cut-function #'xsel-cut-function)
+;;     (setq interprogram-paste-function #'xsel-paste-function)
+;;     ;; Idea from http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
+;;     ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
+;;     ))
 
 
 
@@ -772,7 +789,13 @@ If region is active, apply to active region instead."
 
 (use-package helm
   :ensure t
-  :defer t
+  :bind (("M-x" . helm-M-x)
+         ("C-x C-f" . helm-find-files)
+
+         ("C-x b" . helm-buffers-list)
+         ("C-c u" . helm-buffers-list)
+
+         ("C-c y" . helm-show-kill-ring))
   :config (progn
             ;; (setq-default helm-mode-line-string "")
 
@@ -817,22 +840,15 @@ If region is active, apply to active region instead."
             ;; Make Tab work in terminal. Cannot use "bind-key" since it would detect that we
             ;; already bound tab.
             (define-key helm-map (kbd "C-i") #'helm-execute-persistent-action)
-
-            (bind-key "M-x" #'helm-M-x)
-            (bind-key "C-x C-f" #'helm-find-files)
-
-            (bind-key "C-x b" #'helm-buffers-list)
-            (bind-key "C-c u" #'helm-buffers-list)
-
-            (bind-key "C-c o" #'helm-imenu)
-            (bind-key "C-c y" #'helm-show-kill-ring)
             ))
+
+(use-package helm-imenu
+  :bind ("C-c o" . helm-imenu))
 
 (use-package helm-swoop
   :ensure t
-  :defer t
+  :bind (("C-c s" . helm-swoop))
   :init (progn (bind-key "M-i" #'helm-swoop-from-isearch isearch-mode-map)
-               (bind-key "C-c s" #'helm-swoop)
 
                ;; disable pre-input
                (setq helm-swoop-pre-input-function (lambda () ""))
@@ -844,6 +860,7 @@ If region is active, apply to active region instead."
 
 (use-package ido
   :ensure t
+  :defer t
   :config (progn (ido-mode t)
                  (setq ido-enable-prefix nil
                        ido-enable-flex-matching t
@@ -881,26 +898,25 @@ If region is active, apply to active region instead."
 
 (use-package projectile
   :ensure t
+  :defer 5
   :preface (progn
               (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
               (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
-  :init (progn (bind-key "C-c a" #'projectile-find-other-file))
+  :bind (("C-c a" . projectile-find-other-file))
+  :bind-keymap ("C-c p" . projectile-command-map)
   :config (progn (setq projectile-enable-caching t)
 
                  ;; (setq projectile-indexing-method 'native)
-
-                 ;; (add-to-list 'projectile-globally-ignored-directories "elpa")
-                 ;; (add-to-list 'projectile-globally-ignored-directories ".cache")
-
-                 (setq projectile-completion-system 'helm)
+                 (add-to-list 'projectile-globally-ignored-directories "elpa")
 
                  (projectile-global-mode t)
                  ))
 
 (use-package helm-projectile
   :ensure t
-  :init (progn (helm-projectile-on)
-          ))
+  :config (progn (helm-projectile-on)
+                 (setq projectile-completion-system 'helm)
+                 ))
 
 
 
@@ -1229,11 +1245,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package js2-mode
   :disabled t
+  :mode ("\\.js$" . js2-mode)
   :config (js2-highlight-level 3))
 
 (use-package lua-mode
   :ensure t
-  :mode ("\\.lua$" . lua-mode))
+  :mode ("\\.lua$" . lua-mode)
+  :interpreter ("lua" . lua-mode))
 
 (use-package sgml-mode
   :ensure t
@@ -1323,6 +1341,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Org ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package org
+  :defer t
   :config (progn (setq org-replace-disputed-keys t)
 
                  ;; Fontify org-mode code blocks
@@ -1334,6 +1353,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Other Modes ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package erc
+  :defer t
   :config (progn (setq-default erc-nick "MaryHadALittle")))
 
 ;; (defun load-minimap-package ()
@@ -1408,4 +1428,19 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Finishing Up ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; (server-start)
+(use-package server
+  :config (unless (server-running-p)
+            (server-start)))
+
+(when window-system
+  (let ((elapsed (float-time (time-subtract (current-time)
+                                            emacs-start-time))))
+    (message "Loading %s...done (%.3fs)" load-file-name elapsed))
+
+  (add-hook 'after-init-hook
+            `(lambda ()
+               (let ((elapsed (float-time (time-subtract (current-time)
+                                                         emacs-start-time))))
+                 (message "Loading %s...done (%.3fs) [after-init]"
+                          ,load-file-name elapsed)))
+            t))
