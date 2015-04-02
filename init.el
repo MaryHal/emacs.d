@@ -1201,6 +1201,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Language Hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(use-package sh-script
+  :config (progn
+            (defun disable-elec-here-doc-mode ()
+                   (sh-electric-here-document-mode -1))
+
+            (add-hook 'sh-mode-hook #'disable-elec-here-doc-mode)))
+
 (use-package cc-mode
   :config (progn (setq-default c-default-style "bsd")
                  (setq-default c-basic-offset 4)
