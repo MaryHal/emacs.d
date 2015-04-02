@@ -388,8 +388,8 @@ If region is active, apply to active region instead."
                  ;; (put 'transient-mark-mode 'permanent-local t)
                  ;; (setq-default transient-mark-mode t)
 
-                 ;; Nic says eval-expression-print-level needs to be set to 0 (turned off) so that
-                 ;; you can always see what's happening.
+                 ;; eval-expression-print-level needs to be set to 0 (turned off) so that you can
+                 ;; always see what's happening.
                  (setq eval-expression-print-level nil)
                  ))
 
@@ -618,7 +618,6 @@ If region is active, apply to active region instead."
 (use-package electric
   :config (electric-indent-mode t))
 
-
 ;; Trailing whitespace
 
 (defun disable-show-trailing-whitespace()
@@ -680,18 +679,17 @@ If region is active, apply to active region instead."
 
 (use-package multiple-cursors
   :ensure t
+  :bind (("C->"     . mc/mark-next-like-this)
+         ("C-<"     . mc/mark-previous-like-this)
+         ("C-c C-<" . mc/mark-all-like-this))
   :preface (setq mc/list-file (concat user-cache-directory "mc-lists.el"))
   :init (progn (setq mc/unsupported-minor-modes '(company-mode
                                                   auto-complete-mode
                                                   flyspell-mode
                                                   jedi-mode))
 
-               (bind-key "C->"      #'mc/mark-next-like-this)
-               (bind-key "C-<"      #'mc/mark-previous-like-this)
-               (bind-key "C-c C-<"  #'mc/mark-all-like-this)
-
                (global-unset-key (kbd "M-<down-mouse-1>"))
-               (bind-key "M-<mouse-1>" 'mc/add-cursor-on-click)
+               (bind-key "M-<mouse-1>" #'mc/add-cursor-on-click)
                ))
 
 
@@ -705,7 +703,6 @@ If region is active, apply to active region instead."
 
 (use-package git-gutter
   :ensure t
-  :defer t
   :config (global-git-gutter-mode t))
 
 
@@ -957,8 +954,7 @@ If region is active, apply to active region instead."
                    (setq evil-cross-lines t)
                    (setq evil-intercept-esc 'always)
 
-                   (setq evil-auto-indent t)
-                   )
+                   (setq evil-auto-indent t))
   ;; :init (progn)
   :config (progn (bind-key "<f12>" #'evil-local-mode)
 
@@ -984,12 +980,6 @@ If region is active, apply to active region instead."
                  ;; (add-hook 'after-change-major-mode-hook #'my-enable-evil-mode)
 
                  (evil-set-initial-state 'package-menu-mode 'normal)
-
-                 ;; (add-hook 'compilation-mode-hook (lambda ()
-                 ;;                                     (local-unset-key "g")
-                 ;;                                     (local-unset-key "h")
-                 ;;                                     (evil-define-key 'motion compilation-mode-map "r" 'recompile)
-                 ;;                                     (evil-define-key 'motion compilation-mode-map "h" 'evil-backward-char)))
 
                  ;; Make ESC work more or less like it does in Vim
                  (defun init/minibuffer-keyboard-quit()
@@ -1085,11 +1075,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ;; (evil-ex-define-cmd "tabnew"   #'wg-create-workgroup)
                  ;; (evil-ex-define-cmd "tabclose" #'wg-kill-workgroup)
 
-                 ;; "Unimpaired"
-                 (bind-key "[ b" #'previous-buffer evil-normal-state-map)
-                 (bind-key "] b" #'next-buffer     evil-normal-state-map)
-                 (bind-key "[ q" #'previous-error  evil-normal-state-map)
-                 (bind-key "] q" #'next-error      evil-normal-state-map)
+                 ;; ;; "Unimpaired"
+                 ;; (bind-key "[ b" #'previous-buffer evil-normal-state-map)
+                 ;; (bind-key "] b" #'next-buffer     evil-normal-state-map)
+                 ;; (bind-key "[ q" #'previous-error  evil-normal-state-map)
+                 ;; (bind-key "] q" #'next-error      evil-normal-state-map)
 
                  ;; Bubble Text up and down. Works with regions.
                  (bind-key "[ e" #'move-text-up   evil-normal-state-map)
@@ -1108,6 +1098,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ;; (bind-key "C->" 'mc/mark-next-like-this)
                  ;; (bind-key "C-<" 'mc/mark-previous-like-this)
 
+                 ;; Don't quit!
                  (defadvice evil-quit (around advice-for-evil-quit activate)
                    (message "Thou shall not quit!"))
                  (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
@@ -1124,7 +1115,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
                  (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
-                 (define-key evil-emacs-state-map  (kbd "H-z") evil-leader--default-map)
+                 (define-key evil-emacs-state-map  (kbd "M-SPC") evil-leader--default-map)
 
                  ;; (global-evil-leader-mode t)
 
@@ -1259,6 +1250,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 
 
+;; Yasnippet ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package yasnippet
+  :ensure t
+  ;; :commands (yas-expand yas-minor-mode)
+  :init (progn (setq yas-snippet-dirs (concat user-emacs-directory "snippets")))
+  :config (progn ;; (yas-load-directory (concat user-emacs-directory "snippets"))
+                 (yas-reload-all)
+                 (add-hook 'prog-mode-hook #'yas-minor-mode)
+                 (add-hook 'markdown-mode-hook #'yas-minor-mode)
+                 ))
+
+
+
 ;; Auto-completion ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package irony
@@ -1298,7 +1303,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                                         ;; company-eclim
                                                         ;; company-clang
                                                         ;; company-capf
-                                                        (company-dabbrev-code company-keywords)
+                                                        ;; (company-dabbrev-code company-keywords)
+                                                        company-keywords
                                                         ;; company-dabbrev
                                                         )))
 
@@ -1326,18 +1332,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 
 
-;; Yasnippet ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package yasnippet
-  :ensure t
-  :init (progn (setq yas-snippet-dirs (concat user-emacs-directory "snippets")))
-  :config (progn (yas-reload-all)
-                 (add-hook 'prog-mode-hook #'yas-minor-mode)
-                 (add-hook 'markdown-mode-hook #'yas-minor-mode)
-                 ))
-
-
-
 ;; Org ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package org
@@ -1356,16 +1350,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :defer t
   :config (progn (setq-default erc-nick "MaryHadALittle")))
 
-;; (defun load-minimap-package ()
-;;   (interactive)
-;;   (add-to-loadpath "~/.emacs.d/site-lisp/sublimity")
-;;   (require 'sublimity)
-;;   (require 'sublimity-map)
-;;   (sublimity-mode 1)
-;;   (sublimity-map-set-delay nil)
-;;   (setq sublimity-map-size 30)
-;;   (setq sublimity-map-fraction 0.3)
-;;   )
+(use-package sublimity
+  :load-path "site-lisp/sublimity"
+  :disabled t
+  :defer t
+  :init (progn (defun load-minimap-package ()
+                   (interactive)
+                   (require 'sublimity)
+                   (require 'sublimity-map)
+                   (sublimity-mode 1)
+                   (sublimity-map-set-delay nil)
+                   (setq sublimity-map-size 30)
+                   (setq sublimity-map-fraction 0.3)
+                   )
+                 ))
 
 
 
@@ -1415,14 +1413,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Character-targeted movements
 (use-package misc
-  :bind (("M-z" . zap-up-to-char))
-          )
+  :bind (("M-z" . zap-up-to-char)))
 
 (use-package jump-char
   :ensure t
   :bind (("M-m" . jump-char-forward)
-         ("M-M" . jump-char-backward))
-          )
+         ("M-M" . jump-char-backward)))
 
 
 
