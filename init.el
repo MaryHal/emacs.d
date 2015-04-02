@@ -692,6 +692,9 @@ If region is active, apply to active region instead."
                (bind-key "M-<mouse-1>" #'mc/add-cursor-on-click)
                ))
 
+(use-package ag
+  :ensure t
+  :commands (ag ag-regexp))
 
 
 ;; Version Control;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -782,6 +785,50 @@ If region is active, apply to active region instead."
 
 
 
+;; Project Management ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package projectile
+  :ensure t
+  :defer 5
+  :preface (progn
+              (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
+              (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
+  :bind (("C-c a" . projectile-find-other-file))
+  :bind-keymap ("C-c p" . projectile-command-map)
+  :config (progn (setq projectile-enable-caching t)
+
+                 ;; (setq projectile-indexing-method 'native)
+                 (add-to-list 'projectile-globally-ignored-directories "elpa")
+
+                 (projectile-global-mode t)
+                 ))
+
+(use-package workgroups2
+  :disabled t
+  :config (progn (setq wg-default-session-file (concat user-cache-directory "workgroups2"))
+                 (setq wg-use-default-session-file nil)
+
+                 ;; Change prefix key (before activating WG)
+                 (setq wg-prefix-key (kbd "C-c z"))
+
+                 ;; What to do on Emacs exit / workgroups-mode exit?
+                 (setq wg-emacs-exit-save-behavior nil)           ;; Options: 'save 'ask nil
+                 (setq wg-workgroups-mode-exit-save-behavior nil) ;; Options: 'save 'ask nil
+
+                 ;; Mode Line changes
+                 ;; Display workgroups in Mode Line?
+                 (setq wg-mode-line-display-on t) ;; Default: (not (featurep 'powerline))
+                 (setq wg-flag-modified t)        ;; Display modified flags as well
+
+                 (setq wg-mode-line-decor-left-brace  "["
+                       wg-mode-line-decor-right-brace "]"
+                       wg-mode-line-decor-divider     ":")
+
+                 (workgroups-mode t)
+                 ))
+
+
+
 ;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package helm
@@ -851,6 +898,16 @@ If region is active, apply to active region instead."
                (setq helm-swoop-pre-input-function (lambda () ""))
                ))
 
+(use-package helm-ag
+  :ensure t
+  :commands (helm-ag))
+
+(use-package helm-projectile
+  :ensure t
+  :config (progn (helm-projectile-on)
+                 (setq projectile-completion-system 'helm)
+                 ))
+
 
 
 ;; Ido-mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -887,60 +944,6 @@ If region is active, apply to active region instead."
                                                " [Not readable]"
                                                " [Too big]"
                                                " [Confirm]")))
-                 ))
-
-
-
-;; Projectile ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package projectile
-  :ensure t
-  :defer 5
-  :preface (progn
-              (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
-              (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
-  :bind (("C-c a" . projectile-find-other-file))
-  :bind-keymap ("C-c p" . projectile-command-map)
-  :config (progn (setq projectile-enable-caching t)
-
-                 ;; (setq projectile-indexing-method 'native)
-                 (add-to-list 'projectile-globally-ignored-directories "elpa")
-
-                 (projectile-global-mode t)
-                 ))
-
-(use-package helm-projectile
-  :ensure t
-  :config (progn (helm-projectile-on)
-                 (setq projectile-completion-system 'helm)
-                 ))
-
-
-
-;; Workgroups2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package workgroups2
-  :disabled t
-  :config (progn (setq wg-default-session-file (concat user-cache-directory "workgroups2"))
-                 (setq wg-use-default-session-file nil)
-
-                 ;; Change prefix key (before activating WG)
-                 (setq wg-prefix-key (kbd "C-c z"))
-
-                 ;; What to do on Emacs exit / workgroups-mode exit?
-                 (setq wg-emacs-exit-save-behavior nil)           ;; Options: 'save 'ask nil
-                 (setq wg-workgroups-mode-exit-save-behavior nil) ;; Options: 'save 'ask nil
-
-                 ;; Mode Line changes
-                 ;; Display workgroups in Mode Line?
-                 (setq wg-mode-line-display-on t) ;; Default: (not (featurep 'powerline))
-                 (setq wg-flag-modified t)        ;; Display modified flags as well
-
-                 (setq wg-mode-line-decor-left-brace  "["
-                       wg-mode-line-decor-right-brace "]"
-                       wg-mode-line-decor-divider     ":")
-
-                 (workgroups-mode t)
                  ))
 
 
