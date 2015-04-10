@@ -956,18 +956,26 @@ If region is active, apply to active region instead."
 (use-package evil
   :ensure t
   :preface (progn (setq evil-want-C-u-scroll t)
-                   (setq evil-move-cursor-back nil)
-                   (setq evil-cross-lines t)
-                   (setq evil-intercept-esc 'always)
+                  (setq evil-move-cursor-back nil)
+                  (setq evil-cross-lines t)
+                  (setq evil-intercept-esc 'always)
 
-                   (setq evil-auto-indent t))
+                  (setq evil-auto-indent t))
   ;; :init (progn)
   :config (progn (bind-key "<f12>" #'evil-local-mode)
 
-                 ;; (evil-mode t)
-
                  ;; Toggle evil-mode
                  (evil-set-toggle-key "C-\\")
+
+                 ;; (evil-mode t)
+
+                 (setq evil-emacs-state-cursor    '("lightgreen"  box))
+                 (setq evil-normal-state-cursor   '("white"       box))
+                 (setq evil-insert-state-cursor   '("white"       bar))
+
+                 (setq evil-visual-state-cursor   '("orange"      hollow))
+                 (setq evil-replace-state-cursor  '("red"         hollow))
+                 (setq evil-operator-state-cursor '("lightblue"   box))
 
                  ;; ;; List of modes that should start up in Evil state.
                  ;; (defvar dotemacs-evil-state-modes
@@ -1130,8 +1138,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
                  (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
                  (define-key evil-emacs-state-map  (kbd "M-SPC") evil-leader--default-map)
-
-                 ;; (global-evil-leader-mode t)
 
                  (evil-leader/set-key "!" #'shell-command)
 
