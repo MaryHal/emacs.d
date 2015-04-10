@@ -980,31 +980,14 @@ If region is active, apply to active region instead."
                  ;; Toggle evil-mode
                  (evil-set-toggle-key "C-\\")
 
-                 ;; (evil-mode t)
+                 (evil-mode t)
 
-                 (setq evil-emacs-state-cursor    '("lightgreen"  box))
-                 (setq evil-normal-state-cursor   '("white"       box))
-                 (setq evil-insert-state-cursor   '("white"       bar))
-
-                 (setq evil-visual-state-cursor   '("orange"      hollow))
-                 (setq evil-replace-state-cursor  '("red"         hollow))
-                 (setq evil-operator-state-cursor '("lightblue"   box))
-
-                 ;; ;; List of modes that should start up in Evil state.
-                 ;; (defvar dotemacs-evil-state-modes
-                 ;;   '(fundamental-mode
-                 ;;     text-mode
-                 ;;     prog-mode
-                 ;;     sws-mode
-                 ;;     dired-mode
-                 ;;     comint-mode
-                 ;;     log-edit-mode
-                 ;;     compilation-mode))
-
-                 ;; (defun my-enable-evil-mode ()
-                 ;;   (if (apply 'derived-mode-p dotemacs-evil-state-modes)
-                 ;;       (turn-on-evil-mode)))
-                 ;; (add-hook 'after-change-major-mode-hook #'my-enable-evil-mode)
+                 (setq evil-emacs-state-cursor    '("Palegreen3" box))
+                 (setq evil-normal-state-cursor   '("white"      box))
+                 (setq evil-insert-state-cursor   '("white"      bar))
+                 (setq evil-visual-state-cursor   '("RoyalBlue"  box))
+                 (setq evil-replace-state-cursor  '("red"        hollow))
+                 (setq evil-operator-state-cursor '("CadetBlue"  box))
 
                  (evil-set-initial-state 'package-menu-mode 'normal)
 

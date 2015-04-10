@@ -686,7 +686,7 @@
 
    ;; show-paren
    `(show-paren-mismatch ((,class (:foreground ,smyx-red-3 :background ,smyx-black))))
-   `(show-paren-match ((,class (:foreground ,smyx-black :background ,smyx-pink-1))))
+   `(show-paren-match ((,class (:foreground ,smyx-gray :background ,smyx-black))))
 
    `(naeu-green-face ((,class (:foreground ,smyx-green :background ,smyx-black))))
    `(naeu-pink-face ((,class (:foreground ,smyx-pink-1 :background ,smyx-black))))
