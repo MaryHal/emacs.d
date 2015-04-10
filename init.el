@@ -866,8 +866,8 @@ If region is active, apply to active region instead."
                  ;; show all candidates when set to 0
                  (setq helm-M-x-requires-pattern 0)
 
-                 ;; Loop helm lists
-                 (setq helm-move-to-line-cycle-in-source t)
+                 ;; Don't loop helm sources.
+                 (setq helm-move-to-line-cycle-in-source nil)
 
                  ;; Free up some visual space.
                  (setq helm-display-header-line nil)
