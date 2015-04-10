@@ -843,51 +843,64 @@ If region is active, apply to active region instead."
          ("C-c u" . helm-buffers-list)
 
          ("C-c y" . helm-show-kill-ring))
-  :config (progn
-            ;; (setq-default helm-mode-line-string "")
+  :config (progn (setq-default helm-mode-line-string "")
 
-            (setq helm-scroll-amount 4             ;; scroll 4 lines other window using M-<next>/M-<prior>
-                  helm-quick-update t              ;; do not display invisible candidates
-                  helm-idle-delay 0.01             ;; be idle for this many seconds, before updating in delayed sources.
-                  helm-input-idle-delay 0.01       ;; be idle for this many seconds, before updating candidate buffer
-                  helm-ff-search-library-in-sexp t ;; search for library in `require' and `declare-function' sexp.
+                 ;; Scroll 4 lines other window using M-<next>/M-<prior>
+                 (setq helm-scroll-amount 4)
 
-                  helm-full-frame nil
-                  ;; helm-split-window-default-side 'other ;; open helm buffer in another window
-                  ;; helm-split-window-in-side-p t         ;; open helm buffer inside current window, not occupy whole other window
-                  ;; helm-buffers-favorite-modes (append helm-buffers-favorite-modes
-                  ;;                                     '(picture-mode artist-mode))
-                  helm-candidate-number-limit 200         ;; limit the number of displayed canidates
-                  helm-M-x-requires-pattern 0             ;; show all candidates when set to 0
-                  helm-ff-file-name-history-use-recentf t
-                  ;; helm-move-to-line-cycle-in-source t     ;; move to end or beginning of source
-                  ;;                                         ;; when reaching top or bottom of source.
+                 ;; Do not display invisible candidates
+                 (setq helm-quick-update t)
 
-                  ;; ido-use-virtual-buffers t      ;; Needed in helm-buffers-list
-                  helm-buffers-fuzzy-matching t     ;; fuzzy matching buffer names when non--nil
-                  ;; useful in helm-mini that lists buffers
+                 ;; Be idle for this many seconds, before updating in delayed sources.
+                 (setq helm-idle-delay 0.01)
 
-                  helm-display-header-line nil
-                  )
+                 ;; Be idle for this many seconds, before updating candidate buffer
+                 (setq helm-input-idle-delay 0.01)
 
-            ;; ;; "Remove" source header text
-            ;; (set-face-attribute 'helm-source-header nil :height 1.0)
+                 (setq helm-full-frame nil)
+                 ;; (setq helm-split-window-default-side 'other) ;; open helm buffer in another window
+                 ;; (setq helm-split-window-in-side-p t)         ;; open helm buffer inside current window, not occupy whole other window
 
-            ;; Save current position to mark ring when jumping to a different place
-            (add-hook 'helm-goto-line-before-hook #'helm-save-current-pos-to-mark-ring)
+                 (setq helm-candidate-number-limit 200)
 
-            (helm-mode t)
+                 ;; show all candidates when set to 0
+                 (setq helm-M-x-requires-pattern 0)
 
-            (bind-key "C-z"   #'helm-select-action  helm-map)
-            ;; (bind-key "C-w"   #'backward-kill-word  helm-map)
+                 ;; Loop helm lists
+                 (setq helm-move-to-line-cycle-in-source t)
 
-            ;; Tab -> do persistent action
-            (bind-key "<tab>" #'helm-execute-persistent-action helm-map)
+                 ;; Free up some visual space.
+                 (setq helm-display-header-line nil)
 
-            ;; Make Tab work in terminal. Cannot use "bind-key" since it would detect that we
-            ;; already bound tab.
-            (define-key helm-map (kbd "C-i") #'helm-execute-persistent-action)
-            ))
+                 ;; Lots of fuzzy matching.
+                 (setq helm-bookmark-show-location t)
+                 (setq helm-buffers-fuzzy-matching t)
+                 (setq helm-M-x-fuzzy-match t)
+                 (setq helm-apropos-fuzzy-match t)
+                 (setq helm-recentf-fuzzy-match t)
+                 (setq helm-locate-fuzzy-match t)
+                 (setq helm-file-cache-fuzzy-match t)
+                 (setq helm-semantic-fuzzy-match t)
+                 (setq helm-imenu-fuzzy-match t)
+                 (setq helm-lisp-fuzzy-completion t)
+
+                 ;; ;; "Remove" source header text
+                 ;; (set-face-attribute 'helm-source-header nil :height 1.0)
+
+                 ;; Save current position to mark ring when jumping to a different place
+                 (add-hook 'helm-goto-line-before-hook #'helm-save-current-pos-to-mark-ring)
+
+                 (helm-mode t)
+
+                 (bind-key "C-z"   #'helm-select-action  helm-map)
+
+                 ;; Tab -> do persistent action
+                 (bind-key "<tab>" #'helm-execute-persistent-action helm-map)
+
+                 ;; Make Tab work in terminal. Cannot use "bind-key" since it would detect that we
+                 ;; already bound tab.
+                 (define-key helm-map (kbd "C-i") #'helm-execute-persistent-action)
+                 ))
 
 (use-package helm-imenu
   :bind ("C-c o" . helm-imenu))
