@@ -55,7 +55,7 @@
 
 (use-package paradox
   :ensure t
-  :defer t
+  :commands (paradox-list-packages)
   :config (progn (setq paradox-execute-asynchronously t)))
 
 
@@ -642,7 +642,7 @@ If region is active, apply to active region instead."
 
 (use-package ace-window
   :ensure t
-  :bind (("M-o" . ace-window))
+  :bind ("M-o" . ace-window)
   :init (progn (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
                ))
 
@@ -656,7 +656,7 @@ If region is active, apply to active region instead."
 
 (use-package expand-region
   :ensure t
-  :bind (("C-=" . er/expand-region))
+  :bind ("C-=" . er/expand-region)
   ;; :init (progn )
   )
 
@@ -701,12 +701,15 @@ If region is active, apply to active region instead."
 
 (use-package magit
   :ensure t
-  :bind (("C-c m" . magit-status))
-  )
+  :bind ("C-c m" . magit-status))
 
 (use-package git-gutter
   :ensure t
   :config (global-git-gutter-mode t))
+
+(use-package git-timemachine
+  :ensure t
+  :commands (git-timemachine))
 
 
 
@@ -793,7 +796,7 @@ If region is active, apply to active region instead."
   :preface (progn
               (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
               (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
-  :bind (("C-c a" . projectile-find-other-file))
+  :bind ("C-c a" . projectile-find-other-file)
   :bind-keymap ("C-c p" . projectile-command-map)
   :config (progn (setq projectile-enable-caching t)
 
@@ -876,7 +879,7 @@ If region is active, apply to active region instead."
             (helm-mode t)
 
             (bind-key "C-z"   #'helm-select-action  helm-map)
-            (bind-key "C-w"   #'backward-kill-word  helm-map)
+            ;; (bind-key "C-w"   #'backward-kill-word  helm-map)
 
             ;; Tab -> do persistent action
             (bind-key "<tab>" #'helm-execute-persistent-action helm-map)
@@ -891,7 +894,7 @@ If region is active, apply to active region instead."
 
 (use-package helm-swoop
   :ensure t
-  :bind (("C-c s" . helm-swoop))
+  :bind ("C-c s" . helm-swoop)
   :init (progn (bind-key "M-i" #'helm-swoop-from-isearch isearch-mode-map)
 
                ;; disable pre-input
@@ -1106,6 +1109,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                    (message "Thou shall not quit!"))
                  (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
                    (message "Thou shall not quit!"))
+
+                 ;; git-timemachine integration.
+                 ;; @see https://bitbucket.org/lyro/evil/issue/511/let-certain-minor-modes-key-bindings
+                 (eval-after-load 'git-timemachine
+                   '(progn
+                      (evil-make-overriding-map git-timemachine-mode-map 'normal)
+                      ;; force update evil keymaps after git-timemachine-mode loaded
+                      (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps)))
                  ))
 
 (use-package evil-leader
@@ -1423,7 +1434,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Character-targeted movements
 (use-package misc
-  :bind (("M-z" . zap-up-to-char)))
+  :bind ("M-z" . zap-up-to-char))
 
 (use-package jump-char
   :ensure t
