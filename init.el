@@ -670,7 +670,7 @@ If region is active, apply to active region instead."
 (use-package guide-key
   :ensure t
   :config (progn (guide-key-mode t)
-                 (setq guide-key/guide-key-sequence '("C-x" "C-c" "SPC"))
+                 (setq guide-key/guide-key-sequence '("C-x" "C-c" "SPC" "M-SPC"))
                  (setq guide-key/recursive-key-sequence-flag t)
 
                  ;; Alignment and extra spacing
@@ -701,7 +701,8 @@ If region is active, apply to active region instead."
 
 (use-package magit
   :ensure t
-  :bind ("C-c m" . magit-status))
+  :bind ("C-c m" . magit-status)
+  :init (setq magit-last-seen-setup-instructions "1.4.0"))
 
 (use-package git-gutter
   :ensure t
@@ -989,6 +990,7 @@ If region is active, apply to active region instead."
                  (setq evil-replace-state-cursor  '("red"        hollow))
                  (setq evil-operator-state-cursor '("CadetBlue"  box))
 
+                 (evil-set-initial-state 'erc-mode 'normal)
                  (evil-set-initial-state 'package-menu-mode 'normal)
 
                  ;; Make ESC work more or less like it does in Vim
@@ -1370,8 +1372,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Other Modes ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package erc
-  :defer t
-  :config (progn (setq-default erc-nick "MaryHadALittle")))
+  :defer t)
 
 (use-package sublimity
   :load-path "site-lisp/sublimity"
