@@ -1372,7 +1372,17 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Other Modes ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package erc
-  :defer t)
+  :defer t
+  :config (progn (setq erc-part-reason 'erc-part-reason-various)
+                 (setq erc-part-reason-various-alist
+                       '(("home" "Going home!")
+                         ("^$" "Goodbye.")))
+
+                 (setq erc-quit-reason 'erc-quit-reason-various)
+                 (setq erc-quit-reason-various-alist
+                       '(;; ("home" "Going home!")
+                         ("^$" "Goodbye."))) 
+            ))
 
 (use-package sublimity
   :load-path "site-lisp/sublimity"
