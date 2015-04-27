@@ -480,6 +480,69 @@ If region is active, apply to active region instead."
   :ensure t)
 
 
+
+;; Homeless Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Poor-man's leader?
+(defvar my-leader-key "M-SPC")
+(global-unset-key (kbd "M-SPC"))
+
+(defun leader-kbd (&rest keys)
+  (kbd (mapconcat 'identity (cons my-leader-key keys) " ")))
+
+;; Remove suspend-frame. Three times.
+(global-unset-key (kbd "C-x C-z"))
+;; (global-unset-key (kbd "C-z"))
+(put 'suspend-frame 'disabled t)
+
+;; Unset some keys I never use
+(global-unset-key (kbd "C-x m"))
+(global-unset-key (kbd "C-x f"))
+
+;; replace with [r]eally [q]uit
+(bind-key "C-x r q" #'save-buffers-kill-terminal)
+(bind-key "C-x C-c" (lambda ()
+                            (interactive)
+                            (message "Thou shall not quit!")))
+
+;; Alter M-w so if there's no region, just grab 'till the end of the line.
+(bind-key "M-w" #'save-region-or-current-line)
+
+;; Join below
+(bind-key "C-j" (lambda ()
+                  (interactive)
+                  (join-line -1)))
+
+;; Join above
+(bind-key "M-j" #'join-line)
+
+;; Move windows
+(windmove-default-keybindings 'meta)
+
+;; Easier version of "C-x k" to kill buffer
+(bind-key "C-x C-b"  #'buffer-menu)
+(bind-key "C-x C-k"  #'kill-buffer)
+
+;; Eval
+(bind-key "C-c v"    #'eval-buffer)
+(bind-key "C-c r"    #'eval-region)
+
+(bind-key "C-c k"    #'open-terminal)
+
+(bind-key "C-;"      #'comment-line-or-region)
+(bind-key "M-i"      #'back-to-indentation)
+
+;; Character-targeted movements
+(use-package misc
+  :bind ("M-z" . zap-up-to-char))
+
+(use-package jump-char
+  :ensure t
+  :bind (("M-m" . jump-char-forward)
+         ("M-M" . jump-char-backward)))
+
+
+
 ;; Dired ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package dired
@@ -969,6 +1032,7 @@ If region is active, apply to active region instead."
 
 (use-package evil
   :ensure t
+  :disabled t
   :preface (progn (setq evil-want-C-u-scroll t)
                   (setq evil-move-cursor-back nil)
                   (setq evil-cross-lines t)
@@ -981,7 +1045,7 @@ If region is active, apply to active region instead."
                  ;; Toggle evil-mode
                  (evil-set-toggle-key "C-\\")
 
-                 (evil-mode t)
+                 ;; (evil-mode t)
 
                  (setq evil-emacs-state-cursor    '("Palegreen3" box))
                  (setq evil-normal-state-cursor   '("white"      box))
@@ -1127,6 +1191,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-leader
   :ensure t
+  :disabled t
   :config (progn (setq evil-leader/in-all-states t
                        evil-leader/leader "SPC"
                        evil-leader/non-normal-prefix "s-")
@@ -1199,6 +1264,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-args
   :ensure t
+  :disabled t
   :defer t
   :init (progn
           ;; bind evil-args text objects
@@ -1352,8 +1418,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           ;; when we want the idle-change-delay to be in effect while editing.
           (setq flycheck-check-syntax-automatically '(save
                                                       idle-change
-                                                      mode-enabled))
-          ))
+                                                      mode-enabled))))
 
 
 
@@ -1381,7 +1446,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (setq erc-quit-reason 'erc-quit-reason-various)
                  (setq erc-quit-reason-various-alist
                        '(;; ("home" "Going home!")
-                         ("^$" "Goodbye."))) 
+                         ("^$" "Goodbye.")))
             ))
 
 (use-package sublimity
@@ -1398,61 +1463,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                    (setq sublimity-map-fraction 0.3)
                    )
                  ))
-
-
-
-;; Extra Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Remove suspend-frame. Three times.
-(global-unset-key (kbd "C-x C-z"))
-;; (global-unset-key (kbd "C-z"))
-(put 'suspend-frame 'disabled t)
-
-;; Unset some keys I never use
-(global-unset-key (kbd "C-x m"))
-(global-unset-key (kbd "C-x f"))
-
-;; replace with [r]eally [q]uit
-(bind-key "C-x r q" #'save-buffers-kill-terminal)
-(bind-key "C-x C-c" (lambda ()
-                            (interactive)
-                            (message "Thou shall not quit!")))
-
-;; Alter M-w so if there's no region, just grab 'till the end of the line.
-(bind-key "M-w" #'save-region-or-current-line)
-
-;; Join below
-(bind-key "C-j" (lambda ()
-                  (interactive)
-                  (join-line -1)))
-
-;; Join above
-(bind-key "M-j" #'join-line)
-
-;; Move windows
-(windmove-default-keybindings 'meta)
-
-;; Easier version of "C-x k" to kill buffer
-(bind-key "C-x C-b"  #'buffer-menu)
-(bind-key "C-x C-k"  #'kill-buffer)
-
-;; Eval
-(bind-key "C-c v"    #'eval-buffer)
-(bind-key "C-c r"    #'eval-region)
-
-(bind-key "C-c k"    #'open-terminal)
-
-(bind-key "C-;"      #'comment-line-or-region)
-(bind-key "M-i"      #'back-to-indentation)
-
-;; Character-targeted movements
-(use-package misc
-  :bind ("M-z" . zap-up-to-char))
-
-(use-package jump-char
-  :ensure t
-  :bind (("M-m" . jump-char-forward)
-         ("M-M" . jump-char-backward)))
 
 
 
