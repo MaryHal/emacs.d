@@ -611,7 +611,7 @@ If region is active, apply to active region instead."
                  (line-number-mode t)   ;; have line numbers and
                  (column-number-mode t) ;; column numbers in the mode line
 
-                 ;; (setq sml/theme 'respectful)
+                 (setq sml/theme nil)
                  (sml/setup)
                  ))
 
