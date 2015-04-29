@@ -556,6 +556,7 @@ If region is active, apply to active region instead."
 
 (use-package popwin
   :ensure t
+  :disabled t
   :defer t
   :config (progn (push '("helm" :regexp t :height 16) popwin:special-display-config)
                  (push "*Shell Command Output*" popwin:special-display-config)
@@ -563,6 +564,18 @@ If region is active, apply to active region instead."
 
                  (popwin-mode t)
                  ))
+
+(use-package shackle
+  :ensure t
+  :defer t
+  :init (progn
+            (setq shackle-rules
+                  '(("\\`\\*helm.*?\\*\\'" :regexp t :align t :ratio 0.4)
+
+                    (compilation-mode :noselect t)
+                    (t :select t)))
+            (shackle-mode t)
+            ))
 
 
 
@@ -1032,7 +1045,6 @@ If region is active, apply to active region instead."
 
 (use-package evil
   :ensure t
-  :disabled t
   :preface (progn (setq evil-want-C-u-scroll t)
                   (setq evil-move-cursor-back nil)
                   (setq evil-cross-lines t)
@@ -1191,7 +1203,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-leader
   :ensure t
-  :disabled t
   :config (progn (setq evil-leader/in-all-states t
                        evil-leader/leader "SPC"
                        evil-leader/non-normal-prefix "s-")
@@ -1259,12 +1270,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ))
 
 (use-package evil-surround
-  :disabled t
   :config (global-evil-surround-mode t))
 
 (use-package evil-args
   :ensure t
-  :disabled t
   :defer t
   :init (progn
           ;; bind evil-args text objects
