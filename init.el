@@ -599,8 +599,9 @@ If region is active, apply to active region instead."
 
 ;; Load custom theme
 
-(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/smyx/"))
-(load-theme 'smyx t)
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/smyx/"))
+(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
+(load-theme 'minimal t)
 
 (use-package smart-mode-line
   :ensure t
@@ -610,6 +611,7 @@ If region is active, apply to active region instead."
                  (line-number-mode t)   ;; have line numbers and
                  (column-number-mode t) ;; column numbers in the mode line
 
+                 ;; (setq sml/theme 'respectful)
                  (sml/setup)
                  ))
 
