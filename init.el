@@ -556,23 +556,23 @@ If region is active, apply to active region instead."
 
 (use-package popwin
   :ensure t
-  :disabled t
   :defer t
   :config (progn (push '("helm" :regexp t :height 16) popwin:special-display-config)
                  (push "*Shell Command Output*" popwin:special-display-config)
-                 (push '(compilation-mode :noselect t) popwin:special-display-config)
+                 (push '(compilation-mode :height 16) popwin:special-display-config)
 
                  (popwin-mode t)
                  ))
 
+;; I like being able to close popup windows with C-g, shackle doesn't do that (yet?)
 (use-package shackle
   :ensure t
+  :disabled t
   :defer t
   :init (progn
             (setq shackle-rules
                   '(("\\`\\*helm.*?\\*\\'" :regexp t :align t :ratio 0.4)
-
-                    (compilation-mode :noselect t)
+                    (compilation-mode :align t :ratio 0.4)
                     (t :select t)))
             (shackle-mode t)
             ))
