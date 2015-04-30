@@ -103,10 +103,8 @@
    `(ido-only-match ((,class (:foreground ,foreground :weight bold))))
 
    ;; show-paren
-   `(show-paren-match
-     ((,class (:background ,region))))
-   `(show-paren-mismatch
-     ((,class (:foreground ,failure :weight bold))))
+   `(show-paren-match ((,class (:foreground ,foreground :background ,background))))
+   `(show-paren-mismatch ((,class (:foreground ,failure :background ,background :weight bold))))
 
    ;; modeline
    `(mode-line
