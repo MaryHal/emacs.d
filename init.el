@@ -1078,7 +1078,7 @@ If region is active, apply to active region instead."
                  ;; Toggle evil-mode
                  (evil-set-toggle-key "C-\\")
 
-                 ;; (evil-mode t)
+                 (evil-mode t)
 
                  (setq evil-emacs-state-cursor    '("Palegreen3" box))
                  (setq evil-normal-state-cursor   '("white"      box))
@@ -1414,7 +1414,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                    (define-key irony-mode-map [remap complete-symbol]
                      'irony-completion-at-point-async))
                  (add-hook 'irony-mode-hook #'my-irony-mode-hook)
-                 ;; (add-hook 'irony-mode-hook #'irony-cdb-autosetup-compile-options)
+                 (add-hook 'irony-mode-hook #'irony-cdb-autosetup-compile-options)
 
                  (setq-default company-backends (quote (company-files
                                                         company-irony
@@ -1442,13 +1442,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Flycheck ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package flycheck
-  :disabled t
+  :ensure t
   :init (progn
           ;; Remove newline checks, since they would trigger an immediate check
           ;; when we want the idle-change-delay to be in effect while editing.
           (setq flycheck-check-syntax-automatically '(save
                                                       idle-change
-                                                      mode-enabled))))
+                                                      mode-enabled))
+
+          (global-flycheck-mode t)
+          ))
+
+(use-package flycheck-irony
+  :ensure t
+  :config (add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
 
 
 
