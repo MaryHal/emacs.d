@@ -110,14 +110,14 @@
    `(mode-line
      ((,class (:foreground ,modeline-foreground
                            :background ,modeline-background
-                           :box (:line-width 1 :color ,background :style unspecified)
+                           :box (:line-width 1 :color ,modeline-background :style unspecified)
                            ;; :box nil
                            ))))
    ;; `(mode-line-buffer-id ((,class (:weight bold))))
    `(mode-line-inactive
      ((,class (:foreground ,modeline-foreground-inactive
                            :background ,modeline-background-inactive
-                           :box (:line-width 1 :color ,border :style unspecified)
+                           :box (:line-width 1 :color ,modeline-background-inactive :style unspecified)
                            ;; :box nil
                            ))))
 
@@ -155,23 +155,29 @@
                            :underline nil
                            :box nil))))
    `(helm-source-header
-     ((,class (:foreground ,foreground
+     ((,class (:foreground ,minimal-yellow
                            :background nil
                            :weight bold
-                           :underline ,foreground
+                           :underline ,minimal-yellow
                            :box nil))))
 
-   `(helm-selection ((,class (:background ,foreground :foreground ,background :underline nil))))
-   ;; `(helm-selection-line ((,class (:background ,smyx-bg+1))))
-   ;; `(helm-visible-mark ((,class (:foreground ,smyx-bg :background ,smyx-yellow-2))))
+   `(helm-selection ((,class (:inverse-video t :underline nil))))
+   `(helm-selection-line ((,class (:background ,background))))
+   `(helm-visible-mark ((,class (:foreground ,background :background ,minimal-yellow))))
    `(helm-candidate-number ((,class (:weight bold :foreground ,modeline-foreground :background ,modeline-background))))
 
-   `(helm-ff-directory ((,class (:weight bold :foreground ,foreground :background nil))))
-   ;; `(helm-ff-executable ((,class (:foreground ,smyx-green))))
+   `(helm-ff-dotted-directory ((,class (:weight bold :foreground ,comment :background nil))))
+   `(helm-ff-directory ((,class (:weight bold :foreground ,minimal-red :background nil))))
+   `(helm-ff-executable ((,class (:foreground ,minimal-green))))
    `(helm-ff-file ((,class (:foreground ,foreground))))
-   ;; `(helm-ff-symlink ((,class (:foreground ,smyx-blue))))
-   ;; `(helm-ff-prefix ((,class (:weight bold :foreground ,smyx-yellow :background nil))))
-   ;; `(helm-ff-invalid-symlink ((,class (:foreground ,smyx-gray :background ,smyx-red))))
+   `(helm-ff-symlink ((,class (:foreground ,minimal-blue))))
+   `(helm-ff-prefix ((,class (:weight bold :foreground ,minimal-yellow :background nil))))
+   `(helm-ff-invalid-symlink ((,class (:foreground ,foreground :background ,minimal-red))))
+
+   ;; helm-swoop highlight
+   `(helm-swoop-target-line-face ((,class (:foreground ,background :background ,minimal-green))))
+   `(helm-swoop-target-line-block-face ((,class (:foreground ,background :background ,minimal-aqua))))
+   `(helm-swoop-target-word-face ((,class (:foreground ,comment-delimiter :background ,minimal-blue))))
 
    ;; company-mode
    `(company-tooltip ((,class (:background ,background :foreground ,foreground))))
