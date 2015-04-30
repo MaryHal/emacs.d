@@ -666,11 +666,16 @@ If region is active, apply to active region instead."
       auto-window-vscroll nil)
 
 (use-package fringe
-  :config (progn (set-fringe-mode (cons 0 0))
+  :config (progn
+            ;; Don't show empty line markers in the fringe past the end of the document
+            (setq-default indicate-empty-lines nil)
+            ;; (setq-default indicate-buffer-boundaries '((top . left)
+            ;;                                            (bottom . left)))
+            ;; (setq-default indicate-buffer-boundaries 'left)
+            (setq-default indicate-buffer-boundaries 'nil)
 
-                 ;; Empty line indicators in the fringe
-                 (setq-default indicate-empty-lines nil)
-                 ))
+            (set-fringe-mode (cons 0 0))
+            ))
 
 ;; Set margins to 1
 (setq-default left-margin-width 1
@@ -784,6 +789,20 @@ If region is active, apply to active region instead."
 
 (use-package git-gutter
   :ensure t
+  :config (progn (setq git-gutter:modified-sign "*")
+                 (setq git-gutter:added-sign "+")
+                 (setq git-gutter:deleted-sign "-")
+
+                 ;; (set-face-background 'git-gutter:modified "purple")
+                 ;; (set-face-background 'git-gutter:added    "green")
+                 ;; (set-face-background 'git-gutter:deleted  "red")
+
+                 (global-git-gutter-mode t)
+                 ))
+
+(use-package git-gutter-fringe
+  :ensure t
+  :disabled t
   :config (global-git-gutter-mode t))
 
 (use-package git-timemachine
@@ -1026,7 +1045,7 @@ If region is active, apply to active region instead."
                  (add-to-list 'ido-ignore-directories "node_modules")
 
                  ;; Use ido everywhere
-                 (ido-everywhere 1)
+                 (ido-everywhere t)
 
                  ;; Display ido results vertically, rather than horizontally
                  (setq ido-decorations (quote ("\n-> "

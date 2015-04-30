@@ -128,7 +128,7 @@
    `(sml/filename ((,class (:weight bold :foreground ,foreground))))
    `(sml/folder ((,class (:weight bold :foreground ,minimal-purple))))
    `(sml/git ((,class (:weight bold :foreground ,minimal-blue))))
-   `(sml/modes ((,class (:foreground ,minimal-blue))))
+   `(sml/modes ((,class (:foreground ,minimal-aqua))))
    `(sml/modified ((,class (:foreground ,minimal-red))))
    `(sml/mule-info ((,class (:foreground ,minimal-aqua))))
    `(sml/not-modified ((,class (:foreground ,foreground))))
@@ -189,6 +189,11 @@
    `(company-scrollbar-fg ((,class (:background ,region))))
    `(company-scrollbar-bg ((,class (:background ,foreground))))
    `(company-preview ((,class (:foreground ,failure :background nil))))
+
+   ;; git-gutter
+   `(git-gutter:modified ((,class (:foreground ,minimal-aqua))))
+   `(git-gutter:added    ((,class (:foreground ,minimal-green))))
+   `(git-gutter:deleted  ((,class (:foreground ,minimal-red))))
 
    ;; erc
    `(erc-action-face ((,class (:inherit erc-default-face))))
