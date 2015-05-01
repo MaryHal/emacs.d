@@ -52,6 +52,7 @@
 
 ;; req-package
 (require-package 'use-package)
+(require 'use-package)
 
 (use-package paradox
   :ensure t
@@ -558,6 +559,7 @@ If region is active, apply to active region instead."
   :ensure t
   :defer t
   :config (progn (push '("helm" :regexp t :height 16) popwin:special-display-config)
+                 (push '("magit" :regexp t :height 16) popwin:special-display-config)
                  (push "*Shell Command Output*" popwin:special-display-config)
                  (push '(compilation-mode :height 16) popwin:special-display-config)
 
@@ -765,8 +767,9 @@ If region is active, apply to active region instead."
   :bind (("C->"     . mc/mark-next-like-this)
          ("C-<"     . mc/mark-previous-like-this)
          ("C-c C-<" . mc/mark-all-like-this))
-  :preface (setq mc/list-file (concat user-cache-directory "mc-lists.el"))
-  :init (progn (setq mc/unsupported-minor-modes '(company-mode
+  :init (progn (setq mc/list-file (concat user-cache-directory "mc-lists.el"))
+
+               (setq mc/unsupported-minor-modes '(company-mode
                                                   auto-complete-mode
                                                   flyspell-mode
                                                   jedi-mode))
@@ -891,11 +894,11 @@ If region is active, apply to active region instead."
 (use-package projectile
   :ensure t
   :defer 5
-  :preface (progn
-              (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
-              (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
   :bind ("C-c a" . projectile-find-other-file)
   :bind-keymap ("C-c p" . projectile-command-map)
+  :init (progn
+          (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
+          (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
   :config (progn (setq projectile-enable-caching t)
 
                  ;; (setq projectile-indexing-method 'native)
@@ -961,26 +964,11 @@ If region is active, apply to active region instead."
 
                  (setq helm-candidate-number-limit 200)
 
-                 ;; show all candidates when set to 0
-                 (setq helm-M-x-requires-pattern 0)
-
                  ;; Don't loop helm sources.
                  (setq helm-move-to-line-cycle-in-source nil)
 
                  ;; Free up some visual space.
                  (setq helm-display-header-line nil)
-
-                 ;; Lots of fuzzy matching.
-                 (setq helm-bookmark-show-location t)
-                 (setq helm-buffers-fuzzy-matching t)
-                 (setq helm-M-x-fuzzy-match t)
-                 (setq helm-apropos-fuzzy-match t)
-                 (setq helm-recentf-fuzzy-match t)
-                 (setq helm-locate-fuzzy-match t)
-                 (setq helm-file-cache-fuzzy-match t)
-                 (setq helm-semantic-fuzzy-match t)
-                 (setq helm-imenu-fuzzy-match t)
-                 (setq helm-lisp-fuzzy-completion t)
 
                  ;; ;; "Remove" source header text
                  ;; (set-face-attribute 'helm-source-header nil :height 1.0)
@@ -1521,3 +1509,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (message "Loading %s...done (%.3fs) [after-init]"
                           ,load-file-name elapsed)))
             t))
+
+(provide 'init)
+;;; init.el ends here
+
