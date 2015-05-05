@@ -712,6 +712,15 @@ If region is active, apply to active region instead."
 
 (setq-default show-trailing-whitespace t)
 
+(use-package imenu
+  :config (progn
+            ;; Add use-package blocks to imenu
+            (defun imenu-use-package ()
+              (add-to-list 'imenu-generic-expression
+                           '("Package" "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2)))
+            (add-hook 'emacs-lisp-mode-hook #'imenu-use-package)
+            ))
+
 (use-package ace-jump-mode
   :ensure t
   :bind (("C-c SPC" . ace-jump-word-mode)
