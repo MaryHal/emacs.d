@@ -8,10 +8,8 @@
  '(custom-safe-themes
    (quote
     ("7feeed063855b06836e0262f77f5c6d3f415159a98a9676d549bfeb6c49637c4" default)))
- '(fci-rule-color "#151515" t)
  '(paradox-github-token t)
- '(popwin-mode t)
- '(shackle-mode t))
+ '(popwin-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

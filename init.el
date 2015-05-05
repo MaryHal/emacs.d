@@ -745,14 +745,12 @@ If region is active, apply to active region instead."
   :config (global-anzu-mode t))
 
 (use-package aggressive-indent
-  :disabled t
+  :ensure t
   :config (global-aggressive-indent-mode t))
 
 (use-package expand-region
   :ensure t
-  :bind ("C-=" . er/expand-region)
-  ;; :init (progn )
-  )
+  :bind ("C-=" . er/expand-region))
 
 (use-package key-chord
   :disabled t
@@ -883,6 +881,39 @@ If region is active, apply to active region instead."
                               ("j" windmove-down)
                               ("k" windmove-up)
                               ("l" windmove-right)
+                              ("a" (lambda ()
+                                     (interactive)
+                                     (ace-window 1)
+                                     (add-hook 'ace-window-end-once-hook
+                                               'hydra-window/body)
+                                     (throw 'hydra-disable t))
+                               "ace")
+                              ("x" (lambda ()
+                                     (interactive)
+                                     (ace-window 4)
+                                     (add-hook 'ace-window-end-once-hook
+                                               'hydra-window/body)
+                                     (throw 'hydra-disable t))
+                               "exchange")
+                              ("d" (lambda ()
+                                     (interactive)
+                                     (ace-window 16)
+                                     (add-hook 'ace-window-end-once-hook
+                                               'hydra-window/body)
+                                     (throw 'hydra-disable t))
+                               "del")
+
+                              ("v" (lambda ()
+                                     (interactive)
+                                     (split-window-right)
+                                     (windmove-right))
+                               "vert")
+                              ("s" (lambda ()
+                                     (interactive)
+                                     (split-window-below)
+                                     (windmove-down))
+                               "horz")
+                              ("q" nil "cancel")
                               ))
           ))
 
@@ -1464,14 +1495,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :defer t
   :config (progn (setq erc-part-reason 'erc-part-reason-various)
                  (setq erc-part-reason-various-alist
-                       '(("home" "Going home!")
-                         ("^$" "Goodbye.")))
+                       '(("^$" "Goodbye.")))
 
                  (setq erc-quit-reason 'erc-quit-reason-various)
                  (setq erc-quit-reason-various-alist
-                       '(;; ("home" "Going home!")
-                         ("^$" "Goodbye.")))
-            ))
+                       '(("^$" "Goodbye.")))
+                 ))
 
 (use-package sublimity
   :load-path "site-lisp/sublimity"

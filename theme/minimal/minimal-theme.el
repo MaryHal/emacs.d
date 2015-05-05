@@ -61,7 +61,7 @@
        (failure "red")
        (org-background "grey8")
        )
-  (setq fci-rule-color comment)
+  ;; (setq fci-rule-color comment)
 
   (custom-theme-set-faces
    'minimal
@@ -165,6 +165,8 @@
    `(helm-selection-line ((,class (:background ,background))))
    `(helm-visible-mark ((,class (:foreground ,background :background ,minimal-yellow))))
    `(helm-candidate-number ((,class (:weight bold :foreground ,modeline-foreground :background ,modeline-background))))
+
+   `(helm-action ((,class (:foreground ,foreground :underline nil))))
 
    `(helm-ff-dotted-directory ((,class (:weight bold :foreground ,comment :background nil))))
    `(helm-ff-directory ((,class (:weight bold :foreground ,minimal-red :background nil))))
