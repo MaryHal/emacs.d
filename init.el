@@ -873,27 +873,17 @@ If region is active, apply to active region instead."
   :ensure t
   :init (progn
           (bind-key "<f2>" (defhydra hydra-zoom ()
-                                   "zoom"
-                                   ("i" text-scale-increase "in")
-                                   ("o" text-scale-decrease "out")))
+                             "zoom"
+                             ("i" text-scale-increase "in")
+                             ("o" text-scale-decrease "out")))
 
-          (bind-key "C-z" (defhydra hydra-vi
-                                  (:pre
-                                   (set-cursor-color "#40e0d0")
-                                   :post
-                                   (progn (set-cursor-color "#ffffff")))
-                                  "vi"
-                                  ("l" forward-char)
-                                  ("h" backward-char)
-                                  ("j" next-line)
-                                  ("k" previous-line)
-                                  ("m" set-mark-command "mark")
-                                  ("a" move-beginning-of-line "beg")
-                                  ("e" move-end-of-line "end")
-                                  ("d" delete-region "del" :color blue)
-                                  ("y" kill-ring-save "yank" :color blue)
-                                  ("q" nil "quit")
-                                  ))
+          (bind-key "C-M-o" (defhydra hydra-window ()
+                              "window"
+                              ("h" windmove-left)
+                              ("j" windmove-down)
+                              ("k" windmove-up)
+                              ("l" windmove-right)
+                              ))
           ))
 
 
@@ -1497,6 +1487,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                    (setq sublimity-map-fraction 0.3)
                    )
                  ))
+
+(use-package command-log-mode
+  :load-path "site-lisp/command-log-mode"
+  :disabled t
+  :defer t)
 
 
 
