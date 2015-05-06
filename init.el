@@ -558,7 +558,7 @@ If region is active, apply to active region instead."
 (use-package popwin
   :ensure t
   :defer t
-  :config (progn (push '("helm" :regexp t :height 16) popwin:special-display-config)
+  :config (progn (push '("\\`\\*helm.*?\\*\\'" :regexp t :height 16) popwin:special-display-config)
                  (push '("magit" :regexp t :height 16) popwin:special-display-config)
                  (push "*Shell Command Output*" popwin:special-display-config)
                  (push '(compilation-mode :height 16) popwin:special-display-config)
@@ -746,6 +746,7 @@ If region is active, apply to active region instead."
 
 (use-package aggressive-indent
   :ensure t
+  :disabled t
   :config (global-aggressive-indent-mode t))
 
 (use-package expand-region
