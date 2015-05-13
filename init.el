@@ -1092,22 +1092,21 @@ If region is active, apply to active region instead."
 
                   (setq evil-auto-indent t))
   ;; :init (progn)
-  :config (progn (bind-key "<f12>" #'evil-local-mode)
+  :config (progn (evil-mode t)
+                 ;; (bind-key "<f12>" #'evil-local-mode)
 
                  ;; Toggle evil-mode
                  (evil-set-toggle-key "C-\\")
 
-                 (evil-mode t)
+                 (setq evil-emacs-state-cursor    '("DarkSeaGreen1"  box))
+                 (setq evil-normal-state-cursor   '("white"          box))
+                 (setq evil-insert-state-cursor   '("white"          bar))
+                 (setq evil-visual-state-cursor   '("RoyalBlue"      box))
+                 (setq evil-replace-state-cursor  '("red"            hollow))
+                 (setq evil-operator-state-cursor '("CadetBlue"      box))
 
-                 (setq evil-emacs-state-cursor    '("Palegreen3" box))
-                 (setq evil-normal-state-cursor   '("white"      box))
-                 (setq evil-insert-state-cursor   '("white"      bar))
-                 (setq evil-visual-state-cursor   '("RoyalBlue"  box))
-                 (setq evil-replace-state-cursor  '("red"        hollow))
-                 (setq evil-operator-state-cursor '("CadetBlue"  box))
-
-                 (evil-set-initial-state 'erc-mode 'normal)
-                 (evil-set-initial-state 'package-menu-mode 'normal)
+                 ;; (evil-set-initial-state 'erc-mode 'normal)
+                 ;; (evil-set-initial-state 'package-menu-mode 'normal)
 
                  ;; Make ESC work more or less like it does in Vim
                  (defun init/minibuffer-keyboard-quit()
@@ -1232,19 +1231,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
                    (message "Thou shall not quit!"))
 
-                 ;; git-timemachine integration.
-                 ;; @see https://bitbucket.org/lyro/evil/issue/511/let-certain-minor-modes-key-bindings
-                 (eval-after-load 'git-timemachine
-                   '(progn
-                      (evil-make-overriding-map git-timemachine-mode-map 'normal)
-                      ;; force update evil keymaps after git-timemachine-mode loaded
-                      (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps)))
+                 ;; ;; git-timemachine integration.
+                 ;; ;; @see https://bitbucket.org/lyro/evil/issue/511/let-certain-minor-modes-key-bindings
+                 ;; (eval-after-load 'git-timemachine
+                 ;;   '(progn
+                 ;;      (evil-make-overriding-map git-timemachine-mode-map 'normal)
+                 ;;      ;; force update evil keymaps after git-timemachine-mode loaded
+                 ;;      (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps)))
                  ))
 
+;; Holy-mode without Spacemacs.
 (use-package holy-mode
   :load-path "site-lisp/holy-mode"
-  :config (holy-mode t)
-  )
+  :bind ("<f12>" . holy-mode)
+  :init (holy-mode t))
 
 (use-package evil-leader
   :ensure t
