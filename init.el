@@ -1241,6 +1241,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                       (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps)))
                  ))
 
+(use-package holy-mode
+  :load-path "site-lisp/holy-mode"
+  :config (holy-mode t)
+  )
+
 (use-package evil-leader
   :ensure t
   :config (progn (setq evil-leader/in-all-states t
