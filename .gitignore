@@ -9,7 +9,6 @@ backups/
 cache/
 elpa/
 irony/
-site-lisp/
 url/
 
 *~
@@ -23,4 +22,3 @@ old_init.el
 /projectile-bookmarks.eld
 /projectile.cache
 /.mc-lists.el
-/speed-type

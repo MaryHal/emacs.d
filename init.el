@@ -1511,26 +1511,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                        '(("^$" "Goodbye.")))
                  ))
 
-(use-package sublimity
-  :load-path "site-lisp/sublimity"
-  :disabled t
-  :defer t
-  :init (progn (defun load-minimap-package ()
-                   (interactive)
-                   (require 'sublimity)
-                   (require 'sublimity-map)
-                   (sublimity-mode 1)
-                   (sublimity-map-set-delay nil)
-                   (setq sublimity-map-size 30)
-                   (setq sublimity-map-fraction 0.3)
-                   )
-                 ))
-
-(use-package command-log-mode
-  :load-path "site-lisp/command-log-mode"
-  :disabled t
-  :defer t)
-
 
 
 ;; Finishing Up ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
