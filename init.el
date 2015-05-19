@@ -12,13 +12,15 @@
 (defconst user-custom-file (concat user-emacs-directory "custom.el"))
 (defconst user-cache-directory (concat user-emacs-directory "cache/"))
 
+(defconst user-shell "fish")
+
 ;; Customize Configuration
 (setq custom-file user-custom-file)
 (load user-custom-file t)
 
 
 
-;; Preload Init ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Preload Init ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Things that should be set early just in case something bad happens
 
@@ -27,7 +29,7 @@
 
 
 
-;; Package Management (use-package) ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Package Management (use-package) ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (eval-when-compile (package-initialize))
 
@@ -61,7 +63,7 @@
 
 
 
-;; Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun add-to-loadpath (&rest dirs)
   (dolist (dir dirs load-path)
@@ -267,11 +269,11 @@ If region is active, apply to active region instead."
 ;; Very simple. Just open a terminal in the cwd using the $TERMINAL environment variable.
 (defun open-terminal ()
   (interactive)
-  (shell-command "eval $TERMINAL"))
+  (shell-command (concat "eval $TERMINAL -e " user-shell)))
 
 
 
-;; Advice ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Advice ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; When popping the mark, continue popping until the cursor actually moves
 (defadvice pop-to-mark-command (around ensure-new-position activate)
@@ -314,7 +316,7 @@ If region is active, apply to active region instead."
 
 
 
-;; Sane Defaults ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Sane Defaults ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; (setq epa-file-select-keys nil)
 
@@ -340,7 +342,7 @@ If region is active, apply to active region instead."
 (set-keyboard-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
 
-(setq-default fill-column 100)
+(setq-default fill-column 80)
 
 ;; Easily navigate sillycased words
 (global-subword-mode t)
@@ -439,7 +441,7 @@ If region is active, apply to active region instead."
 
 
 
-;; Backups ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Backups ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Disable backup
 (setq backup-inhibited t)
@@ -468,7 +470,7 @@ If region is active, apply to active region instead."
 
 
 
-;; Other Packages ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Other Packages ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; String manipulation library
 (use-package s
@@ -482,7 +484,7 @@ If region is active, apply to active region instead."
 
 
 
-;; Homeless Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Homeless Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Poor-man's leader?
 (defvar my-leader-key "M-SPC")
@@ -544,7 +546,7 @@ If region is active, apply to active region instead."
 
 
 
-;; Dired ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Dired ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package dired
   :commands dired
@@ -553,7 +555,7 @@ If region is active, apply to active region instead."
 
 
 
-;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package popwin
   :ensure t
@@ -581,7 +583,7 @@ If region is active, apply to active region instead."
 
 
 
-;; Appearance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Appearance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Default window metrics
 (setq default-frame-alist
@@ -601,7 +603,7 @@ If region is active, apply to active region instead."
 
 ;; Load custom theme
 
-;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/smyx/"))
+(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/smyx/"))
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
 (load-theme 'minimal t)
 
@@ -648,7 +650,7 @@ If region is active, apply to active region instead."
 
 
 
-;; Editing ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Editing ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; No Tabs, just spaces
 (setq-default indent-tabs-mode nil)
@@ -746,7 +748,7 @@ If region is active, apply to active region instead."
 
 (use-package aggressive-indent
   :ensure t
-  :disabled t
+  ;; :disabled t
   :config (global-aggressive-indent-mode t))
 
 (use-package expand-region
@@ -822,7 +824,7 @@ If region is active, apply to active region instead."
 
 
 
-;; Clipboard ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Clipboard ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (setq x-select-enable-clipboard t)
 (setq x-select-enable-primary t)
@@ -866,7 +868,7 @@ If region is active, apply to active region instead."
 
 
 
-;; Hydra ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Hydra ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package hydra
   :ensure t
@@ -920,7 +922,7 @@ If region is active, apply to active region instead."
 
 
 
-;; Project Management ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Project Management ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package projectile
   :ensure t
@@ -964,12 +966,13 @@ If region is active, apply to active region instead."
 
 
 
-;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package helm
   :ensure t
   :bind (("M-x" . helm-M-x)
          ("C-x C-f" . helm-find-files)
+         ("C-c C-f" . helm-find-files)
 
          ("C-x b" . helm-buffers-list)
          ("C-c u" . helm-buffers-list)
@@ -1043,7 +1046,7 @@ If region is active, apply to active region instead."
 
 
 
-;; Ido-mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Ido-mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package ido
   :ensure t
@@ -1081,7 +1084,7 @@ If region is active, apply to active region instead."
 
 
 
-;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package evil
   :ensure t
@@ -1337,7 +1340,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 
 
-;; Language Hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Language Hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package sh-script
   :config (progn
@@ -1395,7 +1398,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 
 
-;; Yasnippet ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Yasnippet ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package yasnippet
   :ensure t
@@ -1409,7 +1412,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 
 
-;; Auto-completion ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Auto-completion ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package irony
   :ensure t)
@@ -1463,7 +1466,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 
 
-;; Flycheck ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Flycheck ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package flycheck
   :ensure t
@@ -1483,7 +1486,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 
 
-;; Org ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Org ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package org
   :defer t
@@ -1495,7 +1498,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 
 
-;; Other Modes ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Other Modes ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package erc
   :defer t
@@ -1530,7 +1533,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 
 
-;; Finishing Up ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Finishing Up ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package server
   :config (unless (server-running-p)
