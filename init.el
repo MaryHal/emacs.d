@@ -12,7 +12,7 @@
 (defconst user-custom-file (concat user-emacs-directory "custom.el"))
 (defconst user-cache-directory (concat user-emacs-directory "cache/"))
 
-(defconst user-shell "fish")
+(defconst user-shell "zsh")
 
 ;; Customize Configuration
 (setq custom-file user-custom-file)
@@ -269,7 +269,8 @@ If region is active, apply to active region instead."
 ;; Very simple. Just open a terminal in the cwd using the $TERMINAL environment variable.
 (defun open-terminal ()
   (interactive)
-  (shell-command (concat "eval $TERMINAL -e " user-shell)))
+  (shell-command "urxvtc"))
+;; (shell-command (concat "eval $TERMINAL -e " user-shell)))
 
 
 
@@ -1284,8 +1285,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "o" #'helm-imenu)
                  (evil-leader/set-key "x" #'helm-M-x)
 
-                 ;; Kill ring
+                 ;; Rings
                  (evil-leader/set-key "y" #'helm-show-kill-ring)
+                 (evil-leader/set-key "r m" #'helm-mark-ring)
 
                  ;; Git
                  (evil-leader/set-key "m" #'magit-status)
