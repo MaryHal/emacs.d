@@ -269,8 +269,7 @@ If region is active, apply to active region instead."
 ;; Very simple. Just open a terminal in the cwd using the $TERMINAL environment variable.
 (defun open-terminal ()
   (interactive)
-  (shell-command "urxvtc"))
-;; (shell-command (concat "eval $TERMINAL -e " user-shell)))
+  (call-process-shell-command (concat "eval $TERMINAL -e " user-shell) nil 0))
 
 
 
@@ -535,6 +534,9 @@ If region is active, apply to active region instead."
 
 (bind-key "C-;"      #'comment-line-or-region)
 (bind-key "M-i"      #'back-to-indentation)
+
+;; (bind-key "C-."      #'hippie-expand)
+(bind-key "C-."      #'dabbrev-expand)
 
 ;; Character-targeted movements
 (use-package misc
@@ -1445,14 +1447,15 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (add-hook 'irony-mode-hook #'my-irony-mode-hook)
                  (add-hook 'irony-mode-hook #'irony-cdb-autosetup-compile-options)
 
+                 ;; "Iterating through back-ends that don’t apply to the current buffer is pretty fast."
                  (setq-default company-backends (quote (company-files
                                                         company-irony
                                                         company-elisp
                                                         company-yasnippet
-                                                        ;; company-css
+                                                        company-css
                                                         ;; company-eclim
                                                         ;; company-clang
-                                                        ;; company-capf
+                                                        company-capf
                                                         ;; (company-dabbrev-code company-keywords)
                                                         company-keywords
                                                         ;; company-dabbrev
