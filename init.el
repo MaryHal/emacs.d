@@ -606,7 +606,7 @@ If region is active, apply to active region instead."
 
 ;; Load custom theme
 
-(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/smyx/"))
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/smyx/"))
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
 (load-theme 'minimal t)
 
@@ -1104,12 +1104,12 @@ If region is active, apply to active region instead."
                  ;; Toggle evil-mode
                  (evil-set-toggle-key "C-\\")
 
-                 (setq evil-emacs-state-cursor    '("DarkSeaGreen1"  box))
-                 (setq evil-normal-state-cursor   '("white"          box))
-                 (setq evil-insert-state-cursor   '("white"          bar))
-                 (setq evil-visual-state-cursor   '("RoyalBlue"      box))
-                 (setq evil-replace-state-cursor  '("red"            hollow))
-                 (setq evil-operator-state-cursor '("CadetBlue"      box))
+                 ;; (setq evil-emacs-state-cursor    '("DarkSeaGreen1"  box))
+                 ;; (setq evil-normal-state-cursor   '("white"          box))
+                 ;; (setq evil-insert-state-cursor   '("white"          bar))
+                 ;; (setq evil-visual-state-cursor   '("RoyalBlue"      box))
+                 ;; (setq evil-replace-state-cursor  '("red"            hollow))
+                 ;; (setq evil-operator-state-cursor '("CadetBlue"      box))
 
                  ;; (evil-set-initial-state 'erc-mode 'normal)
                  ;; (evil-set-initial-state 'package-menu-mode 'normal)

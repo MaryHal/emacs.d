@@ -182,9 +182,9 @@
    `(helm-swoop-target-word-face ((,class (:foreground ,comment-delimiter :background ,minimal-blue))))
 
    ;; company-mode
-   `(company-tooltip ((,class (:background ,background :foreground ,foreground))))
+   `(company-tooltip ((,class (:weight bold :background ,background :foreground ,foreground))))
    `(company-tooltip-common ((,class (:inherit company-tooltip :foreground ,comment))))
-   `(company-tooltip-selection ((,class (:foreground ,background :background ,foreground))))
+   `(company-tooltip-selection ((,class (:weight bold :foreground ,background :background ,foreground))))
    `(company-tooltip-common-selection ((,class (:inherit company-tooltip-selection :foreground ,comment))))
    `(company-tooltip-annotation ((,class (:foreground ,foreground :background ,background))))
 
