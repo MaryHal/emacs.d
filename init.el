@@ -610,8 +610,8 @@ If region is active, apply to active region instead."
 
 ;; Load custom theme
 
-;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
-(load-theme 'leuven t)
+(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/leuven-mod/"))
+(load-theme 'leuven-mod t)
 (set-frame-alpha 85)
 
 (use-package smart-mode-line
