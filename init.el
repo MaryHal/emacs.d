@@ -85,10 +85,15 @@
     (kill-buffer-and-window)))
 
 ;; Set transparency of emacs
-(defun set-transparency (value)
-  "Sets the transparency of the frame window. 0=transparent/100=opaque"
-  (interactive "nTransparency Value 0 - 100 opaque:")
-  (set-frame-parameter (selected-frame) 'alpha value))
+(defun set-frame-alpha (arg &optional active)
+  (interactive "nEnter alpha value (1-100): \np")
+  (let* ((elt (assoc 'alpha default-frame-alist))
+         (old (frame-parameter nil 'alpha))
+         (new (cond ((atom old)     `(,arg ,arg))
+                    ((eql 1 active) `(,arg ,(cadr old)))
+                    (t              `(,(car old) ,arg)))))
+    (if elt (setcdr elt new) (push `(alpha ,@new) default-frame-alist))
+    (set-frame-parameter nil 'alpha new)))
 
 ;; Switch to previously selected buffer.
 (defun backward-buffer ()
@@ -271,6 +276,20 @@ If region is active, apply to active region instead."
   (interactive)
   (call-process-shell-command (concat "eval $TERMINAL -e " user-shell) nil 0))
 
+(defun load-theme-and-transparency (alpha-value &rest load-theme-args)
+  (interactive)
+  (load-theme (pop load-theme-args))
+
+  ;; Set transparent background.
+  (if (string= system-type "gnu/linux")
+      (if (string= window-system "x")
+          (set-frame-alpha alpha-value)
+        (progn (when (getenv "DISPLAY")
+                 (set-face-attribute 'default nil :background "unspecified-bg")
+                 ))
+        ))
+  )
+
 
 
 ;; Advice ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -280,21 +299,6 @@ If region is active, apply to active region instead."
   (let ((p (point)))
     (dotimes (i 10)
       (when (= p (point)) ad-do-it))))
-
-;; On Linux, if in terminal, clear the background. If GUI, set background to black and set frame
-;; transparency.
-(defadvice load-theme (after load-theme activate compile)
-  (if (string= system-type "gnu/linux")
-      (if (string= window-system "x")
-          (progn (set-frame-parameter (selected-frame) 'alpha '(90 90))
-                 (add-to-list 'default-frame-alist '(alpha 90 90))
-                 (set-face-attribute 'default nil :background "black")
-                 (set-face-attribute 'fringe nil :background "black")
-                 )
-        (progn (when (getenv "DISPLAY")
-                 (set-face-attribute 'default nil :background "unspecified-bg")
-                 ))
-        )))
 
 ;; ;; Rebalance windows after splitting right
 ;; (defadvice split-window-right
@@ -606,9 +610,9 @@ If region is active, apply to active region instead."
 
 ;; Load custom theme
 
-;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/smyx/"))
-(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
-(load-theme 'minimal t)
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
+(load-theme 'leuven t)
+(set-frame-alpha 85)
 
 (use-package smart-mode-line
   :ensure t
@@ -1539,4 +1543,3 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (provide 'init)
 ;;; init.el ends here
-
