@@ -609,10 +609,33 @@ If region is active, apply to active region instead."
   )
 
 ;; Load custom theme
-
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/leuven-mod/"))
-(load-theme 'leuven-mod t)
-(set-frame-alpha 85)
+(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
+
+(defun mhl/load-light-theme ()
+  (interactive)
+  (load-theme 'leuven-mod t)
+  (set-frame-alpha 90)
+  )
+
+(defun mhl/load-dark-theme ()
+  (interactive)
+  (load-theme 'minimal t)
+
+  ;; Set transparent background.
+  (if (string= system-type "gnu/linux")
+      (if (string= window-system "x")
+          (progn
+            (set-face-attribute 'default nil :background "black")
+            (set-face-attribute 'fringe nil :background "black")
+            (set-frame-alpha 90))
+        (progn (when (getenv "DISPLAY")
+                 (set-face-attribute 'default nil :background "unspecified-bg")
+                 ))
+        ))
+  )
+
+(mhl/load-light-theme)
 
 (use-package smart-mode-line
   :ensure t

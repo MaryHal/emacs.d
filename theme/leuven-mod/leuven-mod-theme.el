@@ -768,7 +768,7 @@ more...")
    [default default default italic underline success warning error])
  '(ansi-color-names-vector
    ["black" "red3" "ForestGreen" "yellow3" "blue" "magenta3" "DeepSkyBlue" "gray50"])
-                                        ; colors used in Shell mode
+ ;; colors used in Shell mode
  )
 
 ;;;###autoload

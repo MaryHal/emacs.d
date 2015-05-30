@@ -55,7 +55,8 @@
        (modeline-foreground foreground)
        (modeline-background "grey10")
        (modeline-foreground-inactive foreground)
-       (modeline-background-inactive "grey20")
+       (modeline-background-inactive "grey18")
+       (modeline-background-inactive-border "grey25")
        (hl-background region)
        (hl-face-background nil)
        (failure "red")
@@ -110,16 +111,16 @@
    `(mode-line
      ((,class (:foreground ,modeline-foreground
                            :background ,modeline-background
-                           :box (:line-width 1 :color ,modeline-background :style unspecified)
-                           ;; :box nil
+                           :box (:line-width 1 :color ,modeline-background-inactive)
                            ))))
-   ;; `(mode-line-buffer-id ((,class (:weight bold))))
    `(mode-line-inactive
      ((,class (:foreground ,modeline-foreground-inactive
                            :background ,modeline-background-inactive
-                           :box (:line-width 1 :color ,modeline-background-inactive :style unspecified)
-                           ;; :box nil
+                           :box (:line-width 1 :color ,modeline-background-inactive-border)
                            ))))
+
+   ;; Anzu
+   `(anzu-mode-line ((,class (:inherit mode-line :weight bold :foreground ,minimal-purple))))
 
    ;; Smart Mode Line
    `(sml/global ((,class (:foreground ,foreground))))
