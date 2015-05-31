@@ -97,7 +97,7 @@ more...")
    `(bold-italic ((,class (:weight bold :slant italic :foreground "black"))))
    `(italic ((,class (:slant italic :foreground "#1A1A1A"))))
    `(underline ((,class (:underline t))))
-   `(cursor ((,class (:background "#21BDFF"))))
+   `(cursor ((,class (:background "#335EA8"))))
 
    ;; Highlighting faces.
    `(fringe ((,class (:foreground "#9B9B9B" :background "white"))))
@@ -151,7 +151,7 @@ more...")
    `(link ((,class ,link)))
    `(link-visited ((,class (:underline t :foreground "#E5786D"))))
    `(button ((,class (:underline t :foreground "#006DAF"))))
-   `(header-line ((,class (:weight bold :underline "black" :overline "black" :foreground "black" :background "#FFFF88"))))
+   `(header-line ((,class (:box "#999911" :foreground "#FFFF88" :background "#CCCC44"))))
 
    ;; Gnus faces.
    `(gnus-button ((,class (:weight normal))))

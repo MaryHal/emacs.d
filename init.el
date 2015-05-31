@@ -276,20 +276,6 @@ If region is active, apply to active region instead."
   (interactive)
   (call-process-shell-command (concat "eval $TERMINAL -e " user-shell) nil 0))
 
-(defun load-theme-and-transparency (alpha-value &rest load-theme-args)
-  (interactive)
-  (load-theme (pop load-theme-args))
-
-  ;; Set transparent background.
-  (if (string= system-type "gnu/linux")
-      (if (string= window-system "x")
-          (set-frame-alpha alpha-value)
-        (progn (when (getenv "DISPLAY")
-                 (set-face-attribute 'default nil :background "unspecified-bg")
-                 ))
-        ))
-  )
-
 
 
 ;; Advice ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -569,7 +555,7 @@ If region is active, apply to active region instead."
   :defer t
   :config (progn (push '("\\`\\*helm.*?\\*\\'" :regexp t :height 16) popwin:special-display-config)
                  (push '("magit" :regexp t :height 16) popwin:special-display-config)
-                 (push "*Shell Command Output*" popwin:special-display-config)
+                 (push '(".*Shell Command Output\*" :regexp t :height 16) popwin:special-display-config)
                  (push '(compilation-mode :height 16) popwin:special-display-config)
 
                  (popwin-mode t)
@@ -580,13 +566,12 @@ If region is active, apply to active region instead."
   :ensure t
   :disabled t
   :defer t
-  :init (progn
-            (setq shackle-rules
-                  '(("\\`\\*helm.*?\\*\\'" :regexp t :align t :ratio 0.4)
-                    (compilation-mode :align t :ratio 0.4)
-                    (t :select t)))
-            (shackle-mode t)
-            ))
+  :init (progn (setq shackle-rules
+                     '(("\\`\\*helm.*?\\*\\'" :regexp t :align t :ratio 0.4)
+                       (compilation-mode :align t :ratio 0.4)
+                       (t :select t)))
+               (shackle-mode t)
+               ))
 
 
 
@@ -615,8 +600,7 @@ If region is active, apply to active region instead."
 (defun mhl/load-light-theme ()
   (interactive)
   (load-theme 'leuven-mod t)
-  (set-frame-alpha 90)
-  )
+  (set-frame-alpha 90))
 
 (defun mhl/load-dark-theme ()
   (interactive)
@@ -632,8 +616,7 @@ If region is active, apply to active region instead."
         (progn (when (getenv "DISPLAY")
                  (set-face-attribute 'default nil :background "unspecified-bg")
                  ))
-        ))
-  )
+        )))
 
 (mhl/load-light-theme)
 
