@@ -29,12 +29,12 @@
 
    ;; Built-in stuff
    `(border ((t (:background ,base00))))
-   `(vertical-border ((t (:background ,base00))))
+   `(vertical-border ((t (:background ,base00 :foreground ,base00))))
    `(border-glyph ((t (nil))))
    `(cursor ((t (:background ,base05 :inverse-video t))))
    `(default ((t (:background ,base00 :foreground ,base05))))
-   `(fringe ((t (:background ,base02))))
-   ;; `(gui-element ((t (:background ,base03 :foreground ,base06))))
+   `(fringe ((t (:background ,base00))))
+   `(gui-element ((t (:background ,base03 :foreground ,base06))))
    `(highlight ((t (:background ,base01))))
    `(link ((t (:foreground ,base0D))))
    `(link-visited ((t (:foreground ,base0E))))
@@ -57,7 +57,8 @@
    `(warning ((t (:foreground ,base09 :weight bold))))
    `(success ((t (:foreground ,base0B :weight bold))))
 
-   `(header-line ((t (:inherit mode-line :foreground ,base0E))))
+   ;; `(header-line ((t (:inherit mode-line :foreground ,base0E))))
+   `(header-line ((t (:inherit mode-line))))
 
    ;; Font-lock stuff
    `(font-lock-builtin-face ((t (:foreground ,base0C))))
@@ -232,7 +233,7 @@
    `(diff-removed ((t (:foreground ,base08))))
    `(diff-header ((t (:background ,base01))))
    `(diff-file-header ((t (:background ,base02))))
-   `(diff-hunk-header ((t (:background ,base01 :foreground ,base0E))))
+   `(diff-hunk-header ((t (:foreground ,base0E))))
 
    `(ediff-even-diff-A ((t (:foreground nil :background nil :inverse-video t))))
    `(ediff-even-diff-B ((t (:foreground nil :background nil :inverse-video t))))
@@ -519,7 +520,8 @@
 
    `(erc-direct-msg-face ((t (:foreground ,base09))))
    `(erc-error-face ((t (:foreground ,base08))))
-   `(erc-header-face ((t (:foreground ,base06 :background ,base04))))
+   ;; `(erc-header-face ((t (:foreground ,base06 :background ,base04))))
+   `(erc-header-face ((t (:inherit mode-line))))
    `(erc-input-face ((t (:foreground ,base0B))))
    `(erc-keyword-face ((t (:foreground ,base0A))))
    `(erc-current-nick-face ((t (:foreground ,base0B))))

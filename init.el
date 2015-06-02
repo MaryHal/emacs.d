@@ -602,8 +602,8 @@ If region is active, apply to active region instead."
 
 (defun mhl/load-light-theme ()
   (interactive)
-  ;; (load-theme 'leuven-mod t)
-  (load-theme 'base16-ashes-light t)
+  (load-theme 'leuven-mod t)
+  ;; (load-theme 'base16-ashes-light t)
   (set-frame-alpha 90))
 
 (defun mhl/load-dark-theme ()
