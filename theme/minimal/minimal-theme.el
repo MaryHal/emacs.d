@@ -85,7 +85,7 @@
    `(font-lock-builtin-face ((,class (:foreground ,foreground :weight bold))))
    `(font-lock-constant-face ((,class (:foreground ,foreground :weight bold))))
    `(font-lock-keyword-face ((,class (:foreground ,foreground :weight bold))))
-   `(font-lock-type-face ((,class (:foreground ,foreground :slant italic))))
+   `(font-lock-type-face ((,class (:foreground ,foreground))))
    `(font-lock-function-name-face ((,class (:foreground ,foreground :weight bold))))
    `(font-lock-variable-name-face ((,class (:foreground ,foreground))))
 
@@ -106,6 +106,10 @@
    ;; show-paren
    `(show-paren-match ((,class (:foreground ,foreground :background ,background))))
    `(show-paren-mismatch ((,class (:foreground ,failure :background ,background :weight bold))))
+
+   `(header-line ((,class (:box (:line-width 1 :color ,modeline-background-inactive)
+                                :foreground ,modeline-foreground
+                                :background ,modeline-background))))
 
    ;; modeline
    `(mode-line
@@ -220,14 +224,14 @@
    `(erc-underline-face ((t (:underline t))))
 
    ;; org-mode
-   `(org-level-1 ((,class (:foreground ,foreground :height 1.6))))
-   `(org-level-2 ((,class (:foreground ,foreground :height 1.5))))
-   `(org-level-3 ((,class (:foreground ,foreground :height 1.4))))
-   `(org-level-4 ((,class (:foreground ,foreground :height 1.3))))
-   `(org-level-5 ((,class (:foreground ,foreground :height 1.2))))
-   `(org-level-6 ((,class (:foreground ,foreground :height 1.1))))
-   `(org-level-7 ((,class (:foreground ,foreground))))
-   `(org-level-8 ((,class (:foreground ,foreground))))
+   `(org-level-1 ((,class (:height 1.3 :weight bold :overline ,border :foreground ,foreground))))
+   `(org-level-2 ((,class (:height 1.0 :weight bold :overline ,border :foreground ,foreground))))
+   `(org-level-3 ((,class (:height 1.0 :weight bold :foreground ,foreground))))
+   `(org-level-4 ((,class (:height 1.0 :weight bold :foreground ,foreground))))
+   `(org-level-5 ((,class (:height 1.0 :weight bold :foreground ,foreground))))
+   `(org-level-6 ((,class (:height 1.0 :weight bold :foreground ,foreground))))
+   `(org-level-7 ((,class (:height 1.0 :weight bold :foreground ,foreground))))
+   `(org-level-8 ((,class (:height 1.0 :weight bold :foreground ,foreground))))
 
    ;; outline
    `(outline-1 ((,class (:inherit org-level-1))))
@@ -252,10 +256,8 @@
    `(org-date ((,class (:background ,org-background :underline t))))
    `(org-block ((,class (:background ,org-background))))
    `(org-block-background ((,class (:background ,org-background :foreground ,foreground))))
-   `(org-block-begin-line
-     ((,class (:background ,org-background :foreground ,comment-delimiter :weight bold))))
-   `(org-block-end-line
-     ((,class (:background ,org-background :foreground ,comment-delimiter :weight bold))))
+   `(org-block-begin-line ((,class (:background ,org-background :foreground ,comment))))
+   `(org-block-end-line ((,class (:background ,org-background :foreground ,comment))))
 
    ;; js2-mode
    `(js2-external-variable ((,class (:inherit base-faces :weight bold))))

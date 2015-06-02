@@ -553,6 +553,7 @@ If region is active, apply to active region instead."
 (use-package popwin
   :ensure t
   :defer t
+  :disabled t
   :config (progn (push '("\\`\\*helm.*?\\*\\'" :regexp t :height 16) popwin:special-display-config)
                  (push '("magit" :regexp t :height 16) popwin:special-display-config)
                  (push '(".*Shell Command Output\*" :regexp t :height 16) popwin:special-display-config)
@@ -564,7 +565,6 @@ If region is active, apply to active region instead."
 ;; I like being able to close popup windows with C-g, shackle doesn't do that (yet?)
 (use-package shackle
   :ensure t
-  :disabled t
   :defer t
   :init (progn (setq shackle-rules
                      '(("\\`\\*helm.*?\\*\\'" :regexp t :align t :ratio 0.4)
@@ -588,23 +588,28 @@ If region is active, apply to active region instead."
 ;; Set font
 (if (string= system-type "windows-nt")
     ;; If Windows
-    (progn (add-to-list 'default-frame-alist '(font . "Consolas 10")))
+    (set-face-attribute 'default nil :family "Consolas" :height 90)
   ;; If not Windows
-  (progn (add-to-list 'default-frame-alist '(font . "Inconsolatazi4 10")))
+  (set-face-attribute 'default nil :family "Pragmata Pro" :height 90)
+  ;; (set-face-attribute 'default nil :family "Inconsolatazi4" :height 100)
+  ;; (set-face-attribute 'default nil :family "Source Code Pro" :height 90)
   )
 
 ;; Load custom theme
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/leuven-mod/"))
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
+(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ashes/"))
 
 (defun mhl/load-light-theme ()
   (interactive)
-  (load-theme 'leuven-mod t)
+  ;; (load-theme 'leuven-mod t)
+  (load-theme 'base16-ashes-light t)
   (set-frame-alpha 90))
 
 (defun mhl/load-dark-theme ()
   (interactive)
-  (load-theme 'minimal t)
+  ;; (load-theme 'minimal t)
+  (load-theme 'base16-ashes-dark t)
 
   ;; Set transparent background.
   (if (string= system-type "gnu/linux")
@@ -618,7 +623,7 @@ If region is active, apply to active region instead."
                  ))
         )))
 
-(mhl/load-light-theme)
+(mhl/load-dark-theme)
 
 (use-package smart-mode-line
   :ensure t
@@ -1006,8 +1011,8 @@ If region is active, apply to active region instead."
                  (setq helm-input-idle-delay 0.01)
 
                  (setq helm-full-frame nil)
-                 ;; (setq helm-split-window-default-side 'other) ;; open helm buffer in another window
-                 ;; (setq helm-split-window-in-side-p t)         ;; open helm buffer inside current window, not occupy whole other window
+                 (setq helm-split-window-default-side 'other)
+                 (setq helm-split-window-in-side-p t)         ;; open helm buffer inside current window, not occupy whole other window
 
                  (setq helm-candidate-number-limit 200)
 
