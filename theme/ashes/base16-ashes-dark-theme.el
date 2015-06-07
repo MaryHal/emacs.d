@@ -7,7 +7,8 @@
 
 (deftheme base16-ashes-dark)
 
-(let ((base00 "#1C2023")
+(let ((basebg "#0F0F0F")
+      (base00 "#1C2023")
       (base01 "#393F45")
       (base02 "#565E65")
       (base03 "#747C84")
@@ -32,8 +33,8 @@
    `(vertical-border ((t (:background ,base00 :foreground ,base00))))
    `(border-glyph ((t (nil))))
    `(cursor ((t (:background ,base05 :inverse-video t))))
-   `(default ((t (:background ,base00 :foreground ,base05))))
-   `(fringe ((t (:background ,base00))))
+   `(default ((t (:background ,basebg :foreground ,base05))))
+   `(fringe ((t (:background ,basebg))))
    `(gui-element ((t (:background ,base03 :foreground ,base06))))
    `(highlight ((t (:background ,base01))))
    `(link ((t (:foreground ,base0D))))
@@ -339,8 +340,8 @@
    `(mm/mirror-face ((t (:inherit region :foreground nil :background nil))))
 
    ;; org-mode
-   `(org-level-1 ((t (:height 1.3 :weight bold :overline ,base01 :foreground ,base05))))
-   `(org-level-2 ((t (:height 1.0 :weight bold :overline ,base01 :foreground ,base05))))
+   `(org-level-1 ((t (:height 1.3 :weight bold :foreground ,base05))))
+   `(org-level-2 ((t (:height 1.0 :weight bold :foreground ,base05))))
    `(org-level-3 ((t (:height 1.0 :weight bold :foreground ,base05))))
    `(org-level-4 ((t (:height 1.0 :weight bold :foreground ,base05))))
    `(org-level-5 ((t (:height 1.0 :weight bold :foreground ,base05))))

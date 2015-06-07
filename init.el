@@ -442,6 +442,11 @@ If region is active, apply to active region instead."
 (with-current-buffer (get-buffer "*scratch*")
   (auto-save-mode -1))
 
+;; If `auto-save-list-file-prefix' is set to `nil', sessions are not recorded
+;; for recovery.
+;; (setq auto-save-list-file-prefix nil)
+(setq auto-save-list-file-prefix (concat user-cache-directory "auto-save-list"))
+
 ;; Place Backup Files in a Specific Directory
 (setq make-backup-files nil)
 
@@ -476,12 +481,15 @@ If region is active, apply to active region instead."
 
 ;; Homeless Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Poor-man's leader?
-(defvar my-leader-key "M-SPC")
-(global-unset-key (kbd "M-SPC"))
+;; ;; Poor-man's leader?
+;; (defvar my-leader-key "M-SPC")
+;; (global-unset-key (kbd "M-SPC"))
 
-(defun leader-kbd (&rest keys)
-  (kbd (mapconcat 'identity (cons my-leader-key keys) " ")))
+;; (defun leader-kbd (&rest keys)
+;;   (kbd (mapconcat 'identity (cons my-leader-key keys) " ")))
+
+;; ;; ;; Example Usage:
+;; ;; (global-set-key (leader-kbd "m") 'magit-status)
 
 ;; Remove suspend-frame. Three times.
 (global-unset-key (kbd "C-x C-z"))
@@ -495,8 +503,8 @@ If region is active, apply to active region instead."
 ;; replace with [r]eally [q]uit
 (bind-key "C-x r q" #'save-buffers-kill-terminal)
 (bind-key "C-x C-c" (lambda ()
-                            (interactive)
-                            (message "Thou shall not quit!")))
+                      (interactive)
+                      (message "Thou shall not quit!")))
 
 ;; Alter M-w so if there's no region, just grab 'till the end of the line.
 (bind-key "M-w" #'save-region-or-current-line)
@@ -1337,6 +1345,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ))
 
 (use-package evil-surround
+  :ensure t
+  :disabled t
+  :defer t
   :config (global-evil-surround-mode t))
 
 (use-package evil-args
@@ -1364,7 +1375,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package sh-script
   :config (progn
             (defun disable-elec-here-doc-mode ()
-                   (sh-electric-here-document-mode -1))
+              (sh-electric-here-document-mode -1))
 
             (add-hook 'sh-mode-hook #'disable-elec-here-doc-mode)))
 
@@ -1424,10 +1435,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   ;; :commands (yas-expand yas-minor-mode)
   :init (progn (setq yas-snippet-dirs (concat user-emacs-directory "snippets")))
   :config (progn ;; (yas-load-directory (concat user-emacs-directory "snippets"))
-                 (yas-reload-all)
-                 (add-hook 'prog-mode-hook #'yas-minor-mode)
-                 (add-hook 'markdown-mode-hook #'yas-minor-mode)
-                 ))
+            (yas-reload-all)
+            (add-hook 'prog-mode-hook #'yas-minor-mode)
+            (add-hook 'markdown-mode-hook #'yas-minor-mode)
+            ))
 
 
 
@@ -1531,6 +1542,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                        '(("^$" "Goodbye.")))
                  ))
 
+(use-package twittering-mode
+  :defer t
+  :ensure t
+  :commands (twittering-mode)
+  :init (progn
+          (setq twittering-use-master-password t)
+          (add-hook 'twittering-mode-hook #'disable-show-trailing-whitespace)
+          ))
 
 
 ;; Finishing Up ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
