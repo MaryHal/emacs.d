@@ -196,10 +196,10 @@
    `(helm-action ((t (:foreground ,base05 :underline nil))))
 
    `(helm-ff-dotted-directory ((t (:weight bold :foreground ,base05 :background nil))))
-   `(helm-ff-directory ((t (:weight bold :foreground ,base0E :background nil))))
-   `(helm-ff-executable ((t (:foreground ,base0A))))
+   `(helm-ff-directory ((t (:weight bold :foreground ,base0F :background nil))))
+   `(helm-ff-executable ((t (:weight bold :foreground ,base0A))))
    `(helm-ff-file ((t (:foreground ,base05))))
-   `(helm-ff-symlink ((t (:foreground ,base0C))))
+   `(helm-ff-symlink ((t (:weight bold :foreground ,base0C))))
    `(helm-ff-prefix ((t (:weight bold :foreground ,base08 :background nil))))
    `(helm-ff-invalid-symlink ((t (:foreground ,base05 :background ,base0E))))
 
