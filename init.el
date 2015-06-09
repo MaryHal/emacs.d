@@ -818,6 +818,10 @@ If region is active, apply to active region instead."
   :ensure t
   :commands (ag ag-regexp))
 
+(use-package rainbow-mode
+  :ensure t
+  :commands (rainbow-mode))
+
 
 ;; Version Control;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
