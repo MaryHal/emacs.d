@@ -493,7 +493,7 @@ If region is active, apply to active region instead."
 
 ;; Remove suspend-frame. Three times.
 (global-unset-key (kbd "C-x C-z"))
-;; (global-unset-key (kbd "C-z"))
+(global-unset-key (kbd "C-z"))
 (put 'suspend-frame 'disabled t)
 
 ;; Unset some keys I never use
@@ -783,7 +783,8 @@ If region is active, apply to active region instead."
 
 (use-package key-chord
   :disabled t
-  :init (progn (key-chord-mode 1))
+  :ensure t
+  :commands (key-chord-mode)
   :config (progn
             (key-chord-define-global "VV" #'other-window)
             ))
@@ -1138,8 +1139,8 @@ If region is active, apply to active region instead."
                  ;; (setq evil-replace-state-cursor  '("red"            hollow))
                  ;; (setq evil-operator-state-cursor '("CadetBlue"      box))
 
-                 ;; (evil-set-initial-state 'erc-mode 'normal)
-                 ;; (evil-set-initial-state 'package-menu-mode 'normal)
+                 (evil-set-initial-state 'erc-mode 'normal)
+                 (evil-set-initial-state 'package-menu-mode 'normal)
 
                  ;; Make ESC work more or less like it does in Vim
                  (defun init/minibuffer-keyboard-quit()
@@ -1180,9 +1181,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ;; ;; Make end-of-line work in insert
                  ;; (bind-key "C-e" #'end-of-line evil-insert-state-map)
 
-                 ;; gj gk by default
+                 ;; Swap j,k with gj, gk
                  (bind-key "j" #'evil-next-visual-line     evil-normal-state-map)
                  (bind-key "k" #'evil-previous-visual-line evil-normal-state-map)
+                 (bind-key "g j" #'evil-next-line          evil-normal-state-map)
+                 (bind-key "g k" #'evil-previous-line      evil-normal-state-map)
 
                  ;; Other evil keybindings
                  (evil-define-operator evil-join-previous-line (beg end)
@@ -1429,6 +1432,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package sgml-mode
   :ensure t
   :mode ("\\.html\\'" . html-mode))
+
+(use-package writegood-mode
+  :ensure t
+  :commands (writegood-mode))
 
 
 
