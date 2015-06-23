@@ -570,7 +570,6 @@ If region is active, apply to active region instead."
                  (popwin-mode t)
                  ))
 
-;; I like being able to close popup windows with C-g, shackle doesn't do that (yet?)
 (use-package shackle
   :ensure t
   :defer t
@@ -774,7 +773,7 @@ If region is active, apply to active region instead."
 
 (use-package aggressive-indent
   :ensure t
-  ;; :disabled t
+  :disabled t
   :config (global-aggressive-indent-mode t))
 
 (use-package expand-region
@@ -1032,8 +1031,19 @@ If region is active, apply to active region instead."
                  ;; Don't loop helm sources.
                  (setq helm-move-to-line-cycle-in-source nil)
 
-                 ;; Free up some visual space.
-                 (setq helm-display-header-line nil)
+                 ;; ;; Free up some visual space.
+                 ;; (setq helm-display-header-line nil)
+
+                 ;; Enter search patterns in header line instead of minibuffer.
+                 (setq helm-echo-input-in-header-line t)
+                 (defun helm-hide-minibuffer-maybe ()
+                   (when (with-helm-buffer helm-echo-input-in-header-line)
+                     (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+                       (overlay-put ov 'window (selected-window))
+                       (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
+                                               `(:background ,bg-color :foreground ,bg-color)))
+                       (setq-local cursor-type nil))))
+                 (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe)
 
                  ;; ;; "Remove" source header text
                  ;; (set-face-attribute 'helm-source-header nil :height 1.0)
