@@ -703,12 +703,12 @@ If region is active, apply to active region instead."
             ;; (setq-default indicate-buffer-boundaries 'left)
             (setq-default indicate-buffer-boundaries 'nil)
 
-            (set-fringe-mode (cons 0 0))
+            (set-fringe-mode (cons 8 8))
             ))
 
-;; Set margins to 1
-(setq-default left-margin-width 1
-              right-margin-width 1)
+;; Set margins to 0
+(setq-default left-margin-width 0
+              right-margin-width 0)
 (set-window-buffer nil (current-buffer))
 
 (use-package paren
@@ -840,12 +840,12 @@ If region is active, apply to active region instead."
                  ;; (set-face-background 'git-gutter:added    "green")
                  ;; (set-face-background 'git-gutter:deleted  "red")
 
-                 (global-git-gutter-mode t)
+                 ;; (global-git-gutter-mode t)
                  ))
 
 (use-package git-gutter-fringe
   :ensure t
-  :disabled t
+  ;; :disabled t
   :config (global-git-gutter-mode t))
 
 (use-package git-timemachine
