@@ -703,6 +703,45 @@ If region is active, apply to active region instead."
             ;; (setq-default indicate-buffer-boundaries 'left)
             (setq-default indicate-buffer-boundaries 'nil)
 
+            (define-fringe-bitmap 'right-arrow
+              [#b0000000
+               #b0000000
+               #b0000000
+               #b0010000
+               #b0011000
+               #b0010000
+               #b0000000
+               #b0000000])
+            (define-fringe-bitmap 'left-arrow
+              [#b0000000
+               #b0000000
+               #b0000000
+               #b0001000
+               #b0011000
+               #b0001000
+               #b0000000
+               #b0000000])
+            (define-fringe-bitmap 'exclamation-mark
+              [#b0010000
+               #b0111000
+               #b0111000
+               #b0010000
+               #b0010000
+               #b0010000
+               #b0000000
+               #b0010000
+               #b0010000])
+            (define-fringe-bitmap 'question-mark
+              [#b0011000
+               #b0100100
+               #b0100100
+               #b0001000
+               #b0010000
+               #b0010000
+               #b0000000
+               #b0010000
+               #b0010000])
+
             (set-fringe-mode (cons 8 8))
             ))
 
@@ -832,6 +871,7 @@ If region is active, apply to active region instead."
 
 (use-package git-gutter
   :ensure t
+  :disabled t
   :config (progn (setq git-gutter:modified-sign "*")
                  (setq git-gutter:added-sign "+")
                  (setq git-gutter:deleted-sign "-")
@@ -846,7 +886,35 @@ If region is active, apply to active region instead."
 (use-package git-gutter-fringe
   :ensure t
   ;; :disabled t
-  :config (global-git-gutter-mode t))
+  :config (progn
+            (define-fringe-bitmap 'git-gutter-fr:added
+              [#b0000000
+               #b0010000
+               #b0010000
+               #b1111100
+               #b0010000
+               #b0010000
+               #b0000000
+               #b0000000])
+            (define-fringe-bitmap 'git-gutter-fr:deleted
+              [#b0000000
+               #b0000000
+               #b0000000
+               #b1111100
+               #b0000000
+               #b0000000
+               #b0000000
+               #b0000000])
+            (define-fringe-bitmap 'git-gutter-fr:modified
+              [#b0000000
+               #b0010000
+               #b0111000
+               #b1111100
+               #b0111000
+               #b0010000
+               #b0000000
+               #b0000000])
+            (global-git-gutter-mode t)))
 
 (use-package git-timemachine
   :ensure t
@@ -1034,22 +1102,25 @@ If region is active, apply to active region instead."
                  ;; ;; Free up some visual space.
                  ;; (setq helm-display-header-line nil)
 
-                 ;; Enter search patterns in header line instead of minibuffer.
-                 (setq helm-echo-input-in-header-line t)
-                 (defun helm-hide-minibuffer-maybe ()
-                   (when (with-helm-buffer helm-echo-input-in-header-line)
-                     (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
-                       (overlay-put ov 'window (selected-window))
-                       (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
-                                               `(:background ,bg-color :foreground ,bg-color)))
-                       (setq-local cursor-type nil))))
-                 (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe)
+                 (defun helm-cfg-use-header-line-instead-of-minibuffer ()
+                   ;; Enter search patterns in header line instead of minibuffer.
+                   (setq helm-echo-input-in-header-line t)
+                   (defun helm-hide-minibuffer-maybe ()
+                     (when (with-helm-buffer helm-echo-input-in-header-line)
+                       (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+                         (overlay-put ov 'window (selected-window))
+                         (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
+                                                 `(:background ,bg-color :foreground ,bg-color)))
+                         (setq-local cursor-type nil))))
+                   (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe)
+                   )
+                 (helm-cfg-use-header-line-instead-of-minibuffer)
 
                  ;; ;; "Remove" source header text
                  ;; (set-face-attribute 'helm-source-header nil :height 1.0)
 
-                 ;; Save current position to mark ring when jumping to a different place
-                 (add-hook 'helm-goto-line-before-hook #'helm-save-current-pos-to-mark-ring)
+                 ;; ;; Save current position to mark ring when jumping to a different place
+                 ;; (add-hook 'helm-goto-line-before-hook #'helm-save-current-pos-to-mark-ring)
 
                  (helm-mode t)
 
@@ -1562,6 +1633,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (setq erc-quit-reason-various-alist
                        '(("^$" "Goodbye.")))
                  ))
+
+(use-package znc
+  :defer t
+  :disabled t
+  :ensure t)
 
 (use-package twittering-mode
   :defer t
