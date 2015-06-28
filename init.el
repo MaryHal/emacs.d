@@ -412,6 +412,9 @@ If region is active, apply to active region instead."
                        uniquify-after-kill-buffer-p t)
                  ))
 
+(use-package winner
+  :config (winner-mode t))
+
 (use-package ediff
   :defer t
   :config (progn (setq ediff-diff-options "-w")
@@ -706,8 +709,9 @@ If region is active, apply to active region instead."
             (define-fringe-bitmap 'right-arrow
               [#b0000000
                #b0000000
-               #b0000000
                #b0010000
+               #b0011000
+               #b0011100
                #b0011000
                #b0010000
                #b0000000
@@ -715,8 +719,9 @@ If region is active, apply to active region instead."
             (define-fringe-bitmap 'left-arrow
               [#b0000000
                #b0000000
-               #b0000000
                #b0001000
+               #b0011000
+               #b0111000
                #b0011000
                #b0001000
                #b0000000
@@ -976,46 +981,45 @@ If region is active, apply to active region instead."
                              ("i" text-scale-increase "in")
                              ("o" text-scale-decrease "out")))
 
-          (bind-key "C-M-o" (defhydra hydra-window ()
-                              "window"
+          (bind-key "C-M-o" (defhydra hydra-window-stuff (:hint nil)
+                              "
+          Split: _v_ert  _s_:horz
+         Delete: _c_lose  _o_nly
+  Switch Window: _h_:left  _j_:down  _k_:up  _l_:right
+        Buffers: _p_revious  _n_ext  _b_:select  _f_ind-file  _F_projectile
+         Winner: _u_ndo  _r_edo
+         Resize: _H_:splitter left  _J_:splitter down  _K_:splitter up  _L_:splitter right
+           Move: _a_:up  _z_:down "
+                              ("z" scroll-up-line)
+                              ("a" scroll-down-line)
+                              ;; ("i" idomenu)
+
+                              ("u" winner-undo)
+                              ("r" winner-redo)
+
                               ("h" windmove-left)
                               ("j" windmove-down)
                               ("k" windmove-up)
                               ("l" windmove-right)
-                              ("a" (lambda ()
-                                     (interactive)
-                                     (ace-window 1)
-                                     (add-hook 'ace-window-end-once-hook
-                                               'hydra-window/body)
-                                     (throw 'hydra-disable t))
-                               "ace")
-                              ("x" (lambda ()
-                                     (interactive)
-                                     (ace-window 4)
-                                     (add-hook 'ace-window-end-once-hook
-                                               'hydra-window/body)
-                                     (throw 'hydra-disable t))
-                               "exchange")
-                              ("d" (lambda ()
-                                     (interactive)
-                                     (ace-window 16)
-                                     (add-hook 'ace-window-end-once-hook
-                                               'hydra-window/body)
-                                     (throw 'hydra-disable t))
-                               "del")
 
-                              ("v" (lambda ()
-                                     (interactive)
-                                     (split-window-right)
-                                     (windmove-right))
-                               "vert")
-                              ("s" (lambda ()
-                                     (interactive)
-                                     (split-window-below)
-                                     (windmove-down))
-                               "horz")
-                              ("q" nil "cancel")
-                              ))
+                              ("p" previous-buffer)
+                              ("n" next-buffer)
+                              ("b" ido-switch-buffer)
+                              ("f" ido-find-file)
+                              ("F" projectile-find-file)
+
+                              ("s" split-window-below)
+                              ("v" split-window-right)
+
+                              ("c" delete-window)
+                              ("o" delete-other-windows)
+
+                              ;; ("H" hydra-move-splitter-left)
+                              ;; ("J" hydra-move-splitter-down)
+                              ;; ("K" hydra-move-splitter-up)
+                              ;; ("L" hydra-move-splitter-right)
+
+                              ("q" nil)))
           ))
 
 
