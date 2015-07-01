@@ -813,6 +813,8 @@ If region is active, apply to active region instead."
 
 (use-package anzu
   :ensure t
+  :bind (("M-%" . anzu-query-replace)
+         ("C-M-%" . anzu-query-replace-regexp))
   :config (global-anzu-mode t))
 
 (use-package aggressive-indent
@@ -986,7 +988,7 @@ If region is active, apply to active region instead."
           Split: _v_ert  _s_:horz
          Delete: _c_lose  _o_nly
   Switch Window: _h_:left  _j_:down  _k_:up  _l_:right
-        Buffers: _p_revious  _n_ext  _b_:select  _f_ind-file  _F_projectile
+        Buffers: _p_revious  _n_ext  _b_:select  _f_ind-file  _F_:projectile
          Winner: _u_ndo  _r_edo
          Resize: _H_:splitter left  _J_:splitter down  _K_:splitter up  _L_:splitter right
            Move: _a_:up  _z_:down "
@@ -1014,10 +1016,10 @@ If region is active, apply to active region instead."
                               ("c" delete-window)
                               ("o" delete-other-windows)
 
-                              ;; ("H" hydra-move-splitter-left)
-                              ;; ("J" hydra-move-splitter-down)
-                              ;; ("K" hydra-move-splitter-up)
-                              ;; ("L" hydra-move-splitter-right)
+                              ("H" hydra-move-splitter-left)
+                              ("J" hydra-move-splitter-down)
+                              ("K" hydra-move-splitter-up)
+                              ("L" hydra-move-splitter-right)
 
                               ("q" nil)))
 
@@ -1026,18 +1028,18 @@ If region is active, apply to active region instead."
                               "
 ^Up^            ^Down^        ^Miscellaneous^
 ----------------------------------------------
-[_p_]   Next    [_n_]   Next    [_l_] Edit lines
-[_P_]   Skip    [_N_]   Skip    [_a_] Mark all
-[_M-p_] Unmark  [_M-n_] Unmark  [_q_] Quit "
-  ("l" mc/edit-lines :exit t)
-  ("a" mc/mark-all-like-this :exit t)
-  ("n" mc/mark-next-like-this)
-  ("N" mc/skip-to-next-like-this)
-  ("M-n" mc/unmark-next-like-this)
-  ("p" mc/mark-previous-like-this)
-  ("P" mc/skip-to-previous-like-this)
-  ("M-p" mc/unmark-previous-like-this)
-  ("q" nil)))
+_p_   Next    _n_   Next    _l_ Edit lines
+_P_   Skip    _N_   Skip    _a_ Mark all
+_M-p_ Unmark  _M-n_ Unmark  _q_ Quit "
+                              ("l" mc/edit-lines :exit t)
+                              ("a" mc/mark-all-like-this :exit t)
+                              ("n" mc/mark-next-like-this)
+                              ("N" mc/skip-to-next-like-this)
+                              ("M-n" mc/unmark-next-like-this)
+                              ("p" mc/mark-previous-like-this)
+                              ("P" mc/skip-to-previous-like-this)
+                              ("M-p" mc/unmark-previous-like-this)
+                              ("q" nil)))
           ))
 
 
