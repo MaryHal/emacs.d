@@ -701,6 +701,18 @@ If region is active, apply to active region instead."
   :config (progn
             ;; Don't show empty line markers in the fringe past the end of the document
             (setq-default indicate-empty-lines nil)
+
+            ;; (define-fringe-bitmap 'empty-line
+            ;;   [#b0010000
+            ;;    #b0000000
+            ;;    #b0010000
+            ;;    #b0000000
+            ;;    #b0010000
+            ;;    #b0000000
+            ;;    #b0010000
+            ;;    #b0000000
+            ;;    #b0010000])
+
             ;; (setq-default indicate-buffer-boundaries '((top . left)
             ;;                                            (bottom . left)))
             ;; (setq-default indicate-buffer-boundaries 'left)
