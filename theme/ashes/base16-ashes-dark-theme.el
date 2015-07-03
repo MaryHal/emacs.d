@@ -340,14 +340,14 @@
    `(mm/mirror-face ((t (:inherit region :foreground nil :background nil))))
 
    ;; org-mode
-   `(org-level-1 ((t (:height 1.3 :weight bold :foreground ,base05))))
-   `(org-level-2 ((t (:height 1.0 :weight bold :foreground ,base05))))
-   `(org-level-3 ((t (:height 1.0 :weight bold :foreground ,base05))))
-   `(org-level-4 ((t (:height 1.0 :weight bold :foreground ,base05))))
-   `(org-level-5 ((t (:height 1.0 :weight bold :foreground ,base05))))
-   `(org-level-6 ((t (:height 1.0 :weight bold :foreground ,base05))))
-   `(org-level-7 ((t (:height 1.0 :weight bold :foreground ,base05))))
-   `(org-level-8 ((t (:height 1.0 :weight bold :foreground ,base05))))
+   `(org-level-1 ((t (:height 1.3 :weight bold :overline ,base00 :foreground ,base05))))
+   `(org-level-2 ((t (:height 1.0 :weight bold :overline ,base00 :foreground ,base05))))
+   `(org-level-3 ((t (:height 1.0 :weight bold :overline ,base00 :foreground ,base05))))
+   `(org-level-4 ((t (:height 1.0 :weight bold :overline ,base00 :foreground ,base05))))
+   `(org-level-5 ((t (:height 1.0 :weight bold :overline ,base00 :foreground ,base05))))
+   `(org-level-6 ((t (:height 1.0 :weight bold :overline ,base00 :foreground ,base05))))
+   `(org-level-7 ((t (:height 1.0 :weight bold :overline ,base00 :foreground ,base05))))
+   `(org-level-8 ((t (:height 1.0 :weight bold :overline ,base00 :foreground ,base05))))
 
    ;; outline
    `(outline-1 ((t (:inherit org-level-1))))
@@ -371,7 +371,7 @@
    `(org-document-info ((t (:foreground ,base0C))))
    `(org-document-info-keyword ((t (:foreground ,base0B))))
    `(org-document-title ((t (:weight bold :foreground ,base09 :height 1.44))))
-   `(org-done ((t (:foreground ,base0B))))
+   `(org-done ((t (:overline ,base00 :foreground ,base0B))))
    `(org-ellipsis ((t (:foreground ,base04))))
    `(org-footnote ((t (:foreground ,base0C))))
    `(org-formula ((t (:foreground ,base08))))
@@ -382,7 +382,7 @@
    `(org-scheduled-today ((t (:foreground ,base0B))))
    `(org-special-keyword ((t (:foreground ,base09))))
    `(org-table ((t (:foreground ,base0E))))
-   `(org-todo ((t (:foreground ,base08))))
+   `(org-todo ((t (:overline ,base00 :foreground ,base08))))
    `(org-upcoming-deadline ((t (:foreground ,base09))))
    `(org-warning ((t (:weight bold :foreground ,base08))))
 
