@@ -24,7 +24,7 @@
 
 ;; Things that should be set early just in case something bad happens
 
-;; Turn off backup files
+;; turn off backup files
 (setq make-backup-files nil)
 
 
@@ -1700,6 +1700,25 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           (setq twittering-use-master-password t)
           (add-hook 'twittering-mode-hook #'disable-show-trailing-whitespace)
           ))
+
+
+
+;; Miscellaneous Packages ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package evil-ranger
+  :load-path "site-lisp/evil-ranger"
+  :config (progn
+            ;; When disabling the mode you can choose to kill the buffers that were opened while browsing the directories.
+            (setq evil-ranger-cleanup-on-disable t)
+
+            ;; Or you can choose to kill the buffer just after you move to another entry in the dired buffer.
+            (setq evil-ranger-cleanup-eagerly t)
+
+            ;; If you want the dired buffers that were peeped to have the mode enabled set it to true.
+            (setq evil-ranger-enable-on-directories t)
+            )
+  )
+
 
 
 ;; Finishing Up ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
