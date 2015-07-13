@@ -1,0 +1,3 @@
+[submodule "site-lisp/evil-ranger"]
+	path = site-lisp/evil-ranger
+	url = https://github.com/ralesi/evil-ranger
