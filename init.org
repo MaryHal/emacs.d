@@ -21,6 +21,10 @@
      ;; Customize Configuration
      (setq custom-file user-custom-file)
      (load user-custom-file t)
+
+     ;; ad-handle-definition warnings are generated when functions are redefined with
+     ;; defadvice. Let's disable these warnings for now.
+     (setq ad-redefinition-action 'accept)
    #+END_SRC
 
 ** Preload Init
@@ -30,7 +34,6 @@
 
      ;; turn off backup files
      (setq make-backup-files nil)
-
    #+END_SRC
 
 ** Package Management (use-package)
@@ -65,7 +68,6 @@
        :ensure t
        :commands (paradox-list-packages)
        :config (progn (setq paradox-execute-asynchronously t)))
-
    #+END_SRC
 
 ** Helper Functions
@@ -281,7 +283,6 @@
      (defun open-terminal ()
        (interactive)
        (call-process-shell-command (concat "eval $TERMINAL -e " user-shell) nil 0))
-
    #+END_SRC
 
 ** Advice
@@ -310,7 +311,6 @@
      ;;     (after rebalance-windows activate)
      ;;   (balance-windows))
      ;; (ad-activate 'delete-window)
-
    #+END_SRC
 
 ** Sane Defaults
@@ -439,7 +439,6 @@
 
      ;; Seed the random number generator
      (random t)
-
    #+END_SRC
 
 ** Backups
@@ -488,7 +487,6 @@
      (use-package dash
        :defer t
        :ensure t)
-
    #+END_SRC
 
 ** Homeless Keybindings
@@ -557,7 +555,6 @@
        :ensure t
        :bind (("M-m" . jump-char-forward)
               ("M-M" . jump-char-backward)))
-
    #+END_SRC
 
 ** Dired
@@ -565,9 +562,7 @@
    #+BEGIN_SRC emacs-lisp
      (use-package dired
        :commands dired
-       :config (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso")
-       )
-
+       :config (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso"))
    #+END_SRC
 
 ** Special Buffers
@@ -594,7 +589,6 @@
                             (t :select t)))
                     (shackle-mode t)
                     ))
-
    #+END_SRC
 
 ** Appearance
@@ -688,7 +682,6 @@
      (setq visible-bell nil
            font-lock-maximum-decoration t
            truncate-partial-width-windows nil)
-
    #+END_SRC
 
 ** Editing
@@ -951,7 +944,6 @@
      (use-package git-timemachine
        :ensure t
        :commands (git-timemachine))
-
    #+END_SRC
 
 ** Clipboard
@@ -996,7 +988,6 @@
      ;;     ;; Idea from http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
      ;;     ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
      ;;     ))
-
    #+END_SRC
 
 ** Hydra
@@ -1068,7 +1059,6 @@
                                    ("M-p" mc/unmark-previous-like-this)
                                    ("q" nil)))
                ))
-
    #+END_SRC
 
 ** Project Management
@@ -1113,7 +1103,6 @@
 
                       (workgroups-mode t)
                       ))
-
    #+END_SRC
 
 ** Helm
@@ -1208,7 +1197,6 @@
        :config (progn (helm-projectile-on)
                       (setq projectile-completion-system 'helm)
                       ))
-
    #+END_SRC
 
 ** Ido-mode
@@ -1247,12 +1235,12 @@
                                                     " [Too big]"
                                                     " [Confirm]")))
                       ))
-
    #+END_SRC
 
 ** Evil
+*** Main Package
 
-   #+BEGIN_SRC emacs-lisp
+    #+BEGIN_SRC emacs-lisp
      (use-package evil
        :ensure t
        :preface (progn (setq evil-want-C-u-scroll t)
@@ -1434,7 +1422,11 @@
        :load-path "site-lisp/holy-mode"
        :bind ("<f12>" . holy-mode)
        :init (holy-mode t))
+   #+END_SRC
 
+*** Evil Additions
+
+    #+BEGIN_SRC emacs-lisp
      (use-package evil-leader
        :ensure t
        :config (progn (setq evil-leader/in-all-states t
@@ -1528,6 +1520,19 @@
                ;; (bind-key "gm" 'evil-jump-out-args evil-normal-state-map)
                ))
 
+     (use-package evil-ranger
+       :ensure t
+       :defer t
+       :config (progn
+                 ;; When disabling the mode you can choose to kill the buffers that were opened while browsing the directories.
+                 (setq evil-ranger-cleanup-on-disable t)
+
+                 ;; Or you can choose to kill the buffer just after you move to another entry in the dired buffer.
+                 (setq evil-ranger-cleanup-eagerly t)
+
+                 ;; If you want the dired buffers that were peeped to have the mode enabled set it to true.
+                 (setq evil-ranger-enable-on-directories t)
+                 ))
    #+END_SRC
 
 ** Language Hooks
@@ -1590,7 +1595,6 @@
      (use-package writegood-mode
        :ensure t
        :commands (writegood-mode))
-
    #+END_SRC
 
 ** Yasnippet
@@ -1605,7 +1609,6 @@
             (add-hook 'prog-mode-hook #'yas-minor-mode)
             (add-hook 'markdown-mode-hook #'yas-minor-mode)
             ))
-
    #+END_SRC
 
 ** Auto-completion
@@ -1661,7 +1664,6 @@
 
                       (global-company-mode t)
                       ))
-
    #+END_SRC
 
 ** Flycheck
@@ -1682,7 +1684,6 @@
      (use-package flycheck-irony
        :ensure t
        :config (add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
-
    #+END_SRC
 
 ** Org
@@ -1695,7 +1696,6 @@
                       ;; Fontify org-mode code blocks
                       (setq org-src-fontify-natively t)
                       ))
-
    #+END_SRC
 
 ** Other Modes
@@ -1725,24 +1725,6 @@
                (setq twittering-use-master-password t)
                (add-hook 'twittering-mode-hook #'disable-show-trailing-whitespace)
                ))
-
-   #+END_SRC
-
-** Miscellaneous Packages
-
-   #+BEGIN_SRC emacs-lisp
-     (use-package evil-ranger
-       :config (progn
-                 ;; When disabling the mode you can choose to kill the buffers that were opened while browsing the directories.
-                 (setq evil-ranger-cleanup-on-disable t)
-
-                 ;; Or you can choose to kill the buffer just after you move to another entry in the dired buffer.
-                 (setq evil-ranger-cleanup-eagerly t)
-
-                 ;; If you want the dired buffers that were peeped to have the mode enabled set it to true.
-                 (setq evil-ranger-enable-on-directories t)
-                 ))
-
    #+END_SRC
 
 ** Finishing Up
