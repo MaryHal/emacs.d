@@ -1732,7 +1732,6 @@
 
    #+BEGIN_SRC emacs-lisp
      (use-package evil-ranger
-       :load-path "site-lisp/evil-ranger"
        :config (progn
                  ;; When disabling the mode you can choose to kill the buffers that were opened while browsing the directories.
                  (setq evil-ranger-cleanup-on-disable t)
