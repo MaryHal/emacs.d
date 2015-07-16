@@ -1,13 +1,19 @@
-
-;;; Code:
+#+TITLE: Emacs Config
 
 * init.el
+** Preload Init
+
+   Things that should be set early just in case something bad happens.
+
+   #+BEGIN_SRC emacs-lisp
+     ;; Turn off backup files
+     (setq make-backup-files nil)
+   #+END_SRC
+
 ** Pre-init Variables
 
    #+BEGIN_SRC emacs-lisp
      (defconst emacs-start-time (current-time))
-     (unless noninteractive
-       (message "Loading %s..." load-file-name))
 
      (require 'package)
      (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
@@ -27,21 +33,21 @@
      (setq ad-redefinition-action 'accept)
    #+END_SRC
 
-** Preload Init
+** Bootstrap use-package
 
-   #+BEGIN_SRC emacs-lisp
-     ;; Things that should be set early just in case something bad happens
-
-     ;; turn off backup files
-     (setq make-backup-files nil)
-   #+END_SRC
-
-** Package Management (use-package)
+   This file uses [[https://github.com/jwiegley/use-package][use-package]] to install and configure third-party packages,
+   but if we don't already have it, we need a mechanism to get it.
 
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile (package-initialize))
 
-     ;; Bootstrap!
+     ;; ;; use-package.el is no longer needed at runtime.
+     ;; (eval-when-compile
+     ;;   (require 'use-package))
+     ;; ;; (require 'diminish)                ;; if you use :diminish
+     ;; (require 'bind-key)                ;; if you use any :bind variant
+
+     ;; Bootstrap Function!
      (defun require-package (package)
        "refresh package archives, check package presence and install if it's not installed"
        (if (null (require package nil t))
@@ -55,19 +61,8 @@
                         (package-install package)))
                   (require package))))
 
-     ;; ;; el-get
-     ;; (require-package 'el-get)
-     ;; (add-to-list 'el-get-recipe-path "~/.emacs.d/el-get/el-get/recipes")
-     ;; (el-get 'sync)
-
-     ;; req-package
+     ;; Aquire use-package, the crux of our config file.
      (require-package 'use-package)
-     (require 'use-package)
-
-     (use-package paradox
-       :ensure t
-       :commands (paradox-list-packages)
-       :config (progn (setq paradox-execute-asynchronously t)))
    #+END_SRC
 
 ** Helper Functions
@@ -153,31 +148,6 @@
                (set-window-buffer (next-window) next-win-buffer)
                (select-window first-win)
                (if this-win-2nd (other-window 1))))))
-
-     ;; (defun rotate-windows ()
-     ;;   "Rotate your windows"
-     ;;   (interactive)
-     ;;   (cond ((not (> (count-windows)1))
-     ;;          (message "You can't rotate a single window!"))
-     ;;         (t
-     ;;          (setq i 1)
-     ;;          (setq numWindows (count-windows))
-     ;;          (while (< i numWindows)
-     ;;            (let* (
-     ;;                   (w1 (elt (window-list) i))
-     ;;                   (w2 (elt (window-list) (+ (% i numWindows) 1)))
-
-     ;;                   (b1 (window-buffer w1))
-     ;;                   (b2 (window-buffer w2))
-
-     ;;                   (s1 (window-start w1))
-     ;;                   (s2 (window-start w2))
-     ;;                   )
-     ;;              (set-window-buffer w1 b2)
-     ;;              (set-window-buffer w2 b1)
-     ;;              (set-window-start w1 s2)
-     ;;              (set-window-start w2 s1)
-     ;;              (setq i (1+ i)))))))
 
      ;; from https://gist.github.com/3402786
      (defun toggle-maximize-buffer () "Maximize buffer"
@@ -794,7 +764,6 @@
        :config (electric-indent-mode t))
 
      ;; Trailing whitespace
-
      (defun disable-show-trailing-whitespace()
        (setq show-trailing-whitespace nil))
 
@@ -1237,196 +1206,195 @@
                       ))
    #+END_SRC
 
-** Evil
-*** Main Package
+** Evil Main
 
-    #+BEGIN_SRC emacs-lisp
-     (use-package evil
-       :ensure t
-       :preface (progn (setq evil-want-C-u-scroll t)
-                       (setq evil-move-cursor-back nil)
-                       (setq evil-cross-lines t)
-                       (setq evil-intercept-esc 'always)
+   #+BEGIN_SRC emacs-lisp
+    (use-package evil
+      :ensure t
+      :preface (progn (setq evil-want-C-u-scroll t)
+                      (setq evil-move-cursor-back nil)
+                      (setq evil-cross-lines t)
+                      (setq evil-intercept-esc 'always)
 
-                       (setq evil-auto-indent t))
-       ;; :init (progn)
-       :config (progn (evil-mode t)
-                      ;; (bind-key "<f12>" #'evil-local-mode)
+                      (setq evil-auto-indent t))
+      ;; :init (progn)
+      :config (progn (evil-mode t)
+                     ;; (bind-key "<f12>" #'evil-local-mode)
 
-                      ;; Toggle evil-mode
-                      (evil-set-toggle-key "C-\\")
+                     ;; Toggle evil-mode
+                     (evil-set-toggle-key "C-\\")
 
-                      ;; (setq evil-emacs-state-cursor    '("DarkSeaGreen1"  box))
-                      ;; (setq evil-normal-state-cursor   '("white"          box))
-                      ;; (setq evil-insert-state-cursor   '("white"          bar))
-                      ;; (setq evil-visual-state-cursor   '("RoyalBlue"      box))
-                      ;; (setq evil-replace-state-cursor  '("red"            hollow))
-                      ;; (setq evil-operator-state-cursor '("CadetBlue"      box))
+                     ;; (setq evil-emacs-state-cursor    '("DarkSeaGreen1"  box))
+                     ;; (setq evil-normal-state-cursor   '("white"          box))
+                     ;; (setq evil-insert-state-cursor   '("white"          bar))
+                     ;; (setq evil-visual-state-cursor   '("RoyalBlue"      box))
+                     ;; (setq evil-replace-state-cursor  '("red"            hollow))
+                     ;; (setq evil-operator-state-cursor '("CadetBlue"      box))
 
-                      (evil-set-initial-state 'erc-mode 'normal)
-                      (evil-set-initial-state 'package-menu-mode 'normal)
+                     (evil-set-initial-state 'erc-mode 'normal)
+                     (evil-set-initial-state 'package-menu-mode 'normal)
 
-                      ;; Make ESC work more or less like it does in Vim
-                      (defun init/minibuffer-keyboard-quit()
-                        "Abort recursive edit.
+                     ;; Make ESC work more or less like it does in Vim
+                     (defun init/minibuffer-keyboard-quit()
+                       "Abort recursive edit.
 
-     In Delete Selection mode, if the mark is active, just deactivate it;
-     then it takes a second \\[keyboard-quit] to abort the minibuffer."
-                        (interactive)
-                        (if (and delete-selection-mode transient-mark-mode mark-active)
-                            (setq deactivate-mark t)
-                          (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
-                          (abort-recursive-edit)))
+    In Delete Selection mode, if the mark is active, just deactivate it;
+    then it takes a second \\[keyboard-quit] to abort the minibuffer."
+                       (interactive)
+                       (if (and delete-selection-mode transient-mark-mode mark-active)
+                           (setq deactivate-mark t)
+                         (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
+                         (abort-recursive-edit)))
 
-                      (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-map)
-                      (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-ns-map)
-                      (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-completion-map)
-                      (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-must-match-map)
-                      (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-isearch-map)
+                     (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-map)
+                     (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-ns-map)
+                     (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-completion-map)
+                     (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-must-match-map)
+                     (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-isearch-map)
 
-                      ;; Being Emacs-y
-                      (bind-key "C-a" #'evil-beginning-of-line  evil-insert-state-map)
-                      (bind-key "C-a" #'evil-beginning-of-line  evil-motion-state-map)
+                     ;; Being Emacs-y
+                     (bind-key "C-a" #'evil-beginning-of-line  evil-insert-state-map)
+                     (bind-key "C-a" #'evil-beginning-of-line  evil-motion-state-map)
 
-                      (bind-key "C-b" #'evil-backward-char      evil-insert-state-map)
-                      (bind-key "C-d" #'evil-delete-char        evil-insert-state-map)
+                     (bind-key "C-b" #'evil-backward-char      evil-insert-state-map)
+                     (bind-key "C-d" #'evil-delete-char        evil-insert-state-map)
 
-                      (bind-key "C-e" #'evil-end-of-line        evil-insert-state-map)
-                      (bind-key "C-e" #'evil-end-of-line        evil-motion-state-map)
+                     (bind-key "C-e" #'evil-end-of-line        evil-insert-state-map)
+                     (bind-key "C-e" #'evil-end-of-line        evil-motion-state-map)
 
-                      (bind-key "C-f" #'evil-forward-char       evil-insert-state-map)
+                     (bind-key "C-f" #'evil-forward-char       evil-insert-state-map)
 
-                      ;; (bind-key "C-k" #'evil-kill-line          evil-insert-state-map)
-                      ;; (bind-key "C-k" #'evil-kill-line          evil-motion-state-map)
+                     ;; (bind-key "C-k" #'evil-kill-line          evil-insert-state-map)
+                     ;; (bind-key "C-k" #'evil-kill-line          evil-motion-state-map)
 
-                      ;; ;; Delete forward like Emacs.
-                      ;; (bind-key "C-d" #'evil-delete-char evil-insert-state-map)
+                     ;; ;; Delete forward like Emacs.
+                     ;; (bind-key "C-d" #'evil-delete-char evil-insert-state-map)
 
-                      ;; ;; Make end-of-line work in insert
-                      ;; (bind-key "C-e" #'end-of-line evil-insert-state-map)
+                     ;; ;; Make end-of-line work in insert
+                     ;; (bind-key "C-e" #'end-of-line evil-insert-state-map)
 
-                      ;; Extra text objects
-                      (defmacro define-and-bind-text-object (key start-regex end-regex)
-                        (let ((inner-name (make-symbol "inner-name"))
-                              (outer-name (make-symbol "outer-name")))
-                          `(progn
-                             (evil-define-text-object ,inner-name (count &optional beg end type)
-                               (evil-select-paren ,start-regex ,end-regex beg end type count nil))
-                             (evil-define-text-object ,outer-name (count &optional beg end type)
-                               (evil-select-paren ,start-regex ,end-regex beg end type count t))
-                             (define-key evil-inner-text-objects-map ,key (quote ,inner-name))
-                             (define-key evil-outer-text-objects-map ,key (quote ,outer-name)))))
+                     ;; Extra text objects
+                     (defmacro define-and-bind-text-object (key start-regex end-regex)
+                       (let ((inner-name (make-symbol "inner-name"))
+                             (outer-name (make-symbol "outer-name")))
+                         `(progn
+                            (evil-define-text-object ,inner-name (count &optional beg end type)
+                              (evil-select-paren ,start-regex ,end-regex beg end type count nil))
+                            (evil-define-text-object ,outer-name (count &optional beg end type)
+                              (evil-select-paren ,start-regex ,end-regex beg end type count t))
+                            (define-key evil-inner-text-objects-map ,key (quote ,inner-name))
+                            (define-key evil-outer-text-objects-map ,key (quote ,outer-name)))))
 
-                      ;; create "il"/"al" (inside/around) line text objects:
-                      (define-and-bind-text-object "l" "^\\s-*" "\\s-*$")
-                      ;; create "ie"/"ae" (inside/around) entire buffer text objects:
-                      (define-and-bind-text-object "e" "\\`\\s-*" "\\s-*\\'")
+                     ;; create "il"/"al" (inside/around) line text objects:
+                     (define-and-bind-text-object "l" "^\\s-*" "\\s-*$")
+                     ;; create "ie"/"ae" (inside/around) entire buffer text objects:
+                     (define-and-bind-text-object "e" "\\`\\s-*" "\\s-*\\'")
 
-                      ;; Swap j,k with gj, gk
-                      (bind-key "j" #'evil-next-visual-line     evil-normal-state-map)
-                      (bind-key "k" #'evil-previous-visual-line evil-normal-state-map)
-                      (bind-key "g j" #'evil-next-line          evil-normal-state-map)
-                      (bind-key "g k" #'evil-previous-line      evil-normal-state-map)
+                     ;; Swap j,k with gj, gk
+                     (bind-key "j" #'evil-next-visual-line     evil-normal-state-map)
+                     (bind-key "k" #'evil-previous-visual-line evil-normal-state-map)
+                     (bind-key "g j" #'evil-next-line          evil-normal-state-map)
+                     (bind-key "g k" #'evil-previous-line      evil-normal-state-map)
 
-                      ;; Other evil keybindings
-                      (evil-define-operator evil-join-previous-line (beg end)
-                        "Join the previous line with the current line."
-                        :motion evil-line
-                        (evil-previous-visual-line)
-                        (evil-join beg end))
+                     ;; Other evil keybindings
+                     (evil-define-operator evil-join-previous-line (beg end)
+                       "Join the previous line with the current line."
+                       :motion evil-line
+                       (evil-previous-visual-line)
+                       (evil-join beg end))
 
-                      ;; Let K match J
-                      (bind-key "K" #'evil-join-previous-line evil-normal-state-map)
+                     ;; Let K match J
+                     (bind-key "K" #'evil-join-previous-line evil-normal-state-map)
 
-                      ;; Make Y work like D
-                      (bind-key "Y" (kbd "y$") evil-normal-state-map)
+                     ;; Make Y work like D
+                     (bind-key "Y" (kbd "y$") evil-normal-state-map)
 
-                      ;; Kill buffer if only window with buffer open, otherwise just close
-                      ;; the window.
-                      (bind-key "Q" #'my-window-killer evil-normal-state-map)
+                     ;; Kill buffer if only window with buffer open, otherwise just close
+                     ;; the window.
+                     (bind-key "Q" #'my-window-killer evil-normal-state-map)
 
-                      ;; Visual indentation now reselects visual selection.
-                      (bind-key ">" (lambda ()
-                                      (interactive)
-                                      ;; ensure mark is less than point
-                                      (when (> (mark) (point))
-                                        (exchange-point-and-mark)
-                                        )
-                                      (evil-normal-state)
-                                      (evil-shift-right (mark) (point))
-                                      ;; re-select last visual-mode selection
-                                      (evil-visual-restore))
-                                evil-visual-state-map)
+                     ;; Visual indentation now reselects visual selection.
+                     (bind-key ">" (lambda ()
+                                     (interactive)
+                                     ;; ensure mark is less than point
+                                     (when (> (mark) (point))
+                                       (exchange-point-and-mark)
+                                       )
+                                     (evil-normal-state)
+                                     (evil-shift-right (mark) (point))
+                                     ;; re-select last visual-mode selection
+                                     (evil-visual-restore))
+                               evil-visual-state-map)
 
-                      (bind-key "<" (lambda ()
-                                      (interactive)
-                                      ;; ensure mark is less than point
-                                      (when (> (mark) (point))
-                                        (exchange-point-and-mark)
-                                        )
-                                      (evil-normal-state)
-                                      (evil-shift-left (mark) (point))
-                                      ;; re-select last visual-mode selection
-                                      (evil-visual-restore))
-                                evil-visual-state-map)
+                     (bind-key "<" (lambda ()
+                                     (interactive)
+                                     ;; ensure mark is less than point
+                                     (when (> (mark) (point))
+                                       (exchange-point-and-mark)
+                                       )
+                                     (evil-normal-state)
+                                     (evil-shift-left (mark) (point))
+                                     ;; re-select last visual-mode selection
+                                     (evil-visual-restore))
+                               evil-visual-state-map)
 
-                      ;; ;; Workgroups2
-                      ;; (bind-key "g T" #'wg-switch-to-workgroup-left  evil-normal-state-map)
-                      ;; (bind-key "g t" #'wg-switch-to-workgroup-right evil-normal-state-map)
+                     ;; ;; Workgroups2
+                     ;; (bind-key "g T" #'wg-switch-to-workgroup-left  evil-normal-state-map)
+                     ;; (bind-key "g t" #'wg-switch-to-workgroup-right evil-normal-state-map)
 
-                      ;; (bind-key "g t" #'wg-switch-to-workgroup-right evil-motion-state-map)
+                     ;; (bind-key "g t" #'wg-switch-to-workgroup-right evil-motion-state-map)
 
-                      ;; (evil-ex-define-cmd "tabnew"   #'wg-create-workgroup)
-                      ;; (evil-ex-define-cmd "tabclose" #'wg-kill-workgroup)
+                     ;; (evil-ex-define-cmd "tabnew"   #'wg-create-workgroup)
+                     ;; (evil-ex-define-cmd "tabclose" #'wg-kill-workgroup)
 
-                      ;; ;; "Unimpaired"
-                      ;; (bind-key "[ b" #'previous-buffer evil-normal-state-map)
-                      ;; (bind-key "] b" #'next-buffer     evil-normal-state-map)
-                      ;; (bind-key "[ q" #'previous-error  evil-normal-state-map)
-                      ;; (bind-key "] q" #'next-error      evil-normal-state-map)
+                     ;; ;; "Unimpaired"
+                     ;; (bind-key "[ b" #'previous-buffer evil-normal-state-map)
+                     ;; (bind-key "] b" #'next-buffer     evil-normal-state-map)
+                     ;; (bind-key "[ q" #'previous-error  evil-normal-state-map)
+                     ;; (bind-key "] q" #'next-error      evil-normal-state-map)
 
-                      ;; Bubble Text up and down. Works with regions.
-                      (bind-key "[ e" #'move-text-up   evil-normal-state-map)
-                      (bind-key "] e" #'move-text-down evil-normal-state-map)
+                     ;; Bubble Text up and down. Works with regions.
+                     (bind-key "[ e" #'move-text-up   evil-normal-state-map)
+                     (bind-key "] e" #'move-text-down evil-normal-state-map)
 
-                      ;; Commentin'
-                      (bind-key "g c c" #'comment-line-or-region
-                                evil-normal-state-map)
-                      (bind-key "g c" #'comment-line-or-region evil-visual-state-map)
+                     ;; Commentin'
+                     (bind-key "g c c" #'comment-line-or-region
+                               evil-normal-state-map)
+                     (bind-key "g c" #'comment-line-or-region evil-visual-state-map)
 
-                      ;; ;; Multiple cursors should use emacs state instead of insert state.
-                      ;; (add-hook 'multiple-cursors-mode-enabled-hook #'evil-emacs-state)
-                      ;; (add-hook 'multiple-cursors-mode-disabled-hook #'evil-normal-state)
+                     ;; ;; Multiple cursors should use emacs state instead of insert state.
+                     ;; (add-hook 'multiple-cursors-mode-enabled-hook #'evil-emacs-state)
+                     ;; (add-hook 'multiple-cursors-mode-disabled-hook #'evil-normal-state)
 
-                      ;; (define-key evil-normal-state-map (kbd "g r") 'mc/mark-all-like-this)
-                      ;; (bind-key "C->" 'mc/mark-next-like-this)
-                      ;; (bind-key "C-<" 'mc/mark-previous-like-this)
+                     ;; (define-key evil-normal-state-map (kbd "g r") 'mc/mark-all-like-this)
+                     ;; (bind-key "C->" 'mc/mark-next-like-this)
+                     ;; (bind-key "C-<" 'mc/mark-previous-like-this)
 
-                      ;; Don't quit!
-                      (defadvice evil-quit (around advice-for-evil-quit activate)
-                        (message "Thou shall not quit!"))
-                      (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
-                        (message "Thou shall not quit!"))
+                     ;; Don't quit!
+                     (defadvice evil-quit (around advice-for-evil-quit activate)
+                       (message "Thou shall not quit!"))
+                     (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
+                       (message "Thou shall not quit!"))
 
-                      ;; ;; git-timemachine integration.
-                      ;; ;; @see https://bitbucket.org/lyro/evil/issue/511/let-certain-minor-modes-key-bindings
-                      ;; (eval-after-load 'git-timemachine
-                      ;;   '(progn
-                      ;;      (evil-make-overriding-map git-timemachine-mode-map 'normal)
-                      ;;      ;; force update evil keymaps after git-timemachine-mode loaded
-                      ;;      (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps)))
-                      ))
+                     ;; ;; git-timemachine integration.
+                     ;; ;; @see https://bitbucket.org/lyro/evil/issue/511/let-certain-minor-modes-key-bindings
+                     ;; (eval-after-load 'git-timemachine
+                     ;;   '(progn
+                     ;;      (evil-make-overriding-map git-timemachine-mode-map 'normal)
+                     ;;      ;; force update evil keymaps after git-timemachine-mode loaded
+                     ;;      (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps)))
+                     ))
 
-     ;; Holy-mode without Spacemacs.
-     (use-package holy-mode
-       :load-path "site-lisp/holy-mode"
-       :bind ("<f12>" . holy-mode)
-       :init (holy-mode t))
-   #+END_SRC
+    ;; Holy-mode without Spacemacs.
+    (use-package holy-mode
+      :load-path "site-lisp/holy-mode"
+      :bind ("<f12>" . holy-mode)
+      :init (holy-mode t))
+  #+END_SRC
 
-*** Evil Additions
+** Evil Additions
 
-    #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp
      (use-package evil-leader
        :ensure t
        :config (progn (setq evil-leader/in-all-states t
@@ -1529,11 +1497,8 @@
 
                  ;; Or you can choose to kill the buffer just after you move to another entry in the dired buffer.
                  (setq evil-ranger-cleanup-eagerly t)
-
-                 ;; If you want the dired buffers that were peeped to have the mode enabled set it to true.
-                 (setq evil-ranger-enable-on-directories t)
                  ))
-   #+END_SRC
+  #+END_SRC
 
 ** Language Hooks
 
@@ -1698,9 +1663,15 @@
                       ))
    #+END_SRC
 
-** Other Modes
+** Miscellaneous Packages
 
    #+BEGIN_SRC emacs-lisp
+     ;; Enhanced package listings.
+     (use-package paradox
+       :ensure t
+       :commands (paradox-list-packages)
+       :config (progn (setq paradox-execute-asynchronously t)))
+
      (use-package erc
        :defer t
        :config (progn (setq erc-part-reason 'erc-part-reason-various)
@@ -1747,3 +1718,4 @@
                                ,load-file-name elapsed)))
                  t))
    #+END_SRC
+

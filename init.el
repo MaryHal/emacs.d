@@ -2,7 +2,7 @@
 ;;; Code:
 
 ;;; Pre-init variables
-(defvar endless/init.org-message-depth 2
+(defvar endless/init.org-message-depth 3
   "What depth of init.org headers to message at startup.")
 
 ;;; init.el
