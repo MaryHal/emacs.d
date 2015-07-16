@@ -1,4 +1,4 @@
-#+TITLE: Emacs Config
+#+Title: emacs.d
 
 * init.el
 ** Preload Init
@@ -8,6 +8,10 @@
    #+BEGIN_SRC emacs-lisp
      ;; Turn off backup files
      (setq make-backup-files nil)
+
+     ;; ad-handle-definition warnings are generated when functions are redefined with
+     ;; defadvice. Let's disable these warnings for now.
+     (setq ad-redefinition-action 'accept)
    #+END_SRC
 
 ** Pre-init Variables
@@ -27,25 +31,16 @@
      ;; Customize Configuration
      (setq custom-file user-custom-file)
      (load user-custom-file t)
-
-     ;; ad-handle-definition warnings are generated when functions are redefined with
-     ;; defadvice. Let's disable these warnings for now.
-     (setq ad-redefinition-action 'accept)
    #+END_SRC
 
 ** Bootstrap use-package
 
-   This file uses [[https://github.com/jwiegley/use-package][use-package]] to install and configure third-party packages,
-   but if we don't already have it, we need a mechanism to get it.
+   This file uses [[https://github.com/jwiegley/use-package][use-package]] to install and configure third-party packages.
+   Since use-package itself is a third-party package, we need to handle the case
+   for when we have a fresh install.
 
    #+BEGIN_SRC emacs-lisp
      (eval-when-compile (package-initialize))
-
-     ;; ;; use-package.el is no longer needed at runtime.
-     ;; (eval-when-compile
-     ;;   (require 'use-package))
-     ;; ;; (require 'diminish)                ;; if you use :diminish
-     ;; (require 'bind-key)                ;; if you use any :bind variant
 
      ;; Bootstrap Function!
      (defun require-package (package)
@@ -86,17 +81,6 @@
                (kill-buffer)
              (delete-window))
          (kill-buffer-and-window)))
-
-     ;; Set transparency of emacs
-     (defun set-frame-alpha (arg &optional active)
-       (interactive "nEnter alpha value (1-100): \np")
-       (let* ((elt (assoc 'alpha default-frame-alist))
-              (old (frame-parameter nil 'alpha))
-              (new (cond ((atom old)     `(,arg ,arg))
-                         ((eql 1 active) `(,arg ,(cadr old)))
-                         (t              `(,(car old) ,arg)))))
-         (if elt (setcdr elt new) (push `(alpha ,@new) default-frame-alist))
-         (set-frame-parameter nil 'alpha new)))
 
      ;; Switch to previously selected buffer.
      (defun backward-buffer ()
@@ -461,6 +445,9 @@
 
 ** Homeless Keybindings
 
+   Keybindings for functions that are not closely associated with a package
+   (like the built-in C functions) are located here.
+
    #+BEGIN_SRC emacs-lisp
      ;; ;; Poor-man's leader?
      ;; (defvar my-leader-key "M-SPC")
@@ -586,6 +573,17 @@
      (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/leuven-mod/"))
      (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
      (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ashes/"))
+
+     ;; Set transparency of emacs
+     (defun set-frame-alpha (arg &optional active)
+       (interactive "nEnter alpha value (1-100): \np")
+       (let* ((elt (assoc 'alpha default-frame-alist))
+              (old (frame-parameter nil 'alpha))
+              (new (cond ((atom old)     `(,arg ,arg))
+                         ((eql 1 active) `(,arg ,(cadr old)))
+                         (t              `(,(car old) ,arg)))))
+         (if elt (setcdr elt new) (push `(alpha ,@new) default-frame-alist))
+         (set-frame-parameter nil 'alpha new)))
 
      (defun mhl/load-light-theme ()
        (interactive)
@@ -855,10 +853,11 @@
      (use-package rainbow-mode
        :ensure t
        :commands (rainbow-mode))
+   #+END_SRC
 
+** Version Control
 
-     ;; Version Control;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+   #+BEGIN_SRC emacs-lisp
      (use-package magit
        :ensure t
        :bind ("C-c m" . magit-status))
@@ -1048,7 +1047,13 @@
 
                       (projectile-global-mode t)
                       ))
+   #+END_SRC
 
+   [[https://github.com/pashinin/workgroups2][Workgroups2]] adds workspace and session support to Emacs. I've found that over
+   time, my use of helm-* to switch buffers quickly has somewhat obsoleted the
+   necessity of this feature, so I've disabled it for now.
+
+   #+BEGIN_SRC emacs-lisp
      (use-package workgroups2
        :disabled t
        :config (progn (setq wg-default-session-file (concat user-cache-directory "workgroups2"))
