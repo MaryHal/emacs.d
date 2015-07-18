@@ -10,14 +10,13 @@
 (with-temp-buffer
   (insert-file-contents (concat user-emacs-directory "init.org"))
   (goto-char (point-min))
-  (search-forward "\n* init.el")
+  (search-forward "\n* Preload Init")
   (while (not (eobp))
     (forward-line 1)
     (cond
      ;; Report Headers
      ((looking-at
-       (format "\\*\\{2,%s\\} +.*$"
-               endless/init.org-message-depth))
+       "\\*+ +.*$")
       (message "%s" (match-string 0)))
      ;; Evaluate Code Blocks
      ((looking-at "^ *#\\+BEGIN_SRC +emacs-lisp *$")
