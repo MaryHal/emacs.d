@@ -26,10 +26,6 @@
     (defconst user-cache-directory (concat user-emacs-directory "cache/"))
 
     (defconst user-shell "zsh")
-
-    ;; Customize Configuration
-    (setq custom-file user-custom-file)
-    (load user-custom-file t)
   #+END_SRC
 
 * Bootstrap use-package
@@ -1719,6 +1715,15 @@
   #+END_SRC
 
 * Finishing Up
+
+  Load custom init file at the end.
+
+  #+BEGIN_SRC emacs-lisp
+    (setq custom-file user-custom-file)
+    (load user-custom-file t)
+  #+END_SRC
+
+  Make sure emacs is daemonized then print out some timing data.
 
   #+BEGIN_SRC emacs-lisp
     (use-package server
