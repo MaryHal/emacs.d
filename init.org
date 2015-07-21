@@ -771,24 +771,9 @@
                 (add-hook 'emacs-lisp-mode-hook #'imenu-use-package)
                 ))
 
-    (use-package ace-jump-mode
+    (use-package avy
       :ensure t
-      :bind (("C-c SPC" . ace-jump-word-mode)
-             ("C-c C-x" . ace-jump-mode-pop-mark))
-      :init (progn
-              ;; ;; Lowercase keys only please.
-              ;; (setq ace-jump-mode-move-keys
-              ;;       (loop for i from ?a to ?z collect i))
-
-              ;; Only jump in this window.
-              (setq ace-jump-mode-scope 'window)
-              ))
-
-    (use-package ace-window
-      :ensure t
-      :bind ("M-o" . ace-window)
-      :init (progn (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-                   ))
+      :commands (avy-goto-word-or-subword-1))
 
     (use-package anzu
       :ensure t
@@ -1460,8 +1445,9 @@
                       ;; Swoop
                       (evil-leader/set-key "s" #'helm-swoop)
 
-                      ;; Ace-jump-mode (has evil-integration built in!)
-                      (evil-leader/set-key "SPC" #'ace-jump-word-mode)
+                      ;; Avy integration
+                      (evil-leader/set-key "SPC" #'avy-goto-word-or-subword-1)
+
                       (evil-leader/set-key "l"   #'helm-locate)
 
                       ;; Expand region
