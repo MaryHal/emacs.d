@@ -477,6 +477,20 @@
     (use-package dired
       :commands dired
       :config (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso"))
+
+     (use-package ranger
+       :ensure t
+       :defer t
+       :commands (ranger)
+       :config (progn
+                 ;; When disabling the mode you can choose to kill the buffers that were opened while browsing the directories.
+                 (setq ranger-cleanup-on-disable t)
+
+                 ;; Or you can choose to kill the buffer just after you move to another entry in the dired buffer.
+                 (setq ranger-cleanup-eagerly t)
+
+                 (setq ranger-show-dotfiles t)
+                 ))
   #+END_SRC
 
 * Special Buffers
@@ -1394,10 +1408,9 @@
    evil-leader) while staying in the emacs-state.
 
    #+BEGIN_SRC emacs-lisp
-    (use-package holy-mode
-      :load-path "site-lisp/holy-mode"
-      :bind ("<f12>" . holy-mode)
-      :init (holy-mode t))
+     (use-package holy-mode
+       :load-path "site-lisp/holy-mode"
+       :bind ("<f12>" . holy-mode))
   #+END_SRC
 
 ** Evil Additions
@@ -1495,17 +1508,6 @@
                ;; bind evil-jump-out-args
                ;; (bind-key "gm" 'evil-jump-out-args evil-normal-state-map)
                ))
-
-     (use-package evil-ranger
-       :ensure t
-       :defer t
-       :config (progn
-                 ;; When disabling the mode you can choose to kill the buffers that were opened while browsing the directories.
-                 (setq evil-ranger-cleanup-on-disable t)
-
-                 ;; Or you can choose to kill the buffer just after you move to another entry in the dired buffer.
-                 (setq evil-ranger-cleanup-eagerly t)
-                 ))
   #+END_SRC
 
 * Language Hooks
@@ -1661,6 +1663,10 @@
 * Org
 
   #+BEGIN_SRC emacs-lisp
+    (use-package htmlize
+      :ensure t
+      :defer t)
+
     (use-package org
       :defer t
       :config (progn (setq org-replace-disputed-keys t)
