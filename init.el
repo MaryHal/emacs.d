@@ -1,14 +1,13 @@
 
 ;;; Code:
 
-;;; Pre-init variables
-(defvar endless/init.org-message-depth 3
-  "What depth of init.org headers to message at startup.")
-
 ;;; init.el
 
+(defconst user-org-init-file (concat user-emacs-directory "init.org"))
+
+;; Manually evaluate emacs-lisp code blocks in init.org
 (with-temp-buffer
-  (insert-file-contents (concat user-emacs-directory "init.org"))
+  (insert-file-contents user-org-init-file)
   (goto-char (point-min))
   (search-forward "\n* Preload Init")
   (while (not (eobp))
