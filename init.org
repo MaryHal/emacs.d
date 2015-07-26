@@ -347,6 +347,16 @@
     ;; Seed the random number generator
     (random t)
 
+    ;; A lesser known fact is that sending the USR2 signal to an Emacs process makes
+    ;; it proceed as soon as possible to a debug window. USR1 is ignored however, so
+    ;; let’s bind it to an alternative desirable function that can be used on an
+    ;; Emacs instance that has locked up.
+
+    (defun my-quit-emacs-unconditionally ()
+      (interactive)
+      (my-quit-emacs '(4)))
+
+    (define-key special-event-map (kbd "<sigusr1>") 'my-quit-emacs-unconditionally)
   #+END_SRC
 
 * Backups
@@ -1604,9 +1614,11 @@
       :init (progn (bind-key "C-n" #'company-select-next     company-active-map)
                    (bind-key "C-p" #'company-select-previous company-active-map)
                    )
-      :config (progn (setq-default company-idle-delay 0)
-                     (setq-default company-minimum-prefix-length 1)
-                     ;; (setq-default company-show-numbers t)
+      :config (progn (setq company-idle-delay 0
+                           company-minimum-prefix-length 2
+                           company-show-numbers t
+                           company-require-match 'never
+                           company-selection-wrap-around t)
 
                      (add-hook 'c++-mode-hook #'irony-mode)
                      (add-hook 'c-mode-hook #'irony-mode)
