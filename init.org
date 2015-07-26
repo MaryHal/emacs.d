@@ -929,8 +929,20 @@
     (use-package hydra
       :ensure t
       :init (progn
+              (bind-key "<f1>" (defhydra hydra-help (:color blue)
+                                 "Help"
+                                 ("a" helm-apropos "Apropos")
+                                 ("c" describe-char "Describe Char")
+                                 ("f" find-function "Find Function")
+                                 ("F" describe-function "Describe Function")
+                                 ("k" describe-key "Describe Key")
+                                 ("K" find-function-on-key "Find Key")
+                                 ("m" describe-mode "Describe Modes")
+                                 ("v" find-variable "Find Variable")
+                                 ("V" describe-variable "Describe Variable")))
+
               (bind-key "<f2>" (defhydra hydra-zoom ()
-                                 "zoom"
+                                 "Zoom"
                                  ("i" text-scale-increase "in")
                                  ("o" text-scale-decrease "out")))
 
