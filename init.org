@@ -467,58 +467,6 @@
              ("M-M" . jump-char-backward)))
   #+END_SRC
 
-* Dired
-
-  #+BEGIN_SRC emacs-lisp
-    (use-package dired
-      :commands dired
-      :config (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso"))
-
-     (use-package ranger
-       :ensure t
-       :defer t
-       :commands (ranger)
-       :config (progn
-                 ;; When disabling the mode you can choose to kill the buffers that were opened while browsing the directories.
-                 (setq ranger-cleanup-on-disable t)
-
-                 ;; Or you can choose to kill the buffer just after you move to another entry in the dired buffer.
-                 (setq ranger-cleanup-eagerly t)
-
-                 (setq ranger-show-dotfiles t)
-                 ))
-  #+END_SRC
-
-* Special Buffers
-
-  With either of these packages we can force certain buffers to open in a
-  certain location in a frame. I mostly use this for helm and compilation
-  buffers.
-
-  #+BEGIN_SRC emacs-lisp
-    (use-package popwin
-      :ensure t
-      :defer t
-      :disabled t
-      :config (progn (push '("\\`\\*helm.*?\\*\\'" :regexp t :height 16) popwin:special-display-config)
-                     (push '("magit" :regexp t :height 16) popwin:special-display-config)
-                     (push '(".*Shell Command Output\*" :regexp t :height 16) popwin:special-display-config)
-                     (push '(compilation-mode :height 16) popwin:special-display-config)
-
-                     (popwin-mode t)
-                     ))
-
-    (use-package shackle
-      :ensure t
-      :defer t
-      :init (progn (setq shackle-rules
-                         '(("\\`\\*helm.*?\\*\\'" :regexp t :align t :ratio 0.4)
-                           (compilation-mode :align t :ratio 0.4)
-                           (t :select t)))
-                   (shackle-mode t)
-                   ))
-  #+END_SRC
-
 * Appearance
 ** Frame Defaults
 
@@ -698,7 +646,19 @@
                       ))
              )))
 
-     (mhl/load-dark-theme)
+     (add-hook 'after-make-frame-functions #'mhl/load-dark-theme)
+   #+END_SRC
+
+   Let’s disable questions about theme loading while we’re at it.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq custom-safe-themes t)
+   #+END_SRC
+
+   Tooltips can be themed as well.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq x-gtk-use-system-tooltips nil)
    #+END_SRC
 
 ** Font
@@ -866,7 +826,6 @@
 
     (use-package git-gutter-fringe
       :ensure t
-      ;; :disabled t
       :config (progn
                 (define-fringe-bitmap 'git-gutter-fr:added
                   [#b0000000
@@ -911,8 +870,8 @@
     (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
   #+END_SRC
 
-  If emacs is run in a terminal, the clipboard - functions have no effect.
-  Instead, we'll make use of xsel, see [[http://www.vergenet.net/~conrad/software/xsel/][this]] -- "a command-line program for
+  If emacs is run in a terminal, the default clipboard functions have no effect.
+  Instead, we'll make use of xsel. See [[http://www.vergenet.net/~conrad/software/xsel/][this]] -- "a command-line program for
   getting and setting the contents of the X selection"
 
   #+BEGIN_SRC emacs-lisp
@@ -1088,6 +1047,9 @@
                       ;; Do not display invisible candidates
                       (setq helm-quick-update t)
 
+                      ;; (setq helm-ff-auto-update-initial-value nil)
+                      (setq helm-ff-smart-completion nil)
+
                       ;; Be idle for this many seconds, before updating in delayed sources.
                       (setq helm-idle-delay 0.01)
 
@@ -1136,6 +1098,8 @@
                       ;; Make Tab work in terminal. Cannot use "bind-key" since it would detect that we
                       ;; already bound tab.
                       (define-key helm-map (kbd "C-i") #'helm-execute-persistent-action)
+
+                      (setq helm-mode-fuzzy-match t)
                       ))
    #+END_SRC
 
@@ -1216,7 +1180,6 @@
                       (setq evil-intercept-esc 'always)
 
                       (setq evil-auto-indent t))
-      ;; :init (progn)
       :config (progn (evil-mode t)
                      ;; (bind-key "<f12>" #'evil-local-mode)
 
@@ -1490,6 +1453,57 @@
                ;; bind evil-jump-out-args
                ;; (bind-key "gm" 'evil-jump-out-args evil-normal-state-map)
                ))
+  #+END_SRC
+
+* Special Buffers
+
+  With either of these packages we can force certain buffers to open in a
+  certain location in a frame. I mostly use this for helm and compilation
+  buffers.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package popwin
+      :ensure t
+      :defer t
+      :disabled t
+      :config (progn (push '("\\`\\*helm.*?\\*\\'" :regexp t :height 16) popwin:special-display-config)
+                     (push '("magit" :regexp t :height 16) popwin:special-display-config)
+                     (push '(".*Shell Command Output\*" :regexp t :height 16) popwin:special-display-config)
+                     (push '(compilation-mode :height 16) popwin:special-display-config)
+
+                     (popwin-mode t)
+                     ))
+
+    (use-package shackle
+      :ensure t
+      :defer t
+      :init (progn (setq shackle-rules
+                         '(("\\`\\*helm.*?\\*\\'" :regexp t :align t :ratio 0.4)
+                           (compilation-mode :align t :ratio 0.4)
+                           (t :select t)))
+                   (shackle-mode t)
+                   ))
+  #+END_SRC
+
+* Dired
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package dired
+      :commands dired
+      :config (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso"))
+
+     (use-package ranger
+       :ensure t
+       :commands (ranger)
+       :config (progn
+                 ;; When disabling the mode you can choose to kill the buffers that were opened while browsing the directories.
+                 (setq ranger-cleanup-on-disable t)
+
+                 ;; Or you can choose to kill the buffer just after you move to another entry in the dired buffer.
+                 (setq ranger-cleanup-eagerly t)
+
+                 (setq ranger-show-dotfiles t)
+                 ))
   #+END_SRC
 
 * Language Hooks
