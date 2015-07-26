@@ -347,16 +347,6 @@
     ;; Seed the random number generator
     (random t)
 
-    ;; A lesser known fact is that sending the USR2 signal to an Emacs process makes
-    ;; it proceed as soon as possible to a debug window. USR1 is ignored however, so
-    ;; let’s bind it to an alternative desirable function that can be used on an
-    ;; Emacs instance that has locked up.
-
-    (defun my-quit-emacs-unconditionally ()
-      (interactive)
-      (my-quit-emacs '(4)))
-
-    (define-key special-event-map (kbd "<sigusr1>") 'my-quit-emacs-unconditionally)
   #+END_SRC
 
 * Backups
@@ -1675,7 +1665,7 @@
       :config (add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
   #+END_SRC
 
-* Org
+* Org-mode
 
   #+BEGIN_SRC emacs-lisp
     (use-package htmlize
@@ -1684,10 +1674,15 @@
 
     (use-package org
       :defer t
-      :config (progn (setq org-replace-disputed-keys t)
+      :config (progn (setq org-startup-indented t)
+                     (setq org-replace-disputed-keys t)
 
                      ;; Fontify org-mode code blocks
                      (setq org-src-fontify-natively t)
+
+                     ;; Ellipses by default blend in too well. Make them more
+                     ;; distict!
+                     (setq org-ellipsis " […]")
                      ))
   #+END_SRC
 
