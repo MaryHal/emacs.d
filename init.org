@@ -1114,11 +1114,17 @@
                       ;; Tab -> do persistent action
                       (bind-key "<tab>" #'helm-execute-persistent-action helm-map)
 
-                      ;; Make Tab work in terminal. Cannot use "bind-key" since it would detect that we
-                      ;; already bound tab.
+                      ;; Make Tab work in terminal. Cannot use "bind-key" since it
+                      ;; would detect that we already bound tab.
                       (define-key helm-map (kbd "C-i") #'helm-execute-persistent-action)
 
                       (setq helm-mode-fuzzy-match t)
+
+                      ;; When there is only a single directory candidate when
+                      ;; file-finding, don't automatically enter that directory.
+                      (setq helm-ff-auto-update-initial-value nil)
+
+                      (setq helm-ff-skip-boring-files t)
                       ))
    #+END_SRC
 
@@ -1616,7 +1622,7 @@
                    )
       :config (progn (setq company-idle-delay 0
                            company-minimum-prefix-length 2
-                           company-show-numbers t
+                           company-show-numbers nil
                            company-require-match 'never
                            company-selection-wrap-around t)
 
