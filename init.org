@@ -346,6 +346,17 @@
 
     ;; Seed the random number generator
     (random t)
+
+    ;; A lesser known fact is that sending the USR2 signal to an Emacs process makes
+    ;; it proceed as soon as possible to a debug window. USR1 is ignored however, so
+    ;; let’s bind it to an alternative desirable function that can be used on an
+    ;; Emacs instance that has locked up.
+
+    (defun my-quit-emacs-unconditionally ()
+      (interactive)
+      (my-quit-emacs '(4)))
+
+    (define-key special-event-map (kbd "<sigusr1>") 'my-quit-emacs-unconditionally)
   #+END_SRC
 
 * Backups
@@ -514,7 +525,11 @@
                      (setq sml/theme nil)
                      (sml/setup)
                      ))
+   #+END_SRC
 
+   I prefer hiding all minor modes by default.
+
+   #+BEGIN_SRC emacs-lisp
     (use-package rich-minority
       :ensure t
       :config (progn (setq rm-blacklist nil)
@@ -677,10 +692,14 @@
 
 * Editing
 
-  #+BEGIN_SRC emacs-lisp
-    ;; No Tabs, just spaces
-    (setq-default indent-tabs-mode nil)
+  Most programming languages I work with prefer spaces over tabs. Note how this
+  is not a mode, but a buffer-local variable.
 
+  #+BEGIN_SRC emacs-lisp
+    (setq-default indent-tabs-mode nil)
+  #+END_SRC
+
+  #+BEGIN_SRC emacs-lisp
     ;; Don't add newlines when cursor goes past end of file
     (setq next-line-add-newlines nil)
     (setq require-final-newline nil)
