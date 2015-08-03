@@ -338,12 +338,14 @@ consing. The default value is 800,000 bytes, or ~ 0.7 MiB. By increasing to
 
   ;; Seed the random number generator
   (random t)
+#+END_SRC
 
-  ;; A lesser known fact is that sending the USR2 signal to an Emacs process makes
-  ;; it proceed as soon as possible to a debug window. USR1 is ignored however, so
-  ;; let’s bind it to an alternative desirable function that can be used on an
-  ;; Emacs instance that has locked up.
+A lesser known fact is that sending the USR2 signal to an Emacs process makes it
+proceed as soon as possible to a debug window. USR1 is ignored however, so let’s
+bind it to an alternative desirable function that can be used on an Emacs
+instance that has locked up.
 
+#+BEGIN_SRC emacs-lisp
   (defun my-quit-emacs-unconditionally ()
     (interactive)
     (my-quit-emacs '(4)))
@@ -653,7 +655,7 @@ We have some custom themes packaged with this config, so make sure =load-theme= 
           )))
 
   ;; (add-hook 'after-make-frame-functions #'mhl/load-dark-theme)
-  (mhl/load-dark-theme)
+  (mhl/load-light-theme)
 #+END_SRC
 
 Let’s disable questions about theme loading while we’re at it.
@@ -1635,8 +1637,7 @@ buffers.
   (use-package company
     :ensure t
     :init (progn (bind-key "C-n" #'company-select-next     company-active-map)
-                 (bind-key "C-p" #'company-select-previous company-active-map)
-                 )
+                 (bind-key "C-p" #'company-select-previous company-active-map))
     :config (progn (setq company-idle-delay 0
                          company-minimum-prefix-length 2
                          company-show-numbers nil

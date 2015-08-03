@@ -116,8 +116,12 @@ more...")
    `(whitespace-trailing ((,class (:foreground "#B3B3B3" :background "#FFFF57"))))
 
    ;; Mode line faces.
-   `(mode-line ((,class (:box (:line-width 1 :color "#1A2F54") :foreground "#85CEEB" :background "#335EA8"))))
-   `(mode-line-inactive ((,class (:box (:line-width 1 :color "#4E4E4C") :foreground "#F0F0EF" :background "#9B9C97"))))
+   `(mode-line ((,class (:box (:line-width 3 :color "#335EA8")
+                              :foreground "#85CEEB"
+                              :background "#335EA8"))))
+   `(mode-line-inactive ((,class (:box (:line-width 3 :color "#9B9C97")
+                                       :foreground "#F0F0EF"
+                                       :background "#9B9C97"))))
    `(mode-line-buffer-id ((,class (:weight bold :foreground "white"))))
    `(mode-line-emphasis ((,class (:weight bold :foreground "white"))))
    `(mode-line-highlight ((,class (:foreground "yellow"))))
@@ -155,7 +159,9 @@ more...")
    `(link-visited ((,class (:underline t :foreground "#E5786D"))))
    `(button ((,class (:underline t :foreground "#006DAF"))))
    ;; `(header-line ((,class (:box "#999911" :foreground "#FFFF88" :background "#CCCC44"))))
-   `(header-line ((,class (:box "#542F1A" :foreground "#EB85CE" :background "#A8335E"))))
+   `(header-line ((,class (:box (:line-width 3 :color "#335EA8")
+                                :foreground "#85CEEB"
+                                :background "#335EA8"))))
 
    ;; Gnus faces.
    `(gnus-button ((,class (:weight normal))))
