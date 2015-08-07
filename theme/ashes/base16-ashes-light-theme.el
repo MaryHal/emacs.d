@@ -27,29 +27,38 @@
   (custom-theme-set-faces
    'base16-ashes-light
 
-   ;; Built-in stuff (Emacs 23)
-   `(border ((t (:background ,base03))))
+   ;; Built-in stuff
+   `(border ((t (:background ,base00))))
+   `(vertical-border ((t (:background ,base00 :foreground ,base00))))
    `(border-glyph ((t (nil))))
-   `(cursor ((t (:background ,base08))))
+   `(cursor ((t (:background ,base05 :inverse-video t))))
    `(default ((t (:background ,base07 :foreground ,base02))))
-   `(fringe ((t (:background ,base02))))
+   `(fringe ((t (:background ,base07))))
    `(gui-element ((t (:background ,base03 :foreground ,base06))))
    `(highlight ((t (:background ,base01))))
    `(link ((t (:foreground ,base0D))))
    `(link-visited ((t (:foreground ,base0E))))
-   `(minibuffer-prompt ((t (:foreground ,base0D))))
-   `(mode-line ((t (:background ,base02 :foreground ,base04 :box nil))))
-   `(mode-line-buffer-id ((t (:foreground ,base0E :background nil))))
-   `(mode-line-emphasis ((t (:foreground ,base06 :slant italic))))
-   `(mode-line-highlight ((t (:foreground ,base0E :box nil :weight bold))))
-   `(mode-line-inactive ((t (:background ,base01 :foreground ,base03 :box nil))))
-   `(region ((t (:background ,base02))))
+   `(minibuffer-prompt ((t (:foreground ,base0D :weight bold))))
+
+   `(mode-line ((t (:background ,base00
+                                :foreground ,base04
+                                :box (:line-width 3 :color ,base00)))))
+   `(mode-line-inactive ((t (:background ,base01
+                                         :foreground ,base03
+                                         :box (:line-width 3 :color ,base01)))))
+
+   ;; `(mode-line-buffer-id ((t (:foreground ,base0E :background nil))))
+   ;; `(mode-line-emphasis ((t (:foreground ,base06 :slant italic))))
+   ;; `(mode-line-highlight ((t (:foreground ,base0E :box nil :weight bold))))
+
+   `(region ((t (:foreground ,base04 :background ,base01))))
    `(secondary-selection ((t (:background ,base03))))
    `(error ((t (:foreground ,base08 :weight bold))))
    `(warning ((t (:foreground ,base09 :weight bold))))
    `(success ((t (:foreground ,base0B :weight bold))))
 
-   `(header-line ((t (:inherit mode-line :foreground ,base0E :background nil))))
+   ;; `(header-line ((t (:inherit mode-line :foreground ,base0E))))
+   `(header-line ((t (:inherit mode-line))))
 
    ;; Font-lock stuff
    `(font-lock-builtin-face ((t (:foreground ,base0C))))
@@ -135,16 +144,79 @@
    `(whitespace-trailing ((t (:background ,base08 :foreground ,base0A))))
 
    ;; Parenthesis matching (built-in)
-   `(show-paren-match ((t (:background ,base0D :foreground ,base03))))
-   `(show-paren-mismatch ((t (:background ,base09 :foreground ,base03))))
+   `(show-paren-match ((t (:background ,base00 :foreground ,base05))))
+   `(show-paren-mismatch ((t (:background ,base00 :foreground ,base0A :weight bold))))
 
-   ;; Parenthesis matching (mic-paren)
-   `(paren-face-match ((t (:foreground nil :background nil :inherit show-paren-match))))
-   `(paren-face-mismatch ((t (:foreground nil :background nil :inherit show-paren-mismatch))))
-   `(paren-face-no-match ((t (:foreground nil :background nil :inherit show-paren-mismatch))))
+   ;; Anzu
+   `(anzu-mode-line ((t (:inherit mode-line :weight bold :foreground ,base0D))))
 
-   ;; Parenthesis dimming (parenface)
-   `(paren-face ((t (:foreground ,base04 :background nil))))
+   ;; Smart Mode Line
+   `(sml/global ((t (:foreground ,base05))))
+   `(sml/line-number ((t (:weight bold :foreground ,base05))))
+   `(sml/col-number ((t (:foreground ,base05))))
+   `(sml/filename ((t (:weight bold :foreground ,base05))))
+   `(sml/folder ((t (:weight bold :foreground ,base0D))))
+   `(sml/git ((t (:weight bold :foreground ,base0C))))
+   `(sml/modes ((t (:foreground ,base0B))))
+   `(sml/modified ((t (:foreground ,base0E))))
+   `(sml/mule-info ((t (:foreground ,base0B))))
+   `(sml/not-modified ((t (:foreground ,base05))))
+   `(sml/numbers-separator ((t (:foreground ,base05))))
+   `(sml/outside-modified ((t (:foreground ,base0E))))
+   `(sml/position-percentage ((t (:foreground ,base08))))
+   `(sml/prefix ((t (:weight bold :foreground ,base0A))))
+   `(sml/process ((t (:weight bold :foreground ,base0A))))
+   `(sml/read-only ((t (:foreground ,base0C))))
+   `(sml/sudo ((t (:foreground ,base0E))))
+   `(sml/time ((t (:foreground ,base05))))
+   `(sml/vc ((t (:foreground ,base0C))))
+   `(sml/vc-edited ((t (:foreground ,base0E))))
+   `(sml/warning ((t (:weight bold :foreground ,base0E))))
+
+   ;; helm
+   `(helm-header
+     ((t (:foreground ,base05
+                      :background ,base00
+                      :underline nil
+                      :box nil))))
+   `(helm-source-header
+     ((t (:foreground ,base08
+                      :background nil
+                      :weight bold
+                      :underline ,base08
+                      :box nil))))
+
+   `(helm-selection ((t (:inverse-video t :underline nil))))
+   `(helm-selection-line ((t (:background ,base00))))
+   `(helm-visible-mark ((t (:foreground ,base00 :background ,base08))))
+   ;; `(helm-candidate-number ((t (:weight bold :foreground ,base04 :background ,base02))))
+   `(helm-candidate-number ((t (:inherit mode-line))))
+
+   `(helm-action ((t (:foreground ,base05 :underline nil))))
+
+   `(helm-ff-dotted-directory ((t (:weight bold :foreground ,base05 :background nil))))
+   `(helm-ff-directory ((t (:weight bold :foreground ,base0F :background nil))))
+   `(helm-ff-executable ((t (:weight bold :foreground ,base0A))))
+   `(helm-ff-file ((t (:foreground ,base05))))
+   `(helm-ff-symlink ((t (:weight bold :foreground ,base0C))))
+   `(helm-ff-prefix ((t (:weight bold :foreground ,base08 :background nil))))
+   `(helm-ff-invalid-symlink ((t (:foreground ,base05 :background ,base0E))))
+
+   ;; helm-swoop highlight
+   `(helm-swoop-target-line-face ((t (:foreground ,base00 :background ,base0A))))
+   `(helm-swoop-target-line-block-face ((t (:foreground ,base00 :background ,base0B))))
+   `(helm-swoop-target-word-face ((t (:foreground ,base01 :background ,base0C))))
+
+   ;; company-mode
+   `(company-tooltip ((t (:weight bold :background ,base00 :foreground ,base05))))
+   `(company-tooltip-common ((t (:inherit company-tooltip :foreground ,base03))))
+   `(company-tooltip-selection ((t (:weight bold :foreground ,base00 :background ,base05))))
+   `(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :foreground ,base03))))
+   `(company-tooltip-annotation ((t (:foreground ,base05 :background ,base00))))
+
+   `(company-scrollbar-fg ((t (:background ,base02))))
+   `(company-scrollbar-bg ((t (:background ,base05))))
+   `(company-preview ((t (:foreground ,base0E :background nil))))
 
    `(sh-heredoc ((t (:foreground nil :inherit font-lock-string-face :weight normal))))
    `(sh-quoted-exec ((t (:foreground nil :inherit font-lock-preprocessor-face))))
@@ -161,7 +233,7 @@
    `(diff-removed ((t (:foreground ,base08))))
    `(diff-header ((t (:background ,base01))))
    `(diff-file-header ((t (:background ,base02))))
-   `(diff-hunk-header ((t (:background ,base01 :foreground ,base0E))))
+   `(diff-hunk-header ((t (:foreground ,base0E))))
 
    `(ediff-even-diff-A ((t (:foreground nil :background nil :inverse-video t))))
    `(ediff-even-diff-B ((t (:foreground nil :background nil :inverse-video t))))
@@ -237,6 +309,11 @@
    `(magit-log-head-label-tags ((t (:foreground ,base0C :box nil :weight bold))))
    `(magit-section-title ((t (:inherit diff-hunk-header))))
 
+   ;; git-gutter
+   `(git-gutter:modified ((t (:foreground ,base0B))))
+   `(git-gutter:added    ((t (:foreground ,base0A))))
+   `(git-gutter:deleted  ((t (:foreground ,base0E))))
+
    `(link ((t (:foreground nil :underline t))))
    `(widget-button ((t (:underline t))))
    `(widget-field ((t (:background ,base03 :box (:line-width 1 :color ,base06)))))
@@ -262,6 +339,25 @@
    `(mm/mirror-face ((t (:inherit region :foreground nil :background nil))))
 
    ;; org-mode
+   `(org-level-1 ((t (:height 1.3 :weight bold :overline ,base00 :foreground ,base05))))
+   `(org-level-2 ((t (:height 1.0 :weight bold :overline ,base00 :foreground ,base05))))
+   `(org-level-3 ((t (:height 1.0 :weight bold :overline ,base00 :foreground ,base05))))
+   `(org-level-4 ((t (:height 1.0 :weight bold :overline ,base00 :foreground ,base05))))
+   `(org-level-5 ((t (:height 1.0 :weight bold :overline ,base00 :foreground ,base05))))
+   `(org-level-6 ((t (:height 1.0 :weight bold :overline ,base00 :foreground ,base05))))
+   `(org-level-7 ((t (:height 1.0 :weight bold :overline ,base00 :foreground ,base05))))
+   `(org-level-8 ((t (:height 1.0 :weight bold :overline ,base00 :foreground ,base05))))
+
+   ;; outline
+   `(outline-1 ((t (:inherit org-level-1))))
+   `(outline-2 ((t (:inherit org-level-2))))
+   `(outline-3 ((t (:inherit org-level-3))))
+   `(outline-4 ((t (:inherit org-level-4))))
+   `(outline-5 ((t (:inherit org-level-5))))
+   `(outline-6 ((t (:inherit org-level-6))))
+   `(outline-7 ((t (:inherit org-level-7))))
+   `(outline-8 ((t (:inherit org-level-8))))
+
    `(org-agenda-structure ((t (:foreground ,base0E))))
    `(org-agenda-date ((t (:foreground ,base0D :underline nil))))
    `(org-agenda-done ((t (:foreground ,base0B))))
@@ -274,7 +370,7 @@
    `(org-document-info ((t (:foreground ,base0C))))
    `(org-document-info-keyword ((t (:foreground ,base0B))))
    `(org-document-title ((t (:weight bold :foreground ,base09 :height 1.44))))
-   `(org-done ((t (:foreground ,base0B))))
+   `(org-done ((t (:overline ,base00 :foreground ,base0B))))
    `(org-ellipsis ((t (:foreground ,base04))))
    `(org-footnote ((t (:foreground ,base0C))))
    `(org-formula ((t (:foreground ,base08))))
@@ -285,7 +381,7 @@
    `(org-scheduled-today ((t (:foreground ,base0B))))
    `(org-special-keyword ((t (:foreground ,base09))))
    `(org-table ((t (:foreground ,base0E))))
-   `(org-todo ((t (:foreground ,base08))))
+   `(org-todo ((t (:overline ,base00 :foreground ,base08))))
    `(org-upcoming-deadline ((t (:foreground ,base09))))
    `(org-warning ((t (:weight bold :foreground ,base08))))
 
@@ -424,7 +520,8 @@
 
    `(erc-direct-msg-face ((t (:foreground ,base09))))
    `(erc-error-face ((t (:foreground ,base08))))
-   `(erc-header-face ((t (:foreground ,base06 :background ,base04))))
+   ;; `(erc-header-face ((t (:foreground ,base06 :background ,base04))))
+   `(erc-header-face ((t (:inherit mode-line))))
    `(erc-input-face ((t (:foreground ,base0B))))
    `(erc-keyword-face ((t (:foreground ,base0A))))
    `(erc-current-nick-face ((t (:foreground ,base0B))))
@@ -452,5 +549,7 @@
      [unspecified ,base00 ,base08 ,base0B ,base0A ,base0D ,base0E ,base0D ,base05])))
 
 (provide-theme 'base16-ashes-light)
+
+;; (((((
 
 ;;; base16-ashes-light-theme.el ends here

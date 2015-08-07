@@ -475,6 +475,8 @@ Keybindings for functions that are not closely associated with a package
 * Appearance
 ** Frame Defaults
 
+Hide most gui elements by default.
+
 #+BEGIN_SRC emacs-lisp
   (setq default-frame-alist
         '((top   . 10) (left   . 2)
@@ -620,6 +622,9 @@ We have some custom themes packaged with this config, so make sure =load-theme= 
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
+  (defadvice load-theme (before theme-dont-propagate activate)
+    (mapcar #'disable-theme custom-enabled-themes))
+
   ;; Set transparency of emacs
   (defun set-frame-alpha (arg &optional active)
     (interactive "nEnter alpha value (1-100): \np")
@@ -655,7 +660,7 @@ We have some custom themes packaged with this config, so make sure =load-theme= 
           )))
 
   ;; (add-hook 'after-make-frame-functions #'mhl/load-dark-theme)
-  (mhl/load-light-theme)
+  (mhl/load-dark-theme)
 #+END_SRC
 
 Let’s disable questions about theme loading while we’re at it.
@@ -1124,8 +1129,8 @@ necessity of this feature, so I've disabled it for now.
                    ;; would detect that we already bound tab.
                    (define-key helm-map (kbd "C-i") #'helm-execute-persistent-action)
 
-                   ;; (setq helm-mode-fuzzy-match t)
-                   ;; (setq helm-completion-in-region-fuzzy-match t)
+                   (setq helm-mode-fuzzy-match t)
+                   (setq helm-completion-in-region-fuzzy-match t)
 
                    ;; When there is only a single directory candidate when
                    ;; file-finding, don't automatically enter that directory.
@@ -1538,6 +1543,7 @@ buffers.
 
    (use-package ranger
      :ensure t
+     :disabled t
      :commands (ranger)
      :config (progn
                ;; When disabling the mode you can choose to kill the buffers that were opened while browsing the directories.
