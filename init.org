@@ -678,14 +678,17 @@ Tooltips can be themed as well.
 ** Font
 
 #+BEGIN_SRC emacs-lisp
+  (defun set-font-family-if-available (family height)
+    (when (member family (font-family-list))
+      (set-face-attribute 'default nil :family family :height height)))
+
   ;; Set font
   (if (string= system-type "windows-nt")
       ;; If Windows
-      (set-face-attribute 'default nil :family "Consolas" :height 90)
+      (set-font-family-if-available "Consolas" 90)
     ;; If not Windows
-    (set-face-attribute 'default nil :family "Pragmata Pro" :height 90)
-    ;; (set-face-attribute 'default nil :family "Inconsolatazi4" :height 100)
-    ;; (set-face-attribute 'default nil :family "Source Code Pro" :height 90)
+    (set-font-family-if-available "PragmataPro" 90)
+    ;; (set-font-family-if-available "Inconsolatazi4" 100)
     )
 #+END_SRC
 
