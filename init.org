@@ -678,18 +678,25 @@ Tooltips can be themed as well.
 ** Font
 
 #+BEGIN_SRC emacs-lisp
-  (defun set-font-family-if-available (family height)
-    (when (member family (font-family-list))
-      (set-face-attribute 'default nil :family family :height height)))
+  (defun set-font-if-available (font-spec-list)
+    (while (not
+            (member
+             (format "%s" (font-get (car font-spec-list) :family))
+             (font-family-list)))
+      (message "%s %d" (car font-spec-list) (length font-spec-list))
+      (pop font-spec-list))
+    (if (null font-spec-list)
+        (message "List contains no valid fonts.")
+      ;; (message "Setting font family: %s" (font-get (car font-spec-list) :family))
+      (apply 'set-face-attribute 'default nil (font-face-attributes (car font-spec-list)))
+      ))
 
-  ;; Set font
-  (if (string= system-type "windows-nt")
-      ;; If Windows
-      (set-font-family-if-available "Consolas" 90)
-    ;; If not Windows
-    (set-font-family-if-available "PragmataPro" 90)
-    ;; (set-font-family-if-available "Inconsolatazi4" 100)
-    )
+  (set-font-if-available (list
+                           (font-spec :family "PragmataPro"
+                                      :size 12)
+                           (font-spec :family "Inconsolatazi4"
+                                      :size 12)
+                         ))
 #+END_SRC
 
 * Editing
