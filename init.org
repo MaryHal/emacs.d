@@ -622,8 +622,8 @@ We have some custom themes packaged with this config, so make sure =load-theme= 
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (defadvice load-theme (before theme-dont-propagate activate)
-    (mapcar #'disable-theme custom-enabled-themes))
+  ;; (defadvice load-theme (before theme-dont-propagate activate)
+  ;;   (mapcar #'disable-theme custom-enabled-themes))
 
   ;; Set transparency of emacs
   (defun set-frame-alpha (arg &optional active)
@@ -761,7 +761,11 @@ is not a mode, but a buffer-local variable.
 
   (use-package avy
     :ensure t
-    :commands (avy-goto-word-or-subword-1))
+    :commands (avy-goto-word-or-subword-1)
+    :init (progn
+            (setq avy-keys
+                  '(?c ?a ?s ?d ?e ?f ?h ?w ?y ?j ?k ?l ?n ?m ?v ?r ?u ?p))
+            ))
 
   (use-package anzu
     :ensure t
