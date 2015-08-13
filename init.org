@@ -1573,63 +1573,67 @@ buffers.
 * Language Hooks
 
 #+BEGIN_SRC emacs-lisp
-    (use-package sh-script
-      :config (progn
-                (defun disable-elec-here-doc-mode ()
-                  (sh-electric-here-document-mode -1))
+  (use-package sh-script
+    :config (progn
+              (defun disable-elec-here-doc-mode ()
+                (sh-electric-here-document-mode -1))
 
-                (add-hook 'sh-mode-hook #'disable-elec-here-doc-mode)))
+              (add-hook 'sh-mode-hook #'disable-elec-here-doc-mode)))
 
-    (use-package cc-mode
-      :config (progn (setq-default c-default-style "bsd")
-                     (setq-default c-basic-offset 4)
+  (use-package cc-mode
+    :config (progn (setq-default c-default-style "bsd")
+                   (setq-default c-basic-offset 4)
 
-                     (defun c-mode-common-custom ()
-                       (c-set-offset 'access-label '-)
-                       (c-set-offset 'inclass '++)
-                       (c-set-offset 'substatement-open 0)
-                       ;; (c-set-offset 'inclass 'my-c-lineup-inclass)
-                       )
+                   (defun c-mode-common-custom ()
+                     (c-set-offset 'access-label '-)
+                     (c-set-offset 'inclass '++)
+                     (c-set-offset 'substatement-open 0)
+                     ;; (c-set-offset 'inclass 'my-c-lineup-inclass)
+                     )
 
-                     (add-hook 'c-mode-common-hook #'c-mode-common-custom)
-                     ))
+                   (add-hook 'c-mode-common-hook #'c-mode-common-custom)
+                   ))
 
-    (use-package markdown-mode
-      :ensure t
-      :config (progn (defun my-markdown-mode-hook()
-                       (defvar markdown-imenu-generic-expression
-                         '(("title" "^\\(.*\\)[\n]=+$" 1)
-                           ("h2-" "^\\(.*\\)[\n]-+$" 1)
-                           ("h1" "^# \\(.*\\)$" 1)
-                           ("h2" "^## \\(.*\\)$" 1)
-                           ("h3" "^### \\(.*\\)$" 1)
-                           ("h4" "^#### \\(.*\\)$" 1)
-                           ("h5" "^##### \\(.*\\)$" 1)
-                           ("h6" "^###### \\(.*\\)$" 1)
-                           ("fn" "^\\[\\^\\(.*\\)\\]" 1)
-                           ))
-                       (setq imenu-generic-expression markdown-imenu-generic-expression))
+  (use-package markdown-mode
+    :ensure t
+    :config (progn (defun my-markdown-mode-hook()
+                     (defvar markdown-imenu-generic-expression
+                       '(("title" "^\\(.*\\)[\n]=+$" 1)
+                         ("h2-" "^\\(.*\\)[\n]-+$" 1)
+                         ("h1" "^# \\(.*\\)$" 1)
+                         ("h2" "^## \\(.*\\)$" 1)
+                         ("h3" "^### \\(.*\\)$" 1)
+                         ("h4" "^#### \\(.*\\)$" 1)
+                         ("h5" "^##### \\(.*\\)$" 1)
+                         ("h6" "^###### \\(.*\\)$" 1)
+                         ("fn" "^\\[\\^\\(.*\\)\\]" 1)
+                         ))
+                     (setq imenu-generic-expression markdown-imenu-generic-expression))
 
-                     (add-hook 'markdown-mode-hook #'my-markdown-mode-hook)
-                     ))
+                   (add-hook 'markdown-mode-hook #'my-markdown-mode-hook)
+                   ))
 
-    (use-package js2-mode
-      :disabled t
-      :mode ("\\.js$" . js2-mode)
-      :config (js2-highlight-level 3))
+  (use-package js2-mode
+    :disabled t
+    :mode ("\\.js$" . js2-mode)
+    :config (js2-highlight-level 3))
 
-    (use-package lua-mode
-      :ensure t
-      :mode ("\\.lua$" . lua-mode)
-      :interpreter ("lua" . lua-mode))
+  (use-package lua-mode
+    :ensure t
+    :mode ("\\.lua$" . lua-mode)
+    :interpreter ("lua" . lua-mode))
 
-    (use-package sgml-mode
-      :ensure t
-      :mode ("\\.html\\'" . html-mode))
+  (use-package php-mode
+    :ensure t
+    :mode ("\\.php$" . php-mode))
 
-    (use-package writegood-mode
-      :ensure t
-      :commands (writegood-mode))
+  (use-package sgml-mode
+    :ensure t
+    :mode ("\\.html\\'" . html-mode))
+
+  (use-package writegood-mode
+    :ensure t
+    :commands (writegood-mode))
 #+END_SRC
 
 * Yasnippet
