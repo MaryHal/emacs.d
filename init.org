@@ -616,9 +616,11 @@ simpler alternatives.
 We have some custom themes packaged with this config, so make sure =load-theme= can find 'em.
 
 #+BEGIN_SRC emacs-lisp
+  (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ashes/"))
   (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/leuven-mod/"))
   (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
-  (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ashes/"))
+  (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/noctilux-theme/"))
+  (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/smyx/"))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -644,7 +646,6 @@ We have some custom themes packaged with this config, so make sure =load-theme= 
 
   (defun mhl/load-dark-theme ()
     (interactive)
-    ;; (load-theme 'minimal t)
     (load-theme 'base16-ashes-dark t)
 
     ;; Set transparent background.

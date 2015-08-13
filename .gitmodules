@@ -1,3 +1,6 @@
 [submodule "site-lisp/evil-ranger"]
 	path = site-lisp/evil-ranger
 	url = https://github.com/ralesi/evil-ranger
+[submodule "theme/noctilux-theme"]
+	path = theme/noctilux-theme
+	url = https://github.com/sjrmanning/noctilux-theme.git
