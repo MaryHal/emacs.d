@@ -4,3 +4,9 @@
 [submodule "theme/noctilux-theme"]
 	path = theme/noctilux-theme
 	url = https://github.com/sjrmanning/noctilux-theme.git
+[submodule "theme/flatui-theme.el"]
+	path = theme/flatui-theme.el
+	url = https://github.com/john2x/flatui-theme.el.git
+[submodule "theme/emacs-material-theme"]
+	path = theme/emacs-material-theme
+	url = https://github.com/cpaulik/emacs-material-theme.git
