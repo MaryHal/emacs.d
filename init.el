@@ -233,11 +233,13 @@ If region is active, apply to active region instead."
 ;; Sentences do not need double spaces to end. Period.
 (set-default 'sentence-end-double-space nil)
 
-;; Useful frame title, that show either a file or a buffer name (if the buffer isn't visiting a file)
-;; (setq frame-title-format
-;;       '("" invocation-name " Prelude - " (:eval (if (buffer-file-name)
-;;                                                     (abbreviate-file-name (buffer-file-name))
-;;                                                   "%b"))))
+;; Useful frame title, that show either a file or a buffer name (if the buffer
+;; isn't visiting a file)
+
+(setq frame-title-format
+      '("" invocation-name " : " (:eval (if (buffer-file-name)
+                                            (abbreviate-file-name (buffer-file-name))
+                                          "%b"))))
 
 ;; backwards compatibility as default-buffer-file-coding-system
 ;; is deprecated in 23.2.
@@ -271,8 +273,8 @@ If region is active, apply to active region instead."
                  ;; (put 'transient-mark-mode 'permanent-local t)
                  ;; (setq-default transient-mark-mode t)
 
-                 ;; eval-expression-print-level needs to be set to 0 (turned off) so that you can
-                 ;; always see what's happening.
+                 ;; eval-expression-print-level needs to be set to 0 (turned
+                 ;; off) so that you can always see what's happening.
                  (setq eval-expression-print-level nil)
                  ))
 
@@ -452,6 +454,7 @@ If region is active, apply to active region instead."
 
 
 ;; Appearance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; Frame Defaults ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (setq default-frame-alist
@@ -583,7 +586,6 @@ If region is active, apply to active region instead."
 ;; Theme ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; We have some custom themes packaged with this config, so make sure =load-theme= can find 'em.
-
 
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ashes/"))
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/emacs-material-theme/"))
@@ -854,9 +856,10 @@ If region is active, apply to active region instead."
 ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
-;; If emacs is run in a terminal, the default clipboard functions have no effect.
-;; Instead, we'll make use of xsel. See [[http://www.vergenet.net/~conrad/software/xsel/][this]] -- "a command-line program for
-;; getting and setting the contents of the X selection"
+;; If emacs is run in a terminal, the default clipboard functions have no
+;; effect. Instead, we'll make use of xsel. See
+;; [[http://www.vergenet.net/~conrad/software/xsel/][this]] -- "a command-line
+;; program for getting and setting the contents of the X selection"
 
 
 (when (not (display-graphic-p))
@@ -865,17 +868,18 @@ If region is active, apply to active region instead."
     ;; Insert text to temp-buffer, and "send" content to xsel stdin
     (with-temp-buffer
       (insert text)
-      ;; I prefer using the "clipboard" selection (the one the typically is used by c-c/c-v)
-      ;; before the primary selection (that uses mouse-select/middle-button-click)
+      ;; I prefer using the "clipboard" selection (the one the typically is used
+      ;; by c-c/c-v) before the primary selection (that uses
+      ;; mouse-select/middle-button-click)
       (call-process-region (point-min) (point-max)
                            "xsel"
                            nil 0
                            nil "--clipboard" "--input")))
   ;; Callback for when user pastes
   (defun xsel-paste-function()
-    ;; Find out what is current selection by xsel. If it is different from the top of the
-    ;; kill-ring (car kill-ring), then return it. Else, nil is returned, so whatever is in the top
-    ;; of the kill-ring will be used.
+    ;; Find out what is current selection by xsel. If it is different from the
+    ;; top of the kill-ring (car kill-ring), then return it. Else, nil is
+    ;; returned, so whatever is in the top of the kill-ring will be used.
     (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
       (unless (string= (car kill-ring) xsel-output)
         xsel-output )))
@@ -985,11 +989,10 @@ _M-p_ Unmark  _M-n_ Unmark  _q_ Quit "
                  (projectile-global-mode t)
                  ))
 
-
-;; [[https://github.com/pashinin/workgroups2][Workgroups2]] adds workspace and session support to Emacs. I've found that over
-;; time, my use of helm-* to switch buffers quickly has somewhat obsoleted the
-;; necessity of this feature, so I've disabled it for now.
-
+;; [[https://github.com/pashinin/workgroups2][Workgroups2]] adds workspace and
+;; session support to Emacs. I've found that over time, my use of helm-* to
+;; switch buffers quickly has somewhat obsoleted the necessity of this feature,
+;; so I've disabled it for now.
 
 (use-package workgroups2
   :disabled t
@@ -1016,6 +1019,7 @@ _M-p_ Unmark  _M-n_ Unmark  _q_ Quit "
                  ))
 
 ;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; Helm Core ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package helm
@@ -1160,6 +1164,7 @@ _M-p_ Unmark  _M-n_ Unmark  _q_ Quit "
                  ))
 
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; Evil Core ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package evil
@@ -1666,8 +1671,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ;; Fontify org-mode code blocks
                  (setq org-src-fontify-natively t)
 
-                 ;; Ellipses by default blend in too well. Make them more
-                 ;; distict!
+                 ;; Ellipses blend in too well. Make them more distict!
                  (setq org-ellipsis " […]")
                  ))
 
