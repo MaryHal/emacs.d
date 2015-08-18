@@ -642,30 +642,21 @@ If region is active, apply to active region instead."
 
 ;; Font ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun set-font-if-available (font-spec-list)
-  (while (not
-          (member
-           (format "%s" (font-get (car font-spec-list) :family))
-           (font-family-list)))
-    (message "%s %d" (car font-spec-list) (length font-spec-list))
-    (pop font-spec-list))
-  (if (null font-spec-list)
-      (message "List contains no valid fonts.")
-    ;; (message "Setting font family: %s" (font-get (car font-spec-list) :family))
-    (apply 'set-face-attribute 'default nil (font-face-attributes (car font-spec-list)))
-    ))
+(defun font-candidate (&rest fonts)
+  "Return the first existing font in FONTS."
+  (find-if (lambda (f) (find-font (if (fontp f) f (font-spec :name f)))) fonts))
 
 ;; Only set font if outside terminal
 (when (display-graphic-p)
-  (set-font-if-available (list
-                          (font-spec :family "PragmataPro"
-                                     :size 12)
-                          (font-spec :family "Inconsolatazi4"
-                                     :size 12)
-                          (font-spec :family "Consolas"
-                                     :size 12)
-                          ))
-  )
+  (set-frame-font (font-candidate (font-spec :family "PragmataPro"
+                                             :size 12)
+                                  (font-spec :family "Inconsolatazi4"
+                                             :size 12)
+                                  "Monospace 8"
+                                  (font-spec :family "Consolas"
+                                             :size 12)
+                                  )
+                  t t))
 
 ;; Editing ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1722,9 +1713,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Make sure emacs is daemonized then print out some timing data.
 
-(use-package server
-  :config (unless (server-running-p)
-            (server-start)))
+;; (use-package server
+;;   :config (unless (server-running-p)
+;;             (server-start)))
 
 (when window-system
   (let ((elapsed (float-time (time-subtract (current-time)
