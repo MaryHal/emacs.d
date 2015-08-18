@@ -711,7 +711,10 @@ If region is active, apply to active region instead."
             ;; Add use-package blocks to imenu
             (defun imenu-use-package ()
               (add-to-list 'imenu-generic-expression
-                           '("Package" "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2)))
+                           '("Package" "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2))
+              (add-to-list 'imenu-generic-expression
+                           '("Section" "^;; \\(.+\\) ;+$" 1))
+              )
             (add-hook 'emacs-lisp-mode-hook #'imenu-use-package)
             ))
 
