@@ -7,7 +7,7 @@
 
 (deftheme base16-ashes-dark)
 
-(let ((basebg "#0F0F0F")
+(let ((basebg "#020202")
       (base00 "#1C2023")
       (base01 "#393F45")
       (base02 "#565E65")

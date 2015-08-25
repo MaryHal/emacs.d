@@ -34,7 +34,8 @@
 
 ;; Bootstrap Function!
 (defun require-package (package)
-  "refresh package archives, check package presence and install if it's not installed"
+  "refresh package archives, check package presence and install
+if it's not installed"
   (if (null (require package nil t))
       (progn (package-initialize)
              (let* ((ARCHIVES (if (null package-archive-contents)
@@ -70,42 +71,6 @@
         (delete-window))
     (kill-buffer-and-window)))
 
-;; Text bubbling (by line). With these functions we can move a region up and
-;; down through a file.
-
-(defun move-text-internal (arg)
-  (cond
-   ((and mark-active transient-mark-mode)
-    (if (> (point) (mark))
-        (exchange-point-and-mark))
-    (let ((column (current-column))
-          (text (delete-and-extract-region (point) (mark))))
-      (forward-line arg)
-      (move-to-column column t)
-      (set-mark (point))
-      (insert text)
-      (exchange-point-and-mark)
-      (setq deactivate-mark nil)))
-   (t
-    (beginning-of-line)
-    (when (or (> arg 0) (not (bobp)))
-      (forward-line)
-      (when (or (< arg 0) (not (eobp)))
-        (transpose-lines arg))
-      (forward-line -1)))))
-
-(defun move-text-down (arg)
-  "Move region (transient-mark-mode active) or current line
-arg lines down."
-  (interactive "*p")
-  (move-text-internal arg))
-
-(defun move-text-up (arg)
-  "Move region (transient-mark-mode active) or current line
-arg lines up."
-  (interactive "*p")
-  (move-text-internal (- arg)))
-
 ;; By default M-w is =kill-ring-save= -- this function simply copies a region.
 ;; However, if no region is selected, it doesn't really do anything.
 ;; =save-region-or-current-line= is =kill-ring-save-dwim=. If no region is
@@ -137,8 +102,6 @@ arg lines up."
       (kill-ring-save (region-beginning) (region-end))
     (copy-line arg)))
 
-
-
 (defun create-scratch-buffer nil
   "create a new scratch buffer to work in. (could be *scratch* - *scratchX*)"
   (interactive)
@@ -156,8 +119,8 @@ arg lines up."
 (defun comment-line-or-region (n)
   "Comment or uncomment current line and leave point after it.
 With positive prefix, apply to N lines including current one.
-With negative prefix, apply to -N lines above.
-If region is active, apply to active region instead."
+With negative prefix, apply to -N lines above. If region is
+active, apply to active region instead."
   (interactive "p")
   (if (use-region-p)
       (comment-or-uncomment-region
@@ -235,7 +198,6 @@ If region is active, apply to active region instead."
 
 ;; Useful frame title, that show either a file or a buffer name (if the buffer
 ;; isn't visiting a file)
-
 (setq frame-title-format
       '("" invocation-name " : " (:eval (if (buffer-file-name)
                                             (abbreviate-file-name (buffer-file-name))
@@ -613,19 +575,22 @@ If region is active, apply to active region instead."
   (interactive)
   (load-theme 'leuven-mod t)
   ;; (load-theme 'base16-ashes-light t)
-  (set-frame-alpha 90))
+  ;; (set-frame-alpha 90)
+  )
 
 (defun mhl/load-dark-theme ()
   (interactive)
-  (load-theme 'noctilux t)
+  (load-theme 'base16-ashes-dark t)
+  ;; (load-theme 'noctilux t)
 
   ;; Set transparent background.
   (if (string= system-type "gnu/linux")
       (if (string= window-system "x")
           (progn
-            (set-face-attribute 'default nil :background "black")
-            (set-face-attribute 'fringe nil :background "black")
-            (set-frame-alpha 90))
+            ;; (set-face-attribute 'default nil :background "black")
+            ;; (set-face-attribute 'fringe nil :background "black")
+            ;; (set-frame-alpha 90)
+            )
         (progn (when (getenv "DISPLAY")
                  (set-face-attribute 'default nil :background "unspecified-bg")
                  ))
@@ -634,13 +599,15 @@ If region is active, apply to active region instead."
 ;; (add-hook 'after-make-frame-functions #'mhl/load-dark-theme)
 (mhl/load-dark-theme)
 
-;; Let’s disable questions about theme loading while we’re at it.
+;; Disable the nagging when loading custom themes.
 (setq custom-safe-themes t)
 
 ;; Tooltips can be themed as well.
 (setq x-gtk-use-system-tooltips nil)
 
 ;; Font ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require 'cl)
 
 (defun font-candidate (&rest fonts)
   "Return the first existing font in FONTS."
@@ -680,6 +647,7 @@ If region is active, apply to active region instead."
       auto-window-vscroll nil)
 
 (use-package paren
+  :disabled t
   :config (progn (show-paren-mode t)
                  (setq show-paren-delay 0)
                  ))
@@ -708,7 +676,7 @@ If region is active, apply to active region instead."
 
 (use-package imenu
   :config (progn
-            ;; Add use-package blocks to imenu
+            ;; Add use-package / init file blocks to imenu
             (defun imenu-use-package ()
               (add-to-list 'imenu-generic-expression
                            '("Package" "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2))
@@ -1096,7 +1064,6 @@ _M-p_ Unmark  _M-n_ Unmark  _q_ Quit "
                  (setq helm-ff-skip-boring-files t)
                  ))
 
-
 ;; Helm Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package helm-imenu
@@ -1307,14 +1274,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ;; (bind-key "[ q" #'previous-error  evil-normal-state-map)
                  ;; (bind-key "] q" #'next-error      evil-normal-state-map)
 
-                 ;; Bubble Text up and down. Works with regions.
-                 (bind-key "[ e" #'move-text-up   evil-normal-state-map)
-                 (bind-key "] e" #'move-text-down evil-normal-state-map)
-
                  ;; Commentin'
-                 (bind-key "g c c" #'comment-line-or-region
-                           evil-normal-state-map)
-                 (bind-key "g c" #'comment-line-or-region evil-visual-state-map)
+                 (bind-key "g c c" #'comment-line-or-region evil-normal-state-map)
+                 (bind-key "g c"   #'comment-line-or-region evil-visual-state-map)
 
                  ;; ;; Multiple cursors should use emacs state instead of insert state.
                  ;; (add-hook 'multiple-cursors-mode-enabled-hook #'evil-emacs-state)
@@ -1424,6 +1386,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :disabled t
   :defer t
   :config (global-evil-surround-mode t))
+
+(use-package evil-smartparens
+  :disabled t
+  :config (progn
+            (require 'smartparens-config)
+            (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode)))
 
 (use-package evil-args
   :ensure t
@@ -1643,6 +1611,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                                       idle-change
                                                       mode-enabled))
 
+          ;; Flycheck doesn't use =load-path= when checking emacs-lisp files.
+          ;; Instead, it uses =flycheck-emacs-lisp-load-path=, which is empty by
+          ;; default. Let's have flycheck use =load-path=!
+          (setq-default flycheck-emacs-lisp-load-path 'inherit)
+
           (global-flycheck-mode t)
           ))
 
@@ -1651,7 +1624,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :config (add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
 
 ;; Org-mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 (use-package htmlize
   :ensure t
@@ -1704,6 +1676,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :commands (twittering-mode)
   :init (progn
           (setq twittering-use-master-password t)
+          (setq twittering-icon-mode t)
+          (setq twittering-allow-insecure-server-cert t)
+
           (add-hook 'twittering-mode-hook #'disable-show-trailing-whitespace)
           ))
 
@@ -1729,6 +1704,5 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             `(lambda ()
                (let ((elapsed (float-time (time-subtract (current-time)
                                                          emacs-start-time))))
-                 (message "Loading %s...done (%.3fs) [after-init]"
-                          ,load-file-name elapsed)))
-            t))
+                 (message "Loading %s...done (%.3fs) [after-init]" ,load-file-name
+                          elapsed))) t))
