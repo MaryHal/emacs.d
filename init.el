@@ -575,7 +575,7 @@ active, apply to active region instead."
   (interactive)
   (load-theme 'leuven-mod t)
   ;; (load-theme 'base16-ashes-light t)
-  ;; (set-frame-alpha 90)
+  (set-frame-alpha 90)
   )
 
 (defun mhl/load-dark-theme ()
@@ -587,9 +587,9 @@ active, apply to active region instead."
   (if (string= system-type "gnu/linux")
       (if (string= window-system "x")
           (progn
-            ;; (set-face-attribute 'default nil :background "black")
-            ;; (set-face-attribute 'fringe nil :background "black")
-            ;; (set-frame-alpha 90)
+            (set-face-attribute 'default nil :background "black")
+            (set-face-attribute 'fringe nil :background "black")
+            (set-frame-alpha 90)
             )
         (progn (when (getenv "DISPLAY")
                  (set-face-attribute 'default nil :background "unspecified-bg")
@@ -1309,6 +1309,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :load-path "site-lisp/holy-mode"
   :bind ("<f12>" . holy-mode))
 
+;; Hybrid-mode (from [[https://github.com/syl20bnr/spacemacs][Spacemacs]])
+
+(use-package hybrid-mode
+  :load-path "site-lisp/hybrid-mode"
+  :config (hybrid-mode t)
+  )
+
 ;; Evil Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package evil-leader
@@ -1389,6 +1396,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-smartparens
   :disabled t
+  :ensure t
   :config (progn
             (require 'smartparens-config)
             (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode)))
