@@ -333,7 +333,6 @@ active, apply to active region instead."
 
 ;; Helper Libraries ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
 ;; String manipulation library
 (use-package s
   :defer t
@@ -629,7 +628,6 @@ active, apply to active region instead."
 
 ;; Most programming languages I work with prefer spaces over tabs. Note how this
 ;; is not a mode, but a buffer-local variable.
-
 (setq-default indent-tabs-mode nil)
 
 ;; Don't add newlines when cursor goes past end of file
@@ -642,7 +640,7 @@ active, apply to active region instead."
 
 ;; Smoother Scrolling
 (setq scroll-margin 2
-      scroll-conservatively 9999
+      scroll-conservatively 101
       scroll-preserve-screen-position t
       auto-window-vscroll nil)
 
@@ -693,6 +691,9 @@ active, apply to active region instead."
           (setq avy-keys
                 '(?c ?a ?s ?d ?e ?f ?h ?w ?y ?j ?k ?l ?n ?m ?v ?r ?u ?p))
           ))
+
+(use-package swiper
+  :ensure t)
 
 (use-package anzu
   :ensure t
@@ -873,64 +874,6 @@ active, apply to active region instead."
                              "Zoom"
                              ("i" text-scale-increase "in")
                              ("o" text-scale-decrease "out")))
-
-          (bind-key "C-M-o" (defhydra hydra-window-stuff (:hint nil)
-                              "
-Split: _v_ert  _s_:horz
-Delete: _c_lose  _o_nly
-Switch Window: _h_:left  _j_:down  _k_:up  _l_:right
-Buffers: _p_revious  _n_ext  _b_:select  _f_ind-file  _F_:projectile
-Winner: _u_ndo  _r_edo
-Resize: _H_:splitter left  _J_:splitter down  _K_:splitter up  _L_:splitter right
-Move: _a_:up  _z_:down "
-                              ("z" scroll-up-line)
-                              ("a" scroll-down-line)
-                              ;; ("i" idomenu)
-
-                              ("u" winner-undo)
-                              ("r" winner-redo)
-
-                              ("h" windmove-left)
-                              ("j" windmove-down)
-                              ("k" windmove-up)
-                              ("l" windmove-right)
-
-                              ("p" previous-buffer)
-                              ("n" next-buffer)
-                              ("b" ido-switch-buffer)
-                              ("f" ido-find-file)
-                              ("F" projectile-find-file)
-
-                              ("s" split-window-below)
-                              ("v" split-window-right)
-
-                              ("c" delete-window)
-                              ("o" delete-other-windows)
-
-                              ("H" hydra-move-splitter-left)
-                              ("J" hydra-move-splitter-down)
-                              ("K" hydra-move-splitter-up)
-                              ("L" hydra-move-splitter-right)
-
-                              ("q" nil)))
-
-
-          (bind-key "C-c n" (defhydra cqql-multiple-cursors-hydra (:hint nil)
-                              "
-^Up^            ^Down^        ^Miscellaneous^
-----------------------------------------------
-_p_   Next    _n_   Next    _l_ Edit lines
-_P_   Skip    _N_   Skip    _a_ Mark all
-_M-p_ Unmark  _M-n_ Unmark  _q_ Quit "
-                              ("l" mc/edit-lines :exit t)
-                              ("a" mc/mark-all-like-this :exit t)
-                              ("n" mc/mark-next-like-this)
-                              ("N" mc/skip-to-next-like-this)
-                              ("M-n" mc/unmark-next-like-this)
-                              ("p" mc/mark-previous-like-this)
-                              ("P" mc/skip-to-previous-like-this)
-                              ("M-p" mc/unmark-previous-like-this)
-                              ("q" nil)))
           ))
 
 ;; Project Management ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1076,6 +1019,8 @@ _M-p_ Unmark  _M-n_ Unmark  _q_ Quit "
 
                ;; disable pre-input
                (setq helm-swoop-pre-input-function (lambda () ""))
+
+               ;; (setq helm-swoop-speed-or-color nil)
                ))
 
 (use-package helm-ag
@@ -1291,14 +1236,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                    (message "Thou shall not quit!"))
                  (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
                    (message "Thou shall not quit!"))
-
-                 ;; ;; git-timemachine integration.
-                 ;; ;; @see https://bitbucket.org/lyro/evil/issue/511/let-certain-minor-modes-key-bindings
-                 ;; (eval-after-load 'git-timemachine
-                 ;;   '(progn
-                 ;;      (evil-make-overriding-map git-timemachine-mode-map 'normal)
-                 ;;      ;; force update evil keymaps after git-timemachine-mode loaded
-                 ;;      (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps)))
                  ))
 
 ;; Holy-mode (from [[https://github.com/syl20bnr/spacemacs][Spacemacs]]) for
@@ -1363,8 +1300,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ;; Projectile
                  (evil-leader/set-key "p" #'projectile-command-map)
 
-                 ;; Swoop
+                 ;; Swiper/Swoop
                  (evil-leader/set-key "s" #'helm-swoop)
+                 (evil-leader/set-key "w" #'swiper)
 
                  ;; Avy integration
                  (evil-leader/set-key "SPC" #'avy-goto-word-or-subword-1)
@@ -1714,3 +1652,4 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                                          emacs-start-time))))
                  (message "Loading %s...done (%.3fs) [after-init]" ,load-file-name
                           elapsed))) t))
+(put 'narrow-to-region 'disabled nil)
