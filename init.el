@@ -10,6 +10,12 @@
 ;; defadvice. Let's disable these warnings for now.
 (setq ad-redefinition-action 'accept)
 
+;; Emacs will run garbage collection after `gc-cons-threshold' bytes of
+;; consing. The default value is 800,000 bytes, or ~ 0.7 MiB. By increasing to
+;; 40 MiB we reduce the number of pauses due to garbage collection.
+
+(setq gc-cons-threshold (* 4 10 1024 1024))
+
 ;; Pre-init Variables ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defconst emacs-start-time (current-time))
@@ -170,12 +176,6 @@ active, apply to active region instead."
 ;; (ad-activate 'delete-window)
 
 ;; Sane Defaults ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Emacs will run garbage collection after `gc-cons-threshold' bytes of
-;; consing. The default value is 800,000 bytes, or ~ 0.7 MiB. By increasing to
-;; 10 MiB we reduce the number of pauses due to garbage collection.
-
-(setq gc-cons-threshold (* 10 1024 1024))
 
 ;; (setq epa-file-select-keys nil)
 
@@ -668,8 +668,7 @@ active, apply to active region instead."
 (defun disable-show-trailing-whitespace()
   (setq show-trailing-whitespace nil))
 
-(add-hook 'term-mode-hook #'disable-show-trailing-whitespace)
-
+(add-hook 'term-mode-hook #'disable-show-trailing-whitespace) 
 (setq-default show-trailing-whitespace t)
 
 (use-package imenu
@@ -1306,8 +1305,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  ;; Avy integration
                  (evil-leader/set-key "SPC" #'avy-goto-word-or-subword-1)
+                 (evil-leader/set-key "l"   #'avy-goto-line)
 
-                 (evil-leader/set-key "l"   #'helm-locate)
+                 ;; Narrowing
+                 (put 'narrow-to-region 'disabled nil)
+                 (evil-leader/set-key "n r" #'narrow-to-region)
+                 (evil-leader/set-key "n d" #'narrow-to-defun)
+                 (evil-leader/set-key "n p" #'narrow-to-page)
+                 (evil-leader/set-key "n w" #'widen)
 
                  ;; Expand region
                  (evil-leader/set-key "v" #'er/expand-region)
@@ -1652,4 +1657,3 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                                          emacs-start-time))))
                  (message "Loading %s...done (%.3fs) [after-init]" ,load-file-name
                           elapsed))) t))
-(put 'narrow-to-region 'disabled nil)
