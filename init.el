@@ -13,7 +13,6 @@
 ;; Emacs will run garbage collection after `gc-cons-threshold' bytes of
 ;; consing. The default value is 800,000 bytes, or ~ 0.7 MiB. By increasing to
 ;; 40 MiB we reduce the number of pauses due to garbage collection.
-
 (setq gc-cons-threshold (* 4 10 1024 1024))
 
 ;; Pre-init Variables ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1639,6 +1638,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (setq custom-file user-custom-file)
 (load user-custom-file t)
+
+;; Garbage collection of larger blocks of data can be slow, causes pauses during
+;; operation. Let's reduce the size of the threshold to a smaller value after
+;; most of our init is complete.
+(add-hook 'after-init-hook `(lambda ()
+                              (setq gc-cons-threshold (* 4 10 1024 1024))
+                              ))
 
 ;; Make sure emacs is daemonized then print out some timing data.
 
