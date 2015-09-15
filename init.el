@@ -289,7 +289,6 @@ active, apply to active region instead."
 ;; proceed as soon as possible to a debug window. USR1 is ignored however, so let’s
 ;; bind it to an alternative desirable function that can be used on an Emacs
 ;; instance that has locked up.
-
 (defun my-quit-emacs-unconditionally ()
   (interactive)
   (my-quit-emacs '(4)))
@@ -1320,15 +1319,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "t" #'open-terminal)
 
                  ;; Help!
-                 (evil-leader/set-key
-                   "hc" #'describe-char
-                   "hf" #'describe-function
-                   "hk" #'describe-key
-                   "hl" #'describe-package
-                   "hm" #'describe-mode
-                   "hp" #'describe-personal-keybindings
-                   "hv" #'describe-variable)
-                 ))
+                 (evil-leader/set-key "h" #'hydra-help/body))
 
 (use-package evil-surround
   :ensure t
@@ -1643,7 +1634,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; operation. Let's reduce the size of the threshold to a smaller value after
 ;; most of our init is complete.
 (add-hook 'after-init-hook `(lambda ()
-                              (setq gc-cons-threshold (* 4 10 1024 1024))
+                              (setq gc-cons-threshold (* 10 1024 1024))
                               ))
 
 ;; Make sure emacs is daemonized then print out some timing data.
