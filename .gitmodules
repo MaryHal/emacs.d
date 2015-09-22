@@ -10,3 +10,6 @@
 [submodule "theme/emacs-material-theme"]
 	path = theme/emacs-material-theme
 	url = https://github.com/cpaulik/emacs-material-theme.git
+[submodule "site-lisp/fzf.el"]
+	path = site-lisp/fzf.el
+	url = https://github.com/bling/fzf.el

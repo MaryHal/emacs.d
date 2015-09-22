@@ -341,7 +341,6 @@ active, apply to active region instead."
   :defer t
   :ensure t)
 
-
 ;; Homeless Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Keybindings for functions that are not closely associated with a package
@@ -410,7 +409,6 @@ active, apply to active region instead."
   :ensure t
   :bind (("M-m" . jump-char-forward)
          ("M-M" . jump-char-backward)))
-
 
 ;; Appearance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -619,8 +617,7 @@ active, apply to active region instead."
                                   "Monospace 8"
                                   (font-spec :family "Consolas"
                                              :size 12)
-                                  )
-                  t t))
+                                  ) t t))
 
 ;; Editing ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -643,7 +640,6 @@ active, apply to active region instead."
       auto-window-vscroll nil)
 
 (use-package paren
-  :disabled t
   :config (progn (show-paren-mode t)
                  (setq show-paren-delay 0)
                  ))
@@ -859,13 +855,13 @@ active, apply to active region instead."
                              "Help"
                              ("a" helm-apropos "Apropos")
                              ("c" describe-char "Describe Char")
-                             ("f" find-function "Find Function")
-                             ("F" describe-function "Describe Function")
-                             ("k" describe-key "Describe Key")
-                             ("K" find-function-on-key "Find Key")
+                             ("F" find-function "Find Function")
+                             ("f" describe-function "Describe Function")
+                             ("K" describe-key "Describe Key")
+                             ("k" find-function-on-key "Find Key")
                              ("m" describe-mode "Describe Modes")
-                             ("v" find-variable "Find Variable")
-                             ("V" describe-variable "Describe Variable")))
+                             ("V" find-variable "Find Variable")
+                             ("v" describe-variable "Describe Variable")))
 
           (bind-key "<f2>" (defhydra hydra-zoom ()
                              "Zoom"
@@ -973,8 +969,7 @@ active, apply to active region instead."
                          (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
                                                  `(:background ,bg-color :foreground ,bg-color)))
                          (setq-local cursor-type nil))))
-                   (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe)
-                   )
+                   (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe))
                  (helm-cfg-use-header-line-instead-of-minibuffer)
 
                  ;; ;; "Remove" source header text
@@ -994,8 +989,8 @@ active, apply to active region instead."
                  ;; would detect that we already bound tab.
                  (define-key helm-map (kbd "C-i") #'helm-execute-persistent-action)
 
-                 (setq helm-mode-fuzzy-match t)
-                 (setq helm-completion-in-region-fuzzy-match t)
+                 ;; (setq helm-mode-fuzzy-match t)
+                 ;; (setq helm-completion-in-region-fuzzy-match t)
 
                  ;; When there is only a single directory candidate when
                  ;; file-finding, don't automatically enter that directory.
@@ -1066,18 +1061,22 @@ active, apply to active region instead."
                                                " [Confirm]")))
                  ))
 
+(use-package fzf
+  :ensure t
+  :commands (fzf fzf-directory))
+
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Evil Core ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package evil
   :ensure t
-  :preface (progn (setq evil-want-C-u-scroll t)
-                  (setq evil-move-cursor-back nil)
-                  (setq evil-cross-lines t)
-                  (setq evil-intercept-esc 'always)
+  :init (progn (setq evil-want-C-u-scroll t)
+               (setq evil-move-cursor-back nil)
+               (setq evil-cross-lines t)
+               (setq evil-intercept-esc 'always)
 
-                  (setq evil-auto-indent t))
+               (setq evil-auto-indent t))
   :config (progn (evil-mode t)
                  ;; (bind-key "<f12>" #'evil-local-mode)
 
@@ -1085,11 +1084,11 @@ active, apply to active region instead."
                  (evil-set-toggle-key "C-\\")
 
                  ;; (setq evil-emacs-state-cursor    '("DarkSeaGreen1"  box))
-                 ;; (setq evil-normal-state-cursor   '("white"          box))
-                 ;; (setq evil-insert-state-cursor   '("white"          bar))
-                 ;; (setq evil-visual-state-cursor   '("RoyalBlue"      box))
-                 ;; (setq evil-replace-state-cursor  '("red"            hollow))
-                 ;; (setq evil-operator-state-cursor '("CadetBlue"      box))
+                 (setq evil-normal-state-cursor   '("white"         box))
+                 (setq evil-insert-state-cursor   '("DarkSeaGreen1" box))
+                 (setq evil-visual-state-cursor   '("RoyalBlue"     box))
+                 (setq evil-replace-state-cursor  '("red"           hollow))
+                 (setq evil-operator-state-cursor '("CadetBlue"     box))
 
                  (evil-set-initial-state 'erc-mode 'normal)
                  (evil-set-initial-state 'package-menu-mode 'normal)
@@ -1113,25 +1112,27 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-isearch-map)
 
                  ;; Being Emacs-y
-                 (bind-key "C-a" #'evil-beginning-of-line  evil-insert-state-map)
-                 (bind-key "C-a" #'evil-beginning-of-line  evil-motion-state-map)
+                 (defun mhl/evil-be-emacsy ()
+                   (bind-key "C-a" #'evil-beginning-of-line  evil-insert-state-map)
+                   (bind-key "C-a" #'evil-beginning-of-line  evil-motion-state-map)
 
-                 (bind-key "C-b" #'evil-backward-char      evil-insert-state-map)
-                 (bind-key "C-d" #'evil-delete-char        evil-insert-state-map)
+                   (bind-key "C-b" #'evil-backward-char      evil-insert-state-map)
+                   (bind-key "C-d" #'evil-delete-char        evil-insert-state-map)
 
-                 (bind-key "C-e" #'evil-end-of-line        evil-insert-state-map)
-                 (bind-key "C-e" #'evil-end-of-line        evil-motion-state-map)
+                   (bind-key "C-e" #'evil-end-of-line        evil-insert-state-map)
+                   (bind-key "C-e" #'evil-end-of-line        evil-motion-state-map)
 
-                 (bind-key "C-f" #'evil-forward-char       evil-insert-state-map)
+                   (bind-key "C-f" #'evil-forward-char       evil-insert-state-map)
 
-                 ;; (bind-key "C-k" #'evil-kill-line          evil-insert-state-map)
-                 ;; (bind-key "C-k" #'evil-kill-line          evil-motion-state-map)
+                   (bind-key "C-k" #'evil-kill-line          evil-insert-state-map)
+                   (bind-key "C-k" #'evil-kill-line          evil-motion-state-map)
 
-                 ;; ;; Delete forward like Emacs.
-                 ;; (bind-key "C-d" #'evil-delete-char evil-insert-state-map)
+                   ;; Delete forward like Emacs.
+                   (bind-key "C-d" #'evil-delete-char evil-insert-state-map)
 
-                 ;; ;; Make end-of-line work in insert
-                 ;; (bind-key "C-e" #'end-of-line evil-insert-state-map)
+                   ;; Make end-of-line work in insert
+                   (bind-key "C-e" #'end-of-line evil-insert-state-map))
+                 ;; (mhl/evil-be-emacsy)
 
                  ;; Extra text objects
                  (defmacro define-and-bind-text-object (key start-regex end-regex)
@@ -1147,6 +1148,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  ;; create "il"/"al" (inside/around) line text objects:
                  (define-and-bind-text-object "l" "^\\s-*" "\\s-*$")
+
                  ;; create "ie"/"ae" (inside/around) entire buffer text objects:
                  (define-and-bind-text-object "e" "\\`\\s-*" "\\s-*\\'")
 
@@ -1244,11 +1246,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :bind ("<f12>" . holy-mode))
 
 ;; Hybrid-mode (from [[https://github.com/syl20bnr/spacemacs][Spacemacs]])
-
 (use-package hybrid-mode
   :load-path "site-lisp/hybrid-mode"
-  :config (hybrid-mode t)
-  )
+  :config (hybrid-mode t))
 
 ;; Evil Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1319,20 +1319,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "t" #'open-terminal)
 
                  ;; Help!
-                 (evil-leader/set-key "h" #'hydra-help/body))
+                 (evil-leader/set-key "h" #'hydra-help/body)))
 
 (use-package evil-surround
   :ensure t
   :disabled t
   :defer t
   :config (global-evil-surround-mode t))
-
-(use-package evil-smartparens
-  :disabled t
-  :ensure t
-  :config (progn
-            (require 'smartparens-config)
-            (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode)))
 
 (use-package evil-args
   :ensure t
@@ -1388,7 +1381,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                        (t :select t)))
                (shackle-mode t)
                ))
-
 
 ;; Dired ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1585,7 +1577,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Miscellaneous Packages ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Pretty package listings.
-
 (use-package paradox
   :ensure t
   :commands (paradox-list-packages)
@@ -1594,7 +1585,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Emacs by default leaves a "watermark" when you leave a channel (The default
 ;; part reason declares to the universe that you're using Emacs/ERC). Let's make
 ;; that a bit more generic.
-
 (use-package erc
   :defer t
   :config (progn (setq erc-part-reason 'erc-part-reason-various)
@@ -1626,7 +1616,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Finishing Up ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Load custom init file at the end.
-
 (setq custom-file user-custom-file)
 (load user-custom-file t)
 
@@ -1638,10 +1627,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                               ))
 
 ;; Make sure emacs is daemonized then print out some timing data.
-
-;; (use-package server
-;;   :config (unless (server-running-p)
-;;             (server-start)))
+(use-package server
+  :config (unless (server-running-p)
+            (server-start)))
 
 (when window-system
   (let ((elapsed (float-time (time-subtract (current-time)
