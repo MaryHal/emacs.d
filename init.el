@@ -295,7 +295,6 @@ active, apply to active region instead."
 
 (define-key special-event-map (kbd "<sigusr1>") 'my-quit-emacs-unconditionally)
 
-
 ;; Backups ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Disable backup
@@ -327,7 +326,6 @@ active, apply to active region instead."
       `((".*" ,temporary-file-directory t)))
 
 (setq create-lockfiles nil)
-
 
 ;; Helper Libraries ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -458,8 +456,6 @@ active, apply to active region instead."
 
 
 ;; I prefer hiding all minor modes by default.
-
-
 (use-package rich-minority
   :ensure t
   :config (progn (setq rm-blacklist nil)
@@ -539,11 +535,9 @@ active, apply to active region instead."
             (set-fringe-mode (cons 8 8))
             ))
 
-
 ;; Theme ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; We have some custom themes packaged with this config, so make sure =load-theme= can find 'em.
-
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ashes/"))
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/emacs-material-theme/"))
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/flatui-theme.el/"))
@@ -634,10 +628,10 @@ active, apply to active region instead."
 (setq visible-cursor nil)
 
 ;; Smoother Scrolling
-(setq scroll-margin 2
-      scroll-conservatively 101
-      scroll-preserve-screen-position t
-      auto-window-vscroll nil)
+(setq scroll-margin 2)
+(setq scroll-conservatively 101)
+(setq scroll-preserve-screen-position t)
+(setq auto-window-vscroll nil)
 
 (use-package paren
   :config (progn (show-paren-mode t)
@@ -659,10 +653,14 @@ active, apply to active region instead."
   :config (electric-indent-mode t))
 
 ;; Trailing whitespace
-(defun disable-show-trailing-whitespace()
+(defun disable-show-trailing-whitespace ()
   (setq show-trailing-whitespace nil))
 
-(add-hook 'term-mode-hook #'disable-show-trailing-whitespace) 
+(defun disable-scroll-margin ()
+  (setq scroll-margin 0))
+
+(add-hook 'term-mode-hook #'disable-show-trailing-whitespace)
+(add-hook 'term-mode-hook #'disable-scroll-margin)
 (setq-default show-trailing-whitespace t)
 
 (use-package imenu
@@ -816,8 +814,6 @@ active, apply to active region instead."
 ;; effect. Instead, we'll make use of xsel. See
 ;; [[http://www.vergenet.net/~conrad/software/xsel/][this]] -- "a command-line
 ;; program for getting and setting the contents of the X selection"
-
-
 (when (not (display-graphic-p))
   ;; Callback for when user cuts
   (defun xsel-cut-function (text &optional push)
@@ -891,7 +887,6 @@ active, apply to active region instead."
 ;; session support to Emacs. I've found that over time, my use of helm-* to
 ;; switch buffers quickly has somewhat obsoleted the necessity of this feature,
 ;; so I've disabled it for now.
-
 (use-package workgroups2
   :disabled t
   :config (progn (setq wg-default-session-file (concat user-cache-directory "workgroups2"))
@@ -1063,7 +1058,11 @@ active, apply to active region instead."
 
 (use-package fzf
   :ensure t
-  :commands (fzf fzf-directory))
+  :commands (fzf fzf-directory)
+  :init (progn
+            (defadvice fzf/start (after normalize-fzf-mode-line)
+              (face-remap-add-relative 'mode-line '(:box nil))
+              )))
 
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1078,7 +1077,6 @@ active, apply to active region instead."
 
                (setq evil-auto-indent t))
   :config (progn (evil-mode t)
-                 ;; (bind-key "<f12>" #'evil-local-mode)
 
                  ;; Toggle evil-mode
                  (evil-set-toggle-key "C-\\")
@@ -1203,32 +1201,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                  (evil-visual-restore))
                            evil-visual-state-map)
 
-                 ;; ;; Workgroups2
-                 ;; (bind-key "g T" #'wg-switch-to-workgroup-left  evil-normal-state-map)
-                 ;; (bind-key "g t" #'wg-switch-to-workgroup-right evil-normal-state-map)
-
-                 ;; (bind-key "g t" #'wg-switch-to-workgroup-right evil-motion-state-map)
-
-                 ;; (evil-ex-define-cmd "tabnew"   #'wg-create-workgroup)
-                 ;; (evil-ex-define-cmd "tabclose" #'wg-kill-workgroup)
-
-                 ;; ;; "Unimpaired"
-                 ;; (bind-key "[ b" #'previous-buffer evil-normal-state-map)
-                 ;; (bind-key "] b" #'next-buffer     evil-normal-state-map)
-                 ;; (bind-key "[ q" #'previous-error  evil-normal-state-map)
-                 ;; (bind-key "] q" #'next-error      evil-normal-state-map)
-
                  ;; Commentin'
                  (bind-key "g c c" #'comment-line-or-region evil-normal-state-map)
                  (bind-key "g c"   #'comment-line-or-region evil-visual-state-map)
-
-                 ;; ;; Multiple cursors should use emacs state instead of insert state.
-                 ;; (add-hook 'multiple-cursors-mode-enabled-hook #'evil-emacs-state)
-                 ;; (add-hook 'multiple-cursors-mode-disabled-hook #'evil-normal-state)
-
-                 ;; (define-key evil-normal-state-map (kbd "g r") 'mc/mark-all-like-this)
-                 ;; (bind-key "C->" 'mc/mark-next-like-this)
-                 ;; (bind-key "C-<" 'mc/mark-previous-like-this)
 
                  ;; Don't quit!
                  (defadvice evil-quit (around advice-for-evil-quit activate)
@@ -1263,6 +1238,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
                  (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
                  (define-key evil-emacs-state-map  (kbd "M-SPC") evil-leader--default-map)
+                 (define-key evil-insert-state-map (kbd "M-SPC") evil-leader--default-map)
 
                  (evil-leader/set-key "!" #'shell-command)
 
@@ -1278,6 +1254,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  ;; Files
                  (evil-leader/set-key "f" #'helm-find-files)
+                 (evil-leader/set-key "z" #'fzf)
 
                  ;; Buffers
                  (evil-leader/set-key "b" #'buffer-menu)
@@ -1626,11 +1603,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                               (setq gc-cons-threshold (* 10 1024 1024))
                               ))
 
-;; Make sure emacs is daemonized then print out some timing data.
+;; Make sure emacs is daemonized.
 (use-package server
   :config (unless (server-running-p)
             (server-start)))
 
+;; Print out some timing data.
 (when window-system
   (let ((elapsed (float-time (time-subtract (current-time)
                                             emacs-start-time))))

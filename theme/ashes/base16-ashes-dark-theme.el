@@ -41,12 +41,14 @@
    `(link-visited ((t (:foreground ,base0E))))
    `(minibuffer-prompt ((t (:foreground ,base0D :weight bold))))
 
-   `(mode-line ((t (:background ,base00
-                                :foreground ,base04
-                                :box (:line-width 3 :color ,base00)))))
-   `(mode-line-inactive ((t (:background ,base01
-                                         :foreground ,base03
-                                         :box (:line-width 3 :color ,base01)))))
+   `(mode-line
+     ((t (:background ,base00
+                      :foreground ,base04
+                      :box (:line-width 3 :color ,base00)))))
+   `(mode-line-inactive
+     ((t (:background ,base01
+                      :foreground ,base03
+                      :box (:line-width 3 :color ,base01)))))
 
    ;; `(mode-line-buffer-id ((t (:foreground ,base0E :background nil))))
    ;; `(mode-line-emphasis ((t (:foreground ,base06 :slant italic))))
@@ -547,7 +549,8 @@
      [,base00 ,base08 ,base0B ,base0A ,base0D ,base0E ,base0D ,base05])
    `(ansi-term-color-vector
      ;; black, base08, base0B, base0A, base0D, magenta, cyan, white
-     [unspecified ,base00 ,base08 ,base0B ,base0A ,base0D ,base0E ,base0D ,base05])))
+     [unspecified ,base00 ,base08 ,base0B ,base0A ,base0D ,base0E ,base0D ,base05]))
+  )
 
 (provide-theme 'base16-ashes-dark)
 
