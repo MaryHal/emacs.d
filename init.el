@@ -560,17 +560,14 @@ active, apply to active region instead."
     (if elt (setcdr elt new) (push `(alpha ,@new) default-frame-alist))
     (set-frame-parameter nil 'alpha new)))
 
-(defun mhl/load-light-theme ()
-  (interactive)
-  (load-theme 'leuven-mod t)
-  ;; (load-theme 'base16-ashes-light t)
+(defun mhl/load-light-theme (theme)
+  (load-theme 'theme t)
   (set-frame-alpha 90)
   )
 
-(defun mhl/load-dark-theme ()
-  (interactive)
-  (load-theme 'base16-ashes-dark t)
-  ;; (load-theme 'noctilux t)
+(defun mhl/load-dark-theme (theme)
+  ;; (load-theme 'base16-ashes-dark t)
+  (load-theme theme t)
 
   ;; Set transparent background.
   (if (string= system-type "gnu/linux")
@@ -585,8 +582,11 @@ active, apply to active region instead."
                  ))
         )))
 
-;; (add-hook 'after-make-frame-functions #'mhl/load-dark-theme)
-(mhl/load-dark-theme)
+;; (mhl/load-light-theme 'leuven-mod)
+;; (mhl/load-light-theme 'base16-ashes-light)
+
+;; (mhl/load-dark-theme 'noctilux)
+(mhl/load-dark-theme 'base16-ashes-dark)
 
 ;; Disable the nagging when loading custom themes.
 (setq custom-safe-themes t)
@@ -628,10 +628,10 @@ active, apply to active region instead."
 (setq visible-cursor nil)
 
 ;; Smoother Scrolling
-(setq scroll-margin 2)
-(setq scroll-conservatively 101)
-(setq scroll-preserve-screen-position t)
-(setq auto-window-vscroll nil)
+(setq scroll-margin 0
+      scroll-conservatively 101
+      scroll-preserve-screen-position t
+      auto-window-vscroll nil)
 
 (use-package paren
   :config (progn (show-paren-mode t)
@@ -1060,7 +1060,7 @@ active, apply to active region instead."
   :ensure t
   :commands (fzf fzf-directory)
   :init (progn
-            (defadvice fzf/start (after normalize-fzf-mode-line)
+            (defadvice fzf/start (after normalize-fzf-mode-line activate)
               (face-remap-add-relative 'mode-line '(:box nil))
               )))
 
@@ -1075,18 +1075,31 @@ active, apply to active region instead."
                (setq evil-cross-lines t)
                (setq evil-intercept-esc 'always)
 
-               (setq evil-auto-indent t))
+               (setq evil-auto-indent t)
+
+               ;; Holy-mode (from [[https://github.com/syl20bnr/spacemacs][Spacemacs]]) for
+               ;; when I want to use evil features (like evil-leader) while staying in the
+               ;; emacs-state.
+               (use-package holy-mode
+                 :load-path "site-lisp/holy-mode"
+                 :bind ("<f12>" . holy-mode))
+
+               ;; Hybrid-mode (from [[https://github.com/syl20bnr/spacemacs][Spacemacs]])
+               (use-package hybrid-mode
+                 :load-path "site-lisp/hybrid-mode"
+                 :config (hybrid-mode t))
+
+               (setq evil-emacs-state-cursor    '("DarkSeaGreen1"  box))
+               (setq evil-normal-state-cursor   '("white"         box))
+               (setq evil-insert-state-cursor   '("DarkSeaGreen1" box))
+               (setq evil-visual-state-cursor   '("RoyalBlue"     box))
+               (setq evil-replace-state-cursor  '("red"           hollow))
+               (setq evil-operator-state-cursor '("CadetBlue"     box))
+               )
   :config (progn (evil-mode t)
 
                  ;; Toggle evil-mode
                  (evil-set-toggle-key "C-\\")
-
-                 ;; (setq evil-emacs-state-cursor    '("DarkSeaGreen1"  box))
-                 (setq evil-normal-state-cursor   '("white"         box))
-                 (setq evil-insert-state-cursor   '("DarkSeaGreen1" box))
-                 (setq evil-visual-state-cursor   '("RoyalBlue"     box))
-                 (setq evil-replace-state-cursor  '("red"           hollow))
-                 (setq evil-operator-state-cursor '("CadetBlue"     box))
 
                  (evil-set-initial-state 'erc-mode 'normal)
                  (evil-set-initial-state 'package-menu-mode 'normal)
@@ -1211,19 +1224,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
                    (message "Thou shall not quit!"))
                  ))
-
-;; Holy-mode (from [[https://github.com/syl20bnr/spacemacs][Spacemacs]]) for
-;; when I want to use evil features (like evil-leader) while staying in the
-;; emacs-state.
-
-(use-package holy-mode
-  :load-path "site-lisp/holy-mode"
-  :bind ("<f12>" . holy-mode))
-
-;; Hybrid-mode (from [[https://github.com/syl20bnr/spacemacs][Spacemacs]])
-(use-package hybrid-mode
-  :load-path "site-lisp/hybrid-mode"
-  :config (hybrid-mode t))
 
 ;; Evil Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
