@@ -585,8 +585,9 @@ active, apply to active region instead."
 ;; (mhl/load-light-theme 'leuven-mod)
 ;; (mhl/load-light-theme 'base16-ashes-light)
 
-;; (mhl/load-dark-theme 'noctilux)
-(mhl/load-dark-theme 'base16-ashes-dark)
+(setq noctilux-italic nil)
+(mhl/load-dark-theme 'noctilux)
+;; (mhl/load-dark-theme 'base16-ashes-dark)
 
 ;; Disable the nagging when loading custom themes.
 (setq custom-safe-themes t)
@@ -1254,7 +1255,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  ;; Files
                  (evil-leader/set-key "f" #'helm-find-files)
-                 (evil-leader/set-key "z" #'fzf)
+                 (evil-leader/set-key "z" #'fzf)           ;; Project(ile) fzf
+                 (evil-leader/set-key "g" #'fzf-directory) ;; Directory fzf
 
                  ;; Buffers
                  (evil-leader/set-key "b" #'buffer-menu)
