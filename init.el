@@ -53,6 +53,7 @@ if it's not installed"
              (require package))))
 
 ;; Aquire use-package, the crux of our config file.
+(setq use-package-verbose t)
 (require-package 'use-package)
 
 ;; Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -219,11 +220,8 @@ active, apply to active region instead."
 (setq split-width-threshold 0)
 
 (use-package autorevert
-  :config (progn (setq global-auto-revert-non-file-buffers t)
-                 (setq auto-revert-verbose nil)
-
-                 (global-auto-revert-mode t)
-                 ))
+  :commands auto-revert-mode
+  :init (add-hook 'find-file-hook #'(lambda () (auto-revert-mode t))))
 
 (use-package simple
   :config (progn (setq shift-select-mode nil)
@@ -240,7 +238,7 @@ active, apply to active region instead."
                  ))
 
 (use-package jka-cmpr-hook
-  :config (auto-compression-mode))
+  :config (auto-compression-mode t))
 
 (use-package delsel
   :config (delete-selection-mode t))
@@ -266,6 +264,10 @@ active, apply to active region instead."
                  ))
 
 (use-package winner
+  :if (not noninteractive)
+  :defer 5
+  :bind (("M-N" . winner-redo)
+         ("M-P" . winner-undo))
   :config (winner-mode t))
 
 (use-package ediff
@@ -401,7 +403,7 @@ active, apply to active region instead."
 
 ;; Character-targeted movements
 (use-package misc
-  :bind ("M-z" . zap-up-to-char))
+  :bind (("M-z" . zap-up-to-char)))
 
 (use-package jump-char
   :ensure t
@@ -416,6 +418,7 @@ active, apply to active region instead."
       '((top   . 10) (left   . 2)
         (width . 80) (height . 30)
         (vertical-scroll-bars . nil)
+        (horizontal-scroll-bars . nil)
         (left-fringe . 0) (right-fringe . 0)
         ))
 
@@ -429,6 +432,7 @@ active, apply to active region instead."
   :config (tooltip-mode -1))
 
 (use-package scroll-bar
+  :disabled t
   :config (scroll-bar-mode -1))
 
 ;; No splash screen please
@@ -871,6 +875,7 @@ active, apply to active region instead."
 (use-package projectile
   :ensure t
   :defer 5
+  :commands (projectile-global-mode)
   :bind ("C-c a" . projectile-find-other-file)
   :bind-keymap ("C-c p" . projectile-command-map)
   :init (progn
@@ -918,6 +923,7 @@ active, apply to active region instead."
 
 (use-package helm
   :ensure t
+  :commands (helm-mode)
   :bind (("M-x" . helm-M-x)
          ("C-x C-f" . helm-find-files)
          ("C-c C-f" . helm-find-files)
@@ -997,8 +1003,19 @@ active, apply to active region instead."
 
 ;; Helm Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(use-package helm-ag
+  :ensure t
+  :commands (helm-ag))
+
 (use-package helm-imenu
   :bind ("C-c o" . helm-imenu))
+
+(use-package helm-projectile
+  :ensure t
+  :commands (helm-projectile)
+  :config (progn (helm-projectile-on)
+                 (setq projectile-completion-system 'helm)
+                 ))
 
 (use-package helm-swoop
   :ensure t
@@ -1010,16 +1027,6 @@ active, apply to active region instead."
 
                ;; (setq helm-swoop-speed-or-color nil)
                ))
-
-(use-package helm-ag
-  :ensure t
-  :commands (helm-ag))
-
-(use-package helm-projectile
-  :ensure t
-  :config (progn (helm-projectile-on)
-                 (setq projectile-completion-system 'helm)
-                 ))
 
 ;; Ido-mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1083,11 +1090,13 @@ active, apply to active region instead."
                ;; emacs-state.
                (use-package holy-mode
                  :load-path "site-lisp/holy-mode"
+                 :commands (holy-mode)
                  :bind ("<f12>" . holy-mode))
 
                ;; Hybrid-mode (from [[https://github.com/syl20bnr/spacemacs][Spacemacs]])
                (use-package hybrid-mode
                  :load-path "site-lisp/hybrid-mode"
+                 :commands (hybrid-mode)
                  :config (hybrid-mode t))
 
                (setq evil-emacs-state-cursor    '("DarkSeaGreen1"  box))
@@ -1230,11 +1239,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-leader
   :ensure t
+  :commands (evil-leader-mode)
+  :init (global-evil-leader-mode t)
   :config (progn (setq evil-leader/in-all-states t
                        evil-leader/leader "SPC"
                        evil-leader/non-normal-prefix "s-")
-
-                 (global-evil-leader-mode t)
 
                  (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
                  (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
@@ -1274,7 +1283,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "m" #'magit-status)
 
                  ;; Projectile
-                 (evil-leader/set-key "p" #'projectile-command-map)
+                 (evil-leader/set-key "c" #'projectile-compile-project)
+                 (evil-leader/set-key "p" #'helm-projectile)
 
                  ;; Swiper/Swoop
                  (evil-leader/set-key "s" #'helm-swoop)
