@@ -203,7 +203,7 @@ active, apply to active region instead."
                                             (abbreviate-file-name (buffer-file-name))
                                           "%b"))))
 
-;; backwards compatibility as default-buffer-file-coding-system
+;; Backwards compatibility as default-buffer-file-coding-system
 ;; is deprecated in 23.2.
 (if (boundp 'buffer-file-coding-system)
     (setq-default buffer-file-coding-system 'utf-8)
@@ -1012,7 +1012,6 @@ active, apply to active region instead."
 
 (use-package helm-projectile
   :ensure t
-  :commands (helm-projectile)
   :config (progn (helm-projectile-on)
                  (setq projectile-completion-system 'helm)
                  ))
@@ -1033,7 +1032,7 @@ active, apply to active region instead."
 (use-package ido
   :ensure t
   :defer t
-  :config (progn (ido-mode t)
+  :config (progn ;; (ido-mode t)
                  (setq ido-enable-prefix nil
                        ido-enable-flex-matching t
                        ido-create-new-buffer 'always
@@ -1104,8 +1103,7 @@ active, apply to active region instead."
                (setq evil-insert-state-cursor   '("DarkSeaGreen1" box))
                (setq evil-visual-state-cursor   '("RoyalBlue"     box))
                (setq evil-replace-state-cursor  '("red"           hollow))
-               (setq evil-operator-state-cursor '("CadetBlue"     box))
-               )
+               (setq evil-operator-state-cursor '("CadetBlue"     box)))
   :config (progn (evil-mode t)
 
                  ;; Toggle evil-mode
@@ -1113,6 +1111,7 @@ active, apply to active region instead."
 
                  (evil-set-initial-state 'erc-mode 'normal)
                  (evil-set-initial-state 'package-menu-mode 'normal)
+                 (evil-set-initial-state 'term-mode 'emacs)
 
                  ;; Make ESC work more or less like it does in Vim
                  (defun init/minibuffer-keyboard-quit()
@@ -1284,7 +1283,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  ;; Projectile
                  (evil-leader/set-key "c" #'projectile-compile-project)
-                 (evil-leader/set-key "p" #'helm-projectile)
+                 (evil-leader/set-key "p" #'projectile-command-map)
 
                  ;; Swiper/Swoop
                  (evil-leader/set-key "s" #'helm-swoop)
