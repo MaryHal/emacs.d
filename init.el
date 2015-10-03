@@ -705,11 +705,13 @@ active, apply to active region instead."
   :bind ("C-=" . er/expand-region))
 
 (use-package key-chord
-  :disabled t
   :ensure t
   :commands (key-chord-mode)
   :config (progn
+            (key-chord-mode t)
+
             (key-chord-define-global "VV" #'other-window)
+            (key-chord-define-global "qf" #'helm-find-files)
             ))
 
 (use-package guide-key
@@ -1334,7 +1336,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           ))
 
 (use-package evil-numbers
-  :ensure
+  :ensure t
   :defer t
   :init (progn
           ;; Instead of C-a and C-x like in Vim, let's use + and -.
