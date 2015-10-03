@@ -1,0 +1,4 @@
+
+In end of data:
+helm-multi-match.el:358:1:Warning: the function `helm-buffer-get' is not known
+    to be defined.

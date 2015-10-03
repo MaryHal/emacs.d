@@ -287,15 +287,15 @@ active, apply to active region instead."
 ;; Seed the random number generator
 (random t)
 
-;; A lesser known fact is that sending the USR2 signal to an Emacs process makes it
-;; proceed as soon as possible to a debug window. USR1 is ignored however, so let’s
-;; bind it to an alternative desirable function that can be used on an Emacs
-;; instance that has locked up.
-(defun my-quit-emacs-unconditionally ()
-  (interactive)
-  (my-quit-emacs '(4)))
+;; ;; A lesser known fact is that sending the USR2 signal to an Emacs process makes it
+;; ;; proceed as soon as possible to a debug window. USR1 is ignored however, so let’s
+;; ;; bind it to an alternative desirable function that can be used on an Emacs
+;; ;; instance that has locked up.
+;; (defun my-quit-emacs-unconditionally ()
+;;   (interactive)
+;;   (my-quit-emacs '(4)))
 
-(define-key special-event-map (kbd "<sigusr1>") 'my-quit-emacs-unconditionally)
+;; (define-key special-event-map (kbd "<sigusr1>") 'my-quit-emacs-unconditionally)
 
 ;; Backups ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -541,17 +541,15 @@ active, apply to active region instead."
 
 ;; Theme ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; We have some custom themes packaged with this config, so make sure =load-theme= can find 'em.
+;; ;; We have some custom themes packaged with this config, so make sure =load-theme= can find 'em.
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ashes/"))
-(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/emacs-material-theme/"))
-(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/flatui-theme.el/"))
-(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/leuven-mod/"))
-(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
-(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/noctilux-theme/"))
-(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/smyx/"))
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/leuven-mod/"))
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/smyx/"))
+(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ample-theme/"))
 
-;; (defadvice load-theme (before theme-dont-propagate activate)
-;;   (mapcar #'disable-theme custom-enabled-themes))
+(defadvice load-theme (before theme-dont-propagate activate)
+  (mapcar #'disable-theme custom-enabled-themes))
 
 ;; Set transparency of emacs
 (defun set-frame-alpha (arg &optional active)
@@ -565,12 +563,10 @@ active, apply to active region instead."
     (set-frame-parameter nil 'alpha new)))
 
 (defun mhl/load-light-theme (theme)
-  (load-theme 'theme t)
-  (set-frame-alpha 90)
-  )
+  (load-theme theme t)
+  (set-frame-alpha 90))
 
 (defun mhl/load-dark-theme (theme)
-  ;; (load-theme 'base16-ashes-dark t)
   (load-theme theme t)
 
   ;; Set transparent background.
@@ -588,10 +584,12 @@ active, apply to active region instead."
 
 ;; (mhl/load-light-theme 'leuven-mod)
 ;; (mhl/load-light-theme 'base16-ashes-light)
+;; (mhl/load-light-theme 'flatui)
+;; (mhl/load-light-theme 'ample-light)
 
-(setq noctilux-italic nil)
-(mhl/load-dark-theme 'noctilux)
-;; (mhl/load-dark-theme 'base16-ashes-dark)
+;; (mhl/load-dark-theme 'noctilux)
+(mhl/load-dark-theme 'base16-ashes-dark)
+;; (mhl/load-dark-theme 'ample-flat)
 
 ;; Disable the nagging when loading custom themes.
 (setq custom-safe-themes t)
@@ -620,8 +618,8 @@ active, apply to active region instead."
 
 ;; Editing ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Most programming languages I work with prefer spaces over tabs. Note how this
-;; is not a mode, but a buffer-local variable.
+;; I prefer spaces over tabs. Note how this is not a mode, but a buffer-local
+;; variable.
 (setq-default indent-tabs-mode nil)
 
 ;; Don't add newlines when cursor goes past end of file
@@ -815,31 +813,32 @@ active, apply to active region instead."
 ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
+(defun xsel-cut-function (text &optional push)
+  ;; Insert text to temp-buffer, and "send" content to xsel stdin
+  (with-temp-buffer
+    (insert text)
+    ;; I prefer using the "clipboard" selection (the one the typically is used
+    ;; by c-c/c-v) before the primary selection (that uses
+    ;; mouse-select/middle-button-click)
+    (call-process-region (point-min) (point-max)
+                         "xsel"
+                         nil 0
+                         nil "--clipboard" "--input")))
+;; Callback for when user pastes
+(defun xsel-paste-function()
+  ;; Find out what is current selection by xsel. If it is different from the
+  ;; top of the kill-ring (car kill-ring), then return it. Else, nil is
+  ;; returned, so whatever is in the top of the kill-ring will be used.
+  (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
+    (unless (string= (car kill-ring) xsel-output)
+      xsel-output )))
+
 ;; If emacs is run in a terminal, the default clipboard functions have no
 ;; effect. Instead, we'll make use of xsel. See
 ;; [[http://www.vergenet.net/~conrad/software/xsel/][this]] -- "a command-line
 ;; program for getting and setting the contents of the X selection"
 (when (not (display-graphic-p))
   ;; Callback for when user cuts
-  (defun xsel-cut-function (text &optional push)
-    ;; Insert text to temp-buffer, and "send" content to xsel stdin
-    (with-temp-buffer
-      (insert text)
-      ;; I prefer using the "clipboard" selection (the one the typically is used
-      ;; by c-c/c-v) before the primary selection (that uses
-      ;; mouse-select/middle-button-click)
-      (call-process-region (point-min) (point-max)
-                           "xsel"
-                           nil 0
-                           nil "--clipboard" "--input")))
-  ;; Callback for when user pastes
-  (defun xsel-paste-function()
-    ;; Find out what is current selection by xsel. If it is different from the
-    ;; top of the kill-ring (car kill-ring), then return it. Else, nil is
-    ;; returned, so whatever is in the top of the kill-ring will be used.
-    (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
-      (unless (string= (car kill-ring) xsel-output)
-        xsel-output )))
   ;; Attach callbacks to hooks
   (setq interprogram-cut-function #'xsel-cut-function)
   (setq interprogram-paste-function #'xsel-paste-function)
@@ -958,21 +957,21 @@ active, apply to active region instead."
                  ;; Don't loop helm sources.
                  (setq helm-move-to-line-cycle-in-source nil)
 
-                 ;; ;; Free up some visual space.
-                 ;; (setq helm-display-header-line nil)
+                 ;; Free up some visual space.
+                 (setq helm-display-header-line nil)
 
-                 (defun helm-cfg-use-header-line-instead-of-minibuffer ()
-                   ;; Enter search patterns in header line instead of minibuffer.
-                   (setq helm-echo-input-in-header-line t)
-                   (defun helm-hide-minibuffer-maybe ()
-                     (when (with-helm-buffer helm-echo-input-in-header-line)
-                       (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
-                         (overlay-put ov 'window (selected-window))
-                         (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
-                                                 `(:background ,bg-color :foreground ,bg-color)))
-                         (setq-local cursor-type nil))))
-                   (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe))
-                 (helm-cfg-use-header-line-instead-of-minibuffer)
+                 ;; (defun helm-cfg-use-header-line-instead-of-minibuffer ()
+                 ;;   ;; Enter search patterns in header line instead of minibuffer.
+                 ;;   (setq helm-echo-input-in-header-line t)
+                 ;;   (defun helm-hide-minibuffer-maybe ()
+                 ;;     (when (with-helm-buffer helm-echo-input-in-header-line)
+                 ;;       (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+                 ;;         (overlay-put ov 'window (selected-window))
+                 ;;         (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
+                 ;;                                 `(:background ,bg-color :foreground ,bg-color)))
+                 ;;         (setq-local cursor-type nil))))
+                 ;;   (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe))
+                 ;; (helm-cfg-use-header-line-instead-of-minibuffer)
 
                  ;; ;; "Remove" source header text
                  ;; (set-face-attribute 'helm-source-header nil :height 1.0)
@@ -1098,12 +1097,13 @@ active, apply to active region instead."
                  :commands (hybrid-mode)
                  :config (hybrid-mode t))
 
-               (setq evil-emacs-state-cursor    '("DarkSeaGreen1"  box))
-               (setq evil-normal-state-cursor   '("white"         box))
-               (setq evil-insert-state-cursor   '("DarkSeaGreen1" box))
-               (setq evil-visual-state-cursor   '("RoyalBlue"     box))
-               (setq evil-replace-state-cursor  '("red"           hollow))
-               (setq evil-operator-state-cursor '("CadetBlue"     box)))
+               ;; (setq evil-emacs-state-cursor    '("DarkSeaGreen1"  box))
+               ;; ;; (setq evil-normal-state-cursor   '("white"         box))
+               ;; (setq evil-insert-state-cursor   '("DarkSeaGreen1" box))
+               ;; (setq evil-visual-state-cursor   '("RoyalBlue"     box))
+               ;; (setq evil-replace-state-cursor  '("red"           hollow))
+               ;; (setq evil-operator-state-cursor '("CadetBlue"     box))
+               )
   :config (progn (evil-mode t)
 
                  ;; Toggle evil-mode
@@ -1144,8 +1144,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                    (bind-key "C-f" #'evil-forward-char       evil-insert-state-map)
 
-                   (bind-key "C-k" #'evil-kill-line          evil-insert-state-map)
-                   (bind-key "C-k" #'evil-kill-line          evil-motion-state-map)
+                   (bind-key "C-k" #'evil-delete-line          evil-insert-state-map)
+                   (bind-key "C-k" #'evil-delete-line          evil-motion-state-map)
 
                    ;; Delete forward like Emacs.
                    (bind-key "C-d" #'evil-delete-char evil-insert-state-map)

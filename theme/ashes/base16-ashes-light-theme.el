@@ -31,7 +31,7 @@
    `(border ((t (:background ,base00))))
    `(vertical-border ((t (:background ,base00 :foreground ,base00))))
    `(border-glyph ((t (nil))))
-   `(cursor ((t (:background ,base05 :inverse-video t))))
+   `(cursor ((t (:background ,base02 :inverse-video t))))
    `(default ((t (:background ,base07 :foreground ,base02))))
    `(fringe ((t (:background ,base07))))
    `(gui-element ((t (:background ,base03 :foreground ,base06))))
@@ -194,10 +194,10 @@
 
    `(helm-action ((t (:foreground ,base05 :underline nil))))
 
-   `(helm-ff-dotted-directory ((t (:weight bold :foreground ,base05 :background nil))))
+   `(helm-ff-dotted-directory ((t (:weight bold :foreground ,base02 :background nil))))
    `(helm-ff-directory ((t (:weight bold :foreground ,base0F :background nil))))
    `(helm-ff-executable ((t (:weight bold :foreground ,base0A))))
-   `(helm-ff-file ((t (:foreground ,base05))))
+   `(helm-ff-file ((t (:foreground ,base02))))
    `(helm-ff-symlink ((t (:weight bold :foreground ,base0C))))
    `(helm-ff-prefix ((t (:weight bold :foreground ,base08 :background nil))))
    `(helm-ff-invalid-symlink ((t (:foreground ,base05 :background ,base0E))))
