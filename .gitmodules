@@ -13,3 +13,6 @@
 [submodule "site-lisp/fzf.el"]
 	path = site-lisp/fzf.el
 	url = https://github.com/bling/fzf.el
+[submodule "theme/ample-theme"]
+	path = theme/ample-theme
+	url = git@github.com:sanford1/ample-theme.git
