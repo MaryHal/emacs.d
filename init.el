@@ -697,7 +697,6 @@ active, apply to active region instead."
 
 (use-package aggressive-indent
   :ensure t
-  :disabled t
   :config (global-aggressive-indent-mode t))
 
 (use-package expand-region
