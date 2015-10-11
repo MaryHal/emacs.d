@@ -588,8 +588,8 @@ active, apply to active region instead."
 ;; (mhl/load-light-theme 'ample-light)
 
 ;; (mhl/load-dark-theme 'noctilux)
-(mhl/load-dark-theme 'base16-ashes-dark)
-;; (mhl/load-dark-theme 'ample-flat)
+;; (mhl/load-dark-theme 'base16-ashes-dark)
+(mhl/load-dark-theme 'ample-flat)
 
 ;; Disable the nagging when loading custom themes.
 (setq custom-safe-themes t)
@@ -681,10 +681,9 @@ active, apply to active region instead."
 (use-package avy
   :ensure t
   :commands (avy-goto-word-or-subword-1)
-  :init (progn
-          (setq avy-keys
-                '(?c ?a ?s ?d ?e ?f ?h ?w ?y ?j ?k ?l ?n ?m ?v ?r ?u ?p))
-          ))
+  :init (progn (setq avy-keys
+                     '(?c ?a ?s ?d ?e ?f ?h ?w ?y ?j ?k ?l ?n ?m ?v ?r ?u ?p))
+               ))
 
 (use-package swiper
   :ensure t)
@@ -697,6 +696,7 @@ active, apply to active region instead."
 
 (use-package aggressive-indent
   :ensure t
+  :disabled t
   :config (global-aggressive-indent-mode t))
 
 (use-package expand-region
@@ -715,12 +715,16 @@ active, apply to active region instead."
 
 (use-package guide-key
   :ensure t
-  :config (progn (guide-key-mode t)
-                 (setq guide-key/guide-key-sequence '("C-x" "C-c" "SPC" "M-SPC"))
+  :disabled t
+  :defer 10
+  :commands (guide-key-mode)
+  :config (progn (setq guide-key/guide-key-sequence '("C-x" "C-c" "SPC" "M-SPC"))
                  (setq guide-key/recursive-key-sequence-flag t)
 
                  ;; Alignment and extra spacing
                  (setq guide-key/align-command-by-space-flag t)
+
+                 (guide-key-mode t)
                  ))
 
 (use-package multiple-cursors
@@ -858,8 +862,8 @@ active, apply to active region instead."
                              ("c" describe-char "Describe Char")
                              ("F" find-function "Find Function")
                              ("f" describe-function "Describe Function")
-                             ("K" describe-key "Describe Key")
-                             ("k" find-function-on-key "Find Key")
+                             ("k" describe-key "Describe Key")
+                             ("K" find-function-on-key "Find Key")
                              ("m" describe-mode "Describe Modes")
                              ("V" find-variable "Find Variable")
                              ("v" describe-variable "Describe Variable")))
@@ -1006,6 +1010,12 @@ active, apply to active region instead."
 (use-package helm-ag
   :ensure t
   :commands (helm-ag))
+
+(use-package helm-descbinds
+  :ensure t
+  :config (progn
+            (helm-descbinds-mode)
+            ))
 
 (use-package helm-imenu
   :bind ("C-c o" . helm-imenu))
@@ -1526,6 +1536,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package flycheck
   :ensure t
+  :defer 5
   :init (progn
           ;; Remove newline checks, since they would trigger an immediate check
           ;; when we want the idle-change-delay to be in effect while editing.
@@ -1576,6 +1587,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; that a bit more generic.
 (use-package erc
   :defer t
+  :commands (erc)
   :config (progn (setq erc-part-reason 'erc-part-reason-various)
                  (setq erc-part-reason-various-alist
                        '(("^$" "Goodbye.")))
@@ -1594,13 +1606,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :defer t
   :ensure t
   :commands (twittering-mode)
-  :init (progn
-          (setq twittering-use-master-password t)
-          (setq twittering-icon-mode t)
-          (setq twittering-allow-insecure-server-cert t)
+  :init (progn (setq twittering-use-master-password t)
+               (setq twittering-icon-mode t)
+               (setq twittering-allow-insecure-server-cert t)
 
-          (add-hook 'twittering-mode-hook #'disable-show-trailing-whitespace)
-          ))
+               (add-hook 'twittering-mode-hook #'disable-show-trailing-whitespace)
+               ))
 
 ;; Finishing Up ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
