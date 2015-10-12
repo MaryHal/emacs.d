@@ -115,12 +115,12 @@
    `(mode-line
      ((,class (:foreground ,modeline-foreground
                            :background ,modeline-background
-                           :box (:line-width 1 :color ,modeline-background-inactive)
+                           :box (:line-width 3 :color ,modeline-background)
                            ))))
    `(mode-line-inactive
      ((,class (:foreground ,modeline-foreground-inactive
                            :background ,modeline-background-inactive
-                           :box (:line-width 1 :color ,modeline-background-inactive-border)
+                           :box (:line-width 3 :color ,modeline-background-inactive)
                            ))))
 
    ;; Anzu

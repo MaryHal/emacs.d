@@ -458,7 +458,6 @@ active, apply to active region instead."
                  (sml/setup)
                  ))
 
-
 ;; I prefer hiding all minor modes by default.
 (use-package rich-minority
   :ensure t
@@ -544,7 +543,7 @@ active, apply to active region instead."
 ;; ;; We have some custom themes packaged with this config, so make sure =load-theme= can find 'em.
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ashes/"))
 ;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/leuven-mod/"))
-;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
+(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
 ;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/smyx/"))
 (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ample-theme/"))
 
@@ -582,6 +581,15 @@ active, apply to active region instead."
                  ))
         )))
 
+(use-package tao-theme
+  :ensure t
+  :disabled t
+  :init (progn
+          (defun tao-palette () (tao-theme-golden-grayscale-yang-palette))
+          (mhl/load-dark-theme 'tao-yin)
+          ;; (mhl/load-light-theme 'tao-yang)
+          ))
+
 ;; (mhl/load-light-theme 'leuven-mod)
 ;; (mhl/load-light-theme 'base16-ashes-light)
 ;; (mhl/load-light-theme 'flatui)
@@ -589,7 +597,9 @@ active, apply to active region instead."
 
 ;; (mhl/load-dark-theme 'noctilux)
 ;; (mhl/load-dark-theme 'base16-ashes-dark)
-(mhl/load-dark-theme 'ample-flat)
+(mhl/load-dark-theme 'base16-mod-dark)
+;; (mhl/load-dark-theme 'minimal)
+;; (mhl/load-dark-theme 'ample-flat)
 
 ;; Disable the nagging when loading custom themes.
 (setq custom-safe-themes t)
