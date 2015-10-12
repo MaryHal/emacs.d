@@ -1045,6 +1045,10 @@ active, apply to active region instead."
                (setq helm-swoop-pre-input-function (lambda () ""))
 
                ;; (setq helm-swoop-speed-or-color nil)
+
+               (setq helm-swoop-split-with-multiple-windows nil
+                     helm-swoop-split-direction 'split-window-vertically
+                     helm-swoop-split-window-function 'helm-default-display-buffer)
                ))
 
 ;; Ido-mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
