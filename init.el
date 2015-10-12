@@ -975,17 +975,17 @@ active, apply to active region instead."
                  ;; Free up some visual space.
                  (setq helm-display-header-line nil)
 
-                 ;; (defun helm-cfg-use-header-line-instead-of-minibuffer ()
-                 ;;   ;; Enter search patterns in header line instead of minibuffer.
-                 ;;   (setq helm-echo-input-in-header-line t)
-                 ;;   (defun helm-hide-minibuffer-maybe ()
-                 ;;     (when (with-helm-buffer helm-echo-input-in-header-line)
-                 ;;       (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
-                 ;;         (overlay-put ov 'window (selected-window))
-                 ;;         (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
-                 ;;                                 `(:background ,bg-color :foreground ,bg-color)))
-                 ;;         (setq-local cursor-type nil))))
-                 ;;   (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe))
+                 (defun helm-cfg-use-header-line-instead-of-minibuffer ()
+                   ;; Enter search patterns in header line instead of minibuffer.
+                   (setq helm-echo-input-in-header-line t)
+                   (defun helm-hide-minibuffer-maybe ()
+                     (when (with-helm-buffer helm-echo-input-in-header-line)
+                       (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+                         (overlay-put ov 'window (selected-window))
+                         (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
+                                                 `(:background ,bg-color :foreground ,bg-color)))
+                         (setq-local cursor-type nil))))
+                   (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe))
                  ;; (helm-cfg-use-header-line-instead-of-minibuffer)
 
                  ;; ;; "Remove" source header text
@@ -1013,6 +1013,52 @@ active, apply to active region instead."
                  (setq helm-ff-auto-update-initial-value nil)
 
                  (setq helm-ff-skip-boring-files t)
+
+                 (use-package flx
+                   :ensure t
+                   :config (progn
+                             (defvar helm-flx-cache (flx-make-string-cache #'flx-get-heatmap-file))
+                             (defadvice helm-score-candidate-for-pattern
+                                 (around flx-score (candidate pattern) activate preactivate compile)
+                               (setq ad-return-value
+                                     (or
+                                      (car (flx-score
+                                            (substring-no-properties candidate)
+                                            (substring-no-properties pattern)
+                                            helm-flx-cache))
+                                      0)))
+
+                             (defadvice helm-fuzzy-default-highlight-match
+                                 (around flx-highlight (candidate) activate preactivate compile)
+                               "The default function to highlight matches in fuzzy matching. It is meant to use with `filter-one-by-one' slot."
+                               (setq ad-return-value
+                                     (let* ((pair (and (consp candidate) candidate))
+                                            (display (if pair (car pair) candidate))
+                                            (real (cdr pair)))
+                                       (with-temp-buffer
+                                         (insert display)
+                                         (goto-char (point-min))
+                                         (if (string-match-p " " helm-pattern)
+                                             (cl-loop with pattern = (split-string helm-pattern)
+                                                      for p in pattern
+                                                      do (when (search-forward (substring-no-properties p) nil t)
+                                                           (add-text-properties
+                                                            (match-beginning 0) (match-end 0) '(face helm-match))))
+                                           (cl-loop with pattern = (cdr (flx-score
+                                                                         (substring-no-properties display)
+                                                                         helm-pattern helm-flx-cache))
+                                                    for index in pattern
+                                                    do (add-text-properties
+                                                        (1+ index) (+ 2 index) '(face helm-match))))
+                                         (setq display (buffer-string)))
+                                       (if real (cons display real) display))))))
+
+                 (setq helm-buffers-fuzzy-matching t
+                       helm-imenu-fuzzy-match t
+                       helm-recentf-fuzzy-match t
+                       helm-locate-fuzzy-match nil
+                       helm-M-x-fuzzy-match t
+                       helm-semantic-fuzzy-match t)
                  ))
 
 ;; Helm Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
