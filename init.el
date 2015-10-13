@@ -702,7 +702,7 @@ active, apply to active region instead."
   :ensure t
   :bind (("M-%" . anzu-query-replace)
          ("C-M-%" . anzu-query-replace-regexp))
-  :config (global-anzu-mode t))
+  :init (global-anzu-mode t))
 
 (use-package aggressive-indent
   :ensure t
