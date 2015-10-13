@@ -220,7 +220,7 @@ active, apply to active region instead."
 (setq split-width-threshold 0)
 
 (use-package autorevert
-  :commands auto-revert-mode
+  :commands (auto-revert-mode)
   :init (add-hook 'find-file-hook #'(lambda () (auto-revert-mode t))))
 
 (use-package simple
@@ -715,12 +715,11 @@ active, apply to active region instead."
 
 (use-package key-chord
   :ensure t
+  :disabled t
   :commands (key-chord-mode)
-  :config (progn
-            (key-chord-mode t)
-
-            (key-chord-define-global "VV" #'other-window)
-            (key-chord-define-global "qf" #'helm-find-files)
+  :init (progn (key-chord-mode t))
+  :config (progn (key-chord-define-global "VV" #'other-window)
+                 (key-chord-define-global "qf" #'helm-find-files)
             ))
 
 (use-package guide-key
@@ -876,7 +875,8 @@ active, apply to active region instead."
                              ("K" find-function-on-key "Find Key")
                              ("m" describe-mode "Describe Modes")
                              ("V" find-variable "Find Variable")
-                             ("v" describe-variable "Describe Variable")))
+                             ("v" describe-variable "Describe Variable")
+                             ("b" helm-descbinds "Describe Bindings")))
 
           (bind-key "<f2>" (defhydra hydra-zoom ()
                              "Zoom"
@@ -1069,9 +1069,10 @@ active, apply to active region instead."
 
 (use-package helm-descbinds
   :ensure t
-  :config (progn
-            (helm-descbinds-mode)
-            ))
+  :commands (helm-descbinds)
+  :init (progn
+          (fset #'describe-bindings #'helm-descbinds)
+          ))
 
 (use-package helm-imenu
   :bind ("C-c o" . helm-imenu))
@@ -1084,18 +1085,17 @@ active, apply to active region instead."
 
 (use-package helm-swoop
   :ensure t
-  :bind ("C-c s" . helm-swoop)
-  :init (progn (bind-key "M-i" #'helm-swoop-from-isearch isearch-mode-map)
+  :bind (("C-c s" . helm-swoop))
+  :init (progn (bind-key "M-i" #'helm-swoop-from-isearch isearch-mode-map))
+  :config (progn ;; disable pre-input
+                 (setq helm-swoop-pre-input-function (lambda () ""))
 
-               ;; disable pre-input
-               (setq helm-swoop-pre-input-function (lambda () ""))
+                 ;; (setq helm-swoop-speed-or-color nil)
 
-               ;; (setq helm-swoop-speed-or-color nil)
-
-               (setq helm-swoop-split-with-multiple-windows nil
-                     helm-swoop-split-direction 'split-window-vertically
-                     helm-swoop-split-window-function 'helm-default-display-buffer)
-               ))
+                 (setq helm-swoop-split-with-multiple-windows nil
+                       helm-swoop-split-direction 'split-window-vertically
+                       helm-swoop-split-window-function 'helm-default-display-buffer)
+                 ))
 
 ;; Ido-mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1407,10 +1407,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package evil-numbers
   :ensure t
   :defer t
+  :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt)
   :init (progn
           ;; Instead of C-a and C-x like in Vim, let's use + and -.
-          (bind-key "-" 'evil-numbers/dec-at-pt evil-normal-state-map)
-          (bind-key "+" 'evil-numbers/inc-at-pt evil-normal-state-map)
+          (bind-key "-" #'evil-numbers/dec-at-pt evil-normal-state-map)
+          (bind-key "+" #'evil-numbers/inc-at-pt evil-normal-state-map)
           ))
 
 ;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1444,7 +1445,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Dired ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package dired
-  :commands dired
+  :commands (dired)
   :config (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso"))
 
 (use-package ranger
@@ -1506,6 +1507,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ))
 
 (use-package js2-mode
+  :ensure t
   :disabled t
   :mode ("\\.js$" . js2-mode)
   :config (js2-highlight-level 3))
@@ -1531,7 +1533,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package yasnippet
   :ensure t
-  ;; :commands (yas-expand yas-minor-mode)
   :init (progn (setq yas-snippet-dirs (concat user-emacs-directory "snippets")))
   :config (progn (yas-reload-all)
                  (add-hook 'prog-mode-hook #'yas-minor-mode)
@@ -1548,49 +1549,51 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package company
   :ensure t
-  :init (progn (bind-key "C-n" #'company-select-next     company-active-map)
-               (bind-key "C-p" #'company-select-previous company-active-map))
-  :config (progn (setq company-idle-delay 0
-                       company-minimum-prefix-length 2
-                       company-show-numbers nil
-                       company-require-match 'never
-                       company-selection-wrap-around t)
+  :config (progn
+            (bind-key "C-n" #'company-select-next     company-active-map)
+            (bind-key "C-p" #'company-select-previous company-active-map)
 
-                 (add-hook 'c++-mode-hook #'irony-mode)
-                 (add-hook 'c-mode-hook #'irony-mode)
-                 (add-hook 'objc-mode-hook #'irony-mode)
+            (setq company-idle-delay 0
+                  company-minimum-prefix-length 2
+                  company-show-numbers nil
+                  company-require-match 'never
+                  company-selection-wrap-around t)
 
-                 ;; replace the `completion-at-point' and `complete-symbol' bindings in
-                 ;; irony-mode's buffers by irony-mode's function
-                 (defun my-irony-mode-hook ()
-                   (define-key irony-mode-map [remap completion-at-point]
-                     'irony-completion-at-point-async)
-                   (define-key irony-mode-map [remap complete-symbol]
-                     'irony-completion-at-point-async))
-                 (add-hook 'irony-mode-hook #'my-irony-mode-hook)
-                 (add-hook 'irony-mode-hook #'irony-cdb-autosetup-compile-options)
+            (add-hook 'c++-mode-hook #'irony-mode)
+            (add-hook 'c-mode-hook #'irony-mode)
+            (add-hook 'objc-mode-hook #'irony-mode)
 
-                 ;; "Iterating through back-ends that don’t apply to the current buffer is pretty fast."
-                 (setq-default company-backends (quote (company-files
-                                                        company-irony
-                                                        company-elisp
-                                                        company-yasnippet
-                                                        company-css
-                                                        ;; company-eclim
-                                                        ;; company-clang
-                                                        company-capf
-                                                        ;; (company-dabbrev-code company-keywords)
-                                                        company-keywords
-                                                        ;; company-dabbrev
-                                                        )))
+            ;; replace the `completion-at-point' and `complete-symbol' bindings in
+            ;; irony-mode's buffers by irony-mode's function
+            (defun my-irony-mode-hook ()
+              (define-key irony-mode-map [remap completion-at-point]
+                'irony-completion-at-point-async)
+              (define-key irony-mode-map [remap complete-symbol]
+                'irony-completion-at-point-async))
+            (add-hook 'irony-mode-hook #'my-irony-mode-hook)
+            (add-hook 'irony-mode-hook #'irony-cdb-autosetup-compile-options)
 
-                 ;; (optional) adds CC special commands to `company-begin-commands' in order to
-                 ;; trigger completion at interesting places, such as after scope operator
-                 ;; std::|
-                 (add-hook 'irony-mode-hook #'company-irony-setup-begin-commands)
+            ;; "Iterating through back-ends that don’t apply to the current buffer is pretty fast."
+            (setq-default company-backends (quote (company-files
+                                                   company-irony
+                                                   company-elisp
+                                                   company-yasnippet
+                                                   company-css
+                                                   ;; company-eclim
+                                                   ;; company-clang
+                                                   company-capf
+                                                   ;; (company-dabbrev-code company-keywords)
+                                                   company-keywords
+                                                   ;; company-dabbrev
+                                                   )))
 
-                 (global-company-mode t)
-                 ))
+            ;; (optional) adds CC special commands to `company-begin-commands' in order to
+            ;; trigger completion at interesting places, such as after scope operator
+            ;; std::|
+            (add-hook 'irony-mode-hook #'company-irony-setup-begin-commands)
+
+            (global-company-mode t)
+            ))
 
 ;; Flycheck ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
