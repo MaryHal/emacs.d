@@ -241,6 +241,7 @@ active, apply to active region instead."
   :config (auto-compression-mode t))
 
 (use-package delsel
+  :disabled t
   :config (delete-selection-mode t))
 
 (use-package tramp
@@ -248,15 +249,16 @@ active, apply to active region instead."
   :config (setq tramp-default-method "ssh"))
 
 (use-package recentf
-  :defer t
+  :defer 10
+  :commands (recentf-mode)
   :config (progn (setq recentf-save-file (concat user-cache-directory "recentf"))
                  (setq recentf-max-saved-items 100)
                  (setq recentf-max-menu-items 15)
-                 (recentf-mode t)
                  ))
 
 (use-package uniquify
   :defer t
+  :disabled t
   :config (progn (setq uniquify-buffer-name-style 'forward
                        uniquify-separator "/"
                        uniquify-ignore-buffers-re "^\\*" ;; leave special buffers alone
@@ -754,7 +756,12 @@ active, apply to active region instead."
 
 (use-package ag
   :ensure t
-  :commands (ag ag-regexp))
+  :commands (ag ag-regexp)
+  :init (progn
+          (use-package helm-ag
+            :ensure t
+            :commands (helm-ag))
+          ))
 
 (use-package rainbow-mode
   :ensure t
@@ -900,7 +907,13 @@ active, apply to active region instead."
                  ;; (setq projectile-indexing-method 'native)
                  (add-to-list 'projectile-globally-ignored-directories "elpa")
 
-                 (projectile-global-mode t)
+                 (use-package helm-projectile
+                   :ensure t
+                   :config (progn (helm-projectile-on)
+                                  (setq projectile-completion-system 'helm)
+                                  ))
+
+                 (projectile-global-mode)
                  ))
 
 ;; [[https://github.com/pashinin/workgroups2][Workgroups2]] adds workspace and
@@ -946,126 +959,81 @@ active, apply to active region instead."
          ("C-c u" . helm-buffers-list)
 
          ("C-c y" . helm-show-kill-ring))
-  :config (progn (setq-default helm-mode-line-string "")
+  :config (progn
+            (use-package helm-flx
+              :ensure t
+              :init (progn helm-flx-mode +1))
 
-                 ;; Scroll 4 lines other window using M-<next>/M-<prior>
-                 (setq helm-scroll-amount 4)
+            (setq-default helm-mode-line-string "")
 
-                 ;; Do not display invisible candidates
-                 (setq helm-quick-update t)
+            ;; Scroll 4 lines other window using M-<next>/M-<prior>
+            (setq helm-scroll-amount 4)
 
-                 ;; (setq helm-ff-auto-update-initial-value nil)
-                 (setq helm-ff-smart-completion nil)
+            ;; Do not display invisible candidates
+            (setq helm-quick-update t)
 
-                 ;; Be idle for this many seconds, before updating in delayed sources.
-                 (setq helm-idle-delay 0.01)
+            ;; (setq helm-ff-auto-update-initial-value nil)
+            (setq helm-ff-smart-completion nil)
 
-                 ;; Be idle for this many seconds, before updating candidate buffer
-                 (setq helm-input-idle-delay 0.01)
+            ;; Be idle for this many seconds, before updating in delayed sources.
+            (setq helm-idle-delay 0.01)
 
-                 (setq helm-full-frame nil)
-                 (setq helm-split-window-default-side 'other)
-                 (setq helm-split-window-in-side-p t)         ;; open helm buffer inside current window, not occupy whole other window
+            ;; Be idle for this many seconds, before updating candidate buffer
+            (setq helm-input-idle-delay 0.01)
 
-                 (setq helm-candidate-number-limit 200)
+            (setq helm-full-frame nil)
+            (setq helm-split-window-default-side 'other)
+            (setq helm-split-window-in-side-p t)         ;; open helm buffer inside current window, not occupy whole other window
 
-                 ;; Don't loop helm sources.
-                 (setq helm-move-to-line-cycle-in-source nil)
+            (setq helm-candidate-number-limit 200)
 
-                 ;; Free up some visual space.
-                 (setq helm-display-header-line nil)
+            ;; Don't loop helm sources.
+            (setq helm-move-to-line-cycle-in-source nil)
 
-                 (defun helm-cfg-use-header-line-instead-of-minibuffer ()
-                   ;; Enter search patterns in header line instead of minibuffer.
-                   (setq helm-echo-input-in-header-line t)
-                   (defun helm-hide-minibuffer-maybe ()
-                     (when (with-helm-buffer helm-echo-input-in-header-line)
-                       (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
-                         (overlay-put ov 'window (selected-window))
-                         (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
-                                                 `(:background ,bg-color :foreground ,bg-color)))
-                         (setq-local cursor-type nil))))
-                   (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe))
-                 ;; (helm-cfg-use-header-line-instead-of-minibuffer)
+            ;; Free up some visual space.
+            (setq helm-display-header-line nil)
 
-                 ;; ;; "Remove" source header text
-                 ;; (set-face-attribute 'helm-source-header nil :height 1.0)
+            (defun helm-cfg-use-header-line-instead-of-minibuffer ()
+              ;; Enter search patterns in header line instead of minibuffer.
+              (setq helm-echo-input-in-header-line t)
+              (defun helm-hide-minibuffer-maybe ()
+                (when (with-helm-buffer helm-echo-input-in-header-line)
+                  (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+                    (overlay-put ov 'window (selected-window))
+                    (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
+                                            `(:background ,bg-color :foreground ,bg-color)))
+                    (setq-local cursor-type nil))))
+              (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe))
+            ;; (helm-cfg-use-header-line-instead-of-minibuffer)
 
-                 ;; ;; Save current position to mark ring when jumping to a different place
-                 ;; (add-hook 'helm-goto-line-before-hook #'helm-save-current-pos-to-mark-ring)
+            ;; ;; "Remove" source header text
+            ;; (set-face-attribute 'helm-source-header nil :height 1.0)
 
-                 (helm-mode t)
+            ;; ;; Save current position to mark ring when jumping to a different place
+            ;; (add-hook 'helm-goto-line-before-hook #'helm-save-current-pos-to-mark-ring)
 
-                 (bind-key "C-z"   #'helm-select-action  helm-map)
+            (helm-mode t)
 
-                 ;; Tab -> do persistent action
-                 (bind-key "<tab>" #'helm-execute-persistent-action helm-map)
+            (bind-key "C-z"   #'helm-select-action  helm-map)
 
-                 ;; Make Tab work in terminal. Cannot use "bind-key" since it
-                 ;; would detect that we already bound tab.
-                 (define-key helm-map (kbd "C-i") #'helm-execute-persistent-action)
+            ;; Tab -> do persistent action
+            (bind-key "<tab>" #'helm-execute-persistent-action helm-map)
 
-                 ;; (setq helm-mode-fuzzy-match t)
-                 ;; (setq helm-completion-in-region-fuzzy-match t)
+            ;; Make Tab work in terminal. Cannot use "bind-key" since it
+            ;; would detect that we already bound tab.
+            (define-key helm-map (kbd "C-i") #'helm-execute-persistent-action)
 
-                 ;; When there is only a single directory candidate when
-                 ;; file-finding, don't automatically enter that directory.
-                 (setq helm-ff-auto-update-initial-value nil)
+            ;; (setq helm-mode-fuzzy-match t)
+            ;; (setq helm-completion-in-region-fuzzy-match t)
 
-                 (setq helm-ff-skip-boring-files t)
+            ;; When there is only a single directory candidate when
+            ;; file-finding, don't automatically enter that directory.
+            (setq helm-ff-auto-update-initial-value nil)
 
-                 (use-package flx
-                   :ensure t
-                   :config (progn
-                             (defvar helm-flx-cache (flx-make-string-cache #'flx-get-heatmap-file))
-                             (defadvice helm-score-candidate-for-pattern
-                                 (around flx-score (candidate pattern) activate preactivate compile)
-                               (setq ad-return-value
-                                     (or
-                                      (car (flx-score
-                                            (substring-no-properties candidate)
-                                            (substring-no-properties pattern)
-                                            helm-flx-cache))
-                                      0)))
-
-                             (defadvice helm-fuzzy-default-highlight-match
-                                 (around flx-highlight (candidate) activate preactivate compile)
-                               "The default function to highlight matches in fuzzy matching. It is meant to use with `filter-one-by-one' slot."
-                               (setq ad-return-value
-                                     (let* ((pair (and (consp candidate) candidate))
-                                            (display (if pair (car pair) candidate))
-                                            (real (cdr pair)))
-                                       (with-temp-buffer
-                                         (insert display)
-                                         (goto-char (point-min))
-                                         (if (string-match-p " " helm-pattern)
-                                             (cl-loop with pattern = (split-string helm-pattern)
-                                                      for p in pattern
-                                                      do (when (search-forward (substring-no-properties p) nil t)
-                                                           (add-text-properties
-                                                            (match-beginning 0) (match-end 0) '(face helm-match))))
-                                           (cl-loop with pattern = (cdr (flx-score
-                                                                         (substring-no-properties display)
-                                                                         helm-pattern helm-flx-cache))
-                                                    for index in pattern
-                                                    do (add-text-properties
-                                                        (1+ index) (+ 2 index) '(face helm-match))))
-                                         (setq display (buffer-string)))
-                                       (if real (cons display real) display))))))
-
-                 (setq helm-buffers-fuzzy-matching t
-                       helm-imenu-fuzzy-match t
-                       helm-recentf-fuzzy-match t
-                       helm-locate-fuzzy-match nil
-                       helm-M-x-fuzzy-match t
-                       helm-semantic-fuzzy-match t)
-                 ))
+            (setq helm-ff-skip-boring-files t)
+            ))
 
 ;; Helm Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package helm-ag
-  :ensure t
-  :commands (helm-ag))
 
 (use-package helm-descbinds
   :ensure t
@@ -1076,12 +1044,6 @@ active, apply to active region instead."
 
 (use-package helm-imenu
   :bind ("C-c o" . helm-imenu))
-
-(use-package helm-projectile
-  :ensure t
-  :config (progn (helm-projectile-on)
-                 (setq projectile-completion-system 'helm)
-                 ))
 
 (use-package helm-swoop
   :ensure t
