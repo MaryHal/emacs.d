@@ -647,7 +647,7 @@ active, apply to active region instead."
 (setq visible-cursor nil)
 
 ;; Smoother Scrolling
-(setq scroll-margin 0
+(setq scroll-margin 10
       scroll-conservatively 101
       scroll-preserve-screen-position t
       auto-window-vscroll nil)
@@ -964,10 +964,6 @@ active, apply to active region instead."
 
          ("C-c y" . helm-show-kill-ring))
   :config (progn
-            (use-package helm-flx
-              :ensure t
-              :config (progn (helm-flx-mode t)))
-
             (helm-mode t)
 
             (setq-default helm-mode-line-string "")
@@ -996,8 +992,8 @@ active, apply to active region instead."
             ;; Don't loop helm sources.
             (setq helm-move-to-line-cycle-in-source nil)
 
-            ;; Free up some visual space.
-            (setq helm-display-header-line nil)
+            ;; ;; Free up some visual space.
+            ;; (setq helm-display-header-line nil)
 
             (defun helm-cfg-use-header-line-instead-of-minibuffer ()
               ;; Enter search patterns in header line instead of minibuffer.
@@ -1010,7 +1006,7 @@ active, apply to active region instead."
                                             `(:background ,bg-color :foreground ,bg-color)))
                     (setq-local cursor-type nil))))
               (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe))
-            ;; (helm-cfg-use-header-line-instead-of-minibuffer)
+            (helm-cfg-use-header-line-instead-of-minibuffer)
 
             ;; ;; "Remove" source header text
             ;; (set-face-attribute 'helm-source-header nil :height 1.0)
@@ -1035,6 +1031,19 @@ active, apply to active region instead."
             (setq helm-ff-auto-update-initial-value nil)
 
             (setq helm-ff-skip-boring-files t)
+
+            ;; Fuzzy matching with flx!
+            (use-package helm-flx
+              :ensure t
+              :init (progn (helm-flx-mode t)))
+
+            (setq helm-buffers-fuzzy-matching t
+                  helm-imenu-fuzzy-match t
+                  helm-recentf-fuzzy-match t
+                  helm-locate-fuzzy-match nil
+                  helm-M-x-fuzzy-match t
+                  helm-semantic-fuzzy-match t)
+
             ))
 
 ;; Helm Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
