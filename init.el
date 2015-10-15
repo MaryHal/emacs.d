@@ -19,6 +19,9 @@
 
 (defconst emacs-start-time (current-time))
 
+(unless noninteractive
+  (message "Loading %s..." load-file-name))
+
 (require 'package)
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("melpa" . "http://melpa.org/packages/")))
@@ -54,6 +57,7 @@ if it's not installed"
 
 ;; Aquire use-package, the crux of our config file.
 (setq use-package-verbose t)
+(setq use-package-minimum-reported-time 0)
 (require-package 'use-package)
 
 ;; Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -962,7 +966,9 @@ active, apply to active region instead."
   :config (progn
             (use-package helm-flx
               :ensure t
-              :init (progn helm-flx-mode +1))
+              :config (progn (helm-flx-mode t)))
+
+            (helm-mode t)
 
             (setq-default helm-mode-line-string "")
 
@@ -1011,8 +1017,6 @@ active, apply to active region instead."
 
             ;; ;; Save current position to mark ring when jumping to a different place
             ;; (add-hook 'helm-goto-line-before-hook #'helm-save-current-pos-to-mark-ring)
-
-            (helm-mode t)
 
             (bind-key "C-z"   #'helm-select-action  helm-map)
 
@@ -1350,7 +1354,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-args
   :ensure t
-  :defer t
   :init (progn
           ;; bind evil-args text objects
           (bind-key "a" #'evil-inner-arg evil-inner-text-objects-map)
@@ -1368,7 +1371,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-numbers
   :ensure t
-  :defer t
   :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt)
   :init (progn
           ;; Instead of C-a and C-x like in Vim, let's use + and -.
@@ -1396,12 +1398,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package shackle
   :ensure t
-  :defer t
-  :init (progn (setq shackle-rules
+  :init (progn (shackle-mode t))
+  :config (progn (setq shackle-rules
                      '(("\\`\\*helm.*?\\*\\'" :regexp t :align t :ratio 0.4)
                        (compilation-mode :align t :ratio 0.4)
                        (t :select t)))
-               (shackle-mode t)
                ))
 
 ;; Dired ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
