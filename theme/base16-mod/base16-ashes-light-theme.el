@@ -1,54 +1,51 @@
 ;; Base16 Ashes (https://github.com/chriskempson/base16)
 ;; Scheme: Jannik Siebert (https://github.com/janniks)
 
-;;; base16-ashes-dark-theme.el
+;;; base16-ashes-light-theme.el
 
 ;;; Code:
 
-(deftheme base16-mod-dark)
+(deftheme base16-ashes-light)
 
-(let ((basebg "#040404")
-      (base00 "#1d1f21")
-      (base01 "#282a2e")
-      (base02 "#373b41")
-      (base03 "#969896")
-      (base04 "#b4b7b4")
-      (base05 "#c5c8c6")
-      (base06 "#e0e0e0")
-      (base07 "#ffffff")
-      (base08 "#cc6666")
-      (base09 "#de935f")
-      (base0A "#f0c674")
-      (base0B "#b5bd68")
-      (base0C "#8abeb7")
-      (base0D "#81a2be")
-      (base0E "#b294bb")
-      (base0F "#a3685a"))
+(let ((base00 "#1C2023")
+      (base01 "#393F45")
+      (base02 "#565E65")
+      (base03 "#747C84")
+      (base04 "#ADB3BA")
+      (base05 "#C7CCD1")
+      (base06 "#DFE2E5")
+      (base07 "#F3F4F5")
+      (base08 "#C7AE95")
+      (base09 "#C7C795")
+      (base0A "#AEC795")
+      (base0B "#95C7AE")
+      (base0C "#95AEC7")
+      (base0D "#AE95C7")
+      (base0E "#C795AE")
+      (base0F "#C79595"))
 
   (custom-theme-set-faces
-   'base16-mod-dark
+   'base16-ashes-light
 
    ;; Built-in stuff
    `(border ((t (:background ,base00))))
    `(vertical-border ((t (:background ,base00 :foreground ,base00))))
    `(border-glyph ((t (nil))))
-   `(cursor ((t (:background ,base05 :inverse-video t))))
-   `(default ((t (:background ,basebg :foreground ,base05))))
-   `(fringe ((t (:background ,basebg))))
+   `(cursor ((t (:background ,base02 :inverse-video t))))
+   `(default ((t (:background ,base07 :foreground ,base02))))
+   `(fringe ((t (:background ,base07))))
    `(gui-element ((t (:background ,base03 :foreground ,base06))))
    `(highlight ((t (:background ,base01))))
    `(link ((t (:foreground ,base0D))))
    `(link-visited ((t (:foreground ,base0E))))
    `(minibuffer-prompt ((t (:foreground ,base0D :weight bold))))
 
-   `(mode-line
-     ((t (:background ,base00
-                      :foreground ,base04
-                      :box (:line-width 3 :color ,base00)))))
-   `(mode-line-inactive
-     ((t (:background ,base01
-                      :foreground ,base03
-                      :box (:line-width 3 :color ,base01)))))
+   `(mode-line ((t (:background ,base00
+                                :foreground ,base04
+                                :box (:line-width 3 :color ,base00)))))
+   `(mode-line-inactive ((t (:background ,base01
+                                         :foreground ,base03
+                                         :box (:line-width 3 :color ,base01)))))
 
    ;; `(mode-line-buffer-id ((t (:foreground ,base0E :background nil))))
    ;; `(mode-line-emphasis ((t (:foreground ,base06 :slant italic))))
@@ -197,13 +194,13 @@
 
    `(helm-action ((t (:foreground ,base05 :underline nil))))
 
-   `(helm-ff-dotted-directory ((t (:weight bold :foreground ,base05 :background nil))))
-   `(helm-ff-directory ((t (:weight bold :foreground ,base08 :background nil))))
-   `(helm-ff-executable ((t (:weight bold :foreground ,base0B))))
-   `(helm-ff-file ((t (:foreground ,base05))))
+   `(helm-ff-dotted-directory ((t (:weight bold :foreground ,base02 :background nil))))
+   `(helm-ff-directory ((t (:weight bold :foreground ,base0F :background nil))))
+   `(helm-ff-executable ((t (:weight bold :foreground ,base0A))))
+   `(helm-ff-file ((t (:foreground ,base02))))
    `(helm-ff-symlink ((t (:weight bold :foreground ,base0C))))
-   `(helm-ff-prefix ((t (:weight bold :foreground ,base0A :background nil))))
-   `(helm-ff-invalid-symlink ((t (:foreground ,base05 :background ,base0F))))
+   `(helm-ff-prefix ((t (:weight bold :foreground ,base08 :background nil))))
+   `(helm-ff-invalid-symlink ((t (:foreground ,base05 :background ,base0E))))
 
    ;; helm-swoop highlight
    `(helm-swoop-target-line-face ((t (:foreground ,base00 :background ,base0A))))
@@ -542,18 +539,24 @@
 
 
   (custom-theme-set-variables
-   'base16-mod-dark
+   'base16-ashes-light
 
    `(ansi-color-names-vector
      ;; black, base08, base0B, base0A, base0D, magenta, cyan, white
      [,base00 ,base08 ,base0B ,base0A ,base0D ,base0E ,base0D ,base05])
    `(ansi-term-color-vector
      ;; black, base08, base0B, base0A, base0D, magenta, cyan, white
-     [unspecified ,base00 ,base08 ,base0B ,base0A ,base0D ,base0E ,base0D ,base05]))
-  )
+     [unspecified ,base00 ,base08 ,base0B ,base0A ,base0D ,base0E ,base0D ,base05])))
 
-(provide-theme 'base16-mod-dark)
+;;;###autoload
+(when (and (boundp 'custom-theme-load-path)
+           load-file-name)
+  ;; add theme folder to `custom-theme-load-path' when installing over MELPA
+  (add-to-list 'custom-theme-load-path
+               (file-name-as-directory (file-name-directory load-file-name))))
+
+(provide-theme 'base16-ashes-light)
 
 ;; (((((
 
-;;; base16-mod-dark-theme.el ends here
+;;; base16-ashes-light-theme.el ends here

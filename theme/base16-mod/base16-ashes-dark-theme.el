@@ -552,6 +552,13 @@
      [unspecified ,base00 ,base08 ,base0B ,base0A ,base0D ,base0E ,base0D ,base05]))
   )
 
+;;;###autoload
+(when (and (boundp 'custom-theme-load-path)
+           load-file-name)
+  ;; add theme folder to `custom-theme-load-path' when installing over MELPA
+  (add-to-list 'custom-theme-load-path
+               (file-name-as-directory (file-name-directory load-file-name))))
+
 (provide-theme 'base16-ashes-dark)
 
 ;; (((((

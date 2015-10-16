@@ -547,11 +547,11 @@ active, apply to active region instead."
 ;; Theme ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; ;; We have some custom themes packaged with this config, so make sure =load-theme= can find 'em.
-(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ashes/"))
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ashes/"))
 ;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/leuven-mod/"))
-(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
 ;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/smyx/"))
-(add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ample-theme/"))
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ample-theme/"))
 
 (defadvice load-theme (before theme-dont-propagate activate)
   (mapcar #'disable-theme custom-enabled-themes))
@@ -596,14 +596,20 @@ active, apply to active region instead."
           ;; (mhl/load-light-theme 'tao-yang)
           ))
 
+(use-package base16-mod-theme
+  :load-path "theme/base16-mod"
+  :init (progn
+          (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/base16-mod/"))
+          (mhl/load-dark-theme 'base16-mod-dark)
+          ;; (mhl/load-dark-theme 'base16-ashes-dark)
+          ))
+
 ;; (mhl/load-light-theme 'leuven-mod)
 ;; (mhl/load-light-theme 'base16-ashes-light)
 ;; (mhl/load-light-theme 'flatui)
 ;; (mhl/load-light-theme 'ample-light)
 
 ;; (mhl/load-dark-theme 'noctilux)
-;; (mhl/load-dark-theme 'base16-ashes-dark)
-(mhl/load-dark-theme 'base16-mod-dark)
 ;; (mhl/load-dark-theme 'minimal)
 ;; (mhl/load-dark-theme 'ample-flat)
 
@@ -676,7 +682,7 @@ active, apply to active region instead."
   (setq show-trailing-whitespace nil))
 
 (defun disable-scroll-margin ()
-  (setq scroll-margin 0))
+  (setq-local scroll-margin 0))
 
 (add-hook 'term-mode-hook #'disable-show-trailing-whitespace)
 (add-hook 'term-mode-hook #'disable-scroll-margin)
@@ -1037,7 +1043,8 @@ active, apply to active region instead."
               :ensure t
               :init (progn (helm-flx-mode t)))
 
-            (setq helm-buffers-fuzzy-matching t
+            (setq helm-apropos-fuzzy-match t
+                  helm-buffers-fuzzy-matching t
                   helm-imenu-fuzzy-match t
                   helm-recentf-fuzzy-match t
                   helm-locate-fuzzy-match nil
