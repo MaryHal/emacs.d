@@ -653,10 +653,10 @@ active, apply to active region instead."
 (setq visible-cursor nil)
 
 ;; Smoother Scrolling
-(setq scroll-margin 10
-      scroll-conservatively 101
-      scroll-preserve-screen-position t
-      auto-window-vscroll nil)
+(setq-default scroll-margin 10
+              scroll-conservatively 101
+              scroll-preserve-screen-position t
+              auto-window-vscroll nil)
 
 (use-package paren
   :config (progn (show-paren-mode t)
