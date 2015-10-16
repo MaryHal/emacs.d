@@ -1394,6 +1394,15 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           (bind-key "+" #'evil-numbers/inc-at-pt evil-normal-state-map)
           ))
 
+(use-package evil-mc
+  :ensure t
+  :commands (evil-mc-make-all-cursors
+             evil-mc-undo-all-cursors
+             evil-mc-make-and-goto-next-match
+             evil-mc-skip-and-goto-next-match)
+  :config (progn (global-evil-mc-mode t))
+  )
+
 ;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; With either of these packages we can force certain buffers to open in a
