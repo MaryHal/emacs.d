@@ -785,7 +785,13 @@ active, apply to active region instead."
 
 (use-package beacon
   :ensure t
-  :config (progn (beacon-mode t)))
+  :config (progn
+            (setq beacon-blink-when-window-scrolls t)
+            (setq beacon-blink-when-window-changes t)
+
+            (setq beacon-color 0.3)
+
+            (beacon-mode t)))
 
 ;; Version Control ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1405,20 +1411,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-mc
   :ensure t
-  :config (progn
-            (setq evil-mc-keys
-                  '(("M-n" . evil-mc-make-and-goto-next-match)
-                    ("M-p" . evil-mc-make-and-goto-prev-match)
-                    ("grm" . evil-mc-make-all-cursors)
-                    ("gru" . evil-mc-undo-all-cursors)
-                    ("grp" . evil-mc-pause-cursors)
-                    ("grr" . evil-mc-resume-cursors)
-                    ("grf" . evil-mc-make-and-goto-first-cursor)
-                    ("grl" . evil-mc-make-and-goto-last-cursor)
-                    ("grh" . evil-mc-make-cursor-here)
-                    ))
-
-            (global-evil-mc-mode t)))
+  :init (progn (global-evil-mc-mode t)))
 
 ;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1598,6 +1591,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             (add-hook 'irony-mode-hook #'company-irony-setup-begin-commands)
 
             (global-company-mode t)
+
+            (use-package company-flx
+              :ensure t
+              :disabled t
+              :config (progn (company-flx-mode t)))
             ))
 
 ;; Flycheck ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
