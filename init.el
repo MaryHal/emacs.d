@@ -546,13 +546,6 @@ active, apply to active region instead."
 
 ;; Theme ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; ;; We have some custom themes packaged with this config, so make sure =load-theme= can find 'em.
-;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ashes/"))
-;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/leuven-mod/"))
-;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
-;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/smyx/"))
-;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ample-theme/"))
-
 (defadvice load-theme (before theme-dont-propagate activate)
   (mapcar #'disable-theme custom-enabled-themes))
 
@@ -604,7 +597,20 @@ active, apply to active region instead."
           ;; (mhl/load-dark-theme 'base16-ashes-dark)
           ))
 
-;; (mhl/load-light-theme 'leuven-mod)
+(use-package leuven-mod
+  :load-path "theme/leuven-mod"
+  :disabled t
+  :init (progn
+          (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/leuven-mod/"))
+          (mhl/load-light-theme 'leuven-mod)
+          ))
+
+;; ;; We have some custom themes packaged with this config, so make sure =load-theme= can find 'em.
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ashes/"))
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/smyx/"))
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ample-theme/"))
+
 ;; (mhl/load-light-theme 'base16-ashes-light)
 ;; (mhl/load-light-theme 'flatui)
 ;; (mhl/load-light-theme 'ample-light)
@@ -1328,14 +1334,19 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "x" #'helm-M-x)
 
                  ;; Rings
-                 (evil-leader/set-key "y" #'helm-show-kill-ring)
-                 (evil-leader/set-key "r m" #'helm-mark-ring)
+                 (evil-leader/set-key "y"  #'helm-show-kill-ring)
+                 (evil-leader/set-key "rm" #'helm-mark-ring)
+
+                 ;; Multiple Cursors (evil-mc)
+                 (evil-leader/set-key "ca" #'evil-mc-make-all-cursors)
+                 (evil-leader/set-key "cc" #'evil-mc-undo-all-cursors)
+                 (evil-leader/set-key "cn" #'evil-mc-make-and-goto-next-match)
+                 (evil-leader/set-key "cp" #'evil-mc-skip-and-goto-next-match)
 
                  ;; Git
                  (evil-leader/set-key "m" #'magit-status)
 
                  ;; Projectile
-                 (evil-leader/set-key "c" #'projectile-compile-project)
                  (evil-leader/set-key "p" #'projectile-command-map)
 
                  ;; Swiper/Swoop
@@ -1400,8 +1411,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
              evil-mc-undo-all-cursors
              evil-mc-make-and-goto-next-match
              evil-mc-skip-and-goto-next-match)
-  :config (progn (global-evil-mc-mode t))
-  )
+  :init (progn (setq evil-mc-keys nil))
+  :config (progn (global-evil-mc-mode t)))
 
 ;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
