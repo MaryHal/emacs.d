@@ -783,6 +783,10 @@ active, apply to active region instead."
   :ensure t
   :commands (rainbow-mode))
 
+(use-package beacon
+  :ensure t
+  :config (progn (beacon-mode t)))
+
 ;; Version Control ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package magit
@@ -1337,12 +1341,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "y"  #'helm-show-kill-ring)
                  (evil-leader/set-key "rm" #'helm-mark-ring)
 
-                 ;; Multiple Cursors (evil-mc)
-                 (evil-leader/set-key "ca" #'evil-mc-make-all-cursors)
-                 (evil-leader/set-key "cc" #'evil-mc-undo-all-cursors)
-                 (evil-leader/set-key "cn" #'evil-mc-make-and-goto-next-match)
-                 (evil-leader/set-key "cp" #'evil-mc-skip-and-goto-next-match)
-
                  ;; Git
                  (evil-leader/set-key "m" #'magit-status)
 
@@ -1407,12 +1405,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-mc
   :ensure t
-  :commands (evil-mc-make-all-cursors
-             evil-mc-undo-all-cursors
-             evil-mc-make-and-goto-next-match
-             evil-mc-skip-and-goto-next-match)
-  :init (progn (setq evil-mc-keys nil))
-  :config (progn (global-evil-mc-mode t)))
+  :config (progn
+            (setq evil-mc-keys
+                  '(("M-n" . evil-mc-make-and-goto-next-match)
+                    ("M-p" . evil-mc-make-and-goto-prev-match)
+                    ("grm" . evil-mc-make-all-cursors)
+                    ("gru" . evil-mc-undo-all-cursors)
+                    ("grp" . evil-mc-pause-cursors)
+                    ("grr" . evil-mc-resume-cursors)
+                    ("grf" . evil-mc-make-and-goto-first-cursor)
+                    ("grl" . evil-mc-make-and-goto-last-cursor)
+                    ("grh" . evil-mc-make-cursor-here)
+                    ))
+
+            (global-evil-mc-mode t)))
 
 ;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
