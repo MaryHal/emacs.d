@@ -474,13 +474,14 @@ active, apply to active region instead."
 
 ;; Fringe ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Disable margins
-(setq-default left-margin-width 0
-              right-margin-width 0)
-(set-window-buffer nil (current-buffer))
-
 (use-package fringe
+  :if (window-system)
   :config (progn
+            ;; Disable margins
+            (setq-default left-margin-width 0
+                          right-margin-width 0)
+            (set-window-buffer nil (current-buffer))
+
             ;; Don't show empty line markers in the fringe past the end of the document
             (setq-default indicate-empty-lines nil)
 
@@ -671,14 +672,16 @@ active, apply to active region instead."
 
 (use-package highlight-parentheses
   :ensure t
+  :defer t
   :config (progn
             (defun hl-parens-hook()
-              (highlight-parentheses-mode 1))
+              (highlight-parentheses-mode t))
             (add-hook 'prog-mode-hook #'hl-parens-hook)
             ))
 
-;; (use-package elec-pair
-;;   :config (electric-pair-mode t))
+(use-package elec-pair
+  :disabled t
+  :config (electric-pair-mode t))
 
 (use-package electric
   :config (electric-indent-mode t))
@@ -714,7 +717,8 @@ active, apply to active region instead."
                ))
 
 (use-package swiper
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package anzu
   :ensure t
@@ -784,10 +788,12 @@ active, apply to active region instead."
   :commands (rainbow-mode))
 
 (use-package beacon
+  :if (window-system)
   :ensure t
   :config (progn
             (setq beacon-blink-when-window-scrolls t)
             (setq beacon-blink-when-window-changes t)
+            (setq beacon-blink-when-point-moves 2)
 
             (setq beacon-color 0.3)
 
@@ -804,20 +810,26 @@ active, apply to active region instead."
   :commands (git-timemachine))
 
 (use-package git-gutter
+  :if (not window-system)
   :ensure t
-  :disabled t
-  :config (progn (setq git-gutter:modified-sign "*")
-                 (setq git-gutter:added-sign "+")
-                 (setq git-gutter:deleted-sign "-")
+  :defer t
+  :init (progn (global-git-gutter-mode t))
+  :config (progn
+            (setq-default left-margin-width 1
+                          right-margin-width 1)
+            (set-window-buffer nil (current-buffer))
 
-                 ;; (set-face-background 'git-gutter:modified "purple")
-                 ;; (set-face-background 'git-gutter:added    "green")
-                 ;; (set-face-background 'git-gutter:deleted  "red")
+            (setq git-gutter:modified-sign "*")
+            (setq git-gutter:added-sign "+")
+            (setq git-gutter:deleted-sign "-")
 
-                 ;; (global-git-gutter-mode t)
-                 ))
+            (set-face-foreground 'git-gutter:modified "purple")
+            (set-face-foreground 'git-gutter:added    "green")
+            (set-face-foreground 'git-gutter:deleted  "red")
+            ))
 
 (use-package git-gutter-fringe
+  :if (window-system)
   :ensure t
   :config (progn
             (define-fringe-bitmap 'git-gutter-fr:added
@@ -937,6 +949,8 @@ active, apply to active region instead."
                    :ensure t
                    :config (progn (helm-projectile-on)
                                   (setq projectile-completion-system 'helm)
+
+                                  (setq helm-projectile-fuzzy-match t)
                                   ))
 
                  (projectile-global-mode)
@@ -1066,7 +1080,6 @@ active, apply to active region instead."
                   helm-locate-fuzzy-match nil
                   helm-M-x-fuzzy-match t
                   helm-semantic-fuzzy-match t)
-
             ))
 
 ;; Helm Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1487,6 +1500,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package markdown-mode
   :ensure t
+  :mode ("\\.md$" . markdown-mode)
   :config (progn (defun my-markdown-mode-hook()
                    (defvar markdown-imenu-generic-expression
                      '(("title" "^\\(.*\\)[\n]=+$" 1)
@@ -1590,12 +1604,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             ;; std::|
             (add-hook 'irony-mode-hook #'company-irony-setup-begin-commands)
 
-            (global-company-mode t)
-
             (use-package company-flx
               :ensure t
               :disabled t
               :config (progn (company-flx-mode t)))
+
+            (global-company-mode t)
             ))
 
 ;; Flycheck ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
