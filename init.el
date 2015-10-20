@@ -791,6 +791,9 @@ active, apply to active region instead."
   :if (window-system)
   :ensure t
   :config (progn
+            (add-to-list 'beacon-dont-blink-commands 'fzf)
+            (add-to-list 'beacon-dont-blink-commands 'fzf-directory)
+
             (setq beacon-blink-when-window-scrolls t)
             (setq beacon-blink-when-window-changes t)
             (setq beacon-blink-when-point-moves 2)
@@ -1148,9 +1151,16 @@ active, apply to active region instead."
   :ensure t
   :commands (fzf fzf-directory)
   :init (progn
+          (setq fzf/args "-x --color=no")
+
+          (let ((fzf/mode-line-face-cookie nil))
             (defadvice fzf/start (after normalize-fzf-mode-line activate)
-              (face-remap-add-relative 'mode-line '(:box nil))
-              )))
+              (setq fzf/mode-line-face-cookie (face-remap-add-relative 'mode-line '(:box nil))))
+
+            (defadvice fzf/after-term-handle-exit (before undo-fzf-mode-line-change activate)
+              (face-remap-remove-relative fzf/mode-line-face-cookie))
+            )
+          ))
 
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
