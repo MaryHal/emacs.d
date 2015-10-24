@@ -834,6 +834,7 @@ active, apply to active region instead."
 (use-package git-gutter-fringe
   :if (window-system)
   :ensure t
+  :init (progn (global-git-gutter-mode t))
   :config (progn
             (define-fringe-bitmap 'git-gutter-fr:added
               [#b0000000
@@ -861,8 +862,7 @@ active, apply to active region instead."
                #b0111000
                #b0010000
                #b0000000
-               #b0000000])
-            (global-git-gutter-mode t)))
+               #b0000000])))
 
 ;; Clipboard ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1031,8 +1031,8 @@ active, apply to active region instead."
             ;; Don't loop helm sources.
             (setq helm-move-to-line-cycle-in-source nil)
 
-            ;; ;; Free up some visual space.
-            ;; (setq helm-display-header-line nil)
+            ;; Free up some visual space.
+            (setq helm-display-header-line nil)
 
             (defun helm-cfg-use-header-line-instead-of-minibuffer ()
               ;; Enter search patterns in header line instead of minibuffer.
@@ -1045,7 +1045,7 @@ active, apply to active region instead."
                                             `(:background ,bg-color :foreground ,bg-color)))
                     (setq-local cursor-type nil))))
               (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe))
-            (helm-cfg-use-header-line-instead-of-minibuffer)
+            ;; (helm-cfg-use-header-line-instead-of-minibuffer)
 
             ;; ;; "Remove" source header text
             ;; (set-face-attribute 'helm-source-header nil :height 1.0)
