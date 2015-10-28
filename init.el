@@ -680,7 +680,6 @@ active, apply to active region instead."
             ))
 
 (use-package elec-pair
-  :disabled t
   :config (electric-pair-mode t))
 
 (use-package electric
@@ -694,7 +693,7 @@ active, apply to active region instead."
   (setq-local scroll-margin 0))
 
 (add-hook 'term-mode-hook #'disable-show-trailing-whitespace)
-(add-hook 'term-mode-hook #'disable-scroll-margin)
+;; (add-hook 'term-mode-hook #'disable-scroll-margin)
 (setq-default show-trailing-whitespace t)
 
 (use-package imenu
@@ -1104,7 +1103,7 @@ active, apply to active region instead."
   :config (progn ;; disable pre-input
                  (setq helm-swoop-pre-input-function (lambda () ""))
 
-                 ;; (setq helm-swoop-speed-or-color nil)
+                 (setq helm-swoop-speed-or-color t)
 
                  (setq helm-swoop-split-with-multiple-windows nil
                        helm-swoop-split-direction 'split-window-vertically
@@ -1152,14 +1151,6 @@ active, apply to active region instead."
   :commands (fzf fzf-directory)
   :init (progn
           (setq fzf/args "-x --color=no")
-
-          (let ((fzf/mode-line-face-cookie nil))
-            (defadvice fzf/start (after normalize-fzf-mode-line activate)
-              (setq fzf/mode-line-face-cookie (face-remap-add-relative 'mode-line '(:box nil))))
-
-            (defadvice fzf/after-term-handle-exit (before undo-fzf-mode-line-change activate)
-              (face-remap-remove-relative fzf/mode-line-face-cookie))
-            )
           ))
 
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
