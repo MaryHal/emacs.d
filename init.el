@@ -23,8 +23,11 @@
   (message "Loading %s..." load-file-name))
 
 (require 'package)
-(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ("melpa" . "http://melpa.org/packages/")))
+(setq package-archives '(("melpa" . "http://melpa.org/packages/")))
+
+(when (< emacs-major-version 24)
+  ;; For important compatibility libraries like cl-lib
+  (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/")))
 
 (defconst user-custom-file (concat user-emacs-directory "custom.el"))
 (defconst user-cache-directory (concat user-emacs-directory "cache/"))
@@ -679,8 +682,8 @@ active, apply to active region instead."
             (add-hook 'prog-mode-hook #'hl-parens-hook)
             ))
 
-(use-package elec-pair
-  :config (electric-pair-mode t))
+;; (use-package elec-pair
+;;   :config (electric-pair-mode t))
 
 (use-package electric
   :config (electric-indent-mode t))
@@ -1159,8 +1162,8 @@ active, apply to active region instead."
 
 (use-package evil
   :ensure t
-  :init (progn (setq evil-want-C-u-scroll t)
-               (setq evil-move-cursor-back nil)
+  :preface (progn (setq evil-want-C-u-scroll t))
+  :init (progn (setq evil-move-cursor-back nil)
                (setq evil-cross-lines t)
                (setq evil-intercept-esc 'always)
 
