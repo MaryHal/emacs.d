@@ -407,6 +407,9 @@ active, apply to active region instead."
 (bind-key "C-;"      #'comment-line-or-region)
 (bind-key "M-i"      #'back-to-indentation)
 
+;; (bind-key "M-9"      #'backward-sexp)
+;; (bind-key "M-0"      #'forward-sexp)
+
 ;; (bind-key "C-."      #'hippie-expand)
 (bind-key "C-."      #'dabbrev-expand)
 
@@ -696,19 +699,19 @@ active, apply to active region instead."
   (setq-local scroll-margin 0))
 
 (add-hook 'term-mode-hook #'disable-show-trailing-whitespace)
-;; (add-hook 'term-mode-hook #'disable-scroll-margin)
+(add-hook 'term-mode-hook #'disable-scroll-margin)
 (setq-default show-trailing-whitespace t)
 
 (use-package imenu
   :config (progn
             ;; Add use-package / init file blocks to imenu
-            (defun imenu-use-package ()
+            (defun imenu-init-file-additions()
               (add-to-list 'imenu-generic-expression
                            '("Package" "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2))
               (add-to-list 'imenu-generic-expression
                            '("Section" "^;; \\(.+\\) ;+$" 1))
               )
-            (add-hook 'emacs-lisp-mode-hook #'imenu-use-package)
+            (add-hook 'emacs-lisp-mode-hook #'imenu-init-file-additions)
             ))
 
 (use-package avy
@@ -1590,18 +1593,29 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             (add-hook 'irony-mode-hook #'irony-cdb-autosetup-compile-options)
 
             ;; "Iterating through back-ends that don’t apply to the current buffer is pretty fast."
-            (setq-default company-backends (quote (company-files
-                                                   company-irony
-                                                   company-elisp
-                                                   company-yasnippet
-                                                   company-css
-                                                   ;; company-eclim
-                                                   ;; company-clang
-                                                   company-capf
-                                                   ;; (company-dabbrev-code company-keywords)
-                                                   company-keywords
-                                                   ;; company-dabbrev
-                                                   )))
+            (setq company-backends (quote (company-files
+                                           company-irony
+                                           company-elisp
+                                           company-css
+                                           ;; company-eclim
+                                           ;; company-clang
+                                           company-capf
+                                           ;; (company-dabbrev-code company-keywords)
+                                           company-keywords
+                                           ;; company-dabbrev
+                                           )))
+
+            ;; Add yasnippet support for all company backends
+            ;; https://github.com/syl20bnr/spacemacs/pull/179
+            (defvar company-mode/enable-yas t "Enable yasnippet for all backends.")
+
+            (defun company-mode/backend-with-yas (backend)
+              (if (or (not company-mode/enable-yas) (and (listp backend)    (member 'company-yasnippet backend)))
+                  backend
+                (append (if (consp backend) backend (list backend))
+                        '(:with company-yasnippet))))
+
+            (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
 
             ;; (optional) adds CC special commands to `company-begin-commands' in order to
             ;; trigger completion at interesting places, such as after scope operator
