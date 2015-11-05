@@ -43,25 +43,32 @@
 
 (eval-when-compile (package-initialize))
 
-;; Bootstrap Function!
-(defun require-package (package)
-  "refresh package archives, check package presence and install
-if it's not installed"
-  (if (null (require package nil t))
-      (progn (package-initialize)
-             (let* ((ARCHIVES (if (null package-archive-contents)
-                                  (progn (package-refresh-contents)
-                                         package-archive-contents)
-                                package-archive-contents))
-                    (AVAIL (assoc package ARCHIVES)))
-               (if AVAIL
-                   (package-install package)))
-             (require package))))
+;; ;; Bootstrap Function!
+;; (defun require-package (package)
+;;   "refresh package archives, check package presence and install
+;; if it's not installed"
+;;   (if (null (require package nil t))
+;;       (progn (package-initialize)
+;;              (let* ((ARCHIVES (if (null package-archive-contents)
+;;                                   (progn (package-refresh-contents)
+;;                                          package-archive-contents)
+;;                                 package-archive-contents))
+;;                     (AVAIL (assoc package ARCHIVES)))
+;;                (if AVAIL
+;;                    (package-install package)))
+;;              (require package))))
+
+(unless (package-installed-p 'use-package)
+  (progn
+    (package-refresh-contents)
+    (package-install 'use-package)
+    (package-initialize)))
+
+(require 'use-package)
 
 ;; Aquire use-package, the crux of our config file.
 (setq use-package-verbose t)
 (setq use-package-minimum-reported-time 0)
-(require-package 'use-package)
 
 ;; Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -248,7 +255,6 @@ active, apply to active region instead."
   :config (auto-compression-mode t))
 
 (use-package delsel
-  :disabled t
   :config (delete-selection-mode t))
 
 (use-package tramp
@@ -407,9 +413,6 @@ active, apply to active region instead."
 (bind-key "C-;"      #'comment-line-or-region)
 (bind-key "M-i"      #'back-to-indentation)
 
-;; (bind-key "M-9"      #'backward-sexp)
-;; (bind-key "M-0"      #'forward-sexp)
-
 ;; (bind-key "C-."      #'hippie-expand)
 (bind-key "C-."      #'dabbrev-expand)
 
@@ -421,6 +424,13 @@ active, apply to active region instead."
   :ensure t
   :bind (("M-m" . jump-char-forward)
          ("M-M" . jump-char-backward)))
+
+(dotimes (n 10)
+  (global-unset-key (kbd (format "M-%d" n)))
+  (global-unset-key (kbd (format "C-%d" n))))
+
+(bind-key "M-9"      #'backward-sexp)
+(bind-key "M-0"      #'forward-sexp)
 
 ;; Appearance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -878,7 +888,7 @@ active, apply to active region instead."
 ;; (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
 
 ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
-(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+(setq x-select-request-type '(UTF7_STRING COMPOUND_TEXT TEXT STRING))
 
 (defun xsel-cut-function (text &optional push)
   ;; Insert text to temp-buffer, and "send" content to xsel stdin
