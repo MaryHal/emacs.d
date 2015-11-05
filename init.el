@@ -1527,9 +1527,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package js2-mode
   :ensure t
-  :disabled t
-  :mode ("\\.js$" . js2-mode)
-  :config (js2-highlight-level 3))
+  :mode ("\\.js$" . js2-mode))
 
 (use-package lua-mode
   :ensure t

@@ -25,3 +25,4 @@ old_init.el
 /.mc-lists.el
 /.flagged
 custom.el
+/kkcrc
