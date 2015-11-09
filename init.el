@@ -1576,6 +1576,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package company
   :ensure t
+  :bind (("C-<tab>" . company-dabbrev)
+         ("M-<tab>" . company-complete)
+         ("C-c C-y" . company-yasnippet))
   :config (progn
             (bind-key "C-n" #'company-select-next     company-active-map)
             (bind-key "C-p" #'company-select-previous company-active-map)
