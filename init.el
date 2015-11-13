@@ -23,11 +23,10 @@
   (message "Loading %s..." load-file-name))
 
 (require 'package)
-(setq package-archives '(("melpa" . "http://melpa.org/packages/")))
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                         ("gnu"   . "https://elpa.gnu.org/packages/")))
 
-(when (< emacs-major-version 24)
-  ;; For important compatibility libraries like cl-lib
-  (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/")))
+(setq tls-checktrust t)
 
 (defconst user-custom-file (concat user-emacs-directory "custom.el"))
 (defconst user-cache-directory (concat user-emacs-directory "cache/"))
@@ -971,6 +970,11 @@ active, apply to active region instead."
                                   (setq helm-projectile-fuzzy-match t)
                                   ))
 
+                 ;; projectile modeline updates causes some slowdown, so let's
+                 ;; change it to a static string.
+                 ;; https://github.com/bbatsov/projectile/issues/657
+                 (setq projectile-mode-line "Projectile")
+
                  (projectile-global-mode)
                  ))
 
@@ -1131,7 +1135,7 @@ active, apply to active region instead."
 (use-package ido
   :ensure t
   :defer t
-  :config (progn ;; (ido-mode t)
+  :config (progn (ido-mode t)
                  (setq ido-enable-prefix nil
                        ido-enable-flex-matching t
                        ido-create-new-buffer 'always
