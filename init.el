@@ -687,11 +687,19 @@ active, apply to active region instead."
 
 (use-package highlight-parentheses
   :ensure t
-  :defer t
   :config (progn
             (defun hl-parens-hook()
               (highlight-parentheses-mode t))
             (add-hook 'prog-mode-hook #'hl-parens-hook)
+            ))
+
+(use-package highlight-indent-guides
+  :ensure t
+  :disabled t
+  :config (progn
+            (add-hook 'prog-mode-hook #'highlight-indent-guides-mode)
+            (set-face-background 'highlight-indent-guides-even-face "#101010")
+            (set-face-background 'highlight-indent-guides-odd-face  "#0B0B0B")
             ))
 
 ;; (use-package elec-pair
@@ -810,7 +818,7 @@ active, apply to active region instead."
 
             (setq beacon-blink-when-window-scrolls t)
             (setq beacon-blink-when-window-changes t)
-            (setq beacon-blink-when-point-moves 2)
+            ;; (setq beacon-blink-when-point-moves 2)
 
             (setq beacon-color 0.3)
 
