@@ -26,8 +26,6 @@
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("gnu"   . "https://elpa.gnu.org/packages/")))
 
-(setq tls-checktrust t)
-
 (defconst user-custom-file (concat user-emacs-directory "custom.el"))
 (defconst user-cache-directory (concat user-emacs-directory "cache/"))
 
@@ -259,6 +257,10 @@ active, apply to active region instead."
 (use-package tramp
   :defer t
   :config (setq tramp-default-method "ssh"))
+
+(use-package tls
+  :config (progn (setq tls-checktrust t)
+                 ))
 
 (use-package recentf
   :defer 10
