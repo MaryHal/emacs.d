@@ -259,8 +259,7 @@ active, apply to active region instead."
   :config (setq tramp-default-method "ssh"))
 
 (use-package tls
-  :config (progn (setq tls-checktrust t)
-                 ))
+  :config (progn (setq tls-checktrust t)))
 
 (use-package recentf
   :defer 10
@@ -1547,6 +1546,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                    (setq imenu-generic-expression markdown-imenu-generic-expression))
 
                  (add-hook 'markdown-mode-hook #'my-markdown-mode-hook)
+
+                 (use-package markdown-toc
+                   :ensure t
+                   :disabled t)
                  ))
 
 (use-package js2-mode
@@ -1617,6 +1620,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             (add-hook 'irony-mode-hook #'my-irony-mode-hook)
             (add-hook 'irony-mode-hook #'irony-cdb-autosetup-compile-options)
 
+            ;; (optional) adds CC special commands to `company-begin-commands' in order to
+            ;; trigger completion at interesting places, such as after scope operator
+            ;; std::|
+            (add-hook 'irony-mode-hook #'company-irony-setup-begin-commands)
+
             ;; "Iterating through back-ends that don’t apply to the current buffer is pretty fast."
             (setq company-backends (quote (company-files
                                            company-irony
@@ -1642,14 +1650,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
             (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
 
-            ;; (optional) adds CC special commands to `company-begin-commands' in order to
-            ;; trigger completion at interesting places, such as after scope operator
-            ;; std::|
-            (add-hook 'irony-mode-hook #'company-irony-setup-begin-commands)
-
             (use-package company-flx
               :ensure t
-              :disabled t
               :config (progn (company-flx-mode t)))
 
             (global-company-mode t)
@@ -1695,6 +1697,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  ;; Ellipses blend in too well. Make them more distict!
                  (setq org-ellipsis " […]")
+
+                 ;; Create "Table of Contents" without exporting (useful for
+                 ;; github README.org files, for example)
+                 (use-package toc-org
+                   :ensure t
+                   :disabled t
+                   :config (progn
+                             (add-hook 'org-mode-hook #'toc-org-enable)))
                  ))
 
 ;; Miscellaneous Packages ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
