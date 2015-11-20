@@ -1042,7 +1042,7 @@ active, apply to active region instead."
             (setq helm-quick-update t)
 
             ;; (setq helm-ff-auto-update-initial-value nil)
-            (setq helm-ff-smart-completion nil)
+            ;; (setq helm-ff-smart-completion nil)
 
             ;; Be idle for this many seconds, before updating in delayed sources.
             (setq helm-idle-delay 0.01)
@@ -1285,10 +1285,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (define-and-bind-text-object "e" "\\`\\s-*" "\\s-*\\'")
 
                  ;; Swap j,k with gj, gk
-                 (bind-key "j" #'evil-next-visual-line     evil-normal-state-map)
-                 (bind-key "k" #'evil-previous-visual-line evil-normal-state-map)
-                 (bind-key "g j" #'evil-next-line          evil-normal-state-map)
-                 (bind-key "g k" #'evil-previous-line      evil-normal-state-map)
+                 (bind-key "j"   #'evil-next-visual-line     evil-normal-state-map)
+                 (bind-key "k"   #'evil-previous-visual-line evil-normal-state-map)
+                 (bind-key "g j" #'evil-next-line            evil-normal-state-map)
+                 (bind-key "g k" #'evil-previous-line        evil-normal-state-map)
 
                  ;; Other evil keybindings
                  (evil-define-operator evil-join-previous-line (beg end)
@@ -1456,6 +1456,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :ensure t
   :init (progn (global-evil-mc-mode t)))
 
+;; Make Anzu work with evil-search
+(use-package evil-anzu
+  :ensure t)
+
 ;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; With either of these packages we can force certain buffers to open in a
@@ -1549,7 +1553,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  (use-package markdown-toc
                    :ensure t
-                   :disabled t)
+                   :disabled t
+                   :commands (markdown-toc-generate-toc))
                  ))
 
 (use-package js2-mode
@@ -1702,7 +1707,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ;; github README.org files, for example)
                  (use-package toc-org
                    :ensure t
-                   :disabled t
                    :config (progn
                              (add-hook 'org-mode-hook #'toc-org-enable)))
                  ))
