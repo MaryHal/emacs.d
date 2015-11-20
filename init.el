@@ -156,6 +156,11 @@ active, apply to active region instead."
   (interactive)
   (call-process-shell-command (concat "eval $TERMINAL -e " user-shell) nil 0))
 
+(defun do-not-quit ()
+    (interactive)
+    (message "Thou shall not quit!"))
+
+
 
 ;; Advice ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -382,9 +387,7 @@ active, apply to active region instead."
 
 ;; replace with [r]eally [q]uit
 (bind-key "C-x r q" #'save-buffers-kill-terminal)
-(bind-key "C-x C-c" (lambda ()
-                      (interactive)
-                      (message "Thou shall not quit!")))
+(bind-key "C-x C-c" #'do-not-quit)
 
 ;; Alter M-w so if there's no region, just grab 'till the end of the line.
 (bind-key "M-w" #'save-region-or-current-line)
@@ -836,6 +839,7 @@ active, apply to active region instead."
   :commands (git-timemachine))
 
 (use-package git-gutter
+  :disabled t
   :if (not window-system)
   :ensure t
   :defer t
@@ -855,6 +859,7 @@ active, apply to active region instead."
             ))
 
 (use-package git-gutter-fringe
+  :disabled t
   :if (window-system)
   :ensure t
   :init (progn (global-git-gutter-mode t))
@@ -1341,9 +1346,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  ;; Don't quit!
                  (defadvice evil-quit (around advice-for-evil-quit activate)
-                   (message "Thou shall not quit!"))
+                   (do-not-quit))
                  (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
-                   (message "Thou shall not quit!"))
+                   (do-not-quit))
                  ))
 
 ;; Evil Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1553,7 +1558,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  (use-package markdown-toc
                    :ensure t
-                   :disabled t
                    :commands (markdown-toc-generate-toc))
                  ))
 
