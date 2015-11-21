@@ -385,6 +385,9 @@ active, apply to active region instead."
 (global-unset-key (kbd "C-x m"))
 (global-unset-key (kbd "C-x f"))
 
+;; Auto-indent on RET
+(bind-key (kbd "RET") #'newline-and-indent)
+
 ;; replace with [r]eally [q]uit
 (bind-key "C-x r q" #'save-buffers-kill-terminal)
 (bind-key "C-x C-c" #'do-not-quit)
