@@ -715,16 +715,22 @@ active, apply to active region instead."
 (use-package electric
   :config (electric-indent-mode t))
 
-;; Trailing whitespace
-(defun disable-show-trailing-whitespace ()
-  (setq show-trailing-whitespace nil))
+(use-package term
+  :defer t
+  :init (progn
+          (defun disable-scroll-margin ()
+            (setq-local scroll-margin 0))
+          (add-hook 'term-mode-hook #'disable-scroll-margin)
+          ))
 
-(defun disable-scroll-margin ()
-  (setq-local scroll-margin 0))
-
-(add-hook 'term-mode-hook #'disable-show-trailing-whitespace)
-(add-hook 'term-mode-hook #'disable-scroll-margin)
-(setq-default show-trailing-whitespace t)
+(use-package whitespace
+  :defer t
+  :init (progn
+          ;; Only show trailing whitespace in programming modes
+          (defun enable-show-trailing-whitespace ()
+            (setq show-trailing-whitespace t))
+          (add-hook 'prog-mode-hook #'enable-show-trailing-whitespace)
+          ))
 
 (use-package imenu
   :config (progn
@@ -1753,8 +1759,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :init (progn (setq twittering-use-master-password t)
                (setq twittering-icon-mode t)
                (setq twittering-allow-insecure-server-cert t)
-
-               (add-hook 'twittering-mode-hook #'disable-show-trailing-whitespace)
                ))
 
 ;; Finishing Up ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
