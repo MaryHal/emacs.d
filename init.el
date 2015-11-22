@@ -196,7 +196,7 @@ active, apply to active region instead."
 ;; (setq epa-file-select-keys nil)
 
 ;; Show keystrokes in progress
-(setq echo-keystrokes 0.1)
+(setq echo-keystrokes 0.02)
 
 ;; Move files to trash when deleting
 ;; (setq delete-by-moving-to-trash t)
@@ -288,7 +288,8 @@ active, apply to active region instead."
   :defer 5
   :bind (("M-N" . winner-redo)
          ("M-P" . winner-undo))
-  :config (winner-mode t))
+  :config (progn
+            (winner-mode t)))
 
 (use-package ediff
   :defer t
@@ -793,6 +794,11 @@ active, apply to active region instead."
                  (guide-key-mode t)
                  ))
 
+(use-package which-key
+  :ensure t
+  :init (progn
+          (which-key-mode t)))
+
 (use-package multiple-cursors
   :ensure t
   :bind (("C->"     . mc/mark-next-like-this)
@@ -973,33 +979,62 @@ active, apply to active region instead."
 
 (use-package projectile
   :ensure t
-  :defer 5
-  :commands (projectile-global-mode)
-  :bind ("C-c a" . projectile-find-other-file)
+  :commands (projectile-ack
+             projectile-ag
+             projectile-compile-project
+             projectile-dired
+             projectile-grep
+             projectile-find-dir
+             projectile-find-file
+             projectile-find-tag
+             projectile-find-test-file
+             projectile-invalidate-cache
+             projectile-kill-buffers
+             projectile-multi-occur
+             projectile-project-root
+             projectile-recentf
+             projectile-regenerate-tags
+             projectile-replace
+             projectile-run-async-shell-command-in-root
+             projectile-run-shell-command-in-root
+             projectile-switch-project
+             projectile-switch-to-buffer
+             projectile-vc)
   :bind-keymap ("C-c p" . projectile-command-map)
   :init (progn
-          (setq projectile-cache-file (concat user-cache-directory "projectile.cache"))
-          (setq projectile-known-projects-file (concat user-cache-directory "projectile-bookmarks.eld")))
-  :config (progn (setq projectile-enable-caching t)
-
-                 ;; (setq projectile-indexing-method 'native)
-                 (add-to-list 'projectile-globally-ignored-directories "elpa")
-
-                 (use-package helm-projectile
-                   :ensure t
-                   :config (progn (helm-projectile-on)
-                                  (setq projectile-completion-system 'helm)
-
-                                  (setq helm-projectile-fuzzy-match t)
-                                  ))
+          (setq projectile-enable-caching t
+                projectile-cache-file (concat user-cache-directory
+                                              "projectile.cache")
+                projectile-known-projects-file (concat user-cache-directory
+                                                       "projectile-bookmarks.eld"))
 
                  ;; projectile modeline updates causes some slowdown, so let's
                  ;; change it to a static string.
                  ;; https://github.com/bbatsov/projectile/issues/657
-                 (setq projectile-mode-line "Projectile")
+                 (setq projectile-mode-line "Projectile"))
+  :config (progn
+            ;; (setq projectile-indexing-method 'native)
+            (add-to-list 'projectile-globally-ignored-directories "elpa")
 
-                 (projectile-global-mode)
-                 ))
+            (projectile-global-mode)
+            ))
+
+(use-package helm-projectile
+  :ensure t
+  :commands (helm-projectile-switch-to-buffer
+             helm-projectile-find-dir
+             helm-projectile-dired-find-dir
+             helm-projectile-recentf
+             helm-projectile-find-file
+             helm-projectile-grep
+             helm-projectile
+             helm-projectile-switch-project)
+  :init (progn
+          (helm-projectile-on)
+
+          (setq projectile-completion-system 'helm)
+          (setq helm-projectile-fuzzy-match t)
+          (setq projectile-switch-project-action 'helm-projectile)))
 
 ;; [[https://github.com/pashinin/workgroups2][Workgroups2]] adds workspace and
 ;; session support to Emacs. I've found that over time, my use of helm-* to
@@ -1035,6 +1070,7 @@ active, apply to active region instead."
 
 (use-package helm
   :ensure t
+  :defer 1
   :commands (helm-mode)
   :bind (("M-x" . helm-M-x)
          ("C-x C-f" . helm-find-files)
@@ -1044,6 +1080,17 @@ active, apply to active region instead."
          ("C-c u" . helm-buffers-list)
 
          ("C-c y" . helm-show-kill-ring))
+  :init (progn
+          (setq helm-apropos-fuzzy-match t
+                helm-buffers-fuzzy-matching t
+                helm-file-cache-fuzzy-match t
+                helm-imenu-fuzzy-match t
+                helm-lisp-fuzzy-completion t
+                helm-locate-fuzzy-match nil
+                helm-recentf-fuzzy-match t
+                helm-M-x-fuzzy-match t
+                helm-semantic-fuzzy-match t)
+          )
   :config (progn
             (helm-mode t)
 
@@ -1118,22 +1165,17 @@ active, apply to active region instead."
               :ensure t
               :init (progn (helm-flx-mode t)))
 
-            (setq helm-apropos-fuzzy-match t
-                  helm-buffers-fuzzy-matching t
-                  helm-imenu-fuzzy-match t
-                  helm-recentf-fuzzy-match t
-                  helm-locate-fuzzy-match nil
-                  helm-M-x-fuzzy-match t
-                  helm-semantic-fuzzy-match t)
             ))
 
 ;; Helm Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package helm-descbinds
   :ensure t
+  :defer t
   :commands (helm-descbinds)
   :init (progn
           (fset #'describe-bindings #'helm-descbinds)
+          (setq helm-descbinds-window-style 'split)
           ))
 
 (use-package helm-imenu
@@ -1146,10 +1188,9 @@ active, apply to active region instead."
   :config (progn ;; disable pre-input
                  (setq helm-swoop-pre-input-function (lambda () ""))
 
-                 (setq helm-swoop-speed-or-color t)
-
                  (setq helm-swoop-split-with-multiple-windows nil
                        helm-swoop-split-direction 'split-window-vertically
+                       helm-swoop-speed-or-color t
                        helm-swoop-split-window-function 'helm-default-display-buffer)
                  ))
 
@@ -1187,6 +1228,10 @@ active, apply to active region instead."
                                                " [Not readable]"
                                                " [Too big]"
                                                " [Confirm]")))
+
+                 (use-package flx-ido
+                   :ensure t
+                   :init (flx-ido-mode t))
                  ))
 
 (use-package fzf
@@ -1220,8 +1265,7 @@ active, apply to active region instead."
                ;; Hybrid-mode (from [[https://github.com/syl20bnr/spacemacs][Spacemacs]])
                (use-package hybrid-mode
                  :load-path "site-lisp/hybrid-mode"
-                 :commands (hybrid-mode)
-                 :config (hybrid-mode t))
+                 :commands (hybrid-mode))
 
                ;; (setq evil-emacs-state-cursor    '("DarkSeaGreen1"  box))
                ;; ;; (setq evil-normal-state-cursor   '("white"         box))
@@ -1229,8 +1273,9 @@ active, apply to active region instead."
                ;; (setq evil-visual-state-cursor   '("RoyalBlue"     box))
                ;; (setq evil-replace-state-cursor  '("red"           hollow))
                ;; (setq evil-operator-state-cursor '("CadetBlue"     box))
-               )
-  :config (progn (evil-mode t)
+
+               (evil-mode t))
+  :config (progn
 
                  ;; Toggle evil-mode
                  (evil-set-toggle-key "C-\\")
@@ -1298,6 +1343,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ;; create "ie"/"ae" (inside/around) entire buffer text objects:
                  (define-and-bind-text-object "e" "\\`\\s-*" "\\s-*\\'")
 
+                 (define-and-bind-text-object "*" "*" "*")
+
                  ;; Swap j,k with gj, gk
                  (bind-key "j"   #'evil-next-visual-line     evil-normal-state-map)
                  (bind-key "k"   #'evil-previous-visual-line evil-normal-state-map)
@@ -1364,11 +1411,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-leader
   :ensure t
-  :commands (evil-leader-mode)
-  :init (global-evil-leader-mode t)
   :config (progn (setq evil-leader/in-all-states t
                        evil-leader/leader "SPC"
                        evil-leader/non-normal-prefix "s-")
+
+                 (global-evil-leader-mode t)
 
                  (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
                  (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
@@ -1378,6 +1425,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "!" #'shell-command)
 
                  (evil-leader/set-key "a" #'projectile-find-other-file)
+
+                 (evil-leader/set-key "l" #'helm-resume)
 
                  ;; Eval
                  (evil-leader/set-key "eb" #'eval-buffer)
@@ -1392,6 +1441,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "z" #'fzf)           ;; Project(ile) fzf
                  (evil-leader/set-key "g" #'fzf-directory) ;; Directory fzf
 
+                 (evil-leader/set-key "i u" #'helm-ucs)
+
                  ;; Buffers
                  (evil-leader/set-key "b" #'buffer-menu)
                  (evil-leader/set-key "k" #'ido-kill-buffer)
@@ -1401,8 +1452,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "x" #'helm-M-x)
 
                  ;; Rings
-                 (evil-leader/set-key "y"  #'helm-show-kill-ring)
-                 (evil-leader/set-key "rm" #'helm-mark-ring)
+                 (evil-leader/set-key "y"   #'helm-show-kill-ring)
+                 (evil-leader/set-key "r m" #'helm-mark-ring)
+                 (evil-leader/set-key "r r" #'helm-register)
 
                  ;; Git
                  (evil-leader/set-key "m" #'magit-status)
@@ -1416,7 +1468,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  ;; Avy integration
                  (evil-leader/set-key "SPC" #'avy-goto-word-or-subword-1)
-                 (evil-leader/set-key "l"   #'avy-goto-line)
 
                  ;; Narrowing
                  (put 'narrow-to-region 'disabled nil)
