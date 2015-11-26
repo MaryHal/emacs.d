@@ -451,18 +451,18 @@ active, apply to active region instead."
         (left-fringe . 0) (right-fringe . 0)
         ))
 
-(use-package menu-bar
-  :config (menu-bar-mode -1))
+;; Remove GUI elements
+(when (and (fboundp 'tool-bar-mode) (not (eq tool-bar-mode -1)))
+  (tool-bar-mode -1))
+(when (and (fboundp 'scroll-bar-mode) (not (eq scroll-bar-mode -1)))
+  (scroll-bar-mode -1))
 
-(use-package tool-bar
-  :config (tool-bar-mode -1))
-
-(use-package tooltip
-  :config (tooltip-mode -1))
-
-(use-package scroll-bar
-  :disabled t
-  :config (scroll-bar-mode -1))
+;; tooltips in echo-aera
+(when (and (fboundp 'tooltip-mode) (not (eq tooltip-mode -1)))
+  (tooltip-mode -1))
+(unless (eq window-system 'mac)
+  (when (and (fboundp 'menu-bar-mode) (not (eq menu-bar-mode -1)))
+    (menu-bar-mode -1)))
 
 ;; No splash screen please
 (setq inhibit-splash-screen t)
@@ -492,6 +492,8 @@ active, apply to active region instead."
   :ensure t
   :config (progn (setq rm-blacklist nil)
                  (setq rm-whitelist " Wrap")
+
+                 ;; ;; "You don't need to activate rich-minority-mode if you're using smart-mode-line"
                  ;; (rich-minority-mode t)
                  ))
 
@@ -1265,7 +1267,8 @@ active, apply to active region instead."
                ;; Hybrid-mode (from [[https://github.com/syl20bnr/spacemacs][Spacemacs]])
                (use-package hybrid-mode
                  :load-path "site-lisp/hybrid-mode"
-                 :commands (hybrid-mode))
+                 :commands (hybrid-mode)
+                 :init (hybrid-mode t))
 
                ;; (setq evil-emacs-state-cursor    '("DarkSeaGreen1"  box))
                ;; ;; (setq evil-normal-state-cursor   '("white"         box))
@@ -1493,6 +1496,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-args
   :ensure t
+  :defer t
   :init (progn
           ;; bind evil-args text objects
           (bind-key "a" #'evil-inner-arg evil-inner-text-objects-map)
@@ -1519,6 +1523,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-mc
   :ensure t
+  :disabled t
   :init (progn (global-evil-mc-mode t)))
 
 ;; Make Anzu work with evil-search
@@ -1577,6 +1582,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Language Hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package sh-script
+  :defer t
   :config (progn
             (defun disable-elec-here-doc-mode ()
               (sh-electric-here-document-mode -1))
@@ -1584,6 +1590,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             (add-hook 'sh-mode-hook #'disable-elec-here-doc-mode)))
 
 (use-package cc-mode
+  :defer t
   :config (progn (setq-default c-default-style "bsd")
                  (setq-default c-basic-offset 4)
 
@@ -1646,7 +1653,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package yasnippet
   :ensure t
-  :init (progn (setq yas-snippet-dirs (concat user-emacs-directory "snippets")))
+  :init (progn
+          (setq yas-snippet-dirs (concat user-emacs-directory "snippets"))
+
+          ;; We don't want undefined variable errors
+          (defvar yas-global-mode nil))
   :config (progn (yas-reload-all)
                  (add-hook 'prog-mode-hook #'yas-minor-mode)
                  (add-hook 'markdown-mode-hook #'yas-minor-mode)
@@ -1721,6 +1732,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
             (use-package company-flx
               :ensure t
+              :disabled t
               :config (progn (company-flx-mode t)))
 
             (global-company-mode t)
