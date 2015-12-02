@@ -1271,7 +1271,7 @@ active, apply to active region instead."
                  :init (hybrid-mode t))
 
                ;; (setq evil-emacs-state-cursor    '("DarkSeaGreen1"  box))
-               ;; ;; (setq evil-normal-state-cursor   '("white"         box))
+               ;; (setq evil-normal-state-cursor   '("white"         box))
                ;; (setq evil-insert-state-cursor   '("DarkSeaGreen1" box))
                ;; (setq evil-visual-state-cursor   '("RoyalBlue"     box))
                ;; (setq evil-replace-state-cursor  '("red"           hollow))
@@ -1347,6 +1347,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (define-and-bind-text-object "e" "\\`\\s-*" "\\s-*\\'")
 
                  (define-and-bind-text-object "*" "*" "*")
+                 (define-and-bind-text-object "/" "/" "/")
 
                  ;; Swap j,k with gj, gk
                  (bind-key "j"   #'evil-next-visual-line     evil-normal-state-map)
@@ -1511,6 +1512,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           ;; bind evil-jump-out-args
           ;; (bind-key "gm" 'evil-jump-out-args evil-normal-state-map)
           ))
+
+(use-package evil-exchange
+  :ensure t
+  :defer t
+  :init (progn (evil-exchange-install)))
 
 (use-package evil-numbers
   :ensure t
@@ -1841,6 +1847,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package server
   :config (unless (server-running-p)
             (server-start)))
+
 
 ;; Print out some timing data.
 (when window-system
