@@ -318,6 +318,10 @@ active, apply to active region instead."
 
 ;; (define-key special-event-map (kbd "<sigusr1>") 'my-quit-emacs-unconditionally)
 
+(use-package esup
+  :ensure t
+  :defer t)
+
 ;; Backups ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Disable backup
