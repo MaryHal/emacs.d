@@ -1499,6 +1499,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :defer t
   :config (global-evil-surround-mode t))
 
+(use-package evil-textobj-anyblock
+  :ensure t
+  :defer t
+  :init (progn
+          (bind-key "b" 'evil-textobj-anyblock-inner-block evil-inner-text-objects-map)
+          (bind-key "b" 'evil-textobj-anyblock-a-block     evil-outer-text-objects-map)
+          ))
+
 (use-package evil-args
   :ensure t
   :defer t
