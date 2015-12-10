@@ -696,6 +696,11 @@ active, apply to active region instead."
 
 (use-package paren
   :config (progn (show-paren-mode t)
+
+                 ;; Show matched parens even in selections
+                 (setq show-paren-priority -50)
+
+                 ;; Immediately match parens
                  (setq show-paren-delay 0)
                  ))
 
@@ -845,7 +850,7 @@ active, apply to active region instead."
             (setq beacon-blink-when-window-changes t)
             ;; (setq beacon-blink-when-point-moves 2)
 
-            (setq beacon-color 0.3)
+            (setq beacon-color 0.8)
 
             (beacon-mode t)))
 
@@ -1237,7 +1242,9 @@ active, apply to active region instead."
 
                  (use-package ido-vertical-mode
                    :ensure t
-                   :init (ido-vertical-mode t))
+                   :init (progn
+                           (setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
+                           (ido-vertical-mode t)))
 
                  (use-package flx-ido
                    :ensure t
