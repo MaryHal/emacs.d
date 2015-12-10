@@ -1223,17 +1223,21 @@ active, apply to active region instead."
                  ;; Use ido everywhere
                  (ido-everywhere t)
 
-                 ;; Display ido results vertically, rather than horizontally
-                 (setq ido-decorations (quote ("\n-> "
-                                               ""
-                                               "\n "
-                                               "\n ..."
-                                               "[" "]"
-                                               " [No match]"
-                                               " [Matched]"
-                                               " [Not readable]"
-                                               " [Too big]"
-                                               " [Confirm]")))
+                 ;; ;; Display ido results vertically, rather than horizontally
+                 ;; (setq ido-decorations (quote ("\n-> "
+                 ;;                               ""
+                 ;;                               "\n "
+                 ;;                               "\n ..."
+                 ;;                               "[" "]"
+                 ;;                               " [No match]"
+                 ;;                               " [Matched]"
+                 ;;                               " [Not readable]"
+                 ;;                               " [Too big]"
+                 ;;                               " [Confirm]")))
+
+                 (use-package ido-vertical-mode
+                   :ensure t
+                   :init (ido-vertical-mode t))
 
                  (use-package flx-ido
                    :ensure t
@@ -1282,13 +1286,10 @@ active, apply to active region instead."
                ;; (setq evil-operator-state-cursor '("CadetBlue"     box))
 
                (evil-mode t))
-  :config (progn
+  :config (progn (evil-set-toggle-key "C-\\")
 
-                 ;; Toggle evil-mode
-                 (evil-set-toggle-key "C-\\")
-
-                 (evil-set-initial-state 'erc-mode 'normal)
-                 (evil-set-initial-state 'package-menu-mode 'normal)
+                 ;; (evil-set-initial-state 'erc-mode 'normal)
+                 ;; (evil-set-initial-state 'package-menu-mode 'normal)
                  (evil-set-initial-state 'term-mode 'emacs)
 
                  ;; Make ESC work more or less like it does in Vim
