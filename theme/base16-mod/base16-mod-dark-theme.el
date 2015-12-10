@@ -6,8 +6,7 @@
 
 (deftheme base16-mod-dark)
 
-(let ((basebg "#040404")
-      (base00 "#1d1f21")
+(let ((base00 "#1d1f21")
       (base01 "#282a2e")
       (base02 "#373b41")
       (base03 "#969896")
@@ -22,7 +21,8 @@
       (base0C "#8abeb7")
       (base0D "#81a2be")
       (base0E "#b294bb")
-      (base0F "#a3685a"))
+      (base0F "#a3685a")
+      (basebg "#040404"))
 
   (custom-theme-set-faces
    'base16-mod-dark
@@ -146,7 +146,7 @@
    `(whitespace-trailing ((t (:background ,base08 :foreground ,base0A))))
 
    ;; Parenthesis matching (built-in)
-   `(show-paren-match ((t (:background ,base00 :foreground ,base05))))
+   `(show-paren-match ((t (:background ,basebg :foreground ,base05 :weight bold))))
    `(show-paren-mismatch ((t (:background ,base00 :foreground ,base0A :weight bold))))
 
    ;; Anzu
