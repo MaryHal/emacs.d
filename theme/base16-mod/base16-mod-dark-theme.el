@@ -146,7 +146,7 @@
    `(whitespace-trailing ((t (:background ,base08 :foreground ,base0A))))
 
    ;; Parenthesis matching (built-in)
-   `(show-paren-match ((t (:background ,basebg :foreground ,base05 :weight bold))))
+   `(show-paren-match ((t (:background ,basebg :foreground ,base0A :weight bold))))
    `(show-paren-mismatch ((t (:background ,base00 :foreground ,base0A :weight bold))))
 
    ;; Anzu

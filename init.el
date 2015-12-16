@@ -854,6 +854,10 @@ active, apply to active region instead."
 
             (beacon-mode t)))
 
+(use-package string-edit
+  :ensure t
+  :defer t)
+
 ;; Version Control ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package magit
