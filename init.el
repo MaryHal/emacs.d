@@ -40,28 +40,30 @@
 
 (eval-when-compile (package-initialize))
 
-;; ;; Bootstrap Function!
-;; (defun require-package (package)
-;;   "refresh package archives, check package presence and install
-;; if it's not installed"
-;;   (if (null (require package nil t))
-;;       (progn (package-initialize)
-;;              (let* ((ARCHIVES (if (null package-archive-contents)
-;;                                   (progn (package-refresh-contents)
-;;                                          package-archive-contents)
-;;                                 package-archive-contents))
-;;                     (AVAIL (assoc package ARCHIVES)))
-;;                (if AVAIL
-;;                    (package-install package)))
-;;              (require package))))
+;; Bootstrap Function!
+(defun require-package (package)
+  "refresh package archives, check package presence and install
+if it's not installed"
+  (if (null (require package nil t))
+      (progn (package-initialize)
+             (let* ((ARCHIVES (if (null package-archive-contents)
+                                  (progn (package-refresh-contents)
+                                         package-archive-contents)
+                                package-archive-contents))
+                    (AVAIL (assoc package ARCHIVES)))
+               (if AVAIL
+                   (package-install package)))
+             (require package))))
 
-(unless (package-installed-p 'use-package)
-  (progn
-    (package-refresh-contents)
-    (package-install 'use-package)
-    (package-initialize)))
+;; (unless (package-installed-p 'use-package)
+;;   (progn
+;;     (package-refresh-contents)
+;;     (package-install 'use-package)
+;;     (package-initialize)))
+;;
+;; (require 'use-package)
 
-(require 'use-package)
+(require-package 'use-package)
 
 ;; Aquire use-package, the crux of our config file.
 (setq use-package-verbose t)
@@ -711,6 +713,12 @@ active, apply to active region instead."
               (highlight-parentheses-mode t))
             (add-hook 'prog-mode-hook #'hl-parens-hook)
             ))
+
+(use-package highlight-leading-spaces
+  :ensure t
+  :disabled t
+  :defer t
+  :init (progn (add-hook 'prog-mode-hook 'highlight-leading-spaces-mode)))
 
 (use-package highlight-indent-guides
   :ensure t
