@@ -1273,6 +1273,9 @@ active, apply to active region instead."
                (setq evil-cross-lines t)
                (setq evil-intercept-esc 'always)
 
+               (setq evil-want-fine-undo t)
+               (setq evil-symbol-word-search t)
+
                (setq evil-auto-indent t)
 
                ;; Holy-mode (from [[https://github.com/syl20bnr/spacemacs][Spacemacs]]) for
