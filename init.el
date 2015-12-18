@@ -773,7 +773,31 @@ active, apply to active region instead."
 
 (use-package swiper
   :ensure t
-  :defer t)
+  :defer t
+  :init (progn
+          (defun ivy-imenu-get-candidates-from (alist  &optional prefix)
+            (cl-loop for elm in alist
+                     nconc (if (imenu--subalist-p elm)
+                               (ivy-imenu-get-candidates-from
+                                (cl-loop for (e . v) in (cdr elm) collect
+                                         (cons e (if (integerp v) (copy-marker v) v)))
+                                (concat prefix (if prefix ".") (car elm)))
+                             (and (cdr elm) ; bug in imenu, should not be needed.
+                                  (setcdr elm (copy-marker (cdr elm))) ; Same as [1].
+                                  (list (cons (concat prefix (if prefix ".") (car elm))
+                                              (copy-marker (cdr elm))))))))
+
+          (defun ivy-imenu-goto ()
+            "Go to buffer position"
+            (interactive)
+            (let ((imenu-auto-rescan t) items)
+              (unless (featurep 'imenu)
+                (require 'imenu nil t))
+              (setq items (imenu--make-index-alist t))
+              (ivy-read "imenu items:"
+                        (ivy-imenu-get-candidates-from (delete (assoc "*Rescan*" items) items))
+                        :action (lambda (k) (goto-char k)))))
+          ))
 
 (use-package anzu
   :ensure t
@@ -1480,6 +1504,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "u" #'helm-buffers-list)
 
                  (evil-leader/set-key "o" #'helm-imenu)
+                 ;; (evil-leader/set-key "o" #'ivy-imenu-goto)
                  (evil-leader/set-key "x" #'helm-M-x)
 
                  ;; Rings
