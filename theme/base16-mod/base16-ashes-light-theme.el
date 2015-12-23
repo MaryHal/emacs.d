@@ -547,7 +547,7 @@
    ;; `(ansi-term-color-vector
    ;;   ;; black, base08, base0B, base0A, base0D, magenta, cyan, white
    ;;   [unspecified ,base00 ,base08 ,base0B ,base0A ,base0D ,base0E ,base0D ,base05])))
-   )
+   ))
 
 ;;;###autoload
 (when (and (boundp 'custom-theme-load-path)

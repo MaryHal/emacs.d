@@ -627,6 +627,7 @@ active, apply to active region instead."
           (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/base16-mod/"))
           (mhl/load-dark-theme 'base16-mod-dark)
           ;; (mhl/load-dark-theme 'base16-ashes-dark)
+          ;; (mhl/load-light-theme 'base16-ashes-light)
           ))
 
 (use-package leuven-mod
@@ -775,29 +776,13 @@ active, apply to active region instead."
   :ensure t
   :defer t
   :init (progn
-          (defun ivy-imenu-get-candidates-from (alist  &optional prefix)
-            (cl-loop for elm in alist
-                     nconc (if (imenu--subalist-p elm)
-                               (ivy-imenu-get-candidates-from
-                                (cl-loop for (e . v) in (cdr elm) collect
-                                         (cons e (if (integerp v) (copy-marker v) v)))
-                                (concat prefix (if prefix ".") (car elm)))
-                             (and (cdr elm) ; bug in imenu, should not be needed.
-                                  (setcdr elm (copy-marker (cdr elm))) ; Same as [1].
-                                  (list (cons (concat prefix (if prefix ".") (car elm))
-                                              (copy-marker (cdr elm))))))))
-
-          (defun ivy-imenu-goto ()
-            "Go to buffer position"
-            (interactive)
-            (let ((imenu-auto-rescan t) items)
-              (unless (featurep 'imenu)
-                (require 'imenu nil t))
-              (setq items (imenu--make-index-alist t))
-              (ivy-read "imenu items:"
-                        (ivy-imenu-get-candidates-from (delete (assoc "*Rescan*" items) items))
-                        :action (lambda (k) (goto-char k)))))
+          (setq ivy-re-builders-alist
+                '((t . ivy--regex-fuzzy)))
           ))
+
+(use-package counsel
+  :ensure t
+  :defer t)
 
 (use-package anzu
   :ensure t
@@ -1496,7 +1481,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "z" #'fzf)           ;; Project(ile) fzf
                  (evil-leader/set-key "g" #'fzf-directory) ;; Directory fzf
 
-                 (evil-leader/set-key "i u" #'helm-ucs)
+                 (evil-leader/set-key "iu" #'helm-ucs)
 
                  ;; Buffers
                  (evil-leader/set-key "b" #'buffer-menu)
@@ -1509,8 +1494,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  ;; Rings
                  (evil-leader/set-key "y"   #'helm-show-kill-ring)
-                 (evil-leader/set-key "r m" #'helm-mark-ring)
-                 (evil-leader/set-key "r r" #'helm-register)
+                 (evil-leader/set-key "rm" #'helm-mark-ring)
+                 (evil-leader/set-key "rr" #'helm-register)
 
                  ;; Git
                  (evil-leader/set-key "m" #'magit-status)
@@ -1527,10 +1512,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  ;; Narrowing
                  (put 'narrow-to-region 'disabled nil)
-                 (evil-leader/set-key "n r" #'narrow-to-region)
-                 (evil-leader/set-key "n d" #'narrow-to-defun)
-                 (evil-leader/set-key "n p" #'narrow-to-page)
-                 (evil-leader/set-key "n w" #'widen)
+                 (evil-leader/set-key "nr" #'narrow-to-region)
+                 (evil-leader/set-key "nd" #'narrow-to-defun)
+                 (evil-leader/set-key "np" #'narrow-to-page)
+                 (evil-leader/set-key "nw" #'widen)
 
                  ;; Expand region
                  (evil-leader/set-key "v" #'er/expand-region)
@@ -1575,6 +1560,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-exchange
   :ensure t
+  :disabled t
   :defer t
   :init (progn (evil-exchange-install)))
 
