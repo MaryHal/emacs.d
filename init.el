@@ -730,19 +730,19 @@ active, apply to active region instead."
             (set-face-background 'highlight-indent-guides-odd-face  "#0B0B0B")
             ))
 
-;; (use-package elec-pair
-;;   :config (electric-pair-mode t))
+(use-package elec-pair
+  :config (electric-pair-mode t))
 
 (use-package electric
   :config (electric-indent-mode t))
 
 (use-package term
   :defer t
-  :init (progn
-          (defun disable-scroll-margin ()
-            (setq-local scroll-margin 0))
-          (add-hook 'term-mode-hook #'disable-scroll-margin)
-          ))
+  :config (progn
+            (defun disable-scroll-margin ()
+              (setq-local scroll-margin 0))
+            (add-hook 'term-mode-hook #'disable-scroll-margin)
+            ))
 
 (use-package whitespace
   :defer t
@@ -768,17 +768,18 @@ active, apply to active region instead."
 (use-package avy
   :ensure t
   :commands (avy-goto-word-or-subword-1)
-  :init (progn (setq avy-keys
-                     '(?c ?a ?s ?d ?e ?f ?h ?w ?y ?j ?k ?l ?n ?m ?v ?r ?u ?p))
-               ))
+  :config (progn (setq avy-keys
+                       '(?c ?a ?s ?d ?e ?f ?h ?w ?y ?j ?k ?l ?n ?m ?v ?r ?u ?p))
+                 ))
 
 (use-package swiper
   :ensure t
   :defer t
-  :init (progn
-          (setq ivy-re-builders-alist
-                '((t . ivy--regex-fuzzy)))
-          ))
+  :config (progn
+            (setq ivy-re-builders-alist
+                  '((t . ivy--regex-fuzzy)))
+            (setq ivy-height 20)
+            ))
 
 (use-package counsel
   :ensure t
@@ -832,16 +833,16 @@ active, apply to active region instead."
   :bind (("C->"     . mc/mark-next-like-this)
          ("C-<"     . mc/mark-previous-like-this)
          ("C-c C-<" . mc/mark-all-like-this))
-  :init (progn (setq mc/list-file (concat user-cache-directory "mc-lists.el"))
+  :config (progn (setq mc/list-file (concat user-cache-directory "mc-lists.el"))
 
-               (setq mc/unsupported-minor-modes '(company-mode
-                                                  auto-complete-mode
-                                                  flyspell-mode
-                                                  jedi-mode))
+                 (setq mc/unsupported-minor-modes '(company-mode
+                                                    auto-complete-mode
+                                                    flyspell-mode
+                                                    jedi-mode))
 
-               (global-unset-key (kbd "M-<down-mouse-1>"))
-               (bind-key "M-<mouse-1>" #'mc/add-cursor-on-click)
-               ))
+                 ;; (global-unset-key (kbd "M-<down-mouse-1>"))
+                 ;; (bind-key "M-<mouse-1>" #'mc/add-cursor-on-click)
+                 ))
 
 (use-package ag
   :ensure t
@@ -998,8 +999,7 @@ active, apply to active region instead."
                              ("K" find-function-on-key "Find Key")
                              ("m" describe-mode "Describe Modes")
                              ("V" find-variable "Find Variable")
-                             ("v" describe-variable "Describe Variable")
-                             ("b" helm-descbinds "Describe Bindings")))
+                             ("v" describe-variable "Describe Variable")))
 
           (bind-key "<f2>" (defhydra hydra-zoom ()
                              "Zoom"
@@ -1105,25 +1105,20 @@ active, apply to active region instead."
   :defer 1
   :commands (helm-mode)
   :bind (("M-x" . helm-M-x)
-         ("C-x C-f" . helm-find-files)
          ("C-c C-f" . helm-find-files)
-
-         ("C-x b" . helm-buffers-list)
          ("C-c u" . helm-buffers-list)
-
          ("C-c y" . helm-show-kill-ring))
-  :init (progn
-          (setq helm-apropos-fuzzy-match t
-                helm-buffers-fuzzy-matching t
-                helm-file-cache-fuzzy-match t
-                helm-imenu-fuzzy-match t
-                helm-lisp-fuzzy-completion t
-                helm-locate-fuzzy-match nil
-                helm-recentf-fuzzy-match t
-                helm-M-x-fuzzy-match t
-                helm-semantic-fuzzy-match t)
-          )
   :config (progn
+            (setq helm-apropos-fuzzy-match t
+                  helm-buffers-fuzzy-matching t
+                  helm-file-cache-fuzzy-match t
+                  helm-imenu-fuzzy-match t
+                  helm-lisp-fuzzy-completion t
+                  helm-locate-fuzzy-match nil
+                  helm-recentf-fuzzy-match t
+                  helm-M-x-fuzzy-match t
+                  helm-semantic-fuzzy-match t)
+
             (helm-mode t)
 
             (setq-default helm-mode-line-string "")
@@ -1203,6 +1198,7 @@ active, apply to active region instead."
 
 (use-package helm-descbinds
   :ensure t
+  :disabled t
   :defer t
   :commands (helm-descbinds)
   :init (progn
@@ -1263,21 +1259,28 @@ active, apply to active region instead."
 
                  (use-package ido-vertical-mode
                    :ensure t
+                   :disabled t
                    :init (progn
                            (setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
                            (ido-vertical-mode t)))
 
+                 (use-package flx
+                   :ensure t)
+
                  (use-package flx-ido
                    :ensure t
                    :init (flx-ido-mode t))
+
+                 (use-package smex
+                   :ensure t)
                  ))
 
 (use-package fzf
   :ensure t
   :commands (fzf fzf-directory)
-  :init (progn
-          (setq fzf/args "-x --color=no")
-          ))
+  :config (progn
+            (setq fzf/args "-x --color=no")
+            ))
 
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1477,7 +1480,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "ep" #'previous-error)
 
                  ;; Files
-                 (evil-leader/set-key "f" #'helm-find-files)
+                 (evil-leader/set-key "f" #'find-file)
                  (evil-leader/set-key "z" #'fzf)           ;; Project(ile) fzf
                  (evil-leader/set-key "g" #'fzf-directory) ;; Directory fzf
 
@@ -1489,11 +1492,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "u" #'helm-buffers-list)
 
                  (evil-leader/set-key "o" #'helm-imenu)
-                 ;; (evil-leader/set-key "o" #'ivy-imenu-goto)
                  (evil-leader/set-key "x" #'helm-M-x)
 
                  ;; Rings
-                 (evil-leader/set-key "y"   #'helm-show-kill-ring)
+                 (evil-leader/set-key "y"  #'helm-show-kill-ring)
                  (evil-leader/set-key "rm" #'helm-mark-ring)
                  (evil-leader/set-key "rr" #'helm-register)
 
@@ -1795,20 +1797,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package flycheck
   :ensure t
   :defer 5
-  :init (progn
-          ;; Remove newline checks, since they would trigger an immediate check
-          ;; when we want the idle-change-delay to be in effect while editing.
-          (setq flycheck-check-syntax-automatically '(save
-                                                      idle-change
-                                                      mode-enabled))
+  :config (progn
+            ;; Remove newline checks, since they would trigger an immediate check
+            ;; when we want the idle-change-delay to be in effect while editing.
+            (setq flycheck-check-syntax-automatically '(save
+                                                        idle-change
+                                                        mode-enabled))
 
-          ;; Flycheck doesn't use =load-path= when checking emacs-lisp files.
-          ;; Instead, it uses =flycheck-emacs-lisp-load-path=, which is empty by
-          ;; default. Let's have flycheck use =load-path=!
-          (setq-default flycheck-emacs-lisp-load-path 'inherit)
+            ;; Flycheck doesn't use =load-path= when checking emacs-lisp files.
+            ;; Instead, it uses =flycheck-emacs-lisp-load-path=, which is empty by
+            ;; default. Let's have flycheck use =load-path=!
+            (setq-default flycheck-emacs-lisp-load-path 'inherit)
 
-          (global-flycheck-mode t)
-          ))
+            (global-flycheck-mode t)
+            ))
 
 (use-package flycheck-irony
   :ensure t
@@ -1871,10 +1873,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :defer t
   :ensure t
   :commands (twittering-mode)
-  :init (progn (setq twittering-use-master-password t)
-               (setq twittering-icon-mode t)
-               (setq twittering-allow-insecure-server-cert t)
-               ))
+  :config (progn (setq twittering-use-master-password t)
+                 (setq twittering-icon-mode t)
+                 (setq twittering-allow-insecure-server-cert t)
+                 ))
 
 ;; Finishing Up ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
