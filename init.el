@@ -785,6 +785,11 @@ active, apply to active region instead."
 
             (setq projectile-completion-system 'ivy)
             (setq magit-completing-read-function 'ivy-completing-read)
+
+            (defun mhl/swiper-recenter (&rest args)
+              "recenter display after swiper"
+              (recenter))
+            (advice-add 'swiper :after #'mhl/swiper-recenter)
             ))
 
 (use-package counsel
@@ -885,10 +890,13 @@ active, apply to active region instead."
 
 (use-package smartparens
   :ensure t
-  :bind (("M-C-9" . sp-forward-barf-sexp)
-         ("M-C-0" . sp-forward-slurp-sexp))
-  :config (progn
-            (use-package smartparens-config)))
+  :init (progn
+          (use-package smartparens-config)
+          (bind-key (kbd "C-<left>") 'sp-backward-slurp-sexp smartparens-mode-map)
+          (bind-key (kbd "C-<right>") 'sp-forward-slurp-sexp smartparens-mode-map)
+          (bind-key (kbd "C-M-<left>") 'sp-backward-barf-sexp smartparens-mode-map)
+          (bind-key (kbd "C-M-<right>") 'sp-forward-barf-sexp smartparens-mode-map)
+          ))
 
 ;; Version Control ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1019,6 +1027,13 @@ active, apply to active region instead."
                              "Zoom"
                              ("i" text-scale-increase "in")
                              ("o" text-scale-decrease "out")))
+          (defhydra hydra-yank-pop ()
+            "yank"
+            ("C-y" yank nil)
+            ("M-y" yank-pop nil)
+            ("y" (yank-pop 1) "next")
+            ("Y" (yank-pop -1) "prev")
+            ("l" helm-show-kill-ring "list" :color blue))
           ))
 
 ;; Project Management ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1516,7 +1531,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ;; (evil-leader/set-key "x" #'helm-M-x)
 
                  ;; Rings
-                 (evil-leader/set-key "y"  #'helm-show-kill-ring)
+                 (evil-leader/set-key "y"  #'counsel-yank-pop)
                  (evil-leader/set-key "rm" #'helm-mark-ring)
                  (evil-leader/set-key "rr" #'helm-register)
 
@@ -1527,8 +1542,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "p" #'projectile-command-map)
 
                  ;; Swiper/Swoop
-                 (evil-leader/set-key "s" #'helm-swoop)
-                 (evil-leader/set-key "w" #'swiper)
+                 (evil-leader/set-key "s" #'swiper)
+                 ;; (evil-leader/set-key "s" #'helm-swoop)
 
                  ;; Avy integration
                  (evil-leader/set-key "SPC" #'avy-goto-word-or-subword-1)
