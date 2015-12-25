@@ -209,6 +209,11 @@
    `(helm-swoop-target-line-block-face ((t (:foreground ,base00 :background ,base0B))))
    `(helm-swoop-target-word-face ((t (:foreground ,base01 :background ,base0C))))
 
+   `(ivy-minibuffer-match-face-1 ((t (:background ,base04 :foreground ,basebg))))
+   `(ivy-minibuffer-match-face-2 ((t (:background ,base03 :foreground ,basebg :weight bold))))
+   `(ivy-minibuffer-match-face-3 ((t (:background ,base0A :foreground ,basebg :weight bold))))
+   `(ivy-minibuffer-match-face-4 ((t (:background ,base0B :foreground ,basebg :weight bold))))
+
    ;; company-mode
    `(company-tooltip ((t (:weight bold :background ,base00 :foreground ,base05))))
    `(company-tooltip-common ((t (:inherit company-tooltip :foreground ,base03))))

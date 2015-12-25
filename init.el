@@ -774,16 +774,22 @@ active, apply to active region instead."
 
 (use-package swiper
   :ensure t
-  :defer t
-  :config (progn
+  :init (progn
             (setq ivy-re-builders-alist
                   '((t . ivy--regex-fuzzy)))
             (setq ivy-height 20)
+            (setq ivy-format-function 'ivy-format-function-arrow)
+
+            (ivy-mode t)
+
+            (setq projectile-completion-system 'ivy)
+            (setq magit-completing-read-function 'ivy-completing-read)
             ))
 
 (use-package counsel
-  :ensure t
-  :defer t)
+ :ensure t
+ :defer t
+ :bind (("M-x" . counsel-M-x)))
 
 (use-package anzu
   :ensure t
@@ -1011,6 +1017,7 @@ active, apply to active region instead."
 
 (use-package projectile
   :ensure t
+  :defer 1
   :commands (projectile-ack
              projectile-ag
              projectile-compile-project
@@ -1040,10 +1047,10 @@ active, apply to active region instead."
                 projectile-known-projects-file (concat user-cache-directory
                                                        "projectile-bookmarks.eld"))
 
-                 ;; projectile modeline updates causes some slowdown, so let's
-                 ;; change it to a static string.
-                 ;; https://github.com/bbatsov/projectile/issues/657
-                 (setq projectile-mode-line "Projectile"))
+          ;; projectile modeline updates causes some slowdown, so let's
+          ;; change it to a static string.
+          ;; https://github.com/bbatsov/projectile/issues/657
+          (setq projectile-mode-line "Projectile"))
   :config (progn
             ;; (setq projectile-indexing-method 'native)
             (add-to-list 'projectile-globally-ignored-directories "elpa")
@@ -1053,6 +1060,7 @@ active, apply to active region instead."
 
 (use-package helm-projectile
   :ensure t
+  :disabled t
   :commands (helm-projectile-switch-to-buffer
              helm-projectile-find-dir
              helm-projectile-dired-find-dir
@@ -1104,7 +1112,8 @@ active, apply to active region instead."
   :ensure t
   :defer 1
   :commands (helm-mode)
-  :bind (("M-x" . helm-M-x)
+  :bind (
+         ;; ("M-x" . helm-M-x)
          ("C-c C-f" . helm-find-files)
          ("C-c u" . helm-buffers-list)
          ("C-c y" . helm-show-kill-ring))
@@ -1119,7 +1128,7 @@ active, apply to active region instead."
                   helm-M-x-fuzzy-match t
                   helm-semantic-fuzzy-match t)
 
-            (helm-mode t)
+            ;; (helm-mode t)
 
             (setq-default helm-mode-line-string "")
 
@@ -1226,13 +1235,15 @@ active, apply to active region instead."
 
 (use-package ido
   :ensure t
+  :disabled t
   :defer t
-  :config (progn (ido-mode t)
-                 (setq ido-enable-prefix nil
+  :config (progn (setq ido-enable-prefix nil
                        ido-enable-flex-matching t
                        ido-create-new-buffer 'always
                        ido-use-filename-at-point nil
                        ido-max-prospects 10)
+
+                 ;; (ido-mode t)
 
                  (setq ido-save-directory-list-file (concat user-cache-directory "ido.last"))
 
@@ -1242,8 +1253,8 @@ active, apply to active region instead."
                  (add-to-list 'ido-ignore-directories "target")
                  (add-to-list 'ido-ignore-directories "node_modules")
 
-                 ;; Use ido everywhere
-                 (ido-everywhere t)
+                 ;; ;; Use ido everywhere
+                 ;; (ido-everywhere t)
 
                  ;; ;; Display ido results vertically, rather than horizontally
                  ;; (setq ido-decorations (quote ("\n-> "
@@ -1264,16 +1275,18 @@ active, apply to active region instead."
                            (setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
                            (ido-vertical-mode t)))
 
-                 (use-package flx
-                   :ensure t)
-
                  (use-package flx-ido
                    :ensure t
+                   :disabled t
                    :init (flx-ido-mode t))
-
-                 (use-package smex
-                   :ensure t)
                  ))
+
+(use-package flx
+  :ensure t)
+
+(use-package smex
+  :ensure t
+  :init (progn (setq smex-save-file (concat user-cache-directory "smex-items"))))
 
 (use-package fzf
   :ensure t
@@ -1469,8 +1482,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  (evil-leader/set-key "a" #'projectile-find-other-file)
 
-                 (evil-leader/set-key "l" #'helm-resume)
-
                  ;; Eval
                  (evil-leader/set-key "eb" #'eval-buffer)
                  (evil-leader/set-key "er" #'eval-region)
@@ -1484,15 +1495,15 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "z" #'fzf)           ;; Project(ile) fzf
                  (evil-leader/set-key "g" #'fzf-directory) ;; Directory fzf
 
-                 (evil-leader/set-key "iu" #'helm-ucs)
-
                  ;; Buffers
                  (evil-leader/set-key "b" #'buffer-menu)
                  (evil-leader/set-key "k" #'ido-kill-buffer)
-                 (evil-leader/set-key "u" #'helm-buffers-list)
+                 (evil-leader/set-key "u" #'switch-to-buffer)
 
-                 (evil-leader/set-key "o" #'helm-imenu)
-                 (evil-leader/set-key "x" #'helm-M-x)
+                 (evil-leader/set-key "o" #'counsel-imenu)
+                 (evil-leader/set-key "x" #'counsel-M-x)
+                 ;; (evil-leader/set-key "o" #'helm-imenu)
+                 ;; (evil-leader/set-key "x" #'helm-M-x)
 
                  ;; Rings
                  (evil-leader/set-key "y"  #'helm-show-kill-ring)
