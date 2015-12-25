@@ -442,8 +442,8 @@ active, apply to active region instead."
   (global-unset-key (kbd (format "M-%d" n)))
   (global-unset-key (kbd (format "C-%d" n))))
 
-(bind-key "M-9"      #'backward-sexp)
-(bind-key "M-0"      #'forward-sexp)
+;; (bind-key "M-9"      #'backward-sexp)
+;; (bind-key "M-0"      #'forward-sexp)
 
 ;; Appearance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -731,6 +731,7 @@ active, apply to active region instead."
             ))
 
 (use-package elec-pair
+  :disabled t
   :config (electric-pair-mode t))
 
 (use-package electric
@@ -881,6 +882,13 @@ active, apply to active region instead."
 (use-package string-edit
   :ensure t
   :defer t)
+
+(use-package smartparens
+  :ensure t
+  :bind (("M-C-9" . sp-forward-barf-sexp)
+         ("M-C-0" . sp-forward-slurp-sexp))
+  :config (progn
+            (use-package smartparens-config)))
 
 ;; Version Control ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1216,10 +1224,12 @@ active, apply to active region instead."
           ))
 
 (use-package helm-imenu
+  :disabled t
   :bind ("C-c o" . helm-imenu))
 
 (use-package helm-swoop
   :ensure t
+  :disabled t
   :bind (("C-c s" . helm-swoop))
   :init (progn (bind-key "M-i" #'helm-swoop-from-isearch isearch-mode-map))
   :config (progn ;; disable pre-input
@@ -1235,7 +1245,6 @@ active, apply to active region instead."
 
 (use-package ido
   :ensure t
-  :disabled t
   :defer t
   :config (progn (setq ido-enable-prefix nil
                        ido-enable-flex-matching t
@@ -1290,6 +1299,7 @@ active, apply to active region instead."
 
 (use-package fzf
   :ensure t
+  :disabled t
   :commands (fzf fzf-directory)
   :config (progn
             (setq fzf/args "-x --color=no")
