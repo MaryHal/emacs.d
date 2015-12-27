@@ -415,19 +415,20 @@ active, apply to active region instead."
 
 ;; Easier version of "C-x k" to kill buffer
 (bind-key "C-x C-b"  #'buffer-menu)
+(bind-key "C-c u"    #'switch-to-buffer)
 (bind-key "C-x C-k"  #'kill-buffer)
 
 ;; Eval
 (bind-key "C-c v"    #'eval-buffer)
 (bind-key "C-c r"    #'eval-region)
 
-(bind-key "C-c k"    #'open-terminal)
+(bind-key "C-c C-t"    #'open-terminal)
 
 (bind-key "C-;"      #'comment-line-or-region)
 (bind-key "M-i"      #'back-to-indentation)
 
-;; (bind-key "C-."      #'hippie-expand)
-(bind-key "C-."      #'dabbrev-expand)
+(bind-key "C-."      #'hippie-expand)
+;; (bind-key "C-."      #'dabbrev-expand)
 
 ;; Character-targeted movements
 (use-package misc
@@ -730,13 +731,6 @@ active, apply to active region instead."
             (set-face-background 'highlight-indent-guides-odd-face  "#0B0B0B")
             ))
 
-(use-package elec-pair
-  :disabled t
-  :config (electric-pair-mode t))
-
-(use-package electric
-  :config (electric-indent-mode t))
-
 (use-package term
   :defer t
   :config (progn
@@ -789,19 +783,27 @@ active, apply to active region instead."
             (defun mhl/swiper-recenter (&rest args)
               "recenter display after swiper"
               (recenter))
-            (advice-add 'swiper :after #'mhl/swiper-recenter)
-            ))
+            (advice-add 'swiper--cleanup :after #'mhl/swiper-recenter)
 
-(use-package counsel
- :ensure t
- :defer t
- :bind (("M-x" . counsel-M-x)))
+            (use-package counsel
+              :ensure t
+              :defer t
+              :bind (("M-x" . counsel-M-x)
+                     ("C-c x" . counsel-M-x)
+                     ("C-c o" . counsel-imenu)
+                     ("C-c y" . counsel-yank-pop))
+              :config (progn
+                        (advice-add 'counsel-imenu :after #'mhl/swiper-recenter)
+                        (setq counsel-yank-pop-truncate t)))))
 
 (use-package anzu
   :ensure t
   :bind (("M-%" . anzu-query-replace)
          ("C-M-%" . anzu-query-replace-regexp))
   :init (global-anzu-mode t))
+
+(use-package electric
+  :config (electric-indent-mode t))
 
 (use-package aggressive-indent
   :ensure t
@@ -888,6 +890,10 @@ active, apply to active region instead."
   :ensure t
   :defer t)
 
+(use-package elec-pair
+  :disabled t
+  :config (electric-pair-mode t))
+
 (use-package smartparens
   :ensure t
   :init (progn
@@ -896,6 +902,8 @@ active, apply to active region instead."
           (bind-key (kbd "C-<right>") 'sp-forward-slurp-sexp smartparens-mode-map)
           (bind-key (kbd "C-M-<left>") 'sp-backward-barf-sexp smartparens-mode-map)
           (bind-key (kbd "C-M-<right>") 'sp-forward-barf-sexp smartparens-mode-map)
+
+          (add-hook 'prog-mode-hook #'smartparens-mode)
           ))
 
 ;; Version Control ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1135,11 +1143,6 @@ active, apply to active region instead."
   :ensure t
   :defer 1
   :commands (helm-mode)
-  :bind (
-         ;; ("M-x" . helm-M-x)
-         ("C-c C-f" . helm-find-files)
-         ("C-c u" . helm-buffers-list)
-         ("C-c y" . helm-show-kill-ring))
   :config (progn
             (setq helm-apropos-fuzzy-match t
                   helm-buffers-fuzzy-matching t
@@ -1314,7 +1317,6 @@ active, apply to active region instead."
 
 (use-package fzf
   :ensure t
-  :disabled t
   :commands (fzf fzf-directory)
   :config (progn
             (setq fzf/args "-x --color=no")
@@ -1517,12 +1519,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  ;; Files
                  (evil-leader/set-key "f" #'find-file)
-                 (evil-leader/set-key "z" #'fzf)           ;; Project(ile) fzf
-                 (evil-leader/set-key "g" #'fzf-directory) ;; Directory fzf
+                 (evil-leader/set-key "z" #'fzf)
+                 (evil-leader/set-key "g" #'fzf-directory)
 
                  ;; Buffers
                  (evil-leader/set-key "b" #'buffer-menu)
-                 (evil-leader/set-key "k" #'ido-kill-buffer)
+                 (evil-leader/set-key "k" #'kill-buffer)
                  (evil-leader/set-key "u" #'switch-to-buffer)
 
                  (evil-leader/set-key "o" #'counsel-imenu)
