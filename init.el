@@ -788,10 +788,10 @@ active, apply to active region instead."
             (use-package counsel
               :ensure t
               :defer t
-              :bind (("M-x" . counsel-M-x)
-                     ("C-c x" . counsel-M-x)
-                     ("C-c o" . counsel-imenu)
-                     ("C-c y" . counsel-yank-pop))
+              :init (progn (bind-key (kbd "M-x")   #'counsel-M-x)
+                           (bind-key (kbd "C-c x") #'counsel-M-x)
+                           (bind-key (kbd "C-c o") #'counsel-imenu)
+                           (bind-key (kbd "C-c y") #'counsel-yank-pop))
               :config (progn
                         (advice-add 'counsel-imenu :after #'mhl/swiper-recenter)
                         (setq counsel-yank-pop-truncate t)))))
@@ -937,7 +937,6 @@ active, apply to active region instead."
             ))
 
 (use-package git-gutter-fringe
-  :disabled t
   :if (window-system)
   :ensure t
   :init (progn (global-git-gutter-mode t))
@@ -1852,6 +1851,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package flycheck-irony
   :ensure t
+  :defer t
   :config (add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
 
 ;; Org-mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
