@@ -775,10 +775,10 @@ active, apply to active region instead."
             (setq ivy-height 20)
             (setq ivy-format-function 'ivy-format-function-arrow)
 
-            (ivy-mode t)
+            ;; (ivy-mode t)
 
-            (setq projectile-completion-system 'ivy)
-            (setq magit-completing-read-function 'ivy-completing-read)
+            ;; (setq projectile-completion-system 'ivy)
+            ;; (setq magit-completing-read-function 'ivy-completing-read)
 
             (defun mhl/swiper-recenter (&rest args)
               "recenter display after swiper"
@@ -788,10 +788,10 @@ active, apply to active region instead."
             (use-package counsel
               :ensure t
               :defer t
-              :init (progn (bind-key (kbd "M-x")   #'counsel-M-x)
-                           (bind-key (kbd "C-c x") #'counsel-M-x)
-                           (bind-key (kbd "C-c o") #'counsel-imenu)
-                           (bind-key (kbd "C-c y") #'counsel-yank-pop))
+              ;; :init (progn (bind-key (kbd "M-x")   #'counsel-M-x)
+              ;;              (bind-key (kbd "C-c x") #'counsel-M-x)
+              ;;              (bind-key (kbd "C-c o") #'counsel-imenu)
+              ;;              (bind-key (kbd "C-c y") #'counsel-yank-pop))
               :config (progn
                         (advice-add 'counsel-imenu :after #'mhl/swiper-recenter)
                         (setq counsel-yank-pop-truncate t)))))
@@ -1090,7 +1090,6 @@ active, apply to active region instead."
 
 (use-package helm-projectile
   :ensure t
-  :disabled t
   :commands (helm-projectile-switch-to-buffer
              helm-projectile-find-dir
              helm-projectile-dired-find-dir
@@ -1142,6 +1141,10 @@ active, apply to active region instead."
   :ensure t
   :defer 1
   :commands (helm-mode)
+  :init (progn (bind-key (kbd "M-x")   #'helm-M-x)
+               (bind-key (kbd "C-c x") #'helm-M-x)
+               (bind-key (kbd "C-c o") #'helm-imenu)
+               (bind-key (kbd "C-c y") #'helm-show-kill-ring))
   :config (progn
             (setq helm-apropos-fuzzy-match t
                   helm-buffers-fuzzy-matching t
@@ -1153,7 +1156,7 @@ active, apply to active region instead."
                   helm-M-x-fuzzy-match t
                   helm-semantic-fuzzy-match t)
 
-            ;; (helm-mode t)
+            (helm-mode t)
 
             (setq-default helm-mode-line-string "")
 
@@ -1225,7 +1228,6 @@ active, apply to active region instead."
             (use-package helm-flx
               :ensure t
               :init (progn (helm-flx-mode t)))
-
             ))
 
 ;; Helm Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1246,7 +1248,6 @@ active, apply to active region instead."
 
 (use-package helm-swoop
   :ensure t
-  :disabled t
   :bind (("C-c s" . helm-swoop))
   :init (progn (bind-key "M-i" #'helm-swoop-from-isearch isearch-mode-map))
   :config (progn ;; disable pre-input
@@ -1517,7 +1518,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "ep" #'previous-error)
 
                  ;; Files
-                 (evil-leader/set-key "f" #'find-file)
+                 ;; (evil-leader/set-key "f" #'find-file)
+                 (evil-leader/set-key "f" #'helm-find-files)
                  (evil-leader/set-key "z" #'fzf)
                  (evil-leader/set-key "g" #'fzf-directory)
 
@@ -1526,13 +1528,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "k" #'kill-buffer)
                  (evil-leader/set-key "u" #'switch-to-buffer)
 
-                 (evil-leader/set-key "o" #'counsel-imenu)
-                 (evil-leader/set-key "x" #'counsel-M-x)
-                 ;; (evil-leader/set-key "o" #'helm-imenu)
-                 ;; (evil-leader/set-key "x" #'helm-M-x)
+                 ;; (evil-leader/set-key "o" #'counsel-imenu)
+                 ;; (evil-leader/set-key "x" #'counsel-M-x)
+                 (evil-leader/set-key "o" #'helm-imenu)
+                 (evil-leader/set-key "x" #'helm-M-x)
 
                  ;; Rings
-                 (evil-leader/set-key "y"  #'counsel-yank-pop)
+                 ;; (evil-leader/set-key "y"  #'counsel-yank-pop)
+                 (evil-leader/set-key "y" #'helm-show-kill-ring)
                  (evil-leader/set-key "rm" #'helm-mark-ring)
                  (evil-leader/set-key "rr" #'helm-register)
 
@@ -1543,8 +1546,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "p" #'projectile-command-map)
 
                  ;; Swiper/Swoop
-                 (evil-leader/set-key "s" #'swiper)
-                 ;; (evil-leader/set-key "s" #'helm-swoop)
+                 ;; (evil-leader/set-key "s" #'swiper)
+                 (evil-leader/set-key "s" #'helm-swoop)
 
                  ;; Avy integration
                  (evil-leader/set-key "SPC" #'avy-goto-word-or-subword-1)
