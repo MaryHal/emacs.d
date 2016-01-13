@@ -1,0 +1,41 @@
+# -*- mode: snippet -*-
+# name: structdef
+# key: structdef
+# --
+struct ${1:name} {
+        $0
+};
+
+void $1_init(struct $1* ${2:varname});
+void $1_terminate(struct $1* $2);
+
+struct $1* $1_create();
+void $1_destroy(struct $1* $2);
+
+
+
+
+void $1_init(struct $1* $2)
+{
+}
+
+void $1_terminate(struct $1* $2)
+{
+}
+
+struct $1* $1_create()
+{
+    struct $1* $2 = malloc(sizeof(struct $1));
+    if ($2)
+    {
+        $1_init(s);
+    }
+
+    return $2;
+}
+
+void $1_destroy(struct $1* $2)
+{
+    $1_terminate($2);
+    free($2);
+}

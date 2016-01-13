@@ -1599,7 +1599,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-exchange
   :ensure t
-  :disabled t
   :defer t
   :init (progn (evil-exchange-install)))
 
