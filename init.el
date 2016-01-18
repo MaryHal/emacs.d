@@ -158,6 +158,16 @@ active, apply to active region instead."
   (interactive)
   (call-process-shell-command (concat "eval $TERMINAL -e " user-shell) nil 0))
 
+(defun eval-and-replace ()
+  "Replace the preceding sexp with its value."
+  (interactive)
+  (backward-kill-sexp)
+  (condition-case nil
+      (prin1 (eval (read (current-kill 0)))
+             (current-buffer))
+    (error (message "Invalid expression")
+           (insert (current-kill 0)))))
+
 (defun do-not-quit ()
     (interactive)
     (message "Thou shall not quit!"))
@@ -421,6 +431,8 @@ active, apply to active region instead."
 ;; Eval
 (bind-key "C-c v"    #'eval-buffer)
 (bind-key "C-c r"    #'eval-region)
+
+(bind-key "C-x C-e" #'eval-and-replace)
 
 (bind-key "C-c C-t"    #'open-terminal)
 
@@ -775,10 +787,10 @@ active, apply to active region instead."
             (setq ivy-height 20)
             (setq ivy-format-function 'ivy-format-function-arrow)
 
-            ;; (ivy-mode t)
+            (ivy-mode t)
 
-            ;; (setq projectile-completion-system 'ivy)
-            ;; (setq magit-completing-read-function 'ivy-completing-read)
+            (setq projectile-completion-system 'ivy)
+            (setq magit-completing-read-function 'ivy-completing-read)
 
             (defun mhl/swiper-recenter (&rest args)
               "recenter display after swiper"
@@ -788,10 +800,10 @@ active, apply to active region instead."
             (use-package counsel
               :ensure t
               :defer t
-              ;; :init (progn (bind-key (kbd "M-x")   #'counsel-M-x)
-              ;;              (bind-key (kbd "C-c x") #'counsel-M-x)
-              ;;              (bind-key (kbd "C-c o") #'counsel-imenu)
-              ;;              (bind-key (kbd "C-c y") #'counsel-yank-pop))
+              :init (progn (bind-key (kbd "M-x")   #'counsel-M-x)
+                           (bind-key (kbd "C-c x") #'counsel-M-x)
+                           (bind-key (kbd "C-c o") #'counsel-imenu)
+                           (bind-key (kbd "C-c y") #'counsel-yank-pop))
               :config (progn
                         (advice-add 'counsel-imenu :after #'mhl/swiper-recenter)
                         (setq counsel-yank-pop-truncate t)))))
@@ -875,8 +887,8 @@ active, apply to active region instead."
   :if (window-system)
   :ensure t
   :config (progn
-            (add-to-list 'beacon-dont-blink-commands 'fzf)
-            (add-to-list 'beacon-dont-blink-commands 'fzf-directory)
+            ;; (add-to-list 'beacon-dont-blink-commands 'fzf)
+            ;; (add-to-list 'beacon-dont-blink-commands 'fzf-directory)
 
             (setq beacon-blink-when-window-scrolls t)
             (setq beacon-blink-when-window-changes t)
@@ -896,6 +908,7 @@ active, apply to active region instead."
 
 (use-package smartparens
   :ensure t
+  :disabled t
   :init (progn
           (use-package smartparens-config)
           (bind-key (kbd "C-<left>") 'sp-backward-slurp-sexp smartparens-mode-map)
@@ -1090,6 +1103,7 @@ active, apply to active region instead."
 
 (use-package helm-projectile
   :ensure t
+  :disabled t
   :commands (helm-projectile-switch-to-buffer
              helm-projectile-find-dir
              helm-projectile-dired-find-dir
@@ -1141,10 +1155,10 @@ active, apply to active region instead."
   :ensure t
   :defer 1
   :commands (helm-mode)
-  :init (progn (bind-key (kbd "M-x")   #'helm-M-x)
-               (bind-key (kbd "C-c x") #'helm-M-x)
-               (bind-key (kbd "C-c o") #'helm-imenu)
-               (bind-key (kbd "C-c y") #'helm-show-kill-ring))
+  ;; :init (progn (bind-key (kbd "M-x")   #'helm-M-x)
+  ;;              (bind-key (kbd "C-c x") #'helm-M-x)
+  ;;              (bind-key (kbd "C-c o") #'helm-imenu)
+  ;;              (bind-key (kbd "C-c y") #'helm-show-kill-ring))
   :config (progn
             (setq helm-apropos-fuzzy-match t
                   helm-buffers-fuzzy-matching t
@@ -1156,7 +1170,7 @@ active, apply to active region instead."
                   helm-M-x-fuzzy-match t
                   helm-semantic-fuzzy-match t)
 
-            (helm-mode t)
+            ;; (helm-mode t)
 
             (setq-default helm-mode-line-string "")
 
@@ -1170,7 +1184,7 @@ active, apply to active region instead."
             ;; (setq helm-ff-smart-completion nil)
 
             ;; Be idle for this many seconds, before updating in delayed sources.
-            (setq helm-idle-delay 0.01)
+            (setq helm-idle-delay 0)
 
             ;; Be idle for this many seconds, before updating candidate buffer
             (setq helm-input-idle-delay 0.01)
@@ -1179,7 +1193,7 @@ active, apply to active region instead."
             (setq helm-split-window-default-side 'other)
             (setq helm-split-window-in-side-p t)         ;; open helm buffer inside current window, not occupy whole other window
 
-            (setq helm-candidate-number-limit 200)
+            (setq helm-candidate-number-limit 1000)
 
             ;; Don't loop helm sources.
             (setq helm-move-to-line-cycle-in-source nil)
@@ -1317,6 +1331,7 @@ active, apply to active region instead."
 
 (use-package fzf
   :ensure t
+  :disabled t
   :commands (fzf fzf-directory)
   :config (progn
             (setq fzf/args "-x --color=no")
@@ -1518,24 +1533,24 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "ep" #'previous-error)
 
                  ;; Files
-                 ;; (evil-leader/set-key "f" #'find-file)
-                 (evil-leader/set-key "f" #'helm-find-files)
+                 (evil-leader/set-key "f" #'find-file)
+                 ;; (evil-leader/set-key "f" #'helm-find-files)
+                 (evil-leader/set-key "g" #'counsel-git)
                  (evil-leader/set-key "z" #'fzf)
-                 (evil-leader/set-key "g" #'fzf-directory)
 
                  ;; Buffers
                  (evil-leader/set-key "b" #'buffer-menu)
                  (evil-leader/set-key "k" #'kill-buffer)
                  (evil-leader/set-key "u" #'switch-to-buffer)
 
-                 ;; (evil-leader/set-key "o" #'counsel-imenu)
-                 ;; (evil-leader/set-key "x" #'counsel-M-x)
-                 (evil-leader/set-key "o" #'helm-imenu)
-                 (evil-leader/set-key "x" #'helm-M-x)
+                 (evil-leader/set-key "o" #'counsel-imenu)
+                 (evil-leader/set-key "x" #'counsel-M-x)
+                 ;; (evil-leader/set-key "o" #'helm-imenu)
+                 ;; (evil-leader/set-key "x" #'helm-M-x)
 
                  ;; Rings
-                 ;; (evil-leader/set-key "y"  #'counsel-yank-pop)
-                 (evil-leader/set-key "y" #'helm-show-kill-ring)
+                 (evil-leader/set-key "y"  #'counsel-yank-pop)
+                 ;; (evil-leader/set-key "y"  #'helm-show-kill-ring)
                  (evil-leader/set-key "rm" #'helm-mark-ring)
                  (evil-leader/set-key "rr" #'helm-register)
 
@@ -1546,8 +1561,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "p" #'projectile-command-map)
 
                  ;; Swiper/Swoop
-                 ;; (evil-leader/set-key "s" #'swiper)
-                 (evil-leader/set-key "s" #'helm-swoop)
+                 (evil-leader/set-key "s" #'swiper)
+                 ;; (evil-leader/set-key "s" #'helm-swoop)
 
                  ;; Avy integration
                  (evil-leader/set-key "SPC" #'avy-goto-word-or-subword-1)
@@ -1873,12 +1888,24 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ;; Ellipses blend in too well. Make them more distict!
                  (setq org-ellipsis " […]")
 
+                 ;; ;; Cooler to-do states
+                 ;; (setq org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
+                 ;;                           (sequence "⚑ WAITING(w)" "|")
+                 ;;                           (sequence "|" "✘ CANCELED(c)")))
+
                  ;; Create "Table of Contents" without exporting (useful for
                  ;; github README.org files, for example)
                  (use-package toc-org
                    :ensure t
                    :config (progn
                              (add-hook 'org-mode-hook #'toc-org-enable)))
+
+                 (use-package org-bullets
+                   :ensure t
+                   :disabled t
+                   :init (progn (setq org-bullets-bullet-list
+                                      '("◉" "○" "►" "◇")))
+                   :config (progn (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))))
                  ))
 
 ;; Miscellaneous Packages ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
