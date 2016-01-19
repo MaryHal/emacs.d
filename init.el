@@ -247,6 +247,19 @@ active, apply to active region instead."
 (setq split-height-threshold nil)
 (setq split-width-threshold 0)
 
+;; http://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/
+;; In this init file we also set gc-cons-threshold to a very high value then
+;; reduce it once we're done loading.
+(defun my-minibuffer-setup-hook ()
+  (setq gc-cons-threshold most-positive-fixnum))
+
+(defun my-minibuffer-exit-hook ()
+  (setq gc-cons-threshold 800000))
+
+(add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
+(add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
+
+
 (use-package autorevert
   :commands (auto-revert-mode)
   :init (add-hook 'find-file-hook #'(lambda () (auto-revert-mode t))))
@@ -781,6 +794,7 @@ active, apply to active region instead."
 
 (use-package swiper
   :ensure t
+  :disabled t
   :init (progn
             (setq ivy-re-builders-alist
                   '((t . ivy--regex-fuzzy)))
@@ -917,6 +931,13 @@ active, apply to active region instead."
           (bind-key (kbd "C-M-<right>") 'sp-forward-barf-sexp smartparens-mode-map)
 
           (add-hook 'prog-mode-hook #'smartparens-mode)
+          ))
+
+(use-package region-state
+  :ensure t
+  :disabled t
+  :init (progn
+          (region-state-mode t)
           ))
 
 ;; Version Control ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1103,7 +1124,6 @@ active, apply to active region instead."
 
 (use-package helm-projectile
   :ensure t
-  :disabled t
   :commands (helm-projectile-switch-to-buffer
              helm-projectile-find-dir
              helm-projectile-dired-find-dir
@@ -1155,10 +1175,10 @@ active, apply to active region instead."
   :ensure t
   :defer 1
   :commands (helm-mode)
-  ;; :init (progn (bind-key (kbd "M-x")   #'helm-M-x)
-  ;;              (bind-key (kbd "C-c x") #'helm-M-x)
-  ;;              (bind-key (kbd "C-c o") #'helm-imenu)
-  ;;              (bind-key (kbd "C-c y") #'helm-show-kill-ring))
+  :init (progn (bind-key (kbd "M-x")   #'helm-M-x)
+               (bind-key (kbd "C-c x") #'helm-M-x)
+               (bind-key (kbd "C-c o") #'helm-imenu)
+               (bind-key (kbd "C-c y") #'helm-show-kill-ring))
   :config (progn
             (setq helm-apropos-fuzzy-match t
                   helm-buffers-fuzzy-matching t
@@ -1533,9 +1553,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "ep" #'previous-error)
 
                  ;; Files
-                 (evil-leader/set-key "f" #'find-file)
-                 ;; (evil-leader/set-key "f" #'helm-find-files)
-                 (evil-leader/set-key "g" #'counsel-git)
+                 ;; (evil-leader/set-key "f" #'find-file)
+                 (evil-leader/set-key "f" #'helm-find-files)
+                 ;; (evil-leader/set-key "g" #'counsel-git)
                  (evil-leader/set-key "z" #'fzf)
 
                  ;; Buffers
@@ -1545,12 +1565,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  (evil-leader/set-key "o" #'counsel-imenu)
                  (evil-leader/set-key "x" #'counsel-M-x)
-                 ;; (evil-leader/set-key "o" #'helm-imenu)
-                 ;; (evil-leader/set-key "x" #'helm-M-x)
+                 (evil-leader/set-key "o" #'helm-imenu)
+                 (evil-leader/set-key "x" #'helm-M-x)
 
                  ;; Rings
-                 (evil-leader/set-key "y"  #'counsel-yank-pop)
-                 ;; (evil-leader/set-key "y"  #'helm-show-kill-ring)
+                 ;; (evil-leader/set-key "y"  #'counsel-yank-pop)
+                 (evil-leader/set-key "y"  #'helm-show-kill-ring)
                  (evil-leader/set-key "rm" #'helm-mark-ring)
                  (evil-leader/set-key "rr" #'helm-register)
 
@@ -1561,8 +1581,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "p" #'projectile-command-map)
 
                  ;; Swiper/Swoop
-                 (evil-leader/set-key "s" #'swiper)
-                 ;; (evil-leader/set-key "s" #'helm-swoop)
+                 ;; (evil-leader/set-key "s" #'swiper)
+                 (evil-leader/set-key "s" #'helm-swoop)
 
                  ;; Avy integration
                  (evil-leader/set-key "SPC" #'avy-goto-word-or-subword-1)
@@ -1952,10 +1972,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (load user-custom-file t)
 
 ;; Garbage collection of larger blocks of data can be slow, causes pauses during
-;; operation. Let's reduce the size of the threshold to a smaller value after
-;; most of our init is complete.
+;; operation. Let's reduce the size of the threshold to a smaller value (the
+;; default) after most of our init is complete.
 (add-hook 'after-init-hook `(lambda ()
-                              (setq gc-cons-threshold (* 10 1024 1024))
+                              (setq gc-cons-threshold 800000)
                               ))
 
 ;; Make sure emacs is daemonized.
