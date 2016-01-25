@@ -811,6 +811,10 @@ active, apply to active region instead."
               (recenter))
             (advice-add 'swiper--cleanup :after #'mhl/swiper-recenter)
 
+            (use-package smex
+              :ensure t
+              :init (progn (setq smex-save-file (concat user-cache-directory "smex-items"))))
+
             (use-package counsel
               :ensure t
               :defer t
@@ -939,6 +943,10 @@ active, apply to active region instead."
   :init (progn
           (region-state-mode t)
           ))
+
+(use-package vlf
+  :disabled t
+  :ensure t)
 
 ;; Version Control ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1190,7 +1198,7 @@ active, apply to active region instead."
                   helm-M-x-fuzzy-match t
                   helm-semantic-fuzzy-match t)
 
-            ;; (helm-mode t)
+            (helm-mode t)
 
             (setq-default helm-mode-line-string "")
 
@@ -1344,10 +1352,6 @@ active, apply to active region instead."
 
 (use-package flx
   :ensure t)
-
-(use-package smex
-  :ensure t
-  :init (progn (setq smex-save-file (concat user-cache-directory "smex-items"))))
 
 (use-package fzf
   :ensure t
@@ -1561,7 +1565,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ;; Buffers
                  (evil-leader/set-key "b" #'buffer-menu)
                  (evil-leader/set-key "k" #'kill-buffer)
-                 (evil-leader/set-key "u" #'switch-to-buffer)
+                 ;; (evil-leader/set-key "u" #'switch-to-buffer)
+                 (evil-leader/set-key "u" #'helm-buffers-list)
 
                  (evil-leader/set-key "o" #'counsel-imenu)
                  (evil-leader/set-key "x" #'counsel-M-x)
