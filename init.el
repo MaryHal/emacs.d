@@ -1183,10 +1183,12 @@ active, apply to active region instead."
   :ensure t
   :defer 1
   :commands (helm-mode)
-  :init (progn (bind-key (kbd "M-x")   #'helm-M-x)
-               (bind-key (kbd "C-c x") #'helm-M-x)
-               (bind-key (kbd "C-c o") #'helm-imenu)
-               (bind-key (kbd "C-c y") #'helm-show-kill-ring))
+  :init (progn
+          (bind-key (kbd "C-x C-f") #'helm-find-files)
+          (bind-key (kbd "M-x")   #'helm-M-x)
+          (bind-key (kbd "C-c x") #'helm-M-x)
+          (bind-key (kbd "C-c o") #'helm-imenu)
+          (bind-key (kbd "C-c y") #'helm-show-kill-ring))
   :config (progn
             (setq helm-apropos-fuzzy-match t
                   helm-buffers-fuzzy-matching t
@@ -1760,6 +1762,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                    :ensure t
                    :commands (markdown-toc-generate-toc))
                  ))
+
+(use-package haskell-mode
+  :ensure t
+  :mode ("\\.hs$" . haskell-mode))
 
 (use-package js2-mode
   :ensure t
