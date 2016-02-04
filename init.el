@@ -656,6 +656,15 @@ active, apply to active region instead."
           ;; (mhl/load-light-theme 'base16-ashes-light)
           ))
 
+(use-package ample-theme
+  :load-path "theme/ample-theme"
+  :disabled t
+  :init (progn
+          (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ample-theme/"))
+          ;; (mhl/load-dark-theme 'ample-flat)
+          (mhl/load-light-theme 'ample-light)
+          ))
+
 (use-package leuven-mod
   :load-path "theme/leuven-mod"
   :disabled t
