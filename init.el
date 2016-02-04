@@ -1789,6 +1789,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :ensure t
   :mode ("\\.php$" . php-mode))
 
+(use-package sql-mode
+  :ensure t
+  :config (progn
+            ;; Set prompt for mariadb
+            (setq sql-mysql-options '("--prompt=mysql> "))
+            ))
+
 (use-package sgml-mode
   :ensure t
   :mode ("\\.html\\'" . html-mode))
