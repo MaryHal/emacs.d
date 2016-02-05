@@ -9,7 +9,7 @@
 
 (let ((basebg "#020202")
       (base00 "#1C2023")
-      (base01 "#393F45")
+      (base01 "#2A2F33")
       (base02 "#565E65")
       (base03 "#747C84")
       (base04 "#ADB3BA")

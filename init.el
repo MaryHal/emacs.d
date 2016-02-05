@@ -651,8 +651,8 @@ active, apply to active region instead."
   :load-path "theme/base16-mod"
   :init (progn
           (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/base16-mod/"))
-          (mhl/load-dark-theme 'base16-mod-dark)
-          ;; (mhl/load-dark-theme 'base16-ashes-dark)
+          ;; (mhl/load-dark-theme 'base16-mod-dark)
+          (mhl/load-dark-theme 'base16-ashes-dark)
           ;; (mhl/load-light-theme 'base16-ashes-light)
           ))
 
@@ -1790,8 +1790,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :mode ("\\.php$" . php-mode))
 
 (use-package sql-mode
-  :ensure t
-  :config (progn
+  :defer t
+  :init (progn
             ;; Set prompt for mariadb
             (setq sql-mysql-options '("--prompt=mysql> "))
             ))
