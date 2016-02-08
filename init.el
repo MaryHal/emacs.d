@@ -629,8 +629,8 @@ active, apply to active region instead."
   (if (string= system-type "gnu/linux")
       (if (string= window-system "x")
           (progn
-            (set-face-attribute 'default nil :background "black")
-            (set-face-attribute 'fringe nil :background "black")
+            ;; (set-face-attribute 'default nil :background "black")
+            ;; (set-face-attribute 'fringe nil :background "black")
             (set-frame-alpha 90)
             )
         (progn (when (getenv "DISPLAY")
@@ -654,6 +654,14 @@ active, apply to active region instead."
           ;; (mhl/load-dark-theme 'base16-mod-dark)
           (mhl/load-dark-theme 'base16-ashes-dark)
           ;; (mhl/load-light-theme 'base16-ashes-light)
+          ))
+
+(use-package minimal-theme
+  :load-path "theme/minimal"
+  :disabled t
+  :init (progn
+          (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
+          (mhl/load-dark-theme 'minimal)
           ))
 
 (use-package ample-theme
@@ -912,6 +920,7 @@ active, apply to active region instead."
 
 (use-package beacon
   :if (window-system)
+  :disabled t
   :ensure t
   :config (progn
             ;; (add-to-list 'beacon-dont-blink-commands 'fzf)
@@ -1621,9 +1630,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-surround
   :ensure t
-  :disabled t
   :defer t
-  :config (global-evil-surround-mode t))
+  :init (global-evil-surround-mode t))
 
 (use-package evil-textobj-anyblock
   :ensure t
@@ -1843,7 +1851,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
             (add-hook 'c++-mode-hook #'irony-mode)
             (add-hook 'c-mode-hook #'irony-mode)
-            (add-hook 'objc-mode-hook #'irony-mode)
+            ;; (add-hook 'objc-mode-hook #'irony-mode)
 
             ;; replace the `completion-at-point' and `complete-symbol' bindings in
             ;; irony-mode's buffers by irony-mode's function

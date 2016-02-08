@@ -144,8 +144,8 @@
    `(whitespace-trailing ((t (:background ,base08 :foreground ,base0A))))
 
    ;; Parenthesis matching (built-in)
-   `(show-paren-match ((t (:background ,base00 :foreground ,base05))))
-   `(show-paren-mismatch ((t (:background ,base00 :foreground ,base0A :weight bold))))
+   `(show-paren-match ((t (:background ,base04 :foreground ,base01))))
+   `(show-paren-mismatch ((t (:background ,base04 :foreground ,base01 :weight bold))))
 
    ;; Anzu
    `(anzu-mode-line ((t (:inherit mode-line :weight bold :foreground ,base0D))))
@@ -198,6 +198,7 @@
    `(helm-ff-directory ((t (:weight bold :foreground ,base0F :background nil))))
    `(helm-ff-executable ((t (:weight bold :foreground ,base0A))))
    `(helm-ff-file ((t (:foreground ,base02))))
+   `(helm-ff-dotted-symlink-directory ((t (:weight bold :foreground ,base0C))))
    `(helm-ff-symlink ((t (:weight bold :foreground ,base0C))))
    `(helm-ff-prefix ((t (:weight bold :foreground ,base08 :background nil))))
    `(helm-ff-invalid-symlink ((t (:foreground ,base05 :background ,base0E))))

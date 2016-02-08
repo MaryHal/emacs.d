@@ -200,6 +200,7 @@
    `(helm-ff-directory ((t (:weight bold :foreground ,base08 :background nil))))
    `(helm-ff-executable ((t (:weight bold :foreground ,base0B))))
    `(helm-ff-file ((t (:foreground ,base05))))
+   `(helm-ff-dotted-symlink-directory ((t (:weight bold :foreground ,base0C))))
    `(helm-ff-symlink ((t (:weight bold :foreground ,base0C))))
    `(helm-ff-prefix ((t (:weight bold :foreground ,base0A :background nil))))
    `(helm-ff-invalid-symlink ((t (:foreground ,base05 :background ,base0F))))
