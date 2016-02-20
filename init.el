@@ -815,6 +815,10 @@ active, apply to active region instead."
   :init (progn
             (setq ivy-re-builders-alist
                   '((t . ivy--regex-fuzzy)))
+
+            ;; (setq ivy-re-builders-alist
+            ;;       '((t . ivy--regex-plus)))
+
             (setq ivy-height 20)
             (setq ivy-format-function 'ivy-format-function-arrow)
 
@@ -838,6 +842,7 @@ active, apply to active region instead."
               :init (progn (bind-key (kbd "M-x")   #'counsel-M-x)
                            (bind-key (kbd "C-c x") #'counsel-M-x)
                            (bind-key (kbd "C-c o") #'counsel-imenu)
+                           (bind-key (kbd "C-c l") #'ivy-resume)
                            (bind-key (kbd "C-c y") #'counsel-yank-pop))
               :config (progn
                         (advice-add 'counsel-imenu :after #'mhl/swiper-recenter)
@@ -962,8 +967,7 @@ active, apply to active region instead."
           (region-state-mode t)
           ))
 
-(use-package vlf
-  :disabled t
+(use-package vlf :disabled t
   :ensure t)
 
 ;; Version Control ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1081,6 +1085,7 @@ active, apply to active region instead."
           (bind-key "<f1>" (defhydra hydra-help (:color blue)
                              "Help"
                              ("a" helm-apropos "Apropos")
+                             ("b" counsel-descbinds "Describe Keybindings")
                              ("c" describe-char "Describe Char")
                              ("F" find-function "Find Function")
                              ("f" describe-function "Describe Function")
@@ -1379,7 +1384,6 @@ active, apply to active region instead."
 
 (use-package fzf
   :ensure t
-  :disabled t
   :commands (fzf fzf-directory)
   :config (progn
             (setq fzf/args "-x --color=no")
@@ -1415,12 +1419,12 @@ active, apply to active region instead."
                  :commands (hybrid-mode)
                  :init (hybrid-mode t))
 
-               ;; (setq evil-emacs-state-cursor    '("DarkSeaGreen1"  box))
-               ;; (setq evil-normal-state-cursor   '("white"         box))
-               ;; (setq evil-insert-state-cursor   '("DarkSeaGreen1" box))
-               ;; (setq evil-visual-state-cursor   '("RoyalBlue"     box))
-               ;; (setq evil-replace-state-cursor  '("red"           hollow))
-               ;; (setq evil-operator-state-cursor '("CadetBlue"     box))
+               (setq evil-emacs-state-cursor    '("#8abeb7" box))
+               (setq evil-normal-state-cursor   '("#e0e0e0" box))
+               (setq evil-insert-state-cursor   '("#f0c674" box))
+               (setq evil-visual-state-cursor   '("#de935f" box))
+               (setq evil-replace-state-cursor  '("#a3685a" box))
+               (setq evil-operator-state-cursor '("#81a2be" box))
 
                (evil-mode t))
   :config (progn (evil-set-toggle-key "C-\\")
@@ -1589,17 +1593,19 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ;; Buffers
                  (evil-leader/set-key "b" #'buffer-menu)
                  (evil-leader/set-key "k" #'kill-buffer)
-                 ;; (evil-leader/set-key "u" #'switch-to-buffer)
-                 (evil-leader/set-key "u" #'helm-buffers-list)
+                 (evil-leader/set-key "u" #'switch-to-buffer)
+                 ;; (evil-leader/set-key "u" #'helm-buffers-list)
 
                  (evil-leader/set-key "o" #'counsel-imenu)
                  (evil-leader/set-key "x" #'counsel-M-x)
                  ;; (evil-leader/set-key "o" #'helm-imenu)
                  ;; (evil-leader/set-key "x" #'helm-M-x)
 
+                 (evil-leader/set-key "l" #'ivy-resume)
+
                  ;; Rings
-                 ;; (evil-leader/set-key "y"  #'counsel-yank-pop)
-                 (evil-leader/set-key "y"  #'helm-show-kill-ring)
+                 (evil-leader/set-key "y"  #'counsel-yank-pop)
+                 ;; (evil-leader/set-key "y"  #'helm-show-kill-ring)
                  (evil-leader/set-key "rm" #'helm-mark-ring)
                  (evil-leader/set-key "rr" #'helm-register)
 
@@ -1610,8 +1616,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "p" #'projectile-command-map)
 
                  ;; Swiper/Swoop
-                 (evil-leader/set-key "s" #'helm-swoop)
-                 (evil-leader/set-key "w" #'swiper)
+                 ;; (evil-leader/set-key "s" #'helm-swoop)
+                 (evil-leader/set-key "s" #'swiper)
+                 (evil-leader/set-key "j" #'counsel-ag)
 
                  ;; Avy integration
                  (evil-leader/set-key "SPC" #'avy-goto-word-or-subword-1)
@@ -1804,6 +1811,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package php-mode
   :ensure t
   :mode ("\\.php$" . php-mode))
+
+(use-package web-mode
+  :ensure t
+  :defer t)
 
 (use-package sql-mode
   :defer t
