@@ -7,7 +7,8 @@
 
 (deftheme base16-ashes-light)
 
-(let ((base00 "#1C2023")
+(let ((basebg "#F3F4F5")
+      (base00 "#1C2023")
       (base01 "#393F45")
       (base02 "#565E65")
       (base03 "#747C84")
@@ -190,7 +191,7 @@
    `(helm-selection-line ((t (:background ,base00))))
    `(helm-visible-mark ((t (:foreground ,base00 :background ,base08))))
    ;; `(helm-candidate-number ((t (:weight bold :foreground ,base04 :background ,base02))))
-   `(helm-candidate-number ((t (:inherit mode-line))))
+   `(helm-candidate-number ((t (:inherit mode-line-inactive :foreground ,base04))))
 
    `(helm-action ((t (:foreground ,base05 :underline nil))))
 
@@ -207,6 +208,14 @@
    `(helm-swoop-target-line-face ((t (:foreground ,base00 :background ,base0A))))
    `(helm-swoop-target-line-block-face ((t (:foreground ,base00 :background ,base0B))))
    `(helm-swoop-target-word-face ((t (:foreground ,base01 :background ,base0C))))
+
+   `(ivy-current-match ((t (:weight ultra-bold :underline t))))
+
+   ;; Match swiper face inheritance
+   `(ivy-minibuffer-match-face-1 ((t (:inherit isearch-lazy-highlight-face))))
+   `(ivy-minibuffer-match-face-2 ((t (:inherit isearch))))
+   `(ivy-minibuffer-match-face-3 ((t (:inherit match))))
+   `(ivy-minibuffer-match-face-4 ((t (:inherit isearch-fail))))
 
    ;; company-mode
    `(company-tooltip ((t (:weight bold :background ,base00 :foreground ,base05))))

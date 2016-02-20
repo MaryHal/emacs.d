@@ -286,6 +286,7 @@ active, apply to active region instead."
 
 (use-package tramp
   :defer t
+  :init (progn (setq tramp-ssh-controlmaster-options ""))
   :config (setq tramp-default-method "ssh"))
 
 (use-package tls
@@ -464,9 +465,9 @@ active, apply to active region instead."
   :bind (("M-m" . jump-char-forward)
          ("M-M" . jump-char-backward)))
 
-(dotimes (n 10)
-  (global-unset-key (kbd (format "M-%d" n)))
-  (global-unset-key (kbd (format "C-%d" n))))
+;; (dotimes (n 10)
+;;   (global-unset-key (kbd (format "M-%d" n)))
+;;   (global-unset-key (kbd (format "C-%d" n))))
 
 ;; (bind-key "M-9"      #'backward-sexp)
 ;; (bind-key "M-0"      #'forward-sexp)
@@ -651,8 +652,8 @@ active, apply to active region instead."
   :load-path "theme/base16-mod"
   :init (progn
           (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/base16-mod/"))
-          ;; (mhl/load-dark-theme 'base16-mod-dark)
-          (mhl/load-dark-theme 'base16-ashes-dark)
+          (mhl/load-dark-theme 'base16-mod-dark)
+          ;; (mhl/load-dark-theme 'base16-ashes-dark)
           ;; (mhl/load-light-theme 'base16-ashes-light)
           ))
 
@@ -811,7 +812,6 @@ active, apply to active region instead."
 
 (use-package swiper
   :ensure t
-  :disabled t
   :init (progn
             (setq ivy-re-builders-alist
                   '((t . ivy--regex-fuzzy)))
@@ -1093,7 +1093,10 @@ active, apply to active region instead."
           (bind-key "<f2>" (defhydra hydra-zoom ()
                              "Zoom"
                              ("i" text-scale-increase "in")
-                             ("o" text-scale-decrease "out")))
+                             ("o" text-scale-decrease "out")
+                             ("r" (lambda ()
+                                    (interactive)
+                                    (text-scale-set 0)) "reset")))
           (defhydra hydra-yank-pop ()
             "yank"
             ("C-y" yank nil)
@@ -1150,6 +1153,7 @@ active, apply to active region instead."
 
 (use-package helm-projectile
   :ensure t
+  :disabled t
   :commands (helm-projectile-switch-to-buffer
              helm-projectile-find-dir
              helm-projectile-dired-find-dir
@@ -1201,12 +1205,12 @@ active, apply to active region instead."
   :ensure t
   :defer 1
   :commands (helm-mode)
-  :init (progn
-          (bind-key (kbd "C-x C-f") #'helm-find-files)
-          (bind-key (kbd "M-x")   #'helm-M-x)
-          (bind-key (kbd "C-c x") #'helm-M-x)
-          (bind-key (kbd "C-c o") #'helm-imenu)
-          (bind-key (kbd "C-c y") #'helm-show-kill-ring))
+  ;; :init (progn
+  ;;         (bind-key (kbd "C-x C-f") #'helm-find-files)
+  ;;         (bind-key (kbd "M-x")   #'helm-M-x)
+  ;;         (bind-key (kbd "C-c x") #'helm-M-x)
+  ;;         (bind-key (kbd "C-c o") #'helm-imenu)
+  ;;         (bind-key (kbd "C-c y") #'helm-show-kill-ring))
   :config (progn
             (setq helm-apropos-fuzzy-match t
                   helm-buffers-fuzzy-matching t
@@ -1218,7 +1222,7 @@ active, apply to active region instead."
                   helm-M-x-fuzzy-match t
                   helm-semantic-fuzzy-match t)
 
-            (helm-mode t)
+            ;; (helm-mode t)
 
             (setq-default helm-mode-line-string "")
 
@@ -1577,9 +1581,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "ep" #'previous-error)
 
                  ;; Files
-                 ;; (evil-leader/set-key "f" #'find-file)
-                 (evil-leader/set-key "f" #'helm-find-files)
-                 ;; (evil-leader/set-key "g" #'counsel-git)
+                 (evil-leader/set-key "f" #'find-file)
+                 ;; (evil-leader/set-key "f" #'helm-find-files)
+                 (evil-leader/set-key "g" #'counsel-git)
                  (evil-leader/set-key "z" #'fzf)
 
                  ;; Buffers
@@ -1590,8 +1594,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  (evil-leader/set-key "o" #'counsel-imenu)
                  (evil-leader/set-key "x" #'counsel-M-x)
-                 (evil-leader/set-key "o" #'helm-imenu)
-                 (evil-leader/set-key "x" #'helm-M-x)
+                 ;; (evil-leader/set-key "o" #'helm-imenu)
+                 ;; (evil-leader/set-key "x" #'helm-M-x)
 
                  ;; Rings
                  ;; (evil-leader/set-key "y"  #'counsel-yank-pop)
@@ -1606,8 +1610,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "p" #'projectile-command-map)
 
                  ;; Swiper/Swoop
-                 ;; (evil-leader/set-key "s" #'swiper)
                  (evil-leader/set-key "s" #'helm-swoop)
+                 (evil-leader/set-key "w" #'swiper)
 
                  ;; Avy integration
                  (evil-leader/set-key "SPC" #'avy-goto-word-or-subword-1)
@@ -1755,6 +1759,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  (add-hook 'c-mode-common-hook #'c-mode-common-custom)
                  ))
+
+(use-package csharp-mode
+  :defer t
+  :mode ("\\.cs$" . csharp-mode))
 
 (use-package markdown-mode
   :ensure t
