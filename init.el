@@ -42,13 +42,9 @@
   (setq package-enable-at-startup nil)
   (package-initialize)
   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
-
   (unless (package-installed-p 'use-package)
     (package-refresh-contents)
-    (package-install 'use-package))
-  (unless (package-installed-p 'delight)
-    (package-refresh-contents)
-    (package-install 'delight)))
+    (package-install 'use-package)))
 
 (eval-when-compile
   (require 'use-package))
@@ -1971,6 +1967,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ))
 
 ;; Miscellaneous Packages ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Hex color modification
+(use-package kurecolor
+  :ensure t
+  :defer t)
 
 ;; Pretty package listings.
 (use-package paradox
