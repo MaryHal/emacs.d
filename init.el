@@ -472,6 +472,7 @@ active, apply to active region instead."
 ;; (bind-key "M-9"      #'backward-sexp)
 ;; (bind-key "M-0"      #'forward-sexp)
 
+
 ;; Appearance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Frame Defaults ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -620,11 +621,11 @@ active, apply to active region instead."
     (set-frame-parameter nil 'alpha new)))
 
 (defun mhl/load-light-theme (theme)
-  (load-theme theme t)
+  (load-theme theme :no-confirm)
   (set-frame-alpha 90))
 
 (defun mhl/load-dark-theme (theme)
-  (load-theme theme t)
+  (load-theme theme :no-confirm)
 
   ;; Set transparent background.
   (if (string= system-type "gnu/linux")
@@ -657,21 +658,20 @@ active, apply to active region instead."
           ;; (mhl/load-light-theme 'base16-ashes-light)
           ))
 
+(use-package yoshi-theme
+  :ensure t
+  :disabled t
+  :init (progn
+          ;; (add-to-list 'custom-theme-load-path (expand-file-name "~/yoshi-theme"))
+          (load-theme 'yoshi :no-confirm)
+          ))
+
 (use-package minimal-theme
   :load-path "theme/minimal"
   :disabled t
   :init (progn
           (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
           (mhl/load-dark-theme 'minimal)
-          ))
-
-(use-package ample-theme
-  :load-path "theme/ample-theme"
-  :disabled t
-  :init (progn
-          (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ample-theme/"))
-          ;; (mhl/load-dark-theme 'ample-flat)
-          (mhl/load-light-theme 'ample-light)
           ))
 
 (use-package leuven-mod
@@ -1758,8 +1758,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (setq-default c-basic-offset 4)
 
                  (defun c-mode-common-custom ()
-                   (c-set-offset 'access-label '-)
-                   (c-set-offset 'inclass '++)
+                   ;; (c-set-offset 'access-label '-)
+                   ;; (c-set-offset 'inclass '++)
                    (c-set-offset 'substatement-open 0)
                    ;; (c-set-offset 'inclass 'my-c-lineup-inclass)
                    )
@@ -1868,8 +1868,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                   company-require-match 'never
                   company-selection-wrap-around t)
 
-            (add-hook 'c++-mode-hook #'irony-mode)
-            (add-hook 'c-mode-hook #'irony-mode)
+            ;; (add-hook 'c++-mode-hook #'irony-mode)
+            ;; (add-hook 'c-mode-hook #'irony-mode)
             ;; (add-hook 'objc-mode-hook #'irony-mode)
 
             ;; replace the `completion-at-point' and `complete-symbol' bindings in
