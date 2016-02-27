@@ -38,32 +38,20 @@
 ;; third-party package, we need to handle the case for when we have a fresh
 ;; install.
 
-(eval-when-compile (package-initialize))
+(when (>= emacs-major-version 24)
+  (setq package-enable-at-startup nil)
+  (package-initialize)
+  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 
-;; Bootstrap Function!
-(defun require-package (package)
-  "refresh package archives, check package presence and install
-if it's not installed"
-  (if (null (require package nil t))
-      (progn (package-initialize)
-             (let* ((ARCHIVES (if (null package-archive-contents)
-                                  (progn (package-refresh-contents)
-                                         package-archive-contents)
-                                package-archive-contents))
-                    (AVAIL (assoc package ARCHIVES)))
-               (if AVAIL
-                   (package-install package)))
-             (require package))))
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+  (unless (package-installed-p 'delight)
+    (package-refresh-contents)
+    (package-install 'delight)))
 
-;; (unless (package-installed-p 'use-package)
-;;   (progn
-;;     (package-refresh-contents)
-;;     (package-install 'use-package)
-;;     (package-initialize)))
-;;
-;; (require 'use-package)
-
-(require-package 'use-package)
+(eval-when-compile
+  (require 'use-package))
 
 ;; Aquire use-package, the crux of our config file.
 (setq use-package-verbose t)
