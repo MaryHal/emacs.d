@@ -511,8 +511,8 @@ active, apply to active region instead."
   :config (progn (setq rm-blacklist nil)
                  (setq rm-whitelist " Wrap")
 
-                 ;; ;; "You don't need to activate rich-minority-mode if you're using smart-mode-line"
-                 ;; (rich-minority-mode t)
+                 ;; "You don't need to activate rich-minority-mode if you're using smart-mode-line"
+                 (rich-minority-mode t)
                  ))
 
 ;; Fringe ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -823,7 +823,9 @@ active, apply to active region instead."
             (use-package counsel
               :ensure t
               :defer t
-              :init (progn (bind-key (kbd "M-x")   #'counsel-M-x)
+              :init (progn (counsel-mode t)
+
+                           (bind-key (kbd "M-x")   #'counsel-M-x)
                            (bind-key (kbd "C-c x") #'counsel-M-x)
                            (bind-key (kbd "C-c o") #'counsel-imenu)
                            (bind-key (kbd "C-c l") #'ivy-resume)
@@ -900,6 +902,7 @@ active, apply to active region instead."
   :init (progn
           (use-package helm-ag
             :ensure t
+            :disabled t
             :commands (helm-ag))
           ))
 
@@ -1192,6 +1195,7 @@ active, apply to active region instead."
 
 (use-package helm
   :ensure t
+  :disabled t
   :defer 1
   :commands (helm-mode)
   ;; :init (progn
@@ -1303,6 +1307,7 @@ active, apply to active region instead."
 
 (use-package helm-swoop
   :ensure t
+  :disabled t
   :bind (("C-c s" . helm-swoop))
   :init (progn (bind-key "M-i" #'helm-swoop-from-isearch isearch-mode-map))
   :config (progn ;; disable pre-input
@@ -1580,8 +1585,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-leader/set-key "u" #'switch-to-buffer)
                  ;; (evil-leader/set-key "u" #'helm-buffers-list)
 
-                 (evil-leader/set-key "o" #'counsel-imenu)
-                 (evil-leader/set-key "x" #'counsel-M-x)
+                 (evil-leader/set-key "o" #'imenu)
+                 (evil-leader/set-key "x" #'execute-extended-command)
                  ;; (evil-leader/set-key "o" #'helm-imenu)
                  ;; (evil-leader/set-key "x" #'helm-M-x)
 
@@ -1590,8 +1595,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ;; Rings
                  (evil-leader/set-key "y"  #'counsel-yank-pop)
                  ;; (evil-leader/set-key "y"  #'helm-show-kill-ring)
-                 (evil-leader/set-key "rm" #'helm-mark-ring)
-                 (evil-leader/set-key "rr" #'helm-register)
+                 ;; (evil-leader/set-key "rm" #'helm-mark-ring)
+                 ;; (evil-leader/set-key "rr" #'helm-register)
 
                  ;; Git
                  (evil-leader/set-key "m" #'magit-status)
@@ -1742,7 +1747,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (setq-default c-basic-offset 4)
 
                  (defun c-mode-common-custom ()
-                   ;; (c-set-offset 'access-label '-)
+                   (c-set-offset 'access-label '+)
                    ;; (c-set-offset 'inclass '++)
                    (c-set-offset 'substatement-open 0)
                    ;; (c-set-offset 'inclass 'my-c-lineup-inclass)
@@ -1752,6 +1757,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ))
 
 (use-package csharp-mode
+  :ensure t
   :defer t
   :mode ("\\.cs$" . csharp-mode))
 

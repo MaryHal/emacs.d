@@ -6,36 +6,34 @@ struct ${1:name} {
         $0
 };
 
-void $1_init(struct $1* ${2:varname});
-void $1_terminate(struct $1* $2);
+void ${2:prefix}_init(struct $1* ${3:varname});
+void $2_terminate(struct $1* $3);
 
-struct $1* $1_create();
-void $1_destroy(struct $1* $2);
-
-
+struct $1* $2_create();
+void $2_destroy(struct $1* $3);
 
 
-void $1_init(struct $1* $2)
+void $2_init(struct $1* $3)
 {
 }
 
-void $1_terminate(struct $1* $2)
+void $2_terminate(struct $1* $3)
 {
 }
 
-struct $1* $1_create()
+struct $1* $2_create()
 {
-    struct $1* $2 = malloc(sizeof(struct $1));
-    if ($2)
+    struct $1* $3 = malloc(sizeof(struct $1));
+    if ($3)
     {
-        $1_init(s);
+        $2_init($3);
     }
 
-    return $2;
+    return $3;
 }
 
-void $1_destroy(struct $1* $2)
+void $2_destroy(struct $1* $3)
 {
-    $1_terminate($2);
-    free($2);
+    $2_terminate($3);
+    free($3);
 }
