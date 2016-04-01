@@ -1573,6 +1573,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ;; Eval
                  (evil-leader/set-key "eb" #'eval-buffer)
                  (evil-leader/set-key "er" #'eval-region)
+                 (evil-leader/set-key "ei" #'eval-and-replace)
 
                  ;; Errors
                  (evil-leader/set-key "en" #'next-error)
@@ -1809,7 +1810,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package web-mode
   :ensure t
-  :defer t)
+  :disabled t
+  :mode ("\\.php$" . web-mode))
 
 (use-package sql-mode
   :defer t
@@ -1931,6 +1933,18 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             ;; Instead, it uses =flycheck-emacs-lisp-load-path=, which is empty by
             ;; default. Let's have flycheck use =load-path=!
             (setq-default flycheck-emacs-lisp-load-path 'inherit)
+
+            ;; (flycheck-define-checker proselint
+            ;;   "A linter for prose."
+            ;;   :command ("proselint" source-inplace)
+            ;;   :error-patterns
+            ;;   ((warning line-start (file-name) ":" line ":" column ": "
+            ;;             (id (one-or-more (not (any " "))))
+            ;;             (message (one-or-more not-newline)
+            ;;                      (zero-or-more "\n" (any " ") (one-or-more not-newline)))
+            ;;             line-end))
+            ;;   :modes (text-mode org-mode markdown-mode gfm-mode))
+            ;; (add-to-list 'flycheck-checkers 'proselint)
 
             (global-flycheck-mode t)
             ))
