@@ -41,7 +41,7 @@
 (when (>= emacs-major-version 24)
   (setq package-enable-at-startup nil)
   (package-initialize)
-  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+  ;; (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
   (unless (package-installed-p 'use-package)
     (package-refresh-contents)
     (package-install 'use-package)))
@@ -220,6 +220,11 @@ active, apply to active region instead."
 (if (boundp 'buffer-file-coding-system)
     (setq-default buffer-file-coding-system 'utf-8)
   (setq buffer-file-coding-system 'utf-8))
+
+(prefer-coding-system       'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
 
 ;; Enable syntax highlighting for older Emacsen that have it off
 (global-font-lock-mode t)
@@ -1029,7 +1034,7 @@ active, apply to active region instead."
 ;; (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
 
 ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
-(setq x-select-request-type '(UTF7_STRING COMPOUND_TEXT TEXT STRING))
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
 (defun xsel-cut-function (text &optional push)
   ;; Insert text to temp-buffer, and "send" content to xsel stdin
@@ -1071,7 +1076,7 @@ active, apply to active region instead."
   :init (progn
           (bind-key "<f1>" (defhydra hydra-help (:color blue)
                              "Help"
-                             ("a" helm-apropos "Apropos")
+                             ("a" apropos "Apropos")
                              ("b" counsel-descbinds "Describe Keybindings")
                              ("c" describe-char "Describe Char")
                              ("F" find-function "Find Function")
