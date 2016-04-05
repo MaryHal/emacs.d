@@ -152,6 +152,12 @@
    ;; Anzu
    `(anzu-mode-line ((t (:inherit mode-line :weight bold :foreground ,base0D))))
 
+   ;; Avy
+   `(avy-lead-face ((t (:background ,base0A :foreground ,base01))))
+   `(avy-lead-face-0 ((t (:background ,base0D :foreground ,base01))))
+   `(avy-lead-face-1 ((t (:background ,base08 :foreground ,base01))))
+   `(avy-lead-face-2 ((t (:background ,base0C :foreground ,base01))))
+
    ;; Smart Mode Line
    `(sml/global ((t (:foreground ,base05))))
    `(sml/line-number ((t (:weight bold :foreground ,base05))))
