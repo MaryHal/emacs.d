@@ -962,6 +962,12 @@ active, apply to active region instead."
 (use-package vlf :disabled t
   :ensure t)
 
+(use-package persistent-scratch
+  :ensure t
+  :init (progn
+          (persistent-scratch-setup-default)
+          ))
+
 ;; Version Control ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package magit
