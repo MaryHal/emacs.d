@@ -837,7 +837,11 @@ active, apply to active region instead."
                            (bind-key (kbd "C-c y") #'counsel-yank-pop))
               :config (progn
                         (advice-add 'counsel-imenu :after #'mhl/swiper-recenter)
-                        (setq counsel-yank-pop-truncate t)))))
+                        (setq counsel-yank-pop-truncate t)))
+
+            ;; (use-package counsel-projectile
+            ;;   :ensure t)
+            ))
 
 (use-package anzu
   :ensure t
@@ -964,6 +968,7 @@ active, apply to active region instead."
 
 (use-package persistent-scratch
   :ensure t
+  :disabled t
   :init (progn
           (persistent-scratch-setup-default)
           ))
