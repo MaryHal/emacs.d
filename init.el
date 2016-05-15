@@ -228,6 +228,7 @@ active, apply to active region instead."
 
 ;; Enable syntax highlighting for older Emacsen that have it off
 (global-font-lock-mode t)
+(setq font-lock-maximum-decoration nil)
 
 ;; Answering just 'y' or 'n' will do
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -493,7 +494,6 @@ active, apply to active region instead."
 (setq initial-scratch-message nil)
 
 (setq visible-bell nil
-      font-lock-maximum-decoration t
       truncate-partial-width-windows nil)
 
 ;; Modeline ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
