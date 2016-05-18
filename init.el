@@ -821,6 +821,10 @@ active, apply to active region instead."
               (recenter))
             (advice-add 'swiper--cleanup :after #'mhl/swiper-recenter)
 
+            (use-package ivy-hydra
+              :ensure t
+              :defer t)
+
             (use-package smex
               :ensure t
               :init (progn (setq smex-save-file (concat user-cache-directory "smex-items"))))
