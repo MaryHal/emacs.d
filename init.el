@@ -436,9 +436,9 @@ active, apply to active region instead."
 (bind-key "C-c v"    #'eval-buffer)
 (bind-key "C-c r"    #'eval-region)
 
-(bind-key "C-x C-e" #'eval-and-replace)
+(bind-key "C-x C-e"  #'eval-and-replace)
 
-(bind-key "C-c C-t"    #'open-terminal)
+(bind-key "C-c C-t"  #'open-terminal)
 
 (bind-key "C-;"      #'comment-line-or-region)
 (bind-key "M-i"      #'back-to-indentation)
@@ -864,6 +864,10 @@ active, apply to active region instead."
 (use-package expand-region
   :ensure t
   :bind ("C-=" . er/expand-region))
+
+(use-package viking-mode
+  :ensure t
+  :disabled t)
 
 (use-package key-chord
   :ensure t
