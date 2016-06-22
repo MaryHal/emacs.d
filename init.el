@@ -33,6 +33,8 @@
 
 ;; Bootstrap use-package ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(setq-default use-package-enable-imenu-support t)
+
 ;; This file uses [[https://github.com/jwiegley/use-package][use-package]] to
 ;; install and configure third-party packages. Since use-package itself is a
 ;; third-party package, we need to handle the case for when we have a fresh
@@ -782,14 +784,8 @@ active, apply to active region instead."
 
 (use-package imenu
   :config (progn
-            ;; Add use-package / init file blocks to imenu
-            (defun imenu-init-file-additions()
-              (add-to-list 'imenu-generic-expression
-                           '("Package" "\\(^\\s-*(use-package +\\)\\(\\_<.+\\_>\\)" 2))
-              (add-to-list 'imenu-generic-expression
-                           '("Section" "^;; \\(.+\\) ;+$" 1))
-              )
-            (add-hook 'emacs-lisp-mode-hook #'imenu-init-file-additions)
+            ;; Always rescan buffer for imenu
+            (set-default 'imenu-auto-rescan t)
             ))
 
 (use-package avy
@@ -867,7 +863,10 @@ active, apply to active region instead."
 
 (use-package viking-mode
   :ensure t
-  :disabled t)
+  :disabled t
+  :config (progn
+            (setq viking-use-expand-region-when-loaded t)
+            (global-viking-mode)))
 
 (use-package key-chord
   :ensure t
@@ -1357,9 +1356,6 @@ active, apply to active region instead."
                  ;; (ido-mode t)
 
                  (setq ido-save-directory-list-file (concat user-cache-directory "ido.last"))
-
-                 ;; Always rescan buffer for imenu
-                 (set-default 'imenu-auto-rescan t)
 
                  (add-to-list 'ido-ignore-directories "target")
                  (add-to-list 'ido-ignore-directories "node_modules")
