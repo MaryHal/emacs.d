@@ -153,6 +153,12 @@
    ;; Anzu
    `(anzu-mode-line ((t (:inherit mode-line :weight bold :foreground ,base0D))))
 
+   ;; Avy
+   `(avy-lead-face   ((t (:background ,base0A :foreground ,base01 :weight bold))))
+   `(avy-lead-face-0 ((t (:background ,base0D :foreground ,base01 :weight bold))))
+   `(avy-lead-face-1 ((t (:background ,base08 :foreground ,base01 :weight bold))))
+   `(avy-lead-face-2 ((t (:background ,base0C :foreground ,base01 :weight bold))))
+
    ;; Smart Mode Line
    `(sml/global ((t (:foreground ,base05))))
    `(sml/line-number ((t (:weight bold :foreground ,base05))))
@@ -214,10 +220,10 @@
    `(ivy-current-match ((t (:weight ultra-bold :underline t))))
 
    ;; Match swiper face inheritance
-   `(ivy-minibuffer-match-face-1 ((t (:inherit isearch-lazy-highlight-face))))
-   `(ivy-minibuffer-match-face-2 ((t (:inherit isearch))))
-   `(ivy-minibuffer-match-face-3 ((t (:inherit match))))
-   `(ivy-minibuffer-match-face-4 ((t (:inherit isearch-fail))))
+   `(ivy-minibuffer-match-face-1 ((t (:foreground ,base0C))))
+   `(ivy-minibuffer-match-face-2 ((t (:foreground ,base0A))))
+   `(ivy-minibuffer-match-face-3 ((t (:foreground ,base0D))))
+   `(ivy-minibuffer-match-face-4 ((t (:foreground ,base08))))
 
    ;; company-mode
    `(company-tooltip ((t (:weight bold :background ,base00 :foreground ,base05))))
