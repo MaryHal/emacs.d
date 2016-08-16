@@ -502,6 +502,7 @@ active, apply to active region instead."
 
 (use-package smart-mode-line
   :ensure t
+  :disabled t
   :config (progn (setq-default sml/line-number-format " %3l")
                  (setq-default sml/col-number-format  "%2c")
 
@@ -649,6 +650,15 @@ active, apply to active region instead."
           ;; (mhl/load-light-theme 'base16-ashes-light)
           ))
 
+(use-package moe-theme
+  :ensure t
+  :disabled t
+  :config (progn
+            (moe-theme-set-color 'purple)
+            (setq moe-theme-highlight-buffer-id nil)
+            (moe-light)
+            ))
+
 (use-package yoshi-theme
   :ensure t
   :disabled t
@@ -740,6 +750,8 @@ active, apply to active region instead."
 
                  ;; Immediately match parens
                  (setq show-paren-delay 0)
+
+                 (setq show-paren-style 'expression)
                  ))
 
 (use-package highlight-parentheses
@@ -1454,12 +1466,12 @@ active, apply to active region instead."
                  :commands (hybrid-mode)
                  :init (hybrid-mode t))
 
-               (setq evil-emacs-state-cursor    '("#8abeb7" box))
-               (setq evil-normal-state-cursor   '("#e0e0e0" box))
-               (setq evil-insert-state-cursor   '("#f0c674" box))
-               (setq evil-visual-state-cursor   '("#de935f" box))
-               (setq evil-replace-state-cursor  '("#a3685a" box))
-               (setq evil-operator-state-cursor '("#81a2be" box))
+               ;; (setq evil-emacs-state-cursor    '("#8abeb7" box))
+               ;; (setq evil-normal-state-cursor   '("#e0e0e0" box))
+               ;; (setq evil-insert-state-cursor   '("#f0c674" box))
+               ;; (setq evil-visual-state-cursor   '("#de935f" box))
+               ;; (setq evil-replace-state-cursor  '("#a3685a" box))
+               ;; (setq evil-operator-state-cursor '("#81a2be" box))
 
                (evil-mode t))
   :config (progn (evil-set-toggle-key "C-\\")
