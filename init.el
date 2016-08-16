@@ -751,7 +751,7 @@ active, apply to active region instead."
                  ;; Immediately match parens
                  (setq show-paren-delay 0)
 
-                 (setq show-paren-style 'expression)
+                 (setq show-paren-style 'parenthesis)
                  ))
 
 (use-package highlight-parentheses
