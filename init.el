@@ -713,14 +713,18 @@ active, apply to active region instead."
 
 ;; Only set font if outside terminal
 (when (display-graphic-p)
-  (set-frame-font (font-candidate (font-spec :family "PragmataPro"
-                                             :size 12)
-                                  (font-spec :family "Inconsolatazi4"
-                                             :size 12)
-                                  "Monospace 8"
-                                  (font-spec :family "Consolas"
-                                             :size 12)
-                                  ) t t))
+  (let ((my-font (font-candidate (font-spec :family "PragmataPro"
+                                                             :size 12)
+                                                  (font-spec :family "Inconsolatazi4"
+                                                             :size 12)
+                                                  "Monospace 8"
+                                                  (font-spec :family "Consolas"
+                                                             :size 12)
+                                                  )))
+    (set-frame-font my-font t t)
+
+    (set-fontset-font t 'hangul my-font)
+    ))
 
 ;; Editing ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
