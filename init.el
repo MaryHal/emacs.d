@@ -490,6 +490,11 @@ active, apply to active region instead."
   (when (and (fboundp 'menu-bar-mode) (not (eq menu-bar-mode -1)))
     (menu-bar-mode -1)))
 
+;; Set margins in terminal
+(when (display-graphic-p)
+  (setq-default left-margin-width 1
+                right-margin-width 1))
+
 ;; No splash screen please
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-message t)
@@ -1013,8 +1018,6 @@ active, apply to active region instead."
   :defer t
   :init (progn (global-git-gutter-mode t))
   :config (progn
-            (setq-default left-margin-width 1
-                          right-margin-width 1)
             (set-window-buffer nil (current-buffer))
 
             (setq git-gutter:modified-sign "*")
