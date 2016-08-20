@@ -991,7 +991,8 @@ active, apply to active region instead."
           (region-state-mode t)
           ))
 
-(use-package vlf :disabled t
+(use-package vlf
+  :disabled t
   :ensure t)
 
 (use-package persistent-scratch
@@ -1413,34 +1414,11 @@ active, apply to active region instead."
   :ensure t
   :commands (fzf fzf-directory)
   :config (progn
-            (setq fzf/args "-x --color=no")
+            (setq fzf/args "-x")
 
             (defadvice fzf/start (after normalize-fzf-mode-line activate)
               "Hide the modeline so FZF will render properly."
               (setq mode-line-format nil))
-
-            (defvar helm-fzf-source
-              (helm-build-async-source "fzf"
-                :candidates-process 'helm-fzf--do-candidate-process
-                :nohighlight t
-                :requires-pattern 2
-                :candidate-number-limit 9999))
-
-            (defun helm-fzf--do-candidate-process ()
-              (let* ((cmd-args `("fzf" "-x" "-f" ,helm-pattern))
-                     (proc (apply #'start-file-process "helm-fzf" nil cmd-args)))
-                (prog1 proc
-                  (set-process-sentinel
-                   proc
-                   (lambda (process event)
-                     (helm-process-deferred-sentinel-hook
-                      process event (helm-default-directory)))))))
-
-            (defun helm-fzf (directory)
-              (interactive "D")
-              (let ((default-directory directory))
-                (helm :sources '(helm-fzf-source)
-                      :buffer "*helm-fzf*")))
             ))
 
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
