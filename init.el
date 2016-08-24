@@ -469,6 +469,11 @@ active, apply to active region instead."
 
 ;; Frame Defaults ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Set margins in terminal
+(when (not (display-graphic-p))
+  (setq-default left-margin-width 1
+                right-margin-width 1))
+
 (setq default-frame-alist
       '((top   . 10) (left   . 2)
         (width . 80) (height . 30)
@@ -489,11 +494,6 @@ active, apply to active region instead."
 (unless (eq window-system 'mac)
   (when (and (fboundp 'menu-bar-mode) (not (eq menu-bar-mode -1)))
     (menu-bar-mode -1)))
-
-;; Set margins in terminal
-(when (display-graphic-p)
-  (setq-default left-margin-width 1
-                right-margin-width 1))
 
 ;; No splash screen please
 (setq inhibit-splash-screen t)
@@ -648,11 +648,19 @@ active, apply to active region instead."
 
 (use-package base16-mod-theme
   :load-path "theme/base16-mod"
+  :disabled t
   :init (progn
           (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/base16-mod/"))
           (mhl/load-dark-theme 'base16-mod-dark)
           ;; (mhl/load-dark-theme 'base16-ashes-dark)
           ;; (mhl/load-light-theme 'base16-ashes-light)
+          ))
+
+(use-package apprentice-theme
+  :load-path "theme/apprentice-theme"
+  :init (progn
+          (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/apprentice-theme/"))
+          (mhl/load-dark-theme 'apprentice)
           ))
 
 (use-package moe-theme
