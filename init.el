@@ -507,7 +507,6 @@ active, apply to active region instead."
 
 (use-package smart-mode-line
   :ensure t
-  :disabled t
   :config (progn (setq-default sml/line-number-format " %3l")
                  (setq-default sml/col-number-format  "%2c")
 
@@ -1422,7 +1421,7 @@ active, apply to active region instead."
   :ensure t
   :commands (fzf fzf-directory)
   :config (progn
-            (setq fzf/args "-x -m --sort 10000 --color=16,bg+:-1,hl:12,hl+:12")
+            (setq fzf/args "-x --sort 10000 --color=16,bg+:-1,hl:4,hl+:4")
 
             (defadvice fzf/start (after normalize-fzf-mode-line activate)
               "Hide the modeline so FZF will render properly."
