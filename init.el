@@ -648,7 +648,6 @@ active, apply to active region instead."
 
 (use-package base16-mod-theme
   :load-path "theme/base16-mod"
-  :disabled t
   :init (progn
           (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/base16-mod/"))
           (mhl/load-dark-theme 'base16-mod-dark)
@@ -658,6 +657,7 @@ active, apply to active region instead."
 
 (use-package apprentice-theme
   :load-path "theme/apprentice-theme"
+  :disabled t
   :init (progn
           (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/apprentice-theme/"))
           (mhl/load-dark-theme 'apprentice)
@@ -1422,7 +1422,7 @@ active, apply to active region instead."
   :ensure t
   :commands (fzf fzf-directory)
   :config (progn
-            (setq fzf/args "-x")
+            (setq fzf/args "-x -m --sort 10000 --color=16,bg+:-1,hl:12,hl+:12")
 
             (defadvice fzf/start (after normalize-fzf-mode-line activate)
               "Hide the modeline so FZF will render properly."
