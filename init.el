@@ -1960,7 +1960,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
             (use-package company-flx
               :ensure t
-              :disabled t
               :config (progn (company-flx-mode t)))
 
             (global-company-mode t)
