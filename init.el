@@ -344,7 +344,7 @@ active, apply to active region instead."
 
 (use-package esup
   :ensure t
-  :defer t)
+  :commands esup)
 
 ;; Backups ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -853,10 +853,6 @@ active, apply to active region instead."
               (recenter))
             (advice-add 'swiper--cleanup :after #'mhl/swiper-recenter)
 
-            (use-package ivy-hydra
-              :ensure t
-              :defer t)
-
             (use-package smex
               :ensure t
               :init (progn (setq smex-save-file (concat user-cache-directory "smex-items"))))
@@ -1031,6 +1027,21 @@ active, apply to active region instead."
 
 (use-package magit
   :ensure t
+  :commands (magit-blame
+             magit-commit
+             magit-commit-popup
+             magit-diff-popup
+             magit-diff-unstaged
+             magit-fetch-popup
+             magit-init
+             magit-log-popup
+             magit-pull-popup
+             magit-push-popup
+             magit-revert
+             magit-stage-file
+             magit-status
+             magit-unstage-file
+             magit-blame-mode)
   :bind ("C-c m" . magit-status))
 
 (use-package git-timemachine
@@ -1046,13 +1057,9 @@ active, apply to active region instead."
   :config (progn
             (set-window-buffer nil (current-buffer))
 
-            (setq git-gutter:modified-sign "*")
-            (setq git-gutter:added-sign "+")
-            (setq git-gutter:deleted-sign "-")
-
-            (set-face-foreground 'git-gutter:modified "purple")
-            (set-face-foreground 'git-gutter:added    "green")
-            (set-face-foreground 'git-gutter:deleted  "red")
+            (setq git-gutter:modified-sign "|")
+            (setq git-gutter:added-sign "|")
+            (setq git-gutter:deleted-sign "|")
             ))
 
 (use-package git-gutter-fringe
@@ -1188,7 +1195,12 @@ active, apply to active region instead."
             ("y" (yank-pop 1) "next")
             ("Y" (yank-pop -1) "prev")
             ("l" helm-show-kill-ring "list" :color blue))
-          ))
+          )
+  :config (progn
+            (use-package ivy-hydra
+              :ensure t
+              :defer t)
+            ))
 
 ;; Project Management ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1483,6 +1495,8 @@ active, apply to active region instead."
 
                (setq evil-want-fine-undo t)
                (setq evil-symbol-word-search t)
+
+               (setq evil-disable-insert-state-bindings t)
 
                (setq evil-auto-indent t)
 
