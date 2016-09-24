@@ -51,9 +51,12 @@
 (eval-when-compile
   (require 'use-package))
 
-;; Aquire use-package, the crux of our config file.
 (setq use-package-verbose t)
 (setq use-package-minimum-reported-time 0)
+
+;; Very important, init-file-encompassing packages
+(use-package general
+  :ensure t)
 
 ;; Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -227,6 +230,9 @@ active, apply to active region instead."
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
+
+(setq coding-system-for-read 'utf-8)
+(setq coding-system-for-write 'utf-8)
 
 ;; Enable syntax highlighting for older Emacsen that have it off
 (global-font-lock-mode t)
@@ -1994,12 +2000,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
             (setq company-backends (mapc #'company-mode/backend-with-yas company-backends))
 
-            (use-package company-flx
-              :ensure t
-              :config (progn (company-flx-mode t)))
-
             (global-company-mode t)
             ))
+
+(use-package company-flx
+  :ensure t
+  :config (progn (company-flx-mode t)))
 
 ;; Flycheck ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
