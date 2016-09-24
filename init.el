@@ -835,6 +835,8 @@ active, apply to active region instead."
             (setq ivy-height 20)
             (setq ivy-format-function 'ivy-format-function-arrow)
 
+            (setq ivy-display-style 'fancy)
+
             (ivy-mode t)
 
             (setq projectile-completion-system 'ivy)
@@ -869,7 +871,17 @@ active, apply to active region instead."
 
             ;; (use-package counsel-projectile
             ;;   :ensure t)
-            ))
+            )
+  :config (progn
+            (defun ivy-insert-action (x)
+              (with-ivy-window
+                (insert x)))
+
+            (ivy-set-actions
+             t
+             '(("I" ivy-insert-action "insert")))
+            )
+  )
 
 (use-package anzu
   :ensure t
