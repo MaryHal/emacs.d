@@ -603,7 +603,7 @@ active, apply to active region instead."
 ;; Theme ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defadvice load-theme (before theme-dont-propagate activate)
-  (mapcar #'disable-theme custom-enabled-themes))
+  (mapc #'disable-theme custom-enabled-themes))
 
 ;; Set transparency of emacs
 (defun set-frame-alpha (arg &optional active)
@@ -1968,7 +1968,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                 (append (if (consp backend) backend (list backend))
                         '(:with company-yasnippet))))
 
-            (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+            (setq company-backends (mapc #'company-mode/backend-with-yas company-backends))
 
             (use-package company-flx
               :ensure t
