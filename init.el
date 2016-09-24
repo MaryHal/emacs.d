@@ -835,7 +835,7 @@ active, apply to active region instead."
             (setq ivy-height 20)
             (setq ivy-format-function 'ivy-format-function-arrow)
 
-            (setq ivy-display-style 'fancy)
+            ;; (setq ivy-display-style 'fancy)
 
             (ivy-mode t)
 
@@ -1055,32 +1055,56 @@ active, apply to active region instead."
   :init (progn (global-git-gutter-mode t))
   :config (progn
             (define-fringe-bitmap 'git-gutter-fr:added
-              [#b0000000
-               #b0010000
-               #b0010000
-               #b1111100
-               #b0010000
-               #b0010000
-               #b0000000
-               #b0000000])
+              [#b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000])
             (define-fringe-bitmap 'git-gutter-fr:deleted
-              [#b0000000
-               #b0000000
-               #b0000000
-               #b1111100
-               #b0000000
-               #b0000000
-               #b0000000
-               #b0000000])
+              [#b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000])
             (define-fringe-bitmap 'git-gutter-fr:modified
-              [#b0000000
-               #b0010000
-               #b0111000
-               #b1111100
-               #b0111000
-               #b0010000
-               #b0000000
-               #b0000000])))
+              [#b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000
+               #b0011000])))
 
 ;; Clipboard ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
