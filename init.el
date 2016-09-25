@@ -1,4 +1,6 @@
 
+;;; Code:
+
 ;; Preload Init ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Things that should be set early just in case something bad happens.
@@ -61,17 +63,19 @@
 ;; Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun add-to-loadpath (&rest dirs)
+  "Add DIRS to loadpath."
   (dolist (dir dirs load-path)
     (add-to-list 'load-path (expand-file-name dir) nil #'string=)))
 
 (defun sudo-edit (&optional arg)
+  "Open file (ARG) with root permissions."
   (interactive "p")
   (if (or arg (not buffer-file-name))
       (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 
 (defun my-window-killer ()
-  "closes the window, and deletes the buffer if it's the last window open."
+  "Closes the window, and deletes the buffer if it's the last window open."
   (interactive)
   (if (> buffer-display-count 1)
       (if (= (length (window-list)) 1)
@@ -79,26 +83,23 @@
         (delete-window))
     (kill-buffer-and-window)))
 
-;; By default M-w is =kill-ring-save= -- this function simply copies a region.
-;; However, if no region is selected, it doesn't really do anything.
-;; =save-region-or-current-line= is =kill-ring-save-dwim=. If no region is
-;; selected, copy to the end of the current line.
-
 (defun copy-to-end-of-line ()
+  "Copy to the end of the line, even if no region is selected.
+Meant to replace 'kill-ring-save'."
   (interactive)
   (kill-ring-save (point)
                   (line-end-position))
   (message "Copied to end of line"))
 
 (defun copy-whole-lines (arg)
-  "Copy lines (as many as prefix argument) in the kill ring"
+  "Copy ARG lines in the kill ring."
   (interactive "p")
   (kill-ring-save (line-beginning-position)
                   (line-beginning-position (+ 1 arg)))
   (message "%d line%s copied" arg (if (= 1 arg) "" "s")))
 
 (defun copy-line (arg)
-  "Copy to end of line, or as many lines as prefix argument"
+  "Copy ARG lines into the kill ring."
   (interactive "P")
   (if (null arg)
       (copy-to-end-of-line)
@@ -110,8 +111,8 @@
       (kill-ring-save (region-beginning) (region-end))
     (copy-line arg)))
 
-(defun create-scratch-buffer nil
-  "create a new scratch buffer to work in. (could be *scratch* - *scratchX*)"
+(defun create-scratch-buffer ()
+  "Create a new scratch buffer to work in.  Could be named *scratch* -> *scratchX*."
   (interactive)
   (let ((n 0)
         bufname)
@@ -840,6 +841,7 @@ active, apply to active region instead."
 
             (setq ivy-height 20)
             (setq ivy-format-function 'ivy-format-function-arrow)
+            (setq ivy-count-format "%d/%d ")
 
             ;; (setq ivy-display-style 'fancy)
 
@@ -881,9 +883,9 @@ active, apply to active region instead."
 
             (ivy-set-actions
              t
-             '(("I" ivy-insert-action "insert")))
-            )
-  )
+             '(("I" ivy-insert-action "insert")
+               ("W" kill-new "save to kill ring")))
+  ))
 
 (use-package anzu
   :ensure t
@@ -1121,8 +1123,8 @@ active, apply to active region instead."
 
 ;; Clipboard ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq x-select-enable-clipboard t)
-(setq x-select-enable-primary t)
+(setq select-enable-clipboard t)
+(setq select-enable-primary t)
 (setq save-interprogram-paste-before-kill t)
 
 ;; (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
@@ -1131,7 +1133,7 @@ active, apply to active region instead."
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
 (defun xsel-cut-function (text &optional push)
-  ;; Insert text to temp-buffer, and "send" content to xsel stdin
+  """Insert TEXT to temp-buffer and send content to xsel stdin."""
   (with-temp-buffer
     (insert text)
     ;; I prefer using the "clipboard" selection (the one the typically is used
