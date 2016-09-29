@@ -143,8 +143,8 @@ active, apply to active region instead."
     ;; (forward-line 1)
     (back-to-indentation)))
 
-;; Very simple. Just open a terminal in the cwd using the $TERMINAL environment variable.
 (defun open-terminal ()
+  "Just open a terminal in the cwd using the $TERMINAL environment variable."
   (interactive)
   (call-process-shell-command (concat "eval $TERMINAL -e " user-shell) nil 0))
 
@@ -966,8 +966,12 @@ active, apply to active region instead."
             :commands (helm-ag))
           ))
 
+(use-package ripgrep
+  :ensure t)
+
 (use-package rainbow-mode
   :ensure t
+  :disabled t
   :commands (rainbow-mode))
 
 (use-package beacon
@@ -1301,6 +1305,7 @@ active, apply to active region instead."
 
 (use-package helm
   :ensure t
+  :disabled t
   :defer 1
   :commands (helm-mode)
   ;; :init (progn
@@ -1652,6 +1657,60 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                    (do-not-quit))
                  (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
                    (do-not-quit))
+
+                 (use-package evil-surround
+                   :ensure t
+                   :defer t
+                   :init (global-evil-surround-mode t))
+
+                 (use-package evil-textobj-anyblock
+                   :ensure t
+                   :defer t
+                   :init (progn
+                           (bind-key "b" 'evil-textobj-anyblock-inner-block evil-inner-text-objects-map)
+                           (bind-key "b" 'evil-textobj-anyblock-a-block     evil-outer-text-objects-map)
+                           ))
+
+                 (use-package evil-args
+                   :ensure t
+                   :defer t
+                   :init (progn
+                           ;; bind evil-args text objects
+                           (bind-key "a" #'evil-inner-arg evil-inner-text-objects-map)
+                           (bind-key "a" #'evil-outer-arg evil-outer-text-objects-map)
+
+                           ;; bind evil-forward/backward-args
+                           (bind-key "gl" #'evil-forward-arg  evil-normal-state-map)
+                           (bind-key "gh" #'evil-backward-arg evil-normal-state-map)
+                           (bind-key "gl" #'evil-forward-arg  evil-motion-state-map)
+                           (bind-key "gh" #'evil-backward-arg evil-motion-state-map)
+
+                           ;; bind evil-jump-out-args
+                           ;; (bind-key "gm" 'evil-jump-out-args evil-normal-state-map)
+                           ))
+
+                 (use-package evil-exchange
+                   :ensure t
+                   :defer t
+                   :init (progn (evil-exchange-install)))
+
+                 (use-package evil-numbers
+                   :ensure t
+                   :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt)
+                   :init (progn
+                           ;; Instead of C-a and C-x like in Vim, let's use + and -.
+                           (bind-key "-" #'evil-numbers/dec-at-pt evil-normal-state-map)
+                           (bind-key "+" #'evil-numbers/inc-at-pt evil-normal-state-map)
+                           ))
+
+                 (use-package evil-mc
+                   :ensure t
+                   :disabled t
+                   :init (progn (global-evil-mc-mode t)))
+
+                 ;; Make Anzu work with evil-search
+                 (use-package evil-anzu
+                   :ensure t)
                  ))
 
 ;; Evil Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1736,60 +1795,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  ;; Help!
                  (evil-leader/set-key "h" #'hydra-help/body)))
-
-(use-package evil-surround
-  :ensure t
-  :defer t
-  :init (global-evil-surround-mode t))
-
-(use-package evil-textobj-anyblock
-  :ensure t
-  :defer t
-  :init (progn
-          (bind-key "b" 'evil-textobj-anyblock-inner-block evil-inner-text-objects-map)
-          (bind-key "b" 'evil-textobj-anyblock-a-block     evil-outer-text-objects-map)
-          ))
-
-(use-package evil-args
-  :ensure t
-  :defer t
-  :init (progn
-          ;; bind evil-args text objects
-          (bind-key "a" #'evil-inner-arg evil-inner-text-objects-map)
-          (bind-key "a" #'evil-outer-arg evil-outer-text-objects-map)
-
-          ;; bind evil-forward/backward-args
-          (bind-key "gl" #'evil-forward-arg  evil-normal-state-map)
-          (bind-key "gh" #'evil-backward-arg evil-normal-state-map)
-          (bind-key "gl" #'evil-forward-arg  evil-motion-state-map)
-          (bind-key "gh" #'evil-backward-arg evil-motion-state-map)
-
-          ;; bind evil-jump-out-args
-          ;; (bind-key "gm" 'evil-jump-out-args evil-normal-state-map)
-          ))
-
-(use-package evil-exchange
-  :ensure t
-  :defer t
-  :init (progn (evil-exchange-install)))
-
-(use-package evil-numbers
-  :ensure t
-  :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt)
-  :init (progn
-          ;; Instead of C-a and C-x like in Vim, let's use + and -.
-          (bind-key "-" #'evil-numbers/dec-at-pt evil-normal-state-map)
-          (bind-key "+" #'evil-numbers/inc-at-pt evil-normal-state-map)
-          ))
-
-(use-package evil-mc
-  :ensure t
-  :disabled t
-  :init (progn (global-evil-mc-mode t)))
-
-;; Make Anzu work with evil-search
-(use-package evil-anzu
-  :ensure t)
 
 ;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -2107,6 +2112,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Pretty package listings.
 (use-package paradox
   :ensure t
+  :disabled t
   :commands (paradox-list-packages)
   :config (progn (setq paradox-execute-asynchronously t)))
 
