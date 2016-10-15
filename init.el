@@ -258,7 +258,6 @@ active, apply to active region instead."
 (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
-
 (use-package autorevert
   :commands (auto-revert-mode)
   :init (add-hook 'find-file-hook #'(lambda () (auto-revert-mode t))))
@@ -414,6 +413,7 @@ active, apply to active region instead."
 ;; Unset some keys I never use
 (global-unset-key (kbd "C-x m"))
 (global-unset-key (kbd "C-x f"))
+(global-unset-key (kbd "ESC ESC ESC"))
 
 ;; Auto-indent on RET
 (bind-key (kbd "RET") #'newline-and-indent)
@@ -449,7 +449,8 @@ active, apply to active region instead."
 
 (bind-key "C-c C-t"  #'open-terminal)
 
-(bind-key "C-;"      #'comment-line-or-region)
+;; (bind-key "C-;"      #'comment-line-or-region)
+(bind-key "C-;"      #'comment-line)
 (bind-key "M-i"      #'back-to-indentation)
 
 (bind-key "C-."      #'hippie-expand)
@@ -609,8 +610,8 @@ active, apply to active region instead."
 
 ;; Theme ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defadvice load-theme (before theme-dont-propagate activate)
-  (mapc #'disable-theme custom-enabled-themes))
+;; (defadvice load-theme (before theme-dont-propagate activate)
+;;   (mapc #'disable-theme custom-enabled-themes))
 
 ;; Set transparency of emacs
 (defun set-frame-alpha (arg &optional active)
@@ -624,10 +625,13 @@ active, apply to active region instead."
     (set-frame-parameter nil 'alpha new)))
 
 (defun mhl/load-light-theme (theme)
+  "Set THEME with background transparency."
   (load-theme theme :no-confirm)
   (set-frame-alpha 90))
 
 (defun mhl/load-dark-theme (theme)
+  "Set THEME with background transparency. If emacs is running in
+a terminal, just try to remove default the background color."
   (load-theme theme :no-confirm)
 
   ;; Set transparent background.
@@ -1503,7 +1507,7 @@ active, apply to active region instead."
                (setq evil-want-fine-undo t)
                (setq evil-symbol-word-search t)
 
-               (setq evil-disable-insert-state-bindings t)
+               ;; (setq evil-disable-insert-state-bindings t)
 
                (setq evil-auto-indent t)
 
@@ -1566,8 +1570,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                    (bind-key "C-f" #'evil-forward-char       evil-insert-state-map)
 
-                   (bind-key "C-k" #'evil-delete-line          evil-insert-state-map)
-                   (bind-key "C-k" #'evil-delete-line          evil-motion-state-map)
+                   (bind-key "C-k" #'evil-delete-line        evil-insert-state-map)
+                   (bind-key "C-k" #'evil-delete-line        evil-motion-state-map)
 
                    ;; Delete forward like Emacs.
                    (bind-key "C-d" #'evil-delete-char evil-insert-state-map)
