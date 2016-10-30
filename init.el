@@ -784,7 +784,7 @@ a terminal, just try to remove default the background color."
 (use-package highlight-parentheses
   :ensure t
   :config (progn
-            (defun hl-parens-hook()
+            (defun hl-parens-hoo)
               (highlight-parentheses-mode t))
             (add-hook 'prog-mode-hook #'hl-parens-hook)
             ))
@@ -867,12 +867,12 @@ a terminal, just try to remove default the background color."
               :ensure t
               :defer t
               :init (progn (counsel-mode t)
-
                            (bind-key (kbd "M-x")   #'counsel-M-x)
                            (bind-key (kbd "C-c x") #'counsel-M-x)
                            (bind-key (kbd "C-c o") #'counsel-imenu)
                            (bind-key (kbd "C-c l") #'ivy-resume)
-                           (bind-key (kbd "C-c y") #'counsel-yank-pop))
+                           (bind-key (kbd "C-c y") #'counsel-yank-pop)
+                           (bind-key (kbd "C-c s") #'swiper))
               :config (progn
                         (advice-add 'counsel-imenu :after #'mhl/swiper-recenter)
                         (setq counsel-yank-pop-truncate t)))
@@ -915,6 +915,10 @@ a terminal, just try to remove default the background color."
   :config (progn
             (setq viking-use-expand-region-when-loaded t)
             (global-viking-mode)))
+
+(use-package embrace
+  :ensure t
+  :defer t)
 
 (use-package key-chord
   :ensure t
@@ -1666,6 +1670,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  (use-package evil-surround
                    :ensure t
+                   :disabled t
                    :defer t
                    :init (global-evil-surround-mode t))
 
@@ -1708,6 +1713,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                            (bind-key "-" #'evil-numbers/dec-at-pt evil-normal-state-map)
                            (bind-key "+" #'evil-numbers/inc-at-pt evil-normal-state-map)
                            ))
+
+                 (use-package evil-quickscope
+                   :ensure t
+                   :defer t
+                   :init (progn (setq evil-quickscope-cross-lines t)))
 
                  (use-package evil-mc
                    :ensure t
