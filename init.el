@@ -784,7 +784,7 @@ a terminal, just try to remove default the background color."
 (use-package highlight-parentheses
   :ensure t
   :config (progn
-            (defun hl-parens-hoo)
+            (defun hl-parens-hook ()
               (highlight-parentheses-mode t))
             (add-hook 'prog-mode-hook #'hl-parens-hook)
             ))
@@ -918,7 +918,7 @@ a terminal, just try to remove default the background color."
 
 (use-package embrace
   :ensure t
-  :defer t)
+  :bind (("C-," . embrace-commander)))
 
 (use-package key-chord
   :ensure t
@@ -1210,8 +1210,7 @@ a terminal, just try to remove default the background color."
             ("M-y" yank-pop nil)
             ("y" (yank-pop 1) "next")
             ("Y" (yank-pop -1) "prev")
-            ("l" helm-show-kill-ring "list" :color blue))
-          )
+            ("l" helm-show-kill-ring "list" :color blue)))
   :config (progn
             (use-package ivy-hydra
               :ensure t
@@ -1670,15 +1669,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  (use-package evil-surround
                    :ensure t
-                   :disabled t
                    :defer t
                    :init (global-evil-surround-mode t))
+
+                 (use-package evil-embrace
+                   :ensure t
+                   :config (progn
+                             (evil-embrace-enable-evil-surround-integration)
+                             ))
 
                  (use-package evil-textobj-anyblock
                    :ensure t
                    :defer t
                    :init (progn
-                           (bind-key "b" 'evil-textobj-anyblock-inner-block evil-inner-text-objects-map)
+                           (bind-key b 'evil-textobj-anyblock-inner-block evil-inner-text-objects-map)
                            (bind-key "b" 'evil-textobj-anyblock-a-block     evil-outer-text-objects-map)
                            ))
 
