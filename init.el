@@ -1682,7 +1682,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                    :ensure t
                    :defer t
                    :init (progn
-                           (bind-key b 'evil-textobj-anyblock-inner-block evil-inner-text-objects-map)
+                           (bind-key "b" 'evil-textobj-anyblock-inner-block evil-inner-text-objects-map)
                            (bind-key "b" 'evil-textobj-anyblock-a-block     evil-outer-text-objects-map)
                            ))
 
