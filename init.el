@@ -106,6 +106,7 @@ Meant to replace 'kill-ring-save'."
     (copy-whole-lines (prefix-numeric-value arg))))
 
 (defun save-region-or-current-line (arg)
+  "Yank region or until the end of the line ARG."
   (interactive "P")
   (if (region-active-p)
       (kill-ring-save (region-beginning) (region-end))
@@ -159,8 +160,9 @@ active, apply to active region instead."
            (insert (current-kill 0)))))
 
 (defun do-not-quit ()
-    (interactive)
-    (message "Thou shall not quit!"))
+  "Alternate function to point quit keybinds and stuff to."
+  (interactive)
+  (message "Thou shall not quit!"))
 
 
 
@@ -205,8 +207,8 @@ active, apply to active region instead."
 
 (setq-default fill-column 80)
 
-;; Easily navigate sillycased words
-(global-subword-mode t)
+;; ;; Easily navigate sillyCased words
+;; (global-subword-mode t)
 
 ;; Don't break lines for me, please
 (setq-default truncate-lines t)
@@ -1259,7 +1261,7 @@ a terminal, just try to remove default the background color."
             ;; (setq projectile-indexing-method 'native)
             (add-to-list 'projectile-globally-ignored-directories "elpa")
 
-            (projectile-global-mode)
+            (projectile-mode)
             ))
 
 (use-package helm-projectile
@@ -2055,12 +2057,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package flycheck
   :ensure t
   :defer 5
-  :config (progn
+  :init (progn
             ;; Remove newline checks, since they would trigger an immediate check
             ;; when we want the idle-change-delay to be in effect while editing.
             (setq flycheck-check-syntax-automatically '(save
                                                         idle-change
                                                         mode-enabled))
+
+            (setq flycheck-perlcritic-severity 4)
 
             ;; Flycheck doesn't use =load-path= when checking emacs-lisp files.
             ;; Instead, it uses =flycheck-emacs-lisp-load-path=, which is empty by
@@ -2198,3 +2202,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                                          emacs-start-time))))
                  (message "Loading %s...done (%.3fs) [after-init]" ,load-file-name
                           elapsed))) t))
+
+(provide 'init)
+;;; init.el ends here
