@@ -838,6 +838,7 @@ a terminal, just try to remove default the background color."
 
 (use-package swiper
   :ensure t
+  :defer t
   :init (progn
             (setq ivy-re-builders-alist
                   '((t . ivy--regex-fuzzy)))
@@ -909,6 +910,7 @@ a terminal, just try to remove default the background color."
 
 (use-package expand-region
   :ensure t
+  :defer t
   :bind ("C-=" . er/expand-region))
 
 (use-package viking-mode
@@ -920,6 +922,7 @@ a terminal, just try to remove default the background color."
 
 (use-package embrace
   :ensure t
+  :defer t
   :bind (("C-," . embrace-commander)))
 
 (use-package key-chord
@@ -947,6 +950,7 @@ a terminal, just try to remove default the background color."
 
 (use-package which-key
   :ensure t
+  :defer t
   :init (progn
           (which-key-mode t)))
 
@@ -977,7 +981,9 @@ a terminal, just try to remove default the background color."
           ))
 
 (use-package ripgrep
-  :ensure t)
+  :ensure t
+  :defer t
+  :disabled t)
 
 (use-package rainbow-mode
   :ensure t
@@ -1185,6 +1191,7 @@ a terminal, just try to remove default the background color."
 
 (use-package hydra
   :ensure t
+  :defer t
   :init (progn
           (bind-key "<f1>" (defhydra hydra-help (:color blue)
                              "Help"
@@ -1678,6 +1685,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  (use-package evil-embrace
                    :ensure t
+                   :defer t
                    :config (progn
                              (evil-embrace-enable-evil-surround-integration)
                              ))
@@ -1725,6 +1733,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (use-package evil-quickscope
                    :ensure t
                    :defer t
+                   :disabled t
                    :init (progn (setq evil-quickscope-cross-lines t)))
 
                  (use-package evil-mc
@@ -1734,7 +1743,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  ;; Make Anzu work with evil-search
                  (use-package evil-anzu
-                   :ensure t)
+                   :ensure t
+                   :defer t)
                  ))
 
 ;; Evil Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1964,6 +1974,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package yasnippet
   :ensure t
+  :defer 3
   :init (progn
           (setq yas-snippet-dirs (concat user-emacs-directory "snippets"))
 
@@ -1976,14 +1987,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Auto-completion ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package irony
-  :ensure t)
-
-(use-package company-irony
-  :ensure t)
-
 (use-package company
   :ensure t
+  :defer t
   :bind (("C-<tab>" . company-dabbrev)
          ("M-<tab>" . company-complete)
          ("C-c C-y" . company-yasnippet))
@@ -1996,6 +2002,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                   company-show-numbers nil
                   company-require-match 'never
                   company-selection-wrap-around t)
+
+            (use-package irony
+              :ensure t
+              :defer t)
+
+            (use-package company-irony
+              :ensure t
+              :defer t)
 
             (defun irony-mode-enable ()
               (when (member major-mode irony-supported-major-modes)
@@ -2050,6 +2064,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package company-flx
   :ensure t
+  :defer t
   :config (progn (company-flx-mode t)))
 
 ;; Flycheck ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
