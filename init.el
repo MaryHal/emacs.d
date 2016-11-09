@@ -1686,7 +1686,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (use-package evil-embrace
                    :ensure t
                    :defer t
-                   :config (progn
+                   :init (progn
                              (evil-embrace-enable-evil-surround-integration)
                              ))
 
