@@ -1548,7 +1548,7 @@ a terminal, just try to remove default the background color."
 
                (evil-mode t))
   :config (progn (evil-set-toggle-key "C-\\")
-                 (bind-key "\\" 'evil-execute-in-evil-state)
+                 ;; (bind-key "\\" 'evil-execute-in-evil-state evil-normal-state-map)
                  (bind-key "C-z" 'evil-execute-in-normal-state)
 
                  ;; (evil-set-initial-state 'erc-mode 'normal)
