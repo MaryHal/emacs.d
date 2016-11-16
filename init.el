@@ -227,7 +227,7 @@ active, apply to active region instead."
 ;; is deprecated in 23.2.
 (if (boundp 'buffer-file-coding-system)
     (setq-default buffer-file-coding-system 'utf-8)
-  (setq buffer-file-coding-system 'utf-8))
+  (setq buffer-file-coding-system 'utf-8-unix))
 
 (prefer-coding-system       'utf-8)
 (set-default-coding-systems 'utf-8)
@@ -517,6 +517,7 @@ active, apply to active region instead."
 
 (use-package smart-mode-line
   :ensure t
+  :disabled t
   :config (progn (setq-default sml/line-number-format " %3l")
                  (setq-default sml/col-number-format  "%2c")
 
@@ -660,6 +661,7 @@ a terminal, just try to remove default the background color."
 
 (use-package base16-mod-theme
   :load-path "theme/base16-mod"
+  :disabled t
   :init (progn
           (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/base16-mod/"))
           (mhl/load-dark-theme 'base16-mod-dark)
@@ -691,6 +693,9 @@ a terminal, just try to remove default the background color."
           ;; (add-to-list 'custom-theme-load-path (expand-file-name "~/yoshi-theme"))
           (load-theme 'yoshi :no-confirm)
           ))
+
+(use-package zerodark-theme
+  :ensure t)
 
 (use-package minimal-theme
   :load-path "theme/minimal"
