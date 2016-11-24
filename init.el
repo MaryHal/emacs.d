@@ -760,6 +760,9 @@ a terminal, just try to remove default the background color."
     (set-frame-font my-font t t)
 
     (set-fontset-font t 'hangul my-font)
+
+    (set-face-font 'Info-quoted my-font)
+    (set-face-attribute 'Info-quoted nil :weight 'extra-bold)
     ))
 
 ;; Editing ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
