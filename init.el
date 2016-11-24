@@ -498,7 +498,7 @@ active, apply to active region instead."
 (when (and (fboundp 'scroll-bar-mode) (not (eq scroll-bar-mode -1)))
   (scroll-bar-mode -1))
 
-;; tooltips in echo-aera
+;; tooltips in echo-area
 (when (and (fboundp 'tooltip-mode) (not (eq tooltip-mode -1)))
   (tooltip-mode -1))
 (unless (eq window-system 'mac)
@@ -517,7 +517,6 @@ active, apply to active region instead."
 
 (use-package smart-mode-line
   :ensure t
-  :disabled t
   :config (progn (setq-default sml/line-number-format " %3l")
                  (setq-default sml/col-number-format  "%2c")
 
@@ -661,7 +660,6 @@ a terminal, just try to remove default the background color."
 
 (use-package base16-mod-theme
   :load-path "theme/base16-mod"
-  :disabled t
   :init (progn
           (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/base16-mod/"))
           (mhl/load-dark-theme 'base16-mod-dark)
@@ -695,7 +693,13 @@ a terminal, just try to remove default the background color."
           ))
 
 (use-package zerodark-theme
-  :ensure t)
+  :ensure t
+  :disabled t
+  :config (progn
+            ;; (setq zerodark-use-high-contrast-in-mode-line t)
+            (zerodark-setup-modeline-format)
+            (zerodark-setup-modeline-format-alt)
+            ))
 
 (use-package minimal-theme
   :load-path "theme/minimal"
@@ -703,6 +707,14 @@ a terminal, just try to remove default the background color."
   :init (progn
           (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
           (mhl/load-dark-theme 'minimal)
+          ))
+
+(use-package essense-theme
+  :load-path "theme/essense"
+  :disabled t
+  :init (progn
+          (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/essense-theme/"))
+          (mhl/load-dark-theme 'essense)
           ))
 
 (use-package leuven-mod
@@ -713,19 +725,13 @@ a terminal, just try to remove default the background color."
           (mhl/load-light-theme 'leuven-mod)
           ))
 
-;; ;; We have some custom themes packaged with this config, so make sure =load-theme= can find 'em.
-;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ashes/"))
-;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/minimal/"))
-;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/smyx/"))
-;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/ample-theme/"))
-
-;; (mhl/load-light-theme 'base16-ashes-light)
-;; (mhl/load-light-theme 'flatui)
-;; (mhl/load-light-theme 'ample-light)
-
-;; (mhl/load-dark-theme 'noctilux)
-;; (mhl/load-dark-theme 'minimal)
-;; (mhl/load-dark-theme 'ample-flat)
+(use-package apropospriate-theme
+  :ensure t
+  :disabled t
+  :config (progn
+            ;; (mhl/load-dark-theme 'apropospriate-dark)
+            (mhl/load-light-theme 'apropospriate-light)
+            ))
 
 ;; Disable the nagging when loading custom themes.
 (setq custom-safe-themes t)
@@ -992,7 +998,6 @@ a terminal, just try to remove default the background color."
 
 (use-package rainbow-mode
   :ensure t
-  :disabled t
   :commands (rainbow-mode))
 
 (use-package beacon
@@ -1994,7 +1999,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package company
   :ensure t
-  :defer t
   :bind (("C-<tab>" . company-dabbrev)
          ("M-<tab>" . company-complete)
          ("C-c C-y" . company-yasnippet))

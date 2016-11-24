@@ -1,18 +1,3 @@
-[submodule "site-lisp/evil-ranger"]
-	path = site-lisp/evil-ranger
-	url = https://github.com/ralesi/evil-ranger
-[submodule "theme/noctilux-theme"]
-	path = theme/noctilux-theme
-	url = https://github.com/sjrmanning/noctilux-theme.git
-[submodule "theme/flatui-theme.el"]
-	path = theme/flatui-theme.el
-	url = https://github.com/john2x/flatui-theme.el.git
-[submodule "theme/emacs-material-theme"]
-	path = theme/emacs-material-theme
-	url = https://github.com/cpaulik/emacs-material-theme.git
-[submodule "site-lisp/fzf.el"]
-	path = site-lisp/fzf.el
-	url = https://github.com/bling/fzf.el
-[submodule "theme/ample-theme"]
-	path = theme/ample-theme
-	url = git@github.com:sanford1/ample-theme.git
+[submodule "theme/essense-theme"]
+	path = theme/essense-theme
+	url = git@github.com:sanford1/essense-theme.git
