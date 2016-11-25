@@ -1703,6 +1703,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                              (evil-embrace-enable-evil-surround-integration)
                              ))
 
+                 (use-package evil-matchit
+                   :ensure t
+                   :defer t
+                   :config (progn
+                             (global-evil-matchit-mode t)))
+
                  (use-package evil-textobj-anyblock
                    :ensure t
                    :defer t
