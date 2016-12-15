@@ -761,8 +761,8 @@ a terminal, just try to remove default the background color."
 
     (set-fontset-font t 'hangul my-font)
 
-    (set-face-font 'Info-quoted my-font)
-    (set-face-attribute 'Info-quoted nil :weight 'extra-bold)
+    ;; (set-face-font 'Info-quoted my-font)
+    ;; (set-face-attribute 'Info-quoted nil :weight 'extra-bold)
     ))
 
 ;; Editing ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1001,6 +1001,7 @@ a terminal, just try to remove default the background color."
 
 (use-package rainbow-mode
   :ensure t
+  :disabled t
   :commands (rainbow-mode))
 
 (use-package beacon
