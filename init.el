@@ -441,7 +441,8 @@ active, apply to active region instead."
 ;; Easier version of "C-x k" to kill buffer
 (bind-key "C-x C-b"  #'buffer-menu)
 (bind-key "C-c u"    #'switch-to-buffer)
-(bind-key "C-x C-k"  #'kill-buffer)
+(bind-key "C-x k"    #'my-window-killer)
+(bind-key "C-x C-k"  #'my-window-killer)
 
 ;; Eval
 (bind-key "C-c v"    #'eval-buffer)
