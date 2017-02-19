@@ -997,11 +997,9 @@ a terminal, just try to remove default the background color."
 
 (use-package ripgrep
   :ensure t
-  :defer t
   :init (progn
           (use-package projectile-ripgrep
             :ensure t
-            :defer t
             :config (progn
                       (bind-key (kbd "s r") 'projectile-ripgrep projectile-command-map)
                       ))
