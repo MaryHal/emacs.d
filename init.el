@@ -998,7 +998,11 @@ a terminal, just try to remove default the background color."
 (use-package ripgrep
   :ensure t
   :defer t
-  :disabled t)
+  :init (progn
+          (use-package projectile-ripgrep
+            :ensure t
+            :defer t)
+          ))
 
 (use-package rainbow-mode
   :ensure t
