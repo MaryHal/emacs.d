@@ -1001,7 +1001,10 @@ a terminal, just try to remove default the background color."
   :init (progn
           (use-package projectile-ripgrep
             :ensure t
-            :defer t)
+            :defer t
+            :config (progn
+                      (bind-key (kbd "s r") 'projectile-ripgrep projectile-command-map)
+                      ))
           ))
 
 (use-package rainbow-mode
