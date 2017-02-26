@@ -1012,7 +1012,6 @@ a terminal, just try to remove default the background color."
 
 (use-package beacon
   :if (window-system)
-  :disabled t
   :ensure t
   :config (progn
             ;; (add-to-list 'beacon-dont-blink-commands 'fzf)
