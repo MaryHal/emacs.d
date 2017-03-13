@@ -31,8 +31,6 @@
 (defconst user-custom-file (concat user-emacs-directory "custom.el"))
 (defconst user-cache-directory (concat user-emacs-directory "cache/"))
 
-(defconst user-shell "zsh")
-
 ;; Bootstrap use-package ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (setq-default use-package-enable-imenu-support t)
@@ -147,7 +145,7 @@ active, apply to active region instead."
 (defun open-terminal ()
   "Just open a terminal in the cwd using the $TERMINAL environment variable."
   (interactive)
-  (call-process-shell-command (concat "eval $TERMINAL -e " user-shell) nil 0))
+  (call-process-shell-command (concat "eval $TERMINAL") nil 0))
 
 (defun eval-and-replace ()
   "Replace the preceding sexp with its value."
