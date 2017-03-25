@@ -964,8 +964,8 @@ a terminal, just try to remove default the background color."
 (use-package which-key
   :ensure t
   :defer t
-  :init (progn
-          (which-key-mode t)))
+  :config (progn
+            (which-key-mode t)))
 
 (use-package multiple-cursors
   :ensure t
@@ -1002,6 +1002,12 @@ a terminal, just try to remove default the background color."
                       (bind-key (kbd "s r") 'projectile-ripgrep projectile-command-map)
                       ))
           ))
+
+(use-package dumb-jump
+  :config (progn
+            (setq dumb-jump-prefer-searcher 'rg)
+            (setq dumb-jump-selector 'ivy))
+  :ensure t)
 
 (use-package rainbow-mode
   :ensure t
@@ -1768,6 +1774,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (use-package evil-anzu
                    :ensure t
                    :defer t)
+
+                 (use-package evil-lion
+                   :ensure t
+                   :config (progn
+                             (evil-lion-mode)))
                  ))
 
 ;; Evil Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1832,7 +1843,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  ;; Swiper/Swoop
                  ;; (evil-leader/set-key "s" #'helm-swoop)
                  (evil-leader/set-key "s" #'swiper)
-                 (evil-leader/set-key "j" #'counsel-ag)
+                 ;; (evil-leader/set-key "j" #'counsel-ag)
+
+                 (evil-leader/set-key "j" #'dumb-jump-go)
 
                  ;; Avy integration
                  (evil-leader/set-key "SPC" #'avy-goto-word-or-subword-1)
