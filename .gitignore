@@ -27,3 +27,5 @@ old_init.el
 custom.el
 /kkcrc
 /.persistent-scratch
+
+/server/server

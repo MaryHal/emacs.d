@@ -1977,6 +1977,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :ensure t
   :mode ("\\.js$" . js2-mode))
 
+(use-package powershell
+  :ensure t
+  :mode ("\\.ps1" . powershell-mode))
+
 (use-package lua-mode
   :ensure t
   :mode ("\\.lua$" . lua-mode)
@@ -2189,7 +2193,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Pretty package listings.
 (use-package paradox
   :ensure t
-  :disabled t
   :commands (paradox-list-packages)
   :config (progn (setq paradox-execute-asynchronously t)))
 
