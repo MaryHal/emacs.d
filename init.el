@@ -1653,8 +1653,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (evil-define-operator evil-join-previous-line (beg end)
                    "Join the previous line with the current line."
                    :motion evil-line
-                   (evil-previous-visual-line)
-                   (evil-join beg end))
+                   ;; (evil-previous-visual-line)
+                   ;; (evil-join beg end)
+                   (join-line))
 
                  ;; Let K match J
                  (bind-key "K" #'evil-join-previous-line evil-normal-state-map)
