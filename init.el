@@ -2010,6 +2010,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :ensure t
   :mode ("\\.html\\'" . html-mode))
 
+(use-package ahk-mode
+  :ensure t
+  :mode ("\\.ahk$" . ahk-mode))
+
 (use-package writegood-mode
   :ensure t
   :commands (writegood-mode))
