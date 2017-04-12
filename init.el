@@ -891,7 +891,6 @@ a terminal, just try to remove default the background color."
                            (bind-key (kbd "C-c s") #'swiper))
               :config (progn
                         (advice-add 'counsel-imenu :after #'mhl/swiper-recenter)
-                        (setq counsel-yank-pop-truncate t)
                         (setq counsel-yank-pop-separator (concat "\n\n" (make-string 70 ?-) "\n\n"))
                         ))
 
