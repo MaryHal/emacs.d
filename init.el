@@ -484,9 +484,7 @@ active, apply to active region instead."
                 right-margin-width 1))
 
 (setq default-frame-alist
-      '((top   . 10) (left   . 2)
-        (width . 80) (height . 30)
-        (vertical-scroll-bars . nil)
+      '((vertical-scroll-bars . nil)
         (horizontal-scroll-bars . nil)
         (left-fringe . 0) (right-fringe . 0)
         ))
