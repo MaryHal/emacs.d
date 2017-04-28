@@ -1087,7 +1087,8 @@ a terminal, just try to remove default the background color."
              magit-blame-mode)
   :bind ("C-c m" . magit-status)
   :config (progn
-            (setenv "SSH_ASKPASS" "git-gui--askpass")
+            (if (string= system-type "windows-nt")
+                (setenv "SSH_ASKPASS" "git-gui--askpass"))
             ))
 
 (use-package git-timemachine
