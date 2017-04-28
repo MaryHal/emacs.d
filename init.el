@@ -56,7 +56,10 @@
 
 ;; Very important, init-file-encompassing packages
 (use-package general
-  :ensure t)
+  :ensure t
+  :config (progn
+            (setq general-default-keymaps 'evil-normal-state-map)
+            ))
 
 ;; Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1786,88 +1789,79 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Evil Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package evil-leader
-  :ensure t
-  :config (progn (setq evil-leader/in-all-states t
-                       evil-leader/leader "SPC"
-                       evil-leader/non-normal-prefix "s-")
 
-                 (global-evil-leader-mode t)
+(setq general-default-keymaps 'evil-normal-state-map)
+(setq custom-leader "SPC")
 
-                 (define-key evil-visual-state-map (kbd "SPC") evil-leader--default-map)
-                 (define-key evil-motion-state-map (kbd "SPC") evil-leader--default-map)
-                 (define-key evil-emacs-state-map  (kbd "M-SPC") evil-leader--default-map)
-                 (define-key evil-insert-state-map (kbd "M-SPC") evil-leader--default-map)
+(general-define-key :prefix custom-leader :keymaps 'normal
+                    "!" 'shell-command
 
-                 (evil-leader/set-key "!" #'shell-command)
+                    "a" 'projectile-find-other-file
 
-                 (evil-leader/set-key "a" #'projectile-find-other-file)
+                    ;; Eval
+                    "e b" 'eval-buffer
+                    "e r" 'eval-region
+                    "e i" 'eval-and-replace
 
-                 ;; Eval
-                 (evil-leader/set-key "eb" #'eval-buffer)
-                 (evil-leader/set-key "er" #'eval-region)
-                 (evil-leader/set-key "ei" #'eval-and-replace)
+                    ;; Errors
+                    "e n" 'next-error
+                    "e p" 'previous-error
 
-                 ;; Errors
-                 (evil-leader/set-key "en" #'next-error)
-                 (evil-leader/set-key "ep" #'previous-error)
+                    ;; Files
+                    "f" 'find-file
+                    ;; (evil-leader/set-key "f" #'helm-find-files)
+                    "g" 'counsel-git
+                    "z" 'fzf
 
-                 ;; Files
-                 (evil-leader/set-key "f" #'find-file)
-                 ;; (evil-leader/set-key "f" #'helm-find-files)
-                 (evil-leader/set-key "g" #'counsel-git)
-                 (evil-leader/set-key "z" #'fzf)
+                    ;; Buffers
+                    "b" 'buffer-menu
+                    "k" 'kill-buffer
+                    "u" 'switch-to-buffer
+                    ;; (evil-leader/set-key "u" #'helm-buffers-list)
 
-                 ;; Buffers
-                 (evil-leader/set-key "b" #'buffer-menu)
-                 (evil-leader/set-key "k" #'kill-buffer)
-                 (evil-leader/set-key "u" #'switch-to-buffer)
-                 ;; (evil-leader/set-key "u" #'helm-buffers-list)
+                    "o" 'imenu
+                    "x" 'execute-extended-command
+                    ;; (evil-leader/set-key "o" #'helm-imenu)
+                    ;; (evil-leader/set-key "x" #'helm-M-x)
 
-                 (evil-leader/set-key "o" #'imenu)
-                 (evil-leader/set-key "x" #'execute-extended-command)
-                 ;; (evil-leader/set-key "o" #'helm-imenu)
-                 ;; (evil-leader/set-key "x" #'helm-M-x)
+                    "l" 'ivy-resume
 
-                 (evil-leader/set-key "l" #'ivy-resume)
+                    ;; Rings
+                    "y"  'counsel-yank-pop
+                    ;; (evil-leader/set-key "y"  #'helm-show-kill-ring)
+                    ;; (evil-leader/set-key "rm" #'helm-mark-ring)
+                    ;; (evil-leader/set-key "rr" #'helm-register)
 
-                 ;; Rings
-                 (evil-leader/set-key "y"  #'counsel-yank-pop)
-                 ;; (evil-leader/set-key "y"  #'helm-show-kill-ring)
-                 ;; (evil-leader/set-key "rm" #'helm-mark-ring)
-                 ;; (evil-leader/set-key "rr" #'helm-register)
+                    ;; Git
+                    "m" 'magit-status
 
-                 ;; Git
-                 (evil-leader/set-key "m" #'magit-status)
+                    ;; Projectile
+                    "p" 'projectile-command-map
 
-                 ;; Projectile
-                 (evil-leader/set-key "p" #'projectile-command-map)
+                    ;; Swiper/Swoop
+                    ;; (evil-leader/set-key "s" #'helm-swoop)
+                    "s" 'swiper
+                    ;; (evil-leader/set-key "j" #'counsel-ag)
 
-                 ;; Swiper/Swoop
-                 ;; (evil-leader/set-key "s" #'helm-swoop)
-                 (evil-leader/set-key "s" #'swiper)
-                 ;; (evil-leader/set-key "j" #'counsel-ag)
+                    "j" 'dumb-jump-go
 
-                 (evil-leader/set-key "j" #'dumb-jump-go)
+                    ;; Avy integration
+                    "SPC" 'avy-goto-word-or-subword-1
 
-                 ;; Avy integration
-                 (evil-leader/set-key "SPC" #'avy-goto-word-or-subword-1)
+                    ;; Narrowing
+                    "n r" 'narrow-to-region
+                    "n d" 'narrow-to-defun
+                    "n p" 'narrow-to-page
+                    "n w" 'widen
 
-                 ;; Narrowing
-                 (put 'narrow-to-region 'disabled nil)
-                 (evil-leader/set-key "nr" #'narrow-to-region)
-                 (evil-leader/set-key "nd" #'narrow-to-defun)
-                 (evil-leader/set-key "np" #'narrow-to-page)
-                 (evil-leader/set-key "nw" #'widen)
+                    ;; Expand region
+                    "v" 'er/expand-region
 
-                 ;; Expand region
-                 (evil-leader/set-key "v" #'er/expand-region)
+                    ;; Terminal
+                    "t" 'open-terminal
 
-                 ;; Terminal
-                 (evil-leader/set-key "t" #'open-terminal)
-
-                 ;; Help!
-                 (evil-leader/set-key "h" #'hydra-help/body)))
+                    ;; Help!
+                    "h" 'hydra-help/body)
 
 ;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
