@@ -352,7 +352,6 @@ active, apply to active region instead."
 (setq backup-inhibited t)
 
 ;; Disable auto save
-(auto-save-mode nil)
 (setq auto-save-default nil)
 (with-current-buffer (get-buffer "*scratch*")
   (auto-save-mode -1))
