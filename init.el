@@ -516,6 +516,7 @@ active, apply to active region instead."
 
 (use-package smart-mode-line
   :ensure t
+  :disabled t
   :config (progn (setq-default sml/line-number-format " %3l")
                  (setq-default sml/col-number-format  "%2c")
 
@@ -650,15 +651,16 @@ a terminal, just try to remove default the background color."
 
 (use-package tao-theme
   :ensure t
-  :disabled t
   :init (progn
-          (defun tao-palette () (tao-theme-golden-grayscale-yang-palette))
-          (mhl/load-dark-theme 'tao-yin)
+          ;; (defun tao-palette () (tao-theme-golden-grayscale-yang-palette))
+          (load-theme 'tao-yin 'y)
+          ;; (mhl/load-dark-theme 'tao-yin)
           ;; (mhl/load-light-theme 'tao-yang)
           ))
 
 (use-package base16-mod-theme
   :load-path "theme/base16-mod"
+  :disabled t
   :init (progn
           (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/base16-mod/"))
           (mhl/load-dark-theme 'base16-mod-dark)
@@ -731,6 +733,14 @@ a terminal, just try to remove default the background color."
             ;; (mhl/load-dark-theme 'apropospriate-dark)
             (mhl/load-light-theme 'apropospriate-light)
             ))
+
+(use-package apprentice-theme
+  :load-path "theme/kaolin-theme"
+  :disabled t
+  :init (progn
+          (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/kaolin-theme/"))
+          (mhl/load-dark-theme 'kaolin)
+          ))
 
 ;; Disable the nagging when loading custom themes.
 (setq custom-safe-themes t)
@@ -1790,10 +1800,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Evil Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(setq general-default-keymaps 'evil-normal-state-map)
+(setq general-default-keymaps '(evil-normal-state-map
+                                evil-visual-state-map
+                                evil-operator-state-map))
 (setq custom-leader "SPC")
 
-(general-define-key :prefix custom-leader :keymaps 'normal
+(general-define-key :prefix custom-leader
                     "!" 'shell-command
 
                     "a" 'projectile-find-other-file
