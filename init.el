@@ -1003,6 +1003,10 @@ a terminal, just try to remove default the background color."
           ;; (mhl/load-light-theme 'tao-yang)
           ))
 
+(use-package eziam-theme
+  :ensure t
+  :disabled t)
+
 (use-package base16-mod-theme
   :load-path "theme/base16-mod"
   :disabled t
