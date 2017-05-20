@@ -58,8 +58,12 @@
 (use-package general
   :ensure t
   :config (progn
-            (setq general-default-keymaps 'evil-normal-state-map)
-            ))
+            (setq general-default-keymaps '(evil-normal-state-map
+                                            evil-visual-state-map
+                                            evil-operator-state-map))
+
+            (setq general-default-prefix "SPC")
+            (setq general-default-non-normal-prefix "M-SPC")))
 
 ;; Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -475,6 +479,320 @@ active, apply to active region instead."
 ;; (bind-key "M-9"      #'backward-sexp)
 ;; (bind-key "M-0"      #'forward-sexp)
 
+;; Editing ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; I prefer spaces over tabs. Note how this is not a mode, but a buffer-local
+;; variable.
+(setq-default indent-tabs-mode nil)
+
+;; Don't add newlines when cursor goes past end of file
+(setq next-line-add-newlines nil)
+(setq require-final-newline nil)
+
+;; Don't Blink Cursor
+(blink-cursor-mode -1)
+(setq visible-cursor nil)
+
+;; Smoother Scrolling
+(setq-default scroll-margin 10
+              scroll-conservatively 101
+              scroll-preserve-screen-position t
+              auto-window-vscroll nil)
+
+(use-package paren
+  :config (progn (show-paren-mode t)
+
+                 ;; Show matched parens even in selections
+                 (setq show-paren-priority -50)
+
+                 ;; Immediately match parens
+                 (setq show-paren-delay 0)
+
+                 (setq show-paren-style 'parenthesis)
+                 ))
+
+(use-package highlight-parentheses
+  :ensure t
+  :config (progn
+            (defun hl-parens-hook ()
+              (highlight-parentheses-mode t))
+            (add-hook 'prog-mode-hook #'hl-parens-hook)
+            ))
+
+(use-package highlight-leading-spaces
+  :ensure t
+  :disabled t
+  :defer t
+  :init (progn (add-hook 'prog-mode-hook 'highlight-leading-spaces-mode)))
+
+(use-package highlight-indent-guides
+  :ensure t
+  :disabled t
+  :config (progn
+            (add-hook 'prog-mode-hook #'highlight-indent-guides-mode)
+            (set-face-background 'highlight-indent-guides-even-face "#101010")
+            (set-face-background 'highlight-indent-guides-odd-face  "#0B0B0B")
+            ))
+
+(use-package term
+  :defer t
+  :config (progn
+            (defun disable-scroll-margin ()
+              (setq-local scroll-margin 0))
+            (add-hook 'term-mode-hook #'disable-scroll-margin)
+            ))
+
+(use-package whitespace
+  :defer t
+  :init (progn
+          ;; Only show trailing whitespace in programming modes
+          (defun enable-show-trailing-whitespace ()
+            (setq show-trailing-whitespace t))
+          (add-hook 'prog-mode-hook #'enable-show-trailing-whitespace)
+          ))
+
+(use-package imenu
+  :config (progn
+            ;; Always rescan buffer for imenu
+            (set-default 'imenu-auto-rescan t)
+            ))
+
+(use-package avy
+  :ensure t
+  :commands (avy-goto-word-or-subword-1)
+  :config (progn (setq avy-keys
+                       '(?c ?a ?s ?d ?e ?f ?h ?w ?y ?j ?k ?l ?n ?m ?v ?r ?u ?p))
+                 ))
+
+(use-package swiper
+  :ensure t
+  :defer t
+  :init (progn
+            (setq ivy-re-builders-alist
+                  '((t . ivy--regex-fuzzy)))
+
+            ;; (setq ivy-re-builders-alist
+            ;;       '((t . ivy--regex-plus)))
+
+            (setq ivy-height 20)
+            (setq ivy-format-function 'ivy-format-function-arrow)
+            (setq ivy-count-format "%d/%d ")
+
+            ;; (setq ivy-display-style 'fancy)
+
+            (ivy-mode t)
+
+            (setq projectile-completion-system 'ivy)
+            (setq magit-completing-read-function 'ivy-completing-read)
+
+            (defun mhl/swiper-recenter (&rest args)
+              "recenter display after swiper"
+              (recenter))
+            (advice-add 'swiper--cleanup :after #'mhl/swiper-recenter)
+
+            (use-package smex
+              :ensure t
+              :init (progn (setq smex-save-file (concat user-cache-directory "smex-items"))))
+
+            (use-package counsel
+              :ensure t
+              :defer t
+              :init (progn (counsel-mode t)
+                           (bind-key (kbd "M-x")   #'counsel-M-x)
+                           (bind-key (kbd "C-c x") #'counsel-M-x)
+                           (bind-key (kbd "C-c o") #'counsel-imenu)
+                           (bind-key (kbd "C-c l") #'ivy-resume)
+                           (bind-key (kbd "C-c y") #'counsel-yank-pop)
+                           (bind-key (kbd "C-c s") #'swiper))
+              :config (progn
+                        (advice-add 'counsel-imenu :after #'mhl/swiper-recenter)
+                        (setq counsel-yank-pop-separator (concat "\n\n" (make-string 70 ?-) "\n\n"))
+                        ))
+
+            ;; (use-package counsel-projectile
+            ;;   :ensure t)
+            )
+  :config (progn
+            (defun ivy-insert-action (x)
+              (with-ivy-window
+                (insert x)))
+
+            (ivy-set-actions
+             t
+             '(("I" ivy-insert-action "insert")
+               ("W" kill-new "save to kill ring")))
+  ))
+
+(use-package anzu
+  :ensure t
+  :config (progn
+            (setq anzu-cons-mode-line-p nil)
+            (global-anzu-mode t)
+
+            (general-define-key "M-%"   #'anzu-query-replace)
+            (general-define-key "C-M-%" #'anzu-query-replace-regexp)))
+
+(use-package electric
+  :config (electric-indent-mode t))
+
+(use-package aggressive-indent
+  :ensure t
+  :disabled t
+  :config (global-aggressive-indent-mode t))
+
+(use-package expand-region
+  :ensure t
+  :defer t
+  :bind ("C-=" . er/expand-region))
+
+(use-package viking-mode
+  :ensure t
+  :disabled t
+  :config (progn
+            (setq viking-use-expand-region-when-loaded t)
+            (global-viking-mode)))
+
+(use-package embrace
+  :ensure t
+  :defer t
+  :bind (("C-," . embrace-commander)))
+
+(use-package key-chord
+  :ensure t
+  :disabled t
+  :commands (key-chord-mode)
+  :init (progn (key-chord-mode t))
+  :config (progn (key-chord-define-global "VV" #'other-window)
+                 (key-chord-define-global "qf" #'helm-find-files)
+            ))
+
+(use-package guide-key
+  :ensure t
+  :disabled t
+  :defer 10
+  :commands (guide-key-mode)
+  :config (progn (setq guide-key/guide-key-sequence '("C-x" "C-c" "SPC" "M-SPC"))
+                 (setq guide-key/recursive-key-sequence-flag t)
+
+                 ;; Alignment and extra spacing
+                 (setq guide-key/align-command-by-space-flag t)
+
+                 (guide-key-mode t)
+                 ))
+
+(use-package which-key
+  :ensure t
+  :defer t
+  :config (progn
+            (which-key-mode t)))
+
+(use-package multiple-cursors
+  :ensure t
+  :bind (("C->"     . mc/mark-next-like-this)
+         ("C-<"     . mc/mark-previous-like-this)
+         ("C-c C-<" . mc/mark-all-like-this))
+  :config (progn (setq mc/list-file (concat user-cache-directory "mc-lists.el"))
+
+                 (setq mc/unsupported-minor-modes '(company-mode
+                                                    auto-complete-mode
+                                                    flyspell-mode
+                                                    jedi-mode))
+
+                 ;; (global-unset-key (kbd "M-<down-mouse-1>"))
+                 ;; (bind-key "M-<mouse-1>" #'mc/add-cursor-on-click)
+                 ))
+
+(use-package ag
+  :ensure t
+  :commands (ag ag-regexp)
+  :init (progn
+          (use-package helm-ag
+            :ensure t
+            :disabled t
+            :commands (helm-ag))
+          ))
+
+(use-package ripgrep
+  :ensure t
+  :init (progn
+          (use-package projectile-ripgrep
+            :ensure t
+            :config (progn
+                      (bind-key (kbd "s r") 'projectile-ripgrep projectile-command-map)
+                      ))
+          ))
+
+(use-package dumb-jump
+  :config (progn
+            (setq dumb-jump-prefer-searcher 'rg)
+            (setq dumb-jump-selector 'ivy))
+  :ensure t)
+
+(use-package rainbow-mode
+  :ensure t
+  :disabled t
+  :commands (rainbow-mode))
+
+(use-package beacon
+  :if (window-system)
+  :ensure t
+  :disabled t
+  :config (progn
+            ;; (add-to-list 'beacon-dont-blink-commands 'fzf)
+            ;; (add-to-list 'beacon-dont-blink-commands 'fzf-directory)
+
+            (setq beacon-blink-when-window-scrolls t)
+            (setq beacon-blink-when-window-changes t)
+            ;; (setq beacon-blink-when-point-moves 2)
+
+            (setq beacon-color 0.8)
+
+            (beacon-mode t)))
+
+(use-package string-edit
+  :ensure t
+  :defer t)
+
+(use-package elec-pair
+  :disabled t
+  :config (electric-pair-mode t))
+
+(use-package smartparens
+  :ensure t
+  :disabled t
+  :init (progn
+          (use-package smartparens-config)
+          (bind-key (kbd "C-<left>") 'sp-backward-slurp-sexp smartparens-mode-map)
+          (bind-key (kbd "C-<right>") 'sp-forward-slurp-sexp smartparens-mode-map)
+          (bind-key (kbd "C-M-<left>") 'sp-backward-barf-sexp smartparens-mode-map)
+          (bind-key (kbd "C-M-<right>") 'sp-forward-barf-sexp smartparens-mode-map)
+
+          (add-hook 'prog-mode-hook #'smartparens-mode)
+          ))
+
+(use-package region-state
+  :ensure t
+  :disabled t
+  :init (progn
+          (region-state-mode t)
+          ))
+
+(use-package vlf
+  :disabled t
+  :ensure t)
+
+(use-package persistent-scratch
+  :ensure t
+  :disabled t
+  :init (progn
+          (persistent-scratch-setup-default)
+          ))
+
+(use-package color-identifiers-mode
+  :ensure t
+  :config (progn
+            (global-color-identifiers-mode)
+            ))
 
 ;; Appearance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -530,12 +848,39 @@ active, apply to active region instead."
 ;; I prefer hiding all minor modes by default.
 (use-package rich-minority
   :ensure t
+  :disabled t
   :config (progn (setq rm-blacklist nil)
                  (setq rm-whitelist " Wrap")
 
                  ;; "You don't need to activate rich-minority-mode if you're using smart-mode-line"
                  (rich-minority-mode t)
                  ))
+
+(use-package spaceline
+  :ensure t
+  :config (progn
+          (require 'spaceline-config)
+          (spaceline-emacs-theme)
+
+          (spaceline-toggle-minor-modes-off)
+
+          (spaceline-toggle-flycheck-error-off)
+          (spaceline-toggle-flycheck-warning-off)
+          (spaceline-toggle-flycheck-info-off)
+
+          (spaceline-toggle-evil-state-on)
+
+          (spaceline-toggle-point-position-off)
+          (spaceline-toggle-version-control-off)
+
+          (spaceline-toggle-buffer-size-off)
+          (spaceline-toggle-buffer-id-on)
+          (spaceline-toggle-buffer-position-on)
+
+          (spaceline-toggle-window-number-off)
+
+          (spaceline-toggle-hud-off)
+          ))
 
 ;; Fringe ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -773,311 +1118,6 @@ a terminal, just try to remove default the background color."
     ;; (set-face-font 'Info-quoted my-font)
     ;; (set-face-attribute 'Info-quoted nil :weight 'extra-bold)
     ))
-
-;; Editing ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; I prefer spaces over tabs. Note how this is not a mode, but a buffer-local
-;; variable.
-(setq-default indent-tabs-mode nil)
-
-;; Don't add newlines when cursor goes past end of file
-(setq next-line-add-newlines nil)
-(setq require-final-newline nil)
-
-;; Don't Blink Cursor
-(blink-cursor-mode -1)
-(setq visible-cursor nil)
-
-;; Smoother Scrolling
-(setq-default scroll-margin 10
-              scroll-conservatively 101
-              scroll-preserve-screen-position t
-              auto-window-vscroll nil)
-
-(use-package paren
-  :config (progn (show-paren-mode t)
-
-                 ;; Show matched parens even in selections
-                 (setq show-paren-priority -50)
-
-                 ;; Immediately match parens
-                 (setq show-paren-delay 0)
-
-                 (setq show-paren-style 'parenthesis)
-                 ))
-
-(use-package highlight-parentheses
-  :ensure t
-  :config (progn
-            (defun hl-parens-hook ()
-              (highlight-parentheses-mode t))
-            (add-hook 'prog-mode-hook #'hl-parens-hook)
-            ))
-
-(use-package highlight-leading-spaces
-  :ensure t
-  :disabled t
-  :defer t
-  :init (progn (add-hook 'prog-mode-hook 'highlight-leading-spaces-mode)))
-
-(use-package highlight-indent-guides
-  :ensure t
-  :disabled t
-  :config (progn
-            (add-hook 'prog-mode-hook #'highlight-indent-guides-mode)
-            (set-face-background 'highlight-indent-guides-even-face "#101010")
-            (set-face-background 'highlight-indent-guides-odd-face  "#0B0B0B")
-            ))
-
-(use-package term
-  :defer t
-  :config (progn
-            (defun disable-scroll-margin ()
-              (setq-local scroll-margin 0))
-            (add-hook 'term-mode-hook #'disable-scroll-margin)
-            ))
-
-(use-package whitespace
-  :defer t
-  :init (progn
-          ;; Only show trailing whitespace in programming modes
-          (defun enable-show-trailing-whitespace ()
-            (setq show-trailing-whitespace t))
-          (add-hook 'prog-mode-hook #'enable-show-trailing-whitespace)
-          ))
-
-(use-package imenu
-  :config (progn
-            ;; Always rescan buffer for imenu
-            (set-default 'imenu-auto-rescan t)
-            ))
-
-(use-package avy
-  :ensure t
-  :commands (avy-goto-word-or-subword-1)
-  :config (progn (setq avy-keys
-                       '(?c ?a ?s ?d ?e ?f ?h ?w ?y ?j ?k ?l ?n ?m ?v ?r ?u ?p))
-                 ))
-
-(use-package swiper
-  :ensure t
-  :defer t
-  :init (progn
-            (setq ivy-re-builders-alist
-                  '((t . ivy--regex-fuzzy)))
-
-            ;; (setq ivy-re-builders-alist
-            ;;       '((t . ivy--regex-plus)))
-
-            (setq ivy-height 20)
-            (setq ivy-format-function 'ivy-format-function-arrow)
-            (setq ivy-count-format "%d/%d ")
-
-            ;; (setq ivy-display-style 'fancy)
-
-            (ivy-mode t)
-
-            (setq projectile-completion-system 'ivy)
-            (setq magit-completing-read-function 'ivy-completing-read)
-
-            (defun mhl/swiper-recenter (&rest args)
-              "recenter display after swiper"
-              (recenter))
-            (advice-add 'swiper--cleanup :after #'mhl/swiper-recenter)
-
-            (use-package smex
-              :ensure t
-              :init (progn (setq smex-save-file (concat user-cache-directory "smex-items"))))
-
-            (use-package counsel
-              :ensure t
-              :defer t
-              :init (progn (counsel-mode t)
-                           (bind-key (kbd "M-x")   #'counsel-M-x)
-                           (bind-key (kbd "C-c x") #'counsel-M-x)
-                           (bind-key (kbd "C-c o") #'counsel-imenu)
-                           (bind-key (kbd "C-c l") #'ivy-resume)
-                           (bind-key (kbd "C-c y") #'counsel-yank-pop)
-                           (bind-key (kbd "C-c s") #'swiper))
-              :config (progn
-                        (advice-add 'counsel-imenu :after #'mhl/swiper-recenter)
-                        (setq counsel-yank-pop-separator (concat "\n\n" (make-string 70 ?-) "\n\n"))
-                        ))
-
-            ;; (use-package counsel-projectile
-            ;;   :ensure t)
-            )
-  :config (progn
-            (defun ivy-insert-action (x)
-              (with-ivy-window
-                (insert x)))
-
-            (ivy-set-actions
-             t
-             '(("I" ivy-insert-action "insert")
-               ("W" kill-new "save to kill ring")))
-  ))
-
-(use-package anzu
-  :ensure t
-  :bind (("M-%" . anzu-query-replace)
-         ("C-M-%" . anzu-query-replace-regexp))
-  :init (global-anzu-mode t))
-
-(use-package electric
-  :config (electric-indent-mode t))
-
-(use-package aggressive-indent
-  :ensure t
-  :disabled t
-  :config (global-aggressive-indent-mode t))
-
-(use-package expand-region
-  :ensure t
-  :defer t
-  :bind ("C-=" . er/expand-region))
-
-(use-package viking-mode
-  :ensure t
-  :disabled t
-  :config (progn
-            (setq viking-use-expand-region-when-loaded t)
-            (global-viking-mode)))
-
-(use-package embrace
-  :ensure t
-  :defer t
-  :bind (("C-," . embrace-commander)))
-
-(use-package key-chord
-  :ensure t
-  :disabled t
-  :commands (key-chord-mode)
-  :init (progn (key-chord-mode t))
-  :config (progn (key-chord-define-global "VV" #'other-window)
-                 (key-chord-define-global "qf" #'helm-find-files)
-            ))
-
-(use-package guide-key
-  :ensure t
-  :disabled t
-  :defer 10
-  :commands (guide-key-mode)
-  :config (progn (setq guide-key/guide-key-sequence '("C-x" "C-c" "SPC" "M-SPC"))
-                 (setq guide-key/recursive-key-sequence-flag t)
-
-                 ;; Alignment and extra spacing
-                 (setq guide-key/align-command-by-space-flag t)
-
-                 (guide-key-mode t)
-                 ))
-
-(use-package which-key
-  :ensure t
-  :defer t
-  :config (progn
-            (which-key-mode t)))
-
-(use-package multiple-cursors
-  :ensure t
-  :bind (("C->"     . mc/mark-next-like-this)
-         ("C-<"     . mc/mark-previous-like-this)
-         ("C-c C-<" . mc/mark-all-like-this))
-  :config (progn (setq mc/list-file (concat user-cache-directory "mc-lists.el"))
-
-                 (setq mc/unsupported-minor-modes '(company-mode
-                                                    auto-complete-mode
-                                                    flyspell-mode
-                                                    jedi-mode))
-
-                 ;; (global-unset-key (kbd "M-<down-mouse-1>"))
-                 ;; (bind-key "M-<mouse-1>" #'mc/add-cursor-on-click)
-                 ))
-
-(use-package ag
-  :ensure t
-  :commands (ag ag-regexp)
-  :init (progn
-          (use-package helm-ag
-            :ensure t
-            :disabled t
-            :commands (helm-ag))
-          ))
-
-(use-package ripgrep
-  :ensure t
-  :init (progn
-          (use-package projectile-ripgrep
-            :ensure t
-            :config (progn
-                      (bind-key (kbd "s r") 'projectile-ripgrep projectile-command-map)
-                      ))
-          ))
-
-(use-package dumb-jump
-  :config (progn
-            (setq dumb-jump-prefer-searcher 'rg)
-            (setq dumb-jump-selector 'ivy))
-  :ensure t)
-
-(use-package rainbow-mode
-  :ensure t
-  :disabled t
-  :commands (rainbow-mode))
-
-(use-package beacon
-  :if (window-system)
-  :ensure t
-  :config (progn
-            ;; (add-to-list 'beacon-dont-blink-commands 'fzf)
-            ;; (add-to-list 'beacon-dont-blink-commands 'fzf-directory)
-
-            (setq beacon-blink-when-window-scrolls t)
-            (setq beacon-blink-when-window-changes t)
-            ;; (setq beacon-blink-when-point-moves 2)
-
-            (setq beacon-color 0.8)
-
-            (beacon-mode t)))
-
-(use-package string-edit
-  :ensure t
-  :defer t)
-
-(use-package elec-pair
-  :disabled t
-  :config (electric-pair-mode t))
-
-(use-package smartparens
-  :ensure t
-  :disabled t
-  :init (progn
-          (use-package smartparens-config)
-          (bind-key (kbd "C-<left>") 'sp-backward-slurp-sexp smartparens-mode-map)
-          (bind-key (kbd "C-<right>") 'sp-forward-slurp-sexp smartparens-mode-map)
-          (bind-key (kbd "C-M-<left>") 'sp-backward-barf-sexp smartparens-mode-map)
-          (bind-key (kbd "C-M-<right>") 'sp-forward-barf-sexp smartparens-mode-map)
-
-          (add-hook 'prog-mode-hook #'smartparens-mode)
-          ))
-
-(use-package region-state
-  :ensure t
-  :disabled t
-  :init (progn
-          (region-state-mode t)
-          ))
-
-(use-package vlf
-  :disabled t
-  :ensure t)
-
-(use-package persistent-scratch
-  :ensure t
-  :disabled t
-  :init (progn
-          (persistent-scratch-setup-default)
-          ))
 
 ;; Version Control ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1537,6 +1577,9 @@ a terminal, just try to remove default the background color."
 (use-package fzf
   :ensure t
   :commands (fzf fzf-directory)
+  :disabled t
+  :init (progn
+          (general-define-key "z" #'fzf))
   :config (progn
             (setq fzf/args "-x --sort 10000 --color=16,bg+:-1,hl:4,hl+:4")
 
@@ -1568,12 +1611,14 @@ a terminal, just try to remove default the background color."
                ;; emacs-state.
                (use-package holy-mode
                  :load-path "site-lisp/holy-mode"
+                 :disabled t
                  :commands (holy-mode)
                  :bind ("<f12>" . holy-mode))
 
                ;; Hybrid-mode (from [[https://github.com/syl20bnr/spacemacs][Spacemacs]])
                (use-package hybrid-mode
                  :load-path "site-lisp/hybrid-mode"
+                 :disabled t
                  :commands (hybrid-mode)
                  :init (hybrid-mode t))
 
@@ -1788,8 +1833,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  ;; Make Anzu work with evil-search
                  (use-package evil-anzu
-                   :ensure t
-                   :defer t)
+                   :ensure t)
 
                  (use-package evil-lion
                    :ensure t
@@ -1799,14 +1843,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Evil Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-(setq general-default-keymaps '(evil-normal-state-map
-                                evil-visual-state-map
-                                evil-operator-state-map))
-(setq custom-leader "SPC")
-
-(general-define-key :prefix custom-leader
-                    "!" 'shell-command
+(general-define-key "!" 'shell-command
 
                     "a" 'projectile-find-other-file
 
@@ -1823,7 +1860,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                     "f" 'find-file
                     ;; (evil-leader/set-key "f" #'helm-find-files)
                     "g" 'counsel-git
-                    "z" 'fzf
 
                     ;; Buffers
                     "b" 'buffer-menu
