@@ -861,6 +861,8 @@ active, apply to active region instead."
           (require 'spaceline-config)
           (spaceline-emacs-theme)
 
+          (setq powerline-height 18)
+
           (spaceline-toggle-minor-modes-off)
 
           (spaceline-toggle-flycheck-error-off)
