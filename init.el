@@ -782,7 +782,6 @@ active, apply to active region instead."
 
 (use-package persistent-scratch
   :ensure t
-  :disabled t
   :init (progn
           (persistent-scratch-setup-default)
           ))
