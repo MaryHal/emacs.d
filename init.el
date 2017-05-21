@@ -862,6 +862,9 @@ active, apply to active region instead."
           (spaceline-emacs-theme)
 
           (setq powerline-height 18)
+          ;; (setq powerline-default-separator 'alternate)
+
+          (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
 
           (spaceline-toggle-minor-modes-off)
 
