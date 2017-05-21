@@ -682,7 +682,6 @@ active, apply to active region instead."
 
 (use-package which-key
   :ensure t
-  :defer t
   :config (progn
             (which-key-mode t)))
 
@@ -977,7 +976,7 @@ active, apply to active region instead."
   (set-frame-alpha 90))
 
 (defun mhl/load-dark-theme (theme)
-  "Set THEME with background transparency. If emacs is running in
+  "Set THEME with background transparency. If Emacs is running in
 a terminal, just try to remove default the background color."
   (load-theme theme :no-confirm)
 
@@ -1626,6 +1625,13 @@ a terminal, just try to remove default the background color."
                  :commands (hybrid-mode)
                  :init (hybrid-mode t))
 
+               ;; (setq evil-normal-state-tag   " N ")
+               ;; (setq evil-visual-state-tag   " V ")
+               ;; (setq evil-emacs-state-tag    " E ")
+               ;; (setq evil-insert-state-tag   " I ")
+               ;; (setq evil-replace-state-tag  " R ")
+               ;; (setq evil-operator-state-tag " O ")
+
                ;; (setq evil-emacs-state-cursor    '("#8abeb7" box))
                ;; (setq evil-normal-state-cursor   '("#e0e0e0" box))
                ;; (setq evil-insert-state-cursor   '("#f0c674" box))
@@ -1848,7 +1854,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; Evil Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (general-define-key "!" 'shell-command
-
                     "a" 'projectile-find-other-file
 
                     ;; Eval
@@ -1873,16 +1878,16 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                     "o" 'imenu
                     "x" 'execute-extended-command
-                    ;; (evil-leader/set-key "o" #'helm-imenu)
-                    ;; (evil-leader/set-key "x" #'helm-M-x)
+                    ;; "o" #'helm-imenu
+                    ;; "x" #'helm-M-x
 
                     "l" 'ivy-resume
 
                     ;; Rings
                     "y"  'counsel-yank-pop
-                    ;; (evil-leader/set-key "y"  #'helm-show-kill-ring)
-                    ;; (evil-leader/set-key "rm" #'helm-mark-ring)
-                    ;; (evil-leader/set-key "rr" #'helm-register)
+                    ;; "y"  #'helm-show-kill-ring
+                    ;; "rm" #'helm-mark-ring
+                    ;; "rr" #'helm-register
 
                     ;; Git
                     "m" 'magit-status
@@ -1891,9 +1896,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                     "p" 'projectile-command-map
 
                     ;; Swiper/Swoop
-                    ;; (evil-leader/set-key "s" #'helm-swoop)
                     "s" 'swiper
-                    ;; (evil-leader/set-key "j" #'counsel-ag)
+                    ;; "s" #'helm-swoop
 
                     "j" 'dumb-jump-go
 
