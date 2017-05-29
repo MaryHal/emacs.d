@@ -169,7 +169,18 @@ active, apply to active region instead."
   (interactive)
   (message "Thou shall not quit!"))
 
+(defun get-active-minor-modes ()
+  "Get a list of active minor-mode symbols."
+  (cl-remove-if (lambda (m) (and (boundp m) (symbol-value m)))
+                minor-mode-list))
 
+(defun what-minor-mode (mode)
+  "Get information on an active minor mode. Use `describe-minor-mode' for a
+selection of all minor-modes, active or not."
+  (interactive
+   (list (completing-read "Minor mode: "
+                          (get-active-minor-modes))))
+  (describe-minor-mode-from-symbol (intern mode)))
 
 ;; Advice ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -722,10 +733,13 @@ active, apply to active region instead."
           ))
 
 (use-package dumb-jump
+  :ensure t
+  :commands (dumb-jump-go)
+  :init (progn
+          (general-define-key "j" #'dumb-jump-go))
   :config (progn
             (setq dumb-jump-prefer-searcher 'rg)
-            (setq dumb-jump-selector 'ivy))
-  :ensure t)
+            (setq dumb-jump-selector 'ivy)))
 
 (use-package rainbow-mode
   :ensure t
@@ -788,6 +802,7 @@ active, apply to active region instead."
 
 (use-package color-identifiers-mode
   :ensure t
+  :disabled t
   :config (progn
             (global-color-identifiers-mode)
             ))
@@ -863,7 +878,7 @@ active, apply to active region instead."
           (setq powerline-height 18)
           ;; (setq powerline-default-separator 'alternate)
 
-          (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+          ;; (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
 
           (spaceline-toggle-minor-modes-off)
 
@@ -1002,6 +1017,7 @@ a terminal, just try to remove default the background color."
   :init (progn
           ;; (defun tao-palette () (tao-theme-golden-grayscale-yang-palette))
           (load-theme 'tao-yin 'y)
+          ;; (load-theme 'tao-yang 'y)
           ;; (mhl/load-dark-theme 'tao-yin)
           ;; (mhl/load-light-theme 'tao-yang)
           ))
