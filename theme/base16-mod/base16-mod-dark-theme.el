@@ -22,7 +22,7 @@
       (base0D "#81a2be")
       (base0E "#b294bb")
       (base0F "#a3685a")
-      (basebg "#040404"))
+      (basebg "#181818"))
 
   (custom-theme-set-faces
    'base16-mod-dark
@@ -40,18 +40,18 @@
    `(link-visited ((t (:foreground ,base0E))))
    `(minibuffer-prompt ((t (:foreground ,base0D :weight bold))))
 
-   ;; `(mode-line
-   ;;   ((t (:background ,base00
-   ;;                    :foreground ,base04
-   ;;                    :box (:line-width 6 :color ,base00)))))
-   ;; `(mode-line-inactive
-   ;;   ((t (:background ,base01
-   ;;                    :foreground ,base03
-   ;;                    :box (:line-width 6 :color ,base01)))))
+   `(mode-line
+     ((t (:background ,base00
+                      :foreground ,base04
+                      ))))
+   `(mode-line-inactive
+     ((t (:background ,base01
+                      :foreground ,base03
+                      ))))
 
-   ;; `(mode-line-buffer-id ((t (:foreground ,base0E :background nil))))
-   ;; `(mode-line-emphasis ((t (:foreground ,base06 :slant italic))))
-   ;; `(mode-line-highlight ((t (:foreground ,base0E :box nil :weight bold))))
+   `(mode-line-buffer-id ((t (:foreground ,base0E :background nil))))
+   `(mode-line-emphasis ((t (:foreground ,base06 :slant italic))))
+   `(mode-line-highlight ((t (:foreground ,base0E :box nil :weight bold))))
 
    `(region ((t (:foreground ,base04 :background ,base01))))
    `(secondary-selection ((t (:background ,base03))))

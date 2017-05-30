@@ -743,7 +743,6 @@ selection of all minor-modes, active or not."
 
 (use-package rainbow-mode
   :ensure t
-  :disabled t
   :commands (rainbow-mode))
 
 (use-package beacon
@@ -873,10 +872,11 @@ selection of all minor-modes, active or not."
   :ensure t
   :config (progn
           (require 'spaceline-config)
-          (spaceline-emacs-theme)
 
           (setq powerline-height 18)
-          ;; (setq powerline-default-separator 'alternate)
+          (setq-default powerline-default-separator 'bar)
+
+          (spaceline-emacs-theme)
 
           ;; (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
 
@@ -1014,6 +1014,7 @@ a terminal, just try to remove default the background color."
 
 (use-package tao-theme
   :ensure t
+  :disabled t
   :init (progn
           ;; (defun tao-palette () (tao-theme-golden-grayscale-yang-palette))
           (load-theme 'tao-yin 'y)
@@ -1028,7 +1029,6 @@ a terminal, just try to remove default the background color."
 
 (use-package base16-mod-theme
   :load-path "theme/base16-mod"
-  :disabled t
   :init (progn
           (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/base16-mod/"))
           (mhl/load-dark-theme 'base16-mod-dark)
@@ -1091,7 +1091,8 @@ a terminal, just try to remove default the background color."
   :disabled t
   :init (progn
           (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/leuven-mod/"))
-          (mhl/load-light-theme 'leuven-mod)
+          ;; (mhl/load-light-theme 'leuven-mod)
+          (load-theme 'leuven-mod t)
           ))
 
 (use-package apropospriate-theme
