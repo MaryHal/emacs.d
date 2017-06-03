@@ -945,7 +945,7 @@ selection of all minor-modes, active or not."
             ;; Display modified status
             (telephone-line-defsegment* my-modified-status-segment
               (if (and (buffer-modified-p) (not (member mode-name modeline-ignored-modes)))
-                  (propertize "+" 'face `(:foreground "#85b654"))
+                  (propertize "*" 'face `(:foreground "#FFFF57"))
                 ""))
 
             ;; Display encoding system
@@ -972,7 +972,7 @@ selection of all minor-modes, active or not."
                     (nil     . (telephone-line-misc-info-segment))
                     (accent  . (my-position-segment))
                     (nil     . (my-major-mode-segment))
-                    (accent  . (my-coding-segment))))
+                    (nil     . (my-coding-segment))))
 
             (setq telephone-line-height 20)
 
