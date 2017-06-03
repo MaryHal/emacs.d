@@ -120,9 +120,17 @@ more...")
                                      :background "#335EA8"))))
    `(mode-line-inactive ((,class (:foreground "#F0F0EF"
                                               :background "#9B9C97"))))
-   `(mode-line-buffer-id ((,class (:weight bold :foreground "white"))))
-   `(mode-line-emphasis ((,class (:weight bold :foreground "white"))))
-   `(mode-line-highlight ((,class (:foreground "yellow"))))
+
+   `(telephone-line-accent-active ((,class (:foreground "#F0F0EF"
+                                                        :background "#335EA8"
+                                                        :inherit mode-line))))
+   `(telephone-line-accent-inactive ((,class (:foreground "#F0F0EF"
+                                                          :background "#9B9C97"
+                                                          :inherit mode-line))))
+
+   ;; `(mode-line-buffer-id ((,class (:weight bold :foreground "white"))))
+   ;; `(mode-line-emphasis ((,class (:weight bold :foreground "white"))))
+   ;; `(mode-line-highlight ((,class (:foreground "yellow"))))
 
    ;; Escape and prompt faces.
    ;; `(minibuffer-prompt ((,class (:weight bold :foreground "black" :background "gold"))))
