@@ -364,6 +364,10 @@ selection of all minor-modes, active or not."
   :ensure t
   :commands esup)
 
+;; Keep .emacs.d clean
+(use-package no-littering
+  :ensure t)
+
 ;; Backups ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Disable backup
@@ -846,30 +850,30 @@ selection of all minor-modes, active or not."
 
 (use-package smart-mode-line
   :ensure t
-  :disabled t
-  :config (progn (setq-default sml/line-number-format " %3l")
-                 (setq-default sml/col-number-format  "%2c")
+  :config (progn
+            ;; I prefer hiding all minor modes by default.
+            (use-package rich-minority
+              :ensure t
+              :config (progn (setq rm-blacklist nil)
+                             (setq rm-whitelist " Wrap")
 
-                 (line-number-mode t)   ;; have line numbers and
-                 (column-number-mode t) ;; column numbers in the mode line
+                             ;; "You don't need to activate rich-minority-mode if you're using smart-mode-line"
+                             (rich-minority-mode t)
+                             ))
+            (setq-default sml/line-number-format " %3l")
+            (setq-default sml/col-number-format  "%2c")
 
-                 (setq sml/theme nil)
-                 (sml/setup)
-                 ))
+            (line-number-mode t)   ;; have line numbers and
+            (column-number-mode t) ;; column numbers in the mode line
 
-;; I prefer hiding all minor modes by default.
-(use-package rich-minority
-  :ensure t
-  :disabled t
-  :config (progn (setq rm-blacklist nil)
-                 (setq rm-whitelist " Wrap")
+            (setq sml/theme nil)
+            (sml/setup)
+            ))
 
-                 ;; "You don't need to activate rich-minority-mode if you're using smart-mode-line"
-                 (rich-minority-mode t)
-                 ))
 
 (use-package telephone-line
   :ensure t
+  :disabled t
   :config (progn
             ;; Need to create custom segments
             (use-package telephone-line-utils)
@@ -901,7 +905,8 @@ selection of all minor-modes, active or not."
                            ((string= mode-name "Emacs-Lisp") "Elisp")
                            ((string= mode-name "Javascript-IDE") "Javascript")
                            (t mode-name))))
-                (propertize mode 'face `(:foreground "#F0F0EF"))))
+                (propertize mode 'face `(:foreground "#F0F0EF"))
+                ))
 
             ;; Display evil state
             (telephone-line-defsegment* my-evil-segment
