@@ -1433,6 +1433,31 @@ a terminal, just try to remove default the background color."
                              ("r" (lambda ()
                                     (interactive)
                                     (text-scale-set 0)) "reset")))
+
+          ;; Hydra - Multiple cursors
+          (defhydra hydra-multiple-cursors (:columns 3
+                                                     :idle 1.0)
+            "Multiple cursors"
+            ("l" mc/edit-lines "Edit lines in region" :exit t)
+            ("b" mc/edit-beginnings-of-lines "Edit beginnings of lines in region" :exit t)
+            ("e" mc/edit-ends-of-lines "Edit ends of lines in region" :exit t)
+            ("a" mc/mark-all-dwim "Mark all dwim" :exit t)
+            ("S" mc/mark-all-symbols-like-this "Mark all symbols likes this" :exit t)
+            ("w" mc/mark-all-words-like-this "Mark all words like this" :exit t)
+            ("r" mc/mark-all-in-region "Mark all in region" :exit t)
+            ("R" mc/mark-all-in-region-regexp "Mark all in region (regexp)" :exit t)
+            ("d" mc/mark-all-like-this-in-defun "Mark all like this in defun" :exit t)
+            ("s" mc/mark-all-symbols-like-this-in-defun "Mark all symbols like this in defun" :exit t)
+            ("W" mc/mark-all-words-like-this-in-defun "Mark all words like this in defun" :exit t)
+            ("i" mc/insert-numbers "Insert numbers" :exit t)
+            ("n" mc/mark-next-like-this "Mark next like this")
+            ("N" mc/skip-to-next-like-this "Skip to next like this")
+            ("M-n" mc/unmark-next-like-this "Unmark next like this")
+            ("p" mc/mark-previous-like-this "Mark previous like this")
+            ("P" mc/skip-to-previous-like-this "Skip to previous like this")
+            ("M-p" mc/unmark-previous-like-this "Unmark previous like this")
+            ("q" nil "Quit" :exit t))
+
           (defhydra hydra-yank-pop ()
             "yank"
             ("C-y" yank nil)
@@ -2067,7 +2092,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                     "t" 'open-terminal
 
                     ;; Help!
-                    "h" 'hydra-help/body)
+                    "h" 'hydra-help/body
+
+                    ;; multiple cursors
+                    "i" 'hydra-multiple-cursors/body)
 
 ;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
