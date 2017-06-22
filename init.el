@@ -1458,6 +1458,19 @@ a terminal, just try to remove default the background color."
             ("M-p" mc/unmark-previous-like-this "Unmark previous like this")
             ("q" nil "Quit" :exit t))
 
+          (defhydra hydra-lisp-eval (:exit t
+                                           :columns 2
+                                           :idle 1.0)
+            "Lisp eval"
+            ("r" eval-region "Region")
+            ("b" eval-buffer "Buffer")
+            ("e" eval-expression "S-expression")
+            ("l" eval-last-sexp "Last s-expression")
+            ("L" eval-print-last-sexp "Last s-expression and print value")
+            ("i" eval-and-replace "Eval and replace in buffer")
+            ("d" eval-defun "Defun / Function")
+            ("f" eval-defun "Defun / Function"))
+
           (defhydra hydra-yank-pop ()
             "yank"
             ("C-y" yank nil)
@@ -2032,13 +2045,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                     "a" 'projectile-find-other-file
 
                     ;; Eval
-                    "e b" 'eval-buffer
-                    "e r" 'eval-region
-                    "e i" 'eval-and-replace
+                    "e" 'hydra-lisp-eval/body
 
-                    ;; Errors
-                    "e n" 'next-error
-                    "e p" 'previous-error
+                    ;; ;; Errors
+                    ;; "e n" 'next-error
+                    ;; "e p" 'previous-error
 
                     ;; Files
                     "f" 'find-file
