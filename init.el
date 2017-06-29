@@ -366,6 +366,7 @@ selection of all minor-modes, active or not."
 
 ;; Keep .emacs.d clean
 (use-package no-littering
+  :disabled t
   :ensure t)
 
 ;; Backups ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1147,7 +1148,6 @@ a terminal, just try to remove default the background color."
 
 (use-package base16-mod-theme
   :load-path "theme/base16-mod"
-  :disabled t
   :init (progn
           (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/base16-mod/"))
           (mhl/load-dark-theme 'base16-mod-dark)
@@ -1207,6 +1207,7 @@ a terminal, just try to remove default the background color."
 
 (use-package leuven-mod
   :load-path "theme/leuven-mod"
+  :disabled t
   :init (progn
           (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/leuven-mod/"))
           ;; (mhl/load-light-theme 'leuven-mod)
