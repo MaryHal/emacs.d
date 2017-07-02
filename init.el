@@ -60,7 +60,9 @@
   :config (progn
             (setq general-default-keymaps '(evil-normal-state-map
                                             evil-visual-state-map
-                                            evil-operator-state-map))
+                                            evil-operator-state-map
+                                            evil-insert-state-map
+                                            evil-emacs-state-map))
 
             (setq general-default-prefix "SPC")
             (setq general-default-non-normal-prefix "M-SPC")))
