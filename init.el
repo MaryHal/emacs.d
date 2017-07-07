@@ -517,6 +517,11 @@ selection of all minor-modes, active or not."
               scroll-preserve-screen-position t
               auto-window-vscroll nil)
 
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
+
 (use-package paren
   :config (progn (show-paren-mode t)
 
