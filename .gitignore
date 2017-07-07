@@ -29,3 +29,4 @@ custom.el
 /.persistent-scratch
 
 /server/
+emacs_backtrace.txt

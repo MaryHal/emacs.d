@@ -1289,7 +1289,7 @@ a terminal, just try to remove default the background color."
   :bind ("C-c m" . magit-status)
   :config (progn
             (if (string= system-type "windows-nt")
-                (setenv "SSH_ASKPASS" "git-gui--askpass"))
+                (setenv "SSH_ASKPASS" "git-gui --askpass"))
             ))
 
 (use-package git-timemachine
@@ -1781,7 +1781,7 @@ a terminal, just try to remove default the background color."
 (use-package evil
   :ensure t
   :preface (progn (setq evil-want-C-u-scroll t))
-  :init (progn (setq evil-move-cursor-back nil)
+  :init (progn ;; (setq evil-move-cursor-back nil)
                (setq evil-cross-lines t)
                (setq evil-intercept-esc 'always)
 

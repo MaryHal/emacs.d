@@ -43,11 +43,11 @@
    `(mode-line
      ((t (:background ,base00
                       :foreground ,base04
-                      ))))
+                      :box (:line-width 6 :color ,base00)))))
    `(mode-line-inactive
      ((t (:background ,base01
                       :foreground ,base03
-                      ))))
+                      :box (:line-width 6 :color ,base01)))))
 
    `(mode-line-buffer-id ((t (:foreground ,base0E :background nil))))
    `(mode-line-emphasis ((t (:foreground ,base06 :slant italic))))
