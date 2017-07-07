@@ -1,4 +1,4 @@
-q
+
 ;;; Code:
 
 ;; Preload Init ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -856,16 +856,8 @@ selection of all minor-modes, active or not."
 
 (use-package smart-mode-line
   :ensure t
+  :disabled t
   :config (progn
-            ;; I prefer hiding all minor modes by default.
-            (use-package rich-minority
-              :ensure t
-              :config (progn (setq rm-blacklist nil)
-                             (setq rm-whitelist " Wrap")
-
-                             ;; "You don't need to activate rich-minority-mode if you're using smart-mode-line"
-                             (rich-minority-mode t)
-                             ))
             (setq-default sml/line-number-format " %3l")
             (setq-default sml/col-number-format  "%2c")
 
@@ -876,6 +868,15 @@ selection of all minor-modes, active or not."
             (sml/setup)
             ))
 
+;; I prefer hiding all minor modes by default.
+(use-package rich-minority
+  :ensure t
+  :config (progn (setq rm-blacklist nil)
+                 (setq rm-whitelist " Wrap")
+
+                 ;; "You don't need to activate rich-minority-mode if you're using smart-mode-line"
+                 (rich-minority-mode t)
+                 ))
 
 (use-package telephone-line
   :ensure t
