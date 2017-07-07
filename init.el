@@ -747,8 +747,6 @@ selection of all minor-modes, active or not."
 (use-package dumb-jump
   :ensure t
   :commands (dumb-jump-go)
-  :init (progn
-          (general-define-key "j" #'dumb-jump-go))
   :config (progn
             (setq dumb-jump-prefer-searcher 'rg)
             (setq dumb-jump-selector 'ivy)))
