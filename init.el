@@ -1,4 +1,4 @@
-
+q
 ;;; Code:
 
 ;; Preload Init ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1289,7 +1289,7 @@ a terminal, just try to remove default the background color."
   :bind ("C-c m" . magit-status)
   :config (progn
             (if (string= system-type "windows-nt")
-                (setenv "SSH_ASKPASS" "git-gui --askpass"))
+                (setenv "SSH_ASKPASS" "git-gui--askpass"))
             ))
 
 (use-package git-timemachine
