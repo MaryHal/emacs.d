@@ -1125,8 +1125,8 @@ a terminal, just try to remove default the background color."
   (if (string= system-type "gnu/linux")
       (if (string= window-system "x")
           (progn
-            ;; (set-face-attribute 'default nil :background "black")
-            ;; (set-face-attribute 'fringe nil :background "black")
+            (set-face-attribute 'default nil :background "black")
+            (set-face-attribute 'fringe nil :background "black")
             (set-frame-alpha 90)
             )
         (progn (when (getenv "DISPLAY")
