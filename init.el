@@ -519,8 +519,7 @@ selection of all minor-modes, active or not."
 
 (use-package editorconfig
   :ensure t
-  :config
-  (editorconfig-mode 1))
+  :config (editorconfig-mode 1))
 
 (use-package paren
   :config (progn (show-paren-mode t)
