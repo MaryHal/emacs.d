@@ -452,7 +452,7 @@ selection of all minor-modes, active or not."
 ;; Join below
 (bind-key "C-j" (lambda ()
                   (interactive)
-                  (join-line -1)))
+                  (join-line 1)))
 
 ;; Join above
 (bind-key "M-j" #'join-line)
