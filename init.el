@@ -1420,26 +1420,26 @@ a terminal, just try to remove default the background color."
   :ensure t
   :defer t
   :init (progn
-          (bind-key "<f1>" (defhydra hydra-help (:color blue)
-                             "Help"
-                             ("a" apropos "Apropos")
-                             ("b" counsel-descbinds "Describe Keybindings")
-                             ("c" describe-char "Describe Char")
-                             ("F" find-function "Find Function")
-                             ("f" describe-function "Describe Function")
-                             ("k" describe-key "Describe Key")
-                             ("K" find-function-on-key "Find Key")
-                             ("m" describe-mode "Describe Modes")
-                             ("V" find-variable "Find Variable")
-                             ("v" describe-variable "Describe Variable")))
+          (defhydra hydra-help (:exit t)
+            "Help"
+            ("a" apropos "Apropos")
+            ("b" counsel-descbinds "Describe Keybindings")
+            ("c" describe-char "Describe Char")
+            ("F" find-function "Find Function")
+            ("f" describe-function "Describe Function")
+            ("k" describe-key "Describe Key")
+            ("K" find-function-on-key "Find Key")
+            ("m" describe-mode "Describe Modes")
+            ("V" find-variable "Find Variable")
+            ("v" describe-variable "Describe Variable"))
 
-          (bind-key "<f2>" (defhydra hydra-zoom ()
-                             "Zoom"
-                             ("i" text-scale-increase "in")
-                             ("o" text-scale-decrease "out")
-                             ("r" (lambda ()
-                                    (interactive)
-                                    (text-scale-set 0)) "reset")))
+          (defhydra hydra-zoom ()
+            "Zoom"
+            ("i" text-scale-increase "in")
+            ("o" text-scale-decrease "out")
+            ("r" (lambda ()
+                   (interactive)
+                   (text-scale-set 0)) "reset"))
 
           ;; Hydra - Multiple cursors
           (defhydra hydra-multiple-cursors (:columns 3
@@ -1484,7 +1484,7 @@ a terminal, just try to remove default the background color."
             ("M-y" yank-pop nil)
             ("y" (yank-pop 1) "next")
             ("Y" (yank-pop -1) "prev")
-            ("l" helm-show-kill-ring "list" :color blue)))
+            ("l" counsel-yank-pop "list" :exit t)))
   :config (progn
             (use-package ivy-hydra
               :ensure t
