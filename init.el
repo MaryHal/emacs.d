@@ -2514,8 +2514,16 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Make sure emacs is daemonized.
 (use-package server
-  :config (unless (server-running-p)
-            (server-start)))
+  :config (progn
+            ;; Suppress error "directory
+            ;; ~/.emacs.d/server is unsafe"
+            ;; on windows.
+            (when (and (>= emacs-major-version 23)
+                       (equal window-system 'w32))
+              (defun server-ensure-safe-dir (dir) "Noop" t))
+
+            (unless (server-running-p)
+              (server-start))))
 
 
 ;; Print out some timing data.
