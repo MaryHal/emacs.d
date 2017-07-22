@@ -170,7 +170,7 @@ active, apply to active region instead."
 
 (defun do-not-quit ()
   "Alternate function to point quit keybinds and stuff to."
-  (interactive)
+ (interactive)
   (message "Thou shall not quit!"))
 
 (defun get-active-minor-modes ()
@@ -1155,6 +1155,7 @@ a terminal, just try to remove default the background color."
 
 (use-package base16-mod-theme
   :load-path "theme/base16-mod"
+  :disabled t
   :init (progn
           (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/base16-mod/"))
           (mhl/load-dark-theme 'base16-mod-dark)
@@ -1164,7 +1165,6 @@ a terminal, just try to remove default the background color."
 
 (use-package apprentice-theme
   :load-path "theme/apprentice-theme"
-  :disabled t
   :init (progn
           (add-to-list 'custom-theme-load-path (concat user-emacs-directory "/theme/apprentice-theme/"))
           (mhl/load-dark-theme 'apprentice)
@@ -1255,7 +1255,7 @@ a terminal, just try to remove default the background color."
 (when (display-graphic-p)
   (let ((my-font (font-candidate
                   (font-spec :family "Inziu Iosevka Slab J"
-                             :size 13)
+                             :size 12)
                   (font-spec :family "PragmataPro"
                              :size 12)
                   (font-spec :family "Inconsolatazi4"
