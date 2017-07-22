@@ -1252,7 +1252,7 @@ a terminal, just try to remove default the background color."
 ;; Only set font if outside terminal
 (when (display-graphic-p)
   (let ((my-font (font-candidate
-                  (font-spec :family "Iosevka Slab"
+                  (font-spec :family "Inziu Iosevka Slab J"
                              :size 12)
                   (font-spec :family "PragmataPro"
                              :size 12)
