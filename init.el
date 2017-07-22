@@ -152,9 +152,11 @@ active, apply to active region instead."
     (back-to-indentation)))
 
 (defun open-terminal ()
-  "Just open a terminal in the cwd using the $TERMINAL environment variable."
+ "Just open a terminal in the cwd using the $TERMINAL environment variable."
   (interactive)
-  (call-process-shell-command (concat "eval $TERMINAL") nil 0))
+  (if (string= system-type "gnu/linux")
+      (call-process-shell-command "eval $TERMINAL" nil 0)
+      (call-process-shell-command "start powershell.exe" nil 0)))
 
 (defun eval-and-replace ()
   "Replace the preceding sexp with its value."
