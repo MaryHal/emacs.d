@@ -519,8 +519,7 @@ selection of all minor-modes, active or not."
 
 (use-package editorconfig
   :ensure t
-  :config
-  (editorconfig-mode 1))
+  :config (editorconfig-mode 1))
 
 (use-package paren
   :config (progn (show-paren-mode t)
@@ -1126,8 +1125,8 @@ a terminal, just try to remove default the background color."
   (if (string= system-type "gnu/linux")
       (if (string= window-system "x")
           (progn
-            ;; (set-face-attribute 'default nil :background "black")
-            ;; (set-face-attribute 'fringe nil :background "black")
+            (set-face-attribute 'default nil :background "black")
+            (set-face-attribute 'fringe nil :background "black")
             (set-frame-alpha 90)
             )
         (progn (when (getenv "DISPLAY")
@@ -2518,8 +2517,16 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Make sure emacs is daemonized.
 (use-package server
-  :config (unless (server-running-p)
-            (server-start)))
+  :config (progn
+            ;; Suppress error "directory
+            ;; ~/.emacs.d/server is unsafe"
+            ;; on windows.
+            (when (and (>= emacs-major-version 23)
+                       (equal window-system 'w32))
+              (defun server-ensure-safe-dir (dir) "Noop" t))
+
+            (unless (server-running-p)
+              (server-start))))
 
 
 ;; Print out some timing data.
