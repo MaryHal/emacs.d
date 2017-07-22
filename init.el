@@ -1253,7 +1253,7 @@ a terminal, just try to remove default the background color."
 (when (display-graphic-p)
   (let ((my-font (font-candidate
                   (font-spec :family "Inziu Iosevka Slab J"
-                             :size 12)
+                             :size 13)
                   (font-spec :family "PragmataPro"
                              :size 12)
                   (font-spec :family "Inconsolatazi4"
