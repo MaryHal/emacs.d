@@ -1252,14 +1252,17 @@ a terminal, just try to remove default the background color."
 
 ;; Only set font if outside terminal
 (when (display-graphic-p)
-  (let ((my-font (font-candidate (font-spec :family "PragmataPro"
-                                                             :size 12)
-                                                  (font-spec :family "Inconsolatazi4"
-                                                             :size 12)
-                                                  "Monospace 8"
-                                                  (font-spec :family "Consolas"
-                                                             :size 12)
-                                                  )))
+  (let ((my-font (font-candidate
+                  (font-spec :family "Iosevka Slab"
+                             :size 12)
+                  (font-spec :family "PragmataPro"
+                             :size 12)
+                  (font-spec :family "Inconsolatazi4"
+                             :size 12)
+                  "Monospace 8"
+                  (font-spec :family "Consolas"
+                             :size 12)
+                  )))
     (set-frame-font my-font t t)
 
     (set-fontset-font t 'hangul my-font)
