@@ -537,11 +537,18 @@ selection of all minor-modes, active or not."
 
 (use-package highlight-parentheses
   :ensure t
+  :disabled t
   :config (progn
             (defun hl-parens-hook ()
               (highlight-parentheses-mode t))
             (add-hook 'prog-mode-hook #'hl-parens-hook)
             ))
+
+(use-package rainbow-delimiters
+  :ensure t
+  :disabled t
+  :config (progn
+            (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)))
 
 (use-package highlight-leading-spaces
   :ensure t
