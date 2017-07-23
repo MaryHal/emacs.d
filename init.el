@@ -1325,6 +1325,7 @@ a terminal, just try to remove default the background color."
 (use-package git-gutter-fringe
   :if (window-system)
   :ensure t
+  :disabled t
   :init (progn (global-git-gutter-mode t))
   :config (progn
             (define-fringe-bitmap 'git-gutter-fr:added
@@ -2042,6 +2043,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  (use-package evil-lion
                    :ensure t
+                   :disabled t
                    :config (progn
                              (evil-lion-mode)))
 
@@ -2376,6 +2378,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package flycheck
   :ensure t
   :defer 5
+  :disabled t
   :init (progn
             ;; Remove newline checks, since they would trigger an immediate check
             ;; when we want the idle-change-delay to be in effect while editing.
