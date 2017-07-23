@@ -1,6 +1,3 @@
-[submodule "theme/essense-theme"]
-	path = theme/essense-theme
-	url = git@github.com:sanford1/essense-theme.git
 [submodule "theme/apprentice-theme"]
 	path = theme/apprentice-theme
 	url = git@github.com:MaryHal/apprentice-theme.git
