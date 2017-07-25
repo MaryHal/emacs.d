@@ -635,14 +635,15 @@ selection of all minor-modes, active or not."
             (use-package counsel
               :ensure t
               :defer t
-              :init (progn (counsel-mode t)
-                           (general-define-key "M-x"   #'counsel-M-x)
-                           (general-define-key "C-c x" #'counsel-M-x)
-                           (general-define-key "C-c o" #'counsel-imenu)
-                           (general-define-key "C-c l" #'ivy-resume)
-                           (general-define-key "C-c y" #'counsel-yank-pop)
-                           (general-define-key "C-c s" #'swiper))
+              :general ("M-x"   #'counsel-M-x
+                        "C-c x" #'counsel-M-x
+                        "C-c o" #'counsel-imenu
+                        "C-c l" #'ivy-resume
+                        "C-c y" #'counsel-yank-pop
+                        "C-c s" #'swiper)
               :config (progn
+                        (counsel-mode t)
+
                         (advice-add 'counsel-imenu :after #'mhl/swiper-recenter)
                         (setq counsel-yank-pop-separator (concat "\n\n" (make-string 70 ?-) "\n\n"))
                         ))
@@ -754,10 +755,8 @@ selection of all minor-modes, active or not."
   :init (progn
           (use-package projectile-ripgrep
             :ensure t
-            :config (progn
-                      (general-define-key "s r" #'projectile-ripgrep :keymaps 'projectile-command-map)
-                      ))
-          ))
+            :general ("s r" #'projectile-ripgrep :keymaps 'projectile-command-map)
+                      )))
 
 (use-package dumb-jump
   :ensure t
@@ -1611,12 +1610,11 @@ a terminal, just try to remove default the background color."
   :disabled t
   :defer 1
   :commands (helm-mode)
-  :init (progn
-          (general-define-key "C-x C-f" #'helm-find-files)
-          (general-define-key "M-x"   #'helm-M-x)
-          (general-define-key "C-c x" #'helm-M-x)
-          (general-define-key "C-c o" #'helm-imenu)
-          (general-define-key "C-c y" #'helm-show-kill-ring))
+  :general ("C-x C-f" #'helm-find-files
+            "M-x"     #'helm-M-x
+            "C-c x"   #'helm-M-x
+            "C-c o"   #'helm-imenu
+            "C-c y"   #'helm-show-kill-ring)
   :config (progn
             (setq helm-apropos-fuzzy-match t
                   helm-buffers-fuzzy-matching t
@@ -1871,18 +1869,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  (defun mhl/evil-be-emacsy ()
                    (general-define-key "C-a" #'evil-beginning-of-line  :keymaps '(insert motion))
+                   (general-define-key "C-e" #'evil-end-of-line        :keymaps '(insert motion))
 
                    (general-define-key "C-b" #'evil-backward-char      :keymaps '(insert))
                    (general-define-key "C-d" #'evil-delete-char        :keymaps '(insert))
-
-                   (general-define-key "C-e" #'evil-end-of-line        :keymaps '(insert motion))
-
                    (general-define-key "C-f" #'evil-forward-char       :keymaps '(insert))
-
-                   (general-define-key "C-k" #'evil-delete-line        :keymaps '(insert motion))
-
-                   ;; Delete forward like Emacs.
-                   (general-define-key "C-d" #'evil-delete-char        :keymaps '(insert)))
+                   (general-define-key "C-k" #'evil-delete-line        :keymaps '(insert motion)))
                  ;; (mhl/evil-be-emacsy)
 
                  ;; Extra text objects
