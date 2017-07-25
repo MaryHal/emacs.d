@@ -71,7 +71,7 @@
              leader-bind
              :prefix "SPC"
              :non-normal-prefix "M-SPC"
-             :states '(normal visual operator insert emacs)
+             :keymaps '(normal visual operator insert emacs)
             )))
 
 ;; Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
