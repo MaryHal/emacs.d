@@ -58,14 +58,21 @@
 (use-package general
   :ensure t
   :config (progn
-            (setq general-default-keymaps '(evil-normal-state-map
-                                            evil-visual-state-map
-                                            evil-operator-state-map
-                                            evil-insert-state-map
-                                            evil-emacs-state-map))
+            ;; (setq general-default-keymaps '(evil-normal-state-map
+            ;;                                 evil-visual-state-map
+            ;;                                 evil-operator-state-map
+            ;;                                 evil-insert-state-map
+            ;;                                 evil-emacs-state-map))
 
-            (setq general-default-prefix "SPC")
-            (setq general-default-non-normal-prefix "M-SPC")))
+            ;; (setq general-default-prefix "SPC")
+            ;; (setq general-default-non-normal-prefix "M-SPC")
+
+            (general-create-definer
+             leader-bind
+             :prefix "SPC"
+             :non-normal-prefix "M-SPC"
+             :states '(normal visual operator insert emacs)
+            )))
 
 ;; Helper Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -445,43 +452,43 @@ selection of all minor-modes, active or not."
 (bind-key (kbd "RET") #'newline-and-indent)
 
 ;; replace with [r]eally [q]uit
-(bind-key "C-x r q" #'save-buffers-kill-terminal)
-(bind-key "C-x C-c" #'do-not-quit)
+(general-define-key "C-x r q" #'save-buffers-kill-terminal)
+(general-define-key "C-x C-c" #'do-not-quit)
 
 ;; Alter M-w so if there's no region, just grab 'till the end of the line.
-(bind-key "M-w" #'save-region-or-current-line)
+(general-define-key "M-w" #'save-region-or-current-line)
 
 ;; Join below
-(bind-key "C-j" (lambda ()
+(general-define-key "C-j" (lambda ()
                   (interactive)
                   (join-line 1)))
 
 ;; Join above
-(bind-key "M-j" #'join-line)
+(general-define-key "M-j" #'join-line)
 
 ;; Move windows
 (windmove-default-keybindings 'meta)
 
 ;; Easier version of "C-x k" to kill buffer
-(bind-key "C-x C-b"  #'buffer-menu)
-(bind-key "C-c u"    #'switch-to-buffer)
-(bind-key "C-x k"    #'my-window-killer)
-(bind-key "C-x C-k"  #'my-window-killer)
+(general-define-key "C-x C-b"  #'buffer-menu)
+(general-define-key "C-c u"    #'switch-to-buffer)
+(general-define-key "C-x k"    #'my-window-killer)
+(general-define-key "C-x C-k"  #'my-window-killer)
 
 ;; Eval
-(bind-key "C-c v"    #'eval-buffer)
-(bind-key "C-c r"    #'eval-region)
+(general-define-key "C-c v"    #'eval-buffer)
+(general-define-key "C-c r"    #'eval-region)
 
-(bind-key "C-x C-e"  #'eval-and-replace)
+(general-define-key "C-x C-e"  #'eval-and-replace)
 
-(bind-key "C-c C-t"  #'open-terminal)
+(general-define-key "C-c C-t"  #'open-terminal)
 
-;; (bind-key "C-;"      #'comment-line-or-region)
-(bind-key "C-;"      #'comment-line)
-(bind-key "M-i"      #'back-to-indentation)
+;; (general-define-key "C-;"      #'comment-line-or-region)
+(general-define-key "C-;"      #'comment-line)
+(general-define-key "M-i"      #'back-to-indentation)
 
-(bind-key "C-."      #'hippie-expand)
-;; (bind-key "C-."      #'dabbrev-expand)
+(general-define-key "C-."      #'hippie-expand)
+;; (general-define-key "C-."      #'dabbrev-expand)
 
 ;; Character-targeted movements
 (use-package misc
@@ -1778,7 +1785,7 @@ a terminal, just try to remove default the background color."
   :commands (fzf fzf-directory)
   :disabled t
   :init (progn
-          (general-define-key "z" #'fzf))
+          (leader-bind "z" #'fzf))
   :config (progn
             (setq fzf/args "-x --sort 10000 --color=16,bg+:-1,hl:4,hl+:4")
 
@@ -2061,72 +2068,72 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Evil Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(general-define-key "!" 'shell-command
-                    "a" 'projectile-find-other-file
+(leader-bind "!" 'shell-command
+             "a" 'projectile-find-other-file
 
-                    ;; Eval
-                    "e" 'hydra-lisp-eval/body
+             ;; Eval
+             "e" 'hydra-lisp-eval/body
 
-                    ;; ;; Errors
-                    ;; "e n" 'next-error
-                    ;; "e p" 'previous-error
+             ;; ;; Errors
+             ;; "e n" 'next-error
+             ;; "e p" 'previous-error
 
-                    ;; Files
-                    "f" 'find-file
-                    ;; (evil-leader/set-key "f" #'helm-find-files)
-                    "g" 'counsel-git
+             ;; Files
+             "f" 'find-file
+             ;; (evil-leader/set-key "f" #'helm-find-files)
+             "g" 'counsel-git
 
-                    ;; Buffers
-                    "b" 'buffer-menu
-                    "k" 'kill-buffer
-                    "u" 'switch-to-buffer
-                    ;; (evil-leader/set-key "u" #'helm-buffers-list)
+             ;; Buffers
+             "b" 'buffer-menu
+             "k" 'kill-buffer
+             "u" 'switch-to-buffer
+             ;; (evil-leader/set-key "u" #'helm-buffers-list)
 
-                    "o" 'imenu
-                    "x" 'execute-extended-command
-                    ;; "o" #'helm-imenu
-                    ;; "x" #'helm-M-x
+             "o" 'imenu
+             "x" 'execute-extended-command
+             ;; "o" #'helm-imenu
+             ;; "x" #'helm-M-x
 
-                    "l" 'ivy-resume
+             "l" 'ivy-resume
 
-                    ;; Rings
-                    "y"  'counsel-yank-pop
-                    ;; "y"  #'helm-show-kill-ring
-                    ;; "rm" #'helm-mark-ring
-                    ;; "rr" #'helm-register
+             ;; Rings
+             "y"  'counsel-yank-pop
+             ;; "y"  #'helm-show-kill-ring
+             ;; "rm" #'helm-mark-ring
+             ;; "rr" #'helm-register
 
-                    ;; Git
-                    "m" 'magit-status
+             ;; Git
+             "m" 'magit-status
 
-                    ;; Projectile
-                    "p" 'projectile-command-map
+             ;; Projectile
+             "p" 'projectile-command-map
 
-                    ;; Swiper/Swoop
-                    "s" 'swiper
-                    ;; "s" #'helm-swoop
+             ;; Swiper/Swoop
+             "s" 'swiper
+             ;; "s" #'helm-swoop
 
-                    "j" 'dumb-jump-go
+             "j" 'dumb-jump-go
 
-                    ;; Avy integration
-                    "SPC" 'avy-goto-word-or-subword-1
+             ;; Avy integration
+             "SPC" 'avy-goto-word-or-subword-1
 
-                    ;; Narrowing
-                    "n r" 'narrow-to-region
-                    "n d" 'narrow-to-defun
-                    "n p" 'narrow-to-page
-                    "n w" 'widen
+             ;; Narrowing
+             "n r" 'narrow-to-region
+             "n d" 'narrow-to-defun
+             "n p" 'narrow-to-page
+             "n w" 'widen
 
-                    ;; Expand region
-                    "v" 'er/expand-region
+             ;; Expand region
+             "v" 'er/expand-region
 
-                    ;; Terminal
-                    "t" 'open-terminal
+             ;; Terminal
+             "t" 'open-terminal
 
-                    ;; Help!
-                    "h" 'hydra-help/body
+             ;; Help!
+             "h" 'hydra-help/body
 
-                    ;; multiple cursors
-                    "i" 'hydra-multiple-cursors/body)
+             ;; multiple cursors
+             "i" 'hydra-multiple-cursors/body)
 
 ;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -2309,6 +2316,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                   company-require-match 'never
                   company-selection-wrap-around t)
 
+            (use-package company-flx
+              :ensure t
+              :defer t
+              :config (progn (company-flx-mode t)))
+
             (use-package irony
               :ensure t
               :defer t)
@@ -2368,11 +2380,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             (global-company-mode t)
             ))
 
-(use-package company-flx
-  :ensure t
-  :defer t
-  :config (progn (company-flx-mode t)))
-
 ;; Flycheck ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package flycheck
@@ -2411,6 +2418,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package flycheck-irony
   :ensure t
   :defer t
+  :disabled t
   :config (add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
 
 (use-package ispell
