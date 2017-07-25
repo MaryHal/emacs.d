@@ -439,14 +439,14 @@ selection of all minor-modes, active or not."
 ;; ;; (global-set-key (leader-kbd "m") 'magit-status)
 
 ;; Remove suspend-frame. Three times.
-(global-unset-key (kbd "C-x C-z"))
-(global-unset-key (kbd "C-z"))
+(general-define-key "C-x C-z" nil)
+(general-define-key "C-z" nil)
 (put 'suspend-frame 'disabled t)
 
 ;; Unset some keys I never use
-(global-unset-key (kbd "C-x m"))
-(global-unset-key (kbd "C-x f"))
-(global-unset-key (kbd "ESC ESC ESC"))
+(general-define-key "C-x m" nil)
+(general-define-key "C-x f" nil)
+(general-define-key "ESC ESC ESC" nil)
 
 ;; Auto-indent on RET
 (general-define-key "RET" #'newline-and-indent)
@@ -500,8 +500,8 @@ selection of all minor-modes, active or not."
          ("M-M" . jump-char-backward)))
 
 ;; (dotimes (n 10)
-;;   (global-unset-key (kbd (format "M-%d" n)))
-;;   (global-unset-key (kbd (format "C-%d" n))))
+;;   (general-define-key (format "M-%d" n)) nil
+;;   (general-define-key (format "C-%d" n))) nil
 
 ;; (general-define-key "M-9"      #'backward-sexp)
 ;; (general-define-key "M-0"      #'forward-sexp)
@@ -735,7 +735,7 @@ selection of all minor-modes, active or not."
                                                     flyspell-mode
                                                     jedi-mode))
 
-                 ;; (global-unset-key (kbd "M-<down-mouse-1>"))
+                 ;; (general-define-key "M-<down-mouse-1>" nil)
                  ;; (general-define-key "M-<mouse-1>" #'mc/add-cursor-on-click)
                  ))
 
