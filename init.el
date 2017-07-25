@@ -449,7 +449,7 @@ selection of all minor-modes, active or not."
 (global-unset-key (kbd "ESC ESC ESC"))
 
 ;; Auto-indent on RET
-(bind-key (kbd "RET") #'newline-and-indent)
+(general-define-key "RET" #'newline-and-indent)
 
 ;; replace with [r]eally [q]uit
 (general-define-key "C-x r q" #'save-buffers-kill-terminal)
@@ -503,8 +503,8 @@ selection of all minor-modes, active or not."
 ;;   (global-unset-key (kbd (format "M-%d" n)))
 ;;   (global-unset-key (kbd (format "C-%d" n))))
 
-;; (bind-key "M-9"      #'backward-sexp)
-;; (bind-key "M-0"      #'forward-sexp)
+;; (general-define-key "M-9"      #'backward-sexp)
+;; (general-define-key "M-0"      #'forward-sexp)
 
 ;; Editing ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -636,12 +636,12 @@ selection of all minor-modes, active or not."
               :ensure t
               :defer t
               :init (progn (counsel-mode t)
-                           (bind-key (kbd "M-x")   #'counsel-M-x)
-                           (bind-key (kbd "C-c x") #'counsel-M-x)
-                           (bind-key (kbd "C-c o") #'counsel-imenu)
-                           (bind-key (kbd "C-c l") #'ivy-resume)
-                           (bind-key (kbd "C-c y") #'counsel-yank-pop)
-                           (bind-key (kbd "C-c s") #'swiper))
+                           (general-define-key "M-x"   #'counsel-M-x)
+                           (general-define-key "C-c x" #'counsel-M-x)
+                           (general-define-key "C-c o" #'counsel-imenu)
+                           (general-define-key "C-c l" #'ivy-resume)
+                           (general-define-key "C-c y" #'counsel-yank-pop)
+                           (general-define-key "C-c s" #'swiper))
               :config (progn
                         (advice-add 'counsel-imenu :after #'mhl/swiper-recenter)
                         (setq counsel-yank-pop-separator (concat "\n\n" (make-string 70 ?-) "\n\n"))
@@ -736,7 +736,7 @@ selection of all minor-modes, active or not."
                                                     jedi-mode))
 
                  ;; (global-unset-key (kbd "M-<down-mouse-1>"))
-                 ;; (bind-key "M-<mouse-1>" #'mc/add-cursor-on-click)
+                 ;; (general-define-key "M-<mouse-1>" #'mc/add-cursor-on-click)
                  ))
 
 (use-package ag
@@ -755,7 +755,7 @@ selection of all minor-modes, active or not."
           (use-package projectile-ripgrep
             :ensure t
             :config (progn
-                      (bind-key (kbd "s r") 'projectile-ripgrep projectile-command-map)
+                      (general-define-key "s r" #'projectile-ripgrep :keymaps 'projectile-command-map)
                       ))
           ))
 
@@ -799,10 +799,11 @@ selection of all minor-modes, active or not."
   :disabled t
   :init (progn
           (use-package smartparens-config)
-          (bind-key (kbd "C-<left>") 'sp-backward-slurp-sexp smartparens-mode-map)
-          (bind-key (kbd "C-<right>") 'sp-forward-slurp-sexp smartparens-mode-map)
-          (bind-key (kbd "C-M-<left>") 'sp-backward-barf-sexp smartparens-mode-map)
-          (bind-key (kbd "C-M-<right>") 'sp-forward-barf-sexp smartparens-mode-map)
+          (general-define-key :keymaps 'smartparens-mode-map
+                              "C-<left>"    #'sp-backward-slurp-sexp
+                              "C-<right>"   #'sp-forward-slurp-sexp
+                              "C-M-<left>"  #'sp-backward-barf-sexp
+                              "C-M-<right>" #'sp-forward-barf-sexp)
 
           (add-hook 'prog-mode-hook #'smartparens-mode)
           ))
@@ -1610,12 +1611,12 @@ a terminal, just try to remove default the background color."
   :disabled t
   :defer 1
   :commands (helm-mode)
-  ;; :init (progn
-  ;;         (bind-key (kbd "C-x C-f") #'helm-find-files)
-  ;;         (bind-key (kbd "M-x")   #'helm-M-x)
-  ;;         (bind-key (kbd "C-c x") #'helm-M-x)
-  ;;         (bind-key (kbd "C-c o") #'helm-imenu)
-  ;;         (bind-key (kbd "C-c y") #'helm-show-kill-ring))
+  :init (progn
+          (general-define-key "C-x C-f" #'helm-find-files)
+          (general-define-key "M-x"   #'helm-M-x)
+          (general-define-key "C-c x" #'helm-M-x)
+          (general-define-key "C-c o" #'helm-imenu)
+          (general-define-key "C-c y" #'helm-show-kill-ring))
   :config (progn
             (setq helm-apropos-fuzzy-match t
                   helm-buffers-fuzzy-matching t
@@ -1677,10 +1678,10 @@ a terminal, just try to remove default the background color."
             ;; ;; Save current position to mark ring when jumping to a different place
             ;; (add-hook 'helm-goto-line-before-hook #'helm-save-current-pos-to-mark-ring)
 
-            (bind-key "C-z"   #'helm-select-action  helm-map)
+            (general-define-key "C-z"   #'helm-select-action :keymaps 'helm-map)
 
             ;; Tab -> do persistent action
-            (bind-key "<tab>" #'helm-execute-persistent-action helm-map)
+            (general-define-key "<tab>" #'helm-execute-persistent-action :keymaps 'helm-map)
 
             ;; Make Tab work in terminal. Cannot use "bind-key" since it
             ;; would detect that we already bound tab.
@@ -1721,7 +1722,8 @@ a terminal, just try to remove default the background color."
   :ensure t
   :disabled t
   :bind (("C-c s" . helm-swoop))
-  :init (progn (bind-key "M-i" #'helm-swoop-from-isearch isearch-mode-map))
+  :init (progn
+          (general-define-key "M-i" #'helm-swoop-from-isearch :keymaps 'isearch-mode-map))
   :config (progn ;; disable pre-input
                  (setq helm-swoop-pre-input-function (lambda () ""))
 
@@ -1844,8 +1846,7 @@ a terminal, just try to remove default the background color."
 
                (evil-mode t))
   :config (progn (evil-set-toggle-key "C-\\")
-                 ;; (bind-key "\\" 'evil-execute-in-evil-state evil-normal-state-map)
-                 (bind-key "C-z" 'evil-execute-in-normal-state)
+                 (general-define-key "C-z" 'evil-execute-in-normal-state)
 
                  ;; (evil-set-initial-state 'erc-mode 'normal)
                  ;; (evil-set-initial-state 'package-menu-mode 'normal)
@@ -1863,33 +1864,26 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                      (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
                      (abort-recursive-edit)))
 
-                 (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-map)
-                 (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-ns-map)
-                 (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-completion-map)
-                 (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-must-match-map)
-                 (bind-key [escape] #'init/minibuffer-keyboard-quit minibuffer-local-isearch-map)
+                 (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-map)
+                 (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-ns-map)
+                 (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-completion-map)
+                 (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-must-match-map)
+                 (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-isearch-map)
 
-                 ;; Being Emacs-y
                  (defun mhl/evil-be-emacsy ()
-                   (bind-key "C-a" #'evil-beginning-of-line  evil-insert-state-map)
-                   (bind-key "C-a" #'evil-beginning-of-line  evil-motion-state-map)
+                   (general-define-key "C-a" #'evil-beginning-of-line  :keymaps '(insert motion))
 
-                   (bind-key "C-b" #'evil-backward-char      evil-insert-state-map)
-                   (bind-key "C-d" #'evil-delete-char        evil-insert-state-map)
+                   (general-define-key "C-b" #'evil-backward-char      :keymaps '(insert))
+                   (general-define-key "C-d" #'evil-delete-char        :keymaps '(insert))
 
-                   (bind-key "C-e" #'evil-end-of-line        evil-insert-state-map)
-                   (bind-key "C-e" #'evil-end-of-line        evil-motion-state-map)
+                   (general-define-key "C-e" #'evil-end-of-line        :keymaps '(insert motion))
 
-                   (bind-key "C-f" #'evil-forward-char       evil-insert-state-map)
+                   (general-define-key "C-f" #'evil-forward-char       :keymaps '(insert))
 
-                   (bind-key "C-k" #'evil-delete-line        evil-insert-state-map)
-                   (bind-key "C-k" #'evil-delete-line        evil-motion-state-map)
+                   (general-define-key "C-k" #'evil-delete-line        :keymaps '(insert motion))
 
                    ;; Delete forward like Emacs.
-                   (bind-key "C-d" #'evil-delete-char evil-insert-state-map)
-
-                   ;; Make end-of-line work in insert
-                   (bind-key "C-e" #'end-of-line evil-insert-state-map))
+                   (general-define-key "C-d" #'evil-delete-char        :keymaps '(insert)))
                  ;; (mhl/evil-be-emacsy)
 
                  ;; Extra text objects
@@ -1914,10 +1908,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (define-and-bind-text-object "/" "/" "/")
 
                  ;; Swap j,k with gj, gk
-                 (bind-key "j"   #'evil-next-visual-line     evil-normal-state-map)
-                 (bind-key "k"   #'evil-previous-visual-line evil-normal-state-map)
-                 (bind-key "g j" #'evil-next-line            evil-normal-state-map)
-                 (bind-key "g k" #'evil-previous-line        evil-normal-state-map)
+                 (general-define-key "j"   #'evil-next-visual-line     :keymaps '(normal))
+                 (general-define-key "k"   #'evil-previous-visual-line :keymaps '(normal))
+                 (general-define-key "g j" #'evil-next-line            :keymaps '(normal))
+                 (general-define-key "g k" #'evil-previous-line        :keymaps '(normal))
 
                  ;; Other evil keybindings
                  (evil-define-operator evil-join-previous-line (beg end)
@@ -1928,46 +1922,46 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                    (join-line))
 
                  ;; Let K match J
-                 (bind-key "K" #'evil-join-previous-line evil-normal-state-map)
+                 (general-define-key "K" #'evil-join-previous-line :keymaps '(normal))
 
                  ;; Make Y work like D
-                 (bind-key "Y" (lambda ()
-                                 (interactive)
-                                 (evil-yank (point) (line-end-position)))
-                           evil-normal-state-map)
+                 (general-define-key "Y" (lambda ()
+                                           (interactive)
+                                           (evil-yank (point) (line-end-position)))
+                                     :keymaps '(normal))
 
                  ;; Kill buffer if only window with buffer open, otherwise just close
                  ;; the window.
-                 (bind-key "Q" #'my-window-killer evil-normal-state-map)
+                 (general-define-key "Q" #'my-window-killer :keymaps '(normal))
 
                  ;; Visual indentation now reselects visual selection.
-                 (bind-key ">" (lambda ()
-                                 (interactive)
-                                 ;; ensure mark is less than point
-                                 (when (> (mark) (point))
-                                   (exchange-point-and-mark)
-                                   )
-                                 (evil-normal-state)
-                                 (evil-shift-right (mark) (point))
-                                 ;; re-select last visual-mode selection
-                                 (evil-visual-restore))
-                           evil-visual-state-map)
+                (general-define-key ">" (lambda ()
+                                        (interactive)
+                                        ;; ensure mark is less than point
+                                        (when (> (mark) (point))
+                                            (exchange-point-and-mark)
+                                            )
+                                        (evil-normal-state)
+                                        (evil-shift-right (mark) (point))
+                                        ;; re-select last visual-mode selection
+                                        (evil-visual-restore))
+                                    :keymaps '(visual))
 
-                 (bind-key "<" (lambda ()
-                                 (interactive)
-                                 ;; ensure mark is less than point
-                                 (when (> (mark) (point))
-                                   (exchange-point-and-mark)
-                                   )
-                                 (evil-normal-state)
-                                 (evil-shift-left (mark) (point))
-                                 ;; re-select last visual-mode selection
-                                 (evil-visual-restore))
-                           evil-visual-state-map)
+                 (general-define-key "<" (lambda ()
+                                           (interactive)
+                                           ;; ensure mark is less than point
+                                           (when (> (mark) (point))
+                                             (exchange-point-and-mark)
+                                             )
+                                           (evil-normal-state)
+                                           (evil-shift-left (mark) (point))
+                                           ;; re-select last visual-mode selection
+                                           (evil-visual-restore))
+                                     :keymaps '(visual))
 
                  ;; Commentin'
-                 (bind-key "g c c" #'comment-line-or-region evil-normal-state-map)
-                 (bind-key "g c"   #'comment-line-or-region evil-visual-state-map)
+                 (general-define-key "g c c" #'comment-line-or-region :keymaps '(normal))
+                 (general-define-key "g c"   #'comment-line-or-region :keymaps '(visual))
 
                  ;; Don't quit!
                  (defadvice evil-quit (around advice-for-evil-quit activate)
@@ -1997,26 +1991,25 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                    :ensure t
                    :defer t
                    :init (progn
-                           (bind-key "b" 'evil-textobj-anyblock-inner-block evil-inner-text-objects-map)
-                           (bind-key "b" 'evil-textobj-anyblock-a-block     evil-outer-text-objects-map)
+                           (general-define-key "b" #'evil-textobj-anyblock-inner-block :keymaps 'evil-inner-text-objects-map)
+                           (general-define-key "b" #'evil-textobj-anyblock-a-block     :keymaps 'evil-outer-text-objects-map)
                            ))
 
                  (use-package evil-args
                    :ensure t
                    :defer t
+                   :disabled t
                    :init (progn
                            ;; bind evil-args text objects
-                           (bind-key "a" #'evil-inner-arg evil-inner-text-objects-map)
-                           (bind-key "a" #'evil-outer-arg evil-outer-text-objects-map)
+                           (general-define-key "a" #'evil-inner-arg :keymaps 'evil-inner-text-objects-map)
+                           (general-define-key "a" #'evil-outer-arg :keymaps 'evil-outer-text-objects-map)
 
                            ;; bind evil-forward/backward-args
-                           (bind-key "gl" #'evil-forward-arg  evil-normal-state-map)
-                           (bind-key "gh" #'evil-backward-arg evil-normal-state-map)
-                           (bind-key "gl" #'evil-forward-arg  evil-motion-state-map)
-                           (bind-key "gh" #'evil-backward-arg evil-motion-state-map)
+                           (general-define-key "gl" #'evil-forward-arg  :keymaps '(normal motion))
+                           (general-define-key "gh" #'evil-backward-arg :keymaps '(normal motion))
 
                            ;; bind evil-jump-out-args
-                           ;; (bind-key "gm" 'evil-jump-out-args evil-normal-state-map)
+                           ;; (general-define-key "gm" 'evil-jump-out-args :keymaps '(normal))
                            ))
 
                  (use-package evil-exchange
@@ -2029,8 +2022,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                    :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt)
                    :init (progn
                            ;; Instead of C-a and C-x like in Vim, let's use + and -.
-                           (bind-key "-" #'evil-numbers/dec-at-pt evil-normal-state-map)
-                           (bind-key "+" #'evil-numbers/inc-at-pt evil-normal-state-map)
+                           (general-define-key "-" #'evil-numbers/dec-at-pt :keymaps '(normal))
+                           (general-define-key "+" #'evil-numbers/inc-at-pt :keymaps '(normal))
                            ))
 
                  (use-package evil-quickscope
@@ -2050,7 +2043,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
                  (use-package evil-lion
                    :ensure t
-                   :disabled t
                    :config (progn
                              (evil-lion-mode)))
 
@@ -2303,12 +2295,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package company
   :ensure t
   :config (progn
-            (bind-key "C-n" #'company-select-next     company-active-map)
-            (bind-key "C-p" #'company-select-previous company-active-map)
+            (general-define-key "C-n" #'company-select-next     :keymaps 'company-active-map)
+            (general-define-key "C-p" #'company-select-previous :keymaps 'company-active-map)
 
-            (bind-key "C-<tab>" #'company-dabbrev)
-            (bind-key "M-<tab>" #'company-complete)
-            (bind-key "C-c C-y" #'company-yasnippet)
+            (general-define-key "C-<tab>" #'company-dabbrev)
+            (general-define-key "M-<tab>" #'company-complete)
+            (general-define-key "C-c C-y" #'company-yasnippet)
 
             (setq company-idle-delay 0
                   company-minimum-prefix-length 2
