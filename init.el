@@ -2049,74 +2049,74 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                              (evil-goggles-use-diff-faces))
                    )))
 
-;; Evil Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Leader ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(leader-bind "!" 'shell-command
-             "a" 'projectile-find-other-file
+(leader-bind "!" #'shell-command
+             "a" #'projectile-find-other-file
 
              ;; Eval
-             "e" 'hydra-lisp-eval/body
+             "e" #'hydra-lisp-eval/body
 
              ;; ;; Errors
-             ;; "e n" 'next-error
-             ;; "e p" 'previous-error
+             ;; "e n" #'next-error
+             ;; "e p" #'previous-error
 
              ;; Files
-             "f" 'find-file
+             "f" #'find-file
              ;; (evil-leader/set-key "f" #'helm-find-files)
-             "g" 'counsel-git
+             "g" #'counsel-git
 
              ;; Buffers
-             "b" 'buffer-menu
-             "k" 'kill-buffer
-             "u" 'switch-to-buffer
+             "b" #'buffer-menu
+             "k" #'kill-buffer
+             "u" #'switch-to-buffer
              ;; (evil-leader/set-key "u" #'helm-buffers-list)
 
-             "o" 'imenu
-             "x" 'execute-extended-command
+             "o" #'imenu
+             "x" #'execute-extended-command
              ;; "o" #'helm-imenu
              ;; "x" #'helm-M-x
 
-             "l" 'ivy-resume
+             "l" #'ivy-resume
 
              ;; Rings
-             "y"  'counsel-yank-pop
+             "y"  #'counsel-yank-pop
              ;; "y"  #'helm-show-kill-ring
              ;; "rm" #'helm-mark-ring
              ;; "rr" #'helm-register
 
              ;; Git
-             "m" 'magit-status
+             "m" #'magit-status
 
              ;; Projectile
-             "p" 'projectile-command-map
+             "p" #'projectile-command-map
 
              ;; Swiper/Swoop
-             "s" 'swiper
+             "s" #'swiper
              ;; "s" #'helm-swoop
 
-             "j" 'dumb-jump-go
+             "j" #'dumb-jump-go
 
              ;; Avy integration
-             "SPC" 'avy-goto-word-or-subword-1
+             "SPC" #'avy-goto-word-or-subword-1
 
              ;; Narrowing
-             "n r" 'narrow-to-region
-             "n d" 'narrow-to-defun
-             "n p" 'narrow-to-page
-             "n w" 'widen
+             "n r" #'narrow-to-region
+             "n d" #'narrow-to-defun
+             "n p" #'narrow-to-page
+             "n w" #'widen
 
              ;; Expand region
-             "v" 'er/expand-region
+             "v" #'er/expand-region
 
              ;; Terminal
-             "t" 'open-terminal
+             "t" #'open-terminal
 
              ;; Help!
-             "h" 'hydra-help/body
+             "h" #'hydra-help/body
 
              ;; multiple cursors
-             "i" 'hydra-multiple-cursors/body)
+             "i" #'hydra-multiple-cursors/body)
 
 ;; Special Buffers ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
