@@ -339,8 +339,8 @@ selection of all minor-modes, active or not."
 (use-package winner
   :if (not noninteractive)
   :defer 5
-  :bind (("M-N" . winner-redo)
-         ("M-P" . winner-undo))
+  :general ("M-N" #'winner-redo
+            "M-P" #'winner-undo)
   :config (progn
             (winner-mode t)))
 
@@ -492,12 +492,12 @@ selection of all minor-modes, active or not."
 
 ;; Character-targeted movements
 (use-package misc
-  :bind (("M-z" . zap-up-to-char)))
+  :general ("M-z" #'zap-up-to-char))
 
 (use-package jump-char
   :ensure t
-  :bind (("M-m" . jump-char-forward)
-         ("M-M" . jump-char-backward)))
+  :general ("M-m" #'jump-char-forward
+            "M-M" #'jump-char-backward))
 
 ;; (dotimes (n 10)
 ;;   (general-define-key (format "M-%d" n)) nil
@@ -681,7 +681,7 @@ selection of all minor-modes, active or not."
 (use-package expand-region
   :ensure t
   :defer t
-  :bind ("C-=" . er/expand-region))
+  :general ("C-=" #'er/expand-region))
 
 (use-package viking-mode
   :ensure t
@@ -693,7 +693,7 @@ selection of all minor-modes, active or not."
 (use-package embrace
   :ensure t
   :defer t
-  :bind (("C-," . embrace-commander)))
+  :general ("C-," #'embrace-commander))
 
 (use-package key-chord
   :ensure t
@@ -725,9 +725,9 @@ selection of all minor-modes, active or not."
 
 (use-package multiple-cursors
   :ensure t
-  :bind (("C->"     . mc/mark-next-like-this)
-         ("C-<"     . mc/mark-previous-like-this)
-         ("C-c C-<" . mc/mark-all-like-this))
+  :general ("C->"     #'mc/mark-next-like-this
+            "C-<"     #'mc/mark-previous-like-this
+            "C-c C-<" #'mc/mark-all-like-this)
   :config (progn (setq mc/list-file (concat user-cache-directory "mc-lists.el"))
 
                  (setq mc/unsupported-minor-modes '(company-mode
@@ -1306,7 +1306,7 @@ a terminal, just try to remove default the background color."
              magit-status
              magit-unstage-file
              magit-blame-mode)
-  :bind ("C-c m" . magit-status)
+  :general ("C-c m" #'magit-status)
   :config (progn
             (if (string= system-type "windows-nt")
                 (setenv "SSH_ASKPASS" "git-gui--askpass"))
@@ -1537,7 +1537,7 @@ a terminal, just try to remove default the background color."
              projectile-switch-project
              projectile-switch-to-buffer
              projectile-vc)
-  :bind-keymap ("C-c p" . projectile-command-map)
+  :general ("C-c p" '(:keymap projectile-command-map))
   :init (progn
           (setq projectile-enable-caching t
                 projectile-cache-file (concat user-cache-directory
@@ -1716,12 +1716,12 @@ a terminal, just try to remove default the background color."
 
 (use-package helm-imenu
   :disabled t
-  :bind ("C-c o" . helm-imenu))
+  :general ("C-c o" #'helm-imenu))
 
 (use-package helm-swoop
   :ensure t
   :disabled t
-  :bind (("C-c s" . helm-swoop))
+  :general (("C-c s" #'helm-swoop))
   :init (progn
           (general-define-key "M-i" #'helm-swoop-from-isearch :keymaps 'isearch-mode-map))
   :config (progn ;; disable pre-input
@@ -1784,10 +1784,9 @@ a terminal, just try to remove default the background color."
 
 (use-package fzf
   :ensure t
-  :commands (fzf fzf-directory)
   :disabled t
-  :init (progn
-          (leader-bind "z" #'fzf))
+  :commands (fzf fzf-directory)
+  :general (leader-bind "z" #'fzf)
   :config (progn
             (setq fzf/args "-x --sort 10000 --color=16,bg+:-1,hl:4,hl+:4")
 
@@ -1821,7 +1820,7 @@ a terminal, just try to remove default the background color."
                  :load-path "site-lisp/holy-mode"
                  :disabled t
                  :commands (holy-mode)
-                 :bind ("<f12>" . holy-mode))
+                 :general ("<f12>" #'holy-mode))
 
                ;; Hybrid-mode (from [[https://github.com/syl20bnr/spacemacs][Spacemacs]])
                (use-package hybrid-mode
