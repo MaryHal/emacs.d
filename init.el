@@ -2141,6 +2141,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :init (progn (shackle-mode t))
   :config (progn (setq shackle-rules
                      '(("\\`\\*helm.*?\\*\\'" :regexp t :align t :ratio 0.4)
+                       ("^\\*magit" :regexp t :align t :size 0.4)
                        (compilation-mode :align t :ratio 0.4)
                        (t :select t)))
                ))
