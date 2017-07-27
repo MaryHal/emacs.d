@@ -1310,7 +1310,7 @@ a terminal, just try to remove default the background color."
             (if (string= system-type "windows-nt")
                 (setenv "SSH_ASKPASS" "git-gui--askpass"))
 
-            ;; (setq-default magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
+            (setq-default magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
             ))
 
 (use-package git-timemachine
@@ -2144,6 +2144,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :config (progn
             (setq shackle-rules
                   '(("\\`\\*helm.*?\\*\\'" :regexp t :align t :size 0.4)
+                    ;; ("^\\*magit" :regexp t :ignore t)
                     ;; ("^\\*magit[^*]+$" :regexp t :same t :noselect t)
                     ;; ("COMMIT_EDITMSG" :align t :popup t)
                     ;; ("^\\*magit.*popup\\*$"  :regexp t :align t :size 0.4)
@@ -2154,7 +2155,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                     ("^\\*.*Shell Command.*\\*$" :regexp t :align t :size 20 :noselect t)
                     (apropos-mode :size 0.3 :align t)
                     (compilation-mode :align t :size 0.4)))
-            (setq shackle-default-rule '(:select t))))
+            ;; (setq shackle-default-rule '(:select t))
+            ))
 
 ;; Dired ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
