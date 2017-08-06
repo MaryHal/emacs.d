@@ -665,7 +665,6 @@ selection of all minor-modes, active or not."
 (use-package anzu
   :ensure t
   :config (progn
-            (setq anzu-cons-mode-line-p nil)
             (global-anzu-mode t)
 
             (general-define-key "M-%"   #'anzu-query-replace)
