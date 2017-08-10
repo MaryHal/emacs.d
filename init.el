@@ -28,6 +28,9 @@
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("gnu"   . "https://elpa.gnu.org/packages/")))
 
+(if (string= system-type "windows-nt")
+    (setq package-check-signature nil))
+
 (defconst user-custom-file (concat user-emacs-directory "custom.el"))
 (defconst user-cache-directory (concat user-emacs-directory "cache/"))
 
