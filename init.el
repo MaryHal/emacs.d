@@ -633,7 +633,12 @@ selection of all minor-modes, active or not."
 
             (use-package smex
               :ensure t
+              :disabled t
               :init (progn (setq smex-save-file (concat user-cache-directory "smex-items"))))
+
+            (use-package amx
+              :ensure t
+              :init (progn (setq amx-save-file (concat user-cache-directory "amx-items"))))
 
             (use-package counsel
               :ensure t
