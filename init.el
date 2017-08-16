@@ -1450,7 +1450,7 @@ a terminal, just try to remove default the background color."
   :init (progn
           (defhydra hydra-help (:exit t)
             "Help"
-            ("a" apropos "Apropos")
+            ("a" counsel-apropos "Apropos")
             ("b" counsel-descbinds "Describe Keybindings")
             ("c" describe-char "Describe Char")
             ("F" find-function "Find Function")
