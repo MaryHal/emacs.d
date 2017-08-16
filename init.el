@@ -196,6 +196,13 @@ selection of all minor-modes, active or not."
                           (get-active-minor-modes))))
   (describe-minor-mode-from-symbol (intern mode)))
 
+(defun output-to-minibuffer (n)
+  (interactive "p")
+  (let ((message-log-max nil))
+    (if (use-region-p)
+        (message (buffer-substring-no-properties (region-beginning) (region-end)))
+      (message (buffer-substring-no-properties (line-beginning-position) (goto-char (line-end-position n)))))))
+
 ;; Advice ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; When popping the mark, continue popping until the cursor actually moves
