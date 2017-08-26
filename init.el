@@ -292,7 +292,7 @@ selection of all minor-modes, active or not."
   (setq gc-cons-threshold most-positive-fixnum))
 
 (defun my-minibuffer-exit-hook ()
-  (setq gc-cons-threshold 800000))
+  (setq gc-cons-threshold 1600000))
 
 (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
@@ -2310,6 +2310,28 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Auto-completion ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(use-package irony
+  :ensure t
+  :defer t
+  :config (progn
+            (defun irony-mode-enable ()
+              (when (member major-mode irony-supported-major-modes)
+                (irony-mode t)))
+
+            ;; (add-hook 'objc-mode-hook #'irony-mode-enable)
+            (add-hook 'c++-mode-hook  #'irony-mode-enable)
+            (add-hook 'c-mode-hook    #'irony-mode-enable)
+
+            ;; replace the `completion-at-point' and `complete-symbol' bindings in
+            ;; irony-mode's buffers by irony-mode's function
+            (defun my-irony-mode-hook ()
+              (define-key irony-mode-map [remap completion-at-point]
+                'irony-completion-at-point-async)
+              (define-key irony-mode-map [remap complete-symbol]
+                'irony-completion-at-point-async))
+            (add-hook 'irony-mode-hook #'my-irony-mode-hook)
+            (add-hook 'irony-mode-hook #'irony-cdb-autosetup-compile-options)))
+
 (use-package company
   :ensure t
   :config (progn
@@ -2331,49 +2353,26 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
               :defer t
               :config (progn (company-flx-mode t)))
 
-            (use-package irony
-              :ensure t
-              :defer t)
-
             (use-package company-irony
               :ensure t
-              :defer t)
-
-            (defun irony-mode-enable ()
-              (when (member major-mode irony-supported-major-modes)
-                (irony-mode t)))
-
-            (add-hook 'c++-mode-hook  #'irony-mode-enable)
-            (add-hook 'c-mode-hook    #'irony-mode-enable)
-            ;; (add-hook 'objc-mode-hook #'irony-mode-enable)
-
-            ;; replace the `completion-at-point' and `complete-symbol' bindings in
-            ;; irony-mode's buffers by irony-mode's function
-            (defun my-irony-mode-hook ()
-              (define-key irony-mode-map [remap completion-at-point]
-                'irony-completion-at-point-async)
-              (define-key irony-mode-map [remap complete-symbol]
-                'irony-completion-at-point-async))
-            (add-hook 'irony-mode-hook #'my-irony-mode-hook)
-            (add-hook 'irony-mode-hook #'irony-cdb-autosetup-compile-options)
-
-            ;; (optional) adds CC special commands to `company-begin-commands' in order to
-            ;; trigger completion at interesting places, such as after scope operator
-            ;; std::|
-            (add-hook 'irony-mode-hook #'company-irony-setup-begin-commands)
+              :defer t
+              :config (progn
+                        ;; (optional) adds CC special commands to `company-begin-commands' in order to
+                        ;; trigger completion at interesting places, such as after scope operator
+                        ;; std::|
+                        (add-hook 'irony-mode-hook #'company-irony-setup-begin-commands)))
 
             ;; "Iterating through back-ends that don’t apply to the current buffer is pretty fast."
-            (setq company-backends (quote (company-files
-                                           company-irony
-                                           company-elisp
-                                           company-css
-                                           ;; company-eclim
-                                           ;; company-clang
-                                           company-capf
-                                           ;; (company-dabbrev-code company-keywords)
-                                           company-keywords
-                                           ;; company-dabbrev
-                                           )))
+            (setq company-backends '(company-files
+                                     company-elisp
+                                     company-css
+                                     ;; company-eclim
+                                     ;; company-clang
+                                     company-capf
+                                     ;; (company-dabbrev-code company-keywords)
+                                     company-keywords
+                                     ;; company-dabbrev
+                                     ))
 
             ;; Add yasnippet support for all company backends
             ;; https://github.com/syl20bnr/spacemacs/pull/179
