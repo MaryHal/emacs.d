@@ -1465,6 +1465,7 @@ a terminal, just try to remove default the background color."
             ("k" describe-key "Describe Key")
             ("K" find-function-on-key "Find Key")
             ("m" describe-mode "Describe Modes")
+            ("M" what-minor-mode "Describe Minor Modes")
             ("V" find-variable "Find Variable")
             ("v" describe-variable "Describe Variable"))
 
@@ -2541,7 +2542,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; operation. Let's reduce the size of the threshold to a smaller value (the
 ;; default) after most of our init is complete.
 (add-hook 'after-init-hook `(lambda ()
-                              (setq gc-cons-threshold 800000)
+                              (setq gc-cons-threshold 1600000)
                               ))
 
 ;; Make sure emacs is daemonized.
