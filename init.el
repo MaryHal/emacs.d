@@ -2311,6 +2311,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package irony
   :ensure t
   :defer t
+  :disabled t
   :config (progn
             (defun irony-mode-enable ()
               (when (member major-mode irony-supported-major-modes)
@@ -2354,6 +2355,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             (use-package company-irony
               :ensure t
               :defer t
+              :disabled t
               :config (progn
                         ;; (optional) adds CC special commands to `company-begin-commands' in order to
                         ;; trigger completion at interesting places, such as after scope operator
