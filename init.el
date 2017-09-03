@@ -456,7 +456,10 @@ selection of all minor-modes, active or not."
 ;; Unset some keys I never use
 (general-define-key "C-x m" nil)
 (general-define-key "C-x f" nil)
-(general-define-key "ESC ESC ESC" nil)
+
+(general-define-key [escape] #'isearch-abort :keymaps 'isearch-mode-map)
+(general-define-key "\e"     #'isearch-abort :keymaps 'isearch-mode-map)
+(general-define-key [escape] #'keyboard-escape-quit)
 
 ;; Auto-indent on RET
 (general-define-key "RET" #'newline-and-indent)
