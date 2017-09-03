@@ -1820,7 +1820,7 @@ a terminal, just try to remove default the background color."
 (use-package evil
   :ensure t
   :preface (progn (setq evil-want-C-u-scroll t))
-  :init (progn ;; (setq evil-move-cursor-back nil)
+  :init (progn (setq evil-move-cursor-back nil)
                (setq evil-cross-lines t)
                (setq evil-intercept-esc 'always)
 
@@ -1839,13 +1839,6 @@ a terminal, just try to remove default the background color."
                  :disabled t
                  :commands (holy-mode)
                  :general ("<f12>" #'holy-mode))
-
-               ;; Hybrid-mode (from [[https://github.com/syl20bnr/spacemacs][Spacemacs]])
-               (use-package hybrid-mode
-                 :load-path "site-lisp/hybrid-mode"
-                 :disabled t
-                 :commands (hybrid-mode)
-                 :init (hybrid-mode t))
 
                ;; (setq evil-normal-state-tag   " N ")
                ;; (setq evil-visual-state-tag   " V ")
@@ -1895,7 +1888,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                    (general-define-key "C-d" #'evil-delete-char        :keymaps '(insert))
                    (general-define-key "C-f" #'evil-forward-char       :keymaps '(insert))
                    (general-define-key "C-k" #'evil-delete-line        :keymaps '(insert motion)))
-                 ;; (mhl/evil-be-emacsy)
+
+                 (mhl/evil-be-emacsy)
 
                  ;; Extra text objects
                  (defmacro define-and-bind-text-object (key start-regex end-regex)
