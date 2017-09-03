@@ -496,8 +496,7 @@ selection of all minor-modes, active or not."
 
 (general-define-key "C-c C-t"  #'open-terminal)
 
-;; (general-define-key "C-;"      #'comment-line-or-region)
-(general-define-key "C-;"      #'comment-line)
+(general-define-key "C-;"      #'comment-line-or-region)
 (general-define-key "M-i"      #'back-to-indentation)
 
 (general-define-key "C-."      #'hippie-expand)
@@ -828,8 +827,7 @@ selection of all minor-modes, active or not."
   :ensure t
   :disabled t
   :init (progn
-          (region-state-mode t)
-          ))
+          (region-state-mode t)))
 
 (use-package vlf
   :disabled t
@@ -966,7 +964,6 @@ selection of all minor-modes, active or not."
             (telephone-line-defsegment* my-buffer-segment
               `(""
                 ,(telephone-line-raw mode-line-buffer-identification t)))
-
 
             ;; Display current position in a buffer
             (telephone-line-defsegment* my-position-segment
@@ -1820,7 +1817,7 @@ a terminal, just try to remove default the background color."
 (use-package evil
   :ensure t
   :preface (progn (setq evil-want-C-u-scroll t))
-  :init (progn (setq evil-move-cursor-back nil)
+  :init (progn ;; (setq evil-move-cursor-back nil)
                (setq evil-cross-lines t)
                (setq evil-intercept-esc 'always)
 
@@ -1847,12 +1844,12 @@ a terminal, just try to remove default the background color."
                ;; (setq evil-replace-state-tag  " R ")
                ;; (setq evil-operator-state-tag " O ")
 
-               ;; (setq evil-emacs-state-cursor    '("#8abeb7" box))
-               ;; (setq evil-normal-state-cursor   '("#e0e0e0" box))
-               ;; (setq evil-insert-state-cursor   '("#f0c674" box))
-               ;; (setq evil-visual-state-cursor   '("#de935f" box))
-               ;; (setq evil-replace-state-cursor  '("#a3685a" box))
-               ;; (setq evil-operator-state-cursor '("#81a2be" box))
+               (setq evil-emacs-state-cursor    '("#8abeb7" box))
+               (setq evil-normal-state-cursor   '("#e0e0e0" box))
+               (setq evil-insert-state-cursor   '("#f0c674" box))
+               (setq evil-visual-state-cursor   '("#de935f" box))
+               (setq evil-replace-state-cursor  '("#a3685a" box))
+               (setq evil-operator-state-cursor '("#81a2be" box))
 
                (evil-mode t))
   :config (progn (evil-set-toggle-key "C-\\")
@@ -1881,13 +1878,16 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                  (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-isearch-map)
 
                  (defun mhl/evil-be-emacsy ()
-                   (general-define-key "C-a" #'evil-beginning-of-line  :keymaps '(insert motion))
-                   (general-define-key "C-e" #'evil-end-of-line        :keymaps '(insert motion))
+                   (general-define-key "C-a" #'evil-beginning-of-line    :keymaps '(insert motion))
+                   (general-define-key "C-e" #'evil-end-of-line          :keymaps '(insert motion))
 
-                   (general-define-key "C-b" #'evil-backward-char      :keymaps '(insert))
-                   (general-define-key "C-d" #'evil-delete-char        :keymaps '(insert))
-                   (general-define-key "C-f" #'evil-forward-char       :keymaps '(insert))
-                   (general-define-key "C-k" #'evil-delete-line        :keymaps '(insert motion)))
+                   (general-define-key "C-b" #'evil-backward-char        :keymaps '(insert))
+                   (general-define-key "C-d" #'evil-delete-char          :keymaps '(insert))
+                   (general-define-key "C-f" #'evil-forward-char         :keymaps '(insert))
+                   (general-define-key "C-k" #'evil-delete-line          :keymaps '(insert motion))
+
+                   (general-define-key "C-p" #'evil-previous-visual-line :keymaps '(insert))
+                   (general-define-key "C-n" #'evil-next-visual-line     :keymaps '(insert)))
 
                  (mhl/evil-be-emacsy)
 
