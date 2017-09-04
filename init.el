@@ -630,6 +630,9 @@ selection of all minor-modes, active or not."
 
             ;; (setq ivy-display-style 'fancy)
 
+            (setq swiper-faces '(region region region region))
+            (setq ivy-minibuffer-faces '(region region region region))
+
             (ivy-mode t)
 
             (setq projectile-completion-system 'ivy)
