@@ -1850,7 +1850,7 @@ a terminal, just try to remove default the background color."
                (setq evil-emacs-state-cursor    '("#8abeb7" box))
                (setq evil-normal-state-cursor   '("#e0e0e0" box))
                (setq evil-insert-state-cursor   '("#f0c674" box))
-               (setq evil-visual-state-cursor   '("#de935f" box))
+               ;; (setq evil-visual-state-cursor   '("#de935f" box))
                (setq evil-replace-state-cursor  '("#a3685a" box))
                (setq evil-operator-state-cursor '("#81a2be" box))
 
@@ -2080,27 +2080,21 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
              ;; Files
              "f" #'find-file
-             ;; (evil-leader/set-key "f" #'helm-find-files)
              "g" #'counsel-git
 
              ;; Buffers
              "b" #'buffer-menu
              "k" #'kill-buffer
              "u" #'switch-to-buffer
-             ;; (evil-leader/set-key "u" #'helm-buffers-list)
 
              "o" #'imenu
              "x" #'execute-extended-command
-             ;; "o" #'helm-imenu
-             ;; "x" #'helm-M-x
 
              "l" #'ivy-resume
 
              ;; Rings
              "y"  #'counsel-yank-pop
-             ;; "y"  #'helm-show-kill-ring
-             ;; "rm" #'helm-mark-ring
-             ;; "rr" #'helm-register
+             "r m" #'counsel-mark-ring
 
              ;; Git
              "m" #'magit-status
