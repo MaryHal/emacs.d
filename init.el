@@ -840,6 +840,7 @@ selection of all minor-modes, active or not."
   :ensure t
   :init (progn
           (persistent-scratch-setup-default)
+          (persistent-scratch-autosave-mode t)
           ))
 
 (use-package color-identifiers-mode
@@ -2280,6 +2281,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :ensure t
   :mode ("\\.html\\'" . html-mode))
 
+(use-package go-mode
+  :ensure t
+  :mode ("\\.go\\'" . go-mode))
+
 (use-package ahk-mode
   :ensure t
   :mode ("\\.ahk$" . ahk-mode))
@@ -2358,6 +2363,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                         ;; trigger completion at interesting places, such as after scope operator
                         ;; std::|
                         (add-hook 'irony-mode-hook #'company-irony-setup-begin-commands)))
+
+            (use-package company-go
+              :ensure t
+              :defer t
+              :disabled t
+              :config (add-hook 'go-mode-hook
+                                (lambda ()
+                                  (set (make-local-variable 'company-backends) '(company-go)))))
 
             ;; "Iterating through back-ends that don’t apply to the current buffer is pretty fast."
             (setq company-backends '(company-files
