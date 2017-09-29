@@ -563,6 +563,13 @@ selection of all minor-modes, active or not."
             (add-hook 'prog-mode-hook #'hl-parens-hook)
             ))
 
+(use-package highlight-thing
+  :ensure t
+  :disabled t
+  :config (progn
+            (global-highlight-thing-mode)
+            ))
+
 (use-package rainbow-delimiters
   :ensure t
   :disabled t
@@ -638,10 +645,10 @@ selection of all minor-modes, active or not."
             (setq projectile-completion-system 'ivy)
             (setq magit-completing-read-function 'ivy-completing-read)
 
-            (defun mhl/swiper-recenter (&rest args)
-              "recenter display after swiper"
-              (recenter))
-            (advice-add 'swiper--cleanup :after #'mhl/swiper-recenter)
+            ;; (defun mhl/swiper-recenter (&rest args)
+            ;;   "recenter display after swiper"
+            ;;   (recenter))
+            ;; (advice-add 'swiper--cleanup :after #'mhl/swiper-recenter)
 
             (use-package smex
               :ensure t
