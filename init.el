@@ -1343,7 +1343,6 @@ a terminal, just try to remove default the background color."
   :commands (git-timemachine))
 
 (use-package git-gutter
-  :disabled t
   :if (not window-system)
   :ensure t
   :defer t
@@ -1359,7 +1358,6 @@ a terminal, just try to remove default the background color."
 (use-package git-gutter-fringe
   :if (window-system)
   :ensure t
-  :disabled t
   :init (progn (global-git-gutter-mode t))
   :config (progn
             (define-fringe-bitmap 'git-gutter-fr:added
