@@ -425,12 +425,10 @@ selection of all minor-modes, active or not."
 
 ;; String manipulation library
 (use-package s
-  :defer t
   :ensure t)
 
 ;; Modern list library
 (use-package dash
-  :defer t
   :ensure t)
 
 ;; Homeless Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2465,6 +2463,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
               (setq ispell-program-name "aspell")
               ;; Please note ispell-extra-args contains ACTUAL parameters passed to aspell
               (setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US"))))
+
+            ;; On windows, append .exe suffix
+            (when (and (string= system-type "windows-nt")
+                       (not (s-suffix? ".exe" ispell-program-name)))
+              (setq ispell-program-name (concat ispell-program-name ".exe")))
             ))
 
 ;; Org-mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
