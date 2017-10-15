@@ -1,3 +1,5 @@
+choco install emacs64 -y
+
 mkdir "%USERPROFILE%\AppData\Roaming\.emacs.d\"
 mkdir "%USERPROFILE%\AppData\Roaming\.emacs.d\cache\"
 mkdir "%USERPROFILE%\AppData\Roaming\.emacs.d\server\"
