@@ -297,6 +297,12 @@ selection of all minor-modes, active or not."
 (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
+(use-package emacs-lock-mode
+  :init (progn
+            ;; Protect the scratch buffer!
+            (with-current-buffer "*scratch*"
+              (emacs-lock-mode 'kill))))
+
 (use-package autorevert
   :commands (auto-revert-mode)
   :init (add-hook 'find-file-hook #'(lambda () (auto-revert-mode t))))
