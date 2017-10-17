@@ -1207,6 +1207,10 @@ a terminal, just try to remove default the background color."
           (mhl/load-dark-theme 'apprentice)
           ))
 
+(use-package doom-themes
+  :ensure t
+  :disabled t)
+
 (use-package moe-theme
   :ensure t
   :disabled t
