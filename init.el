@@ -846,6 +846,19 @@ selection of all minor-modes, active or not."
   :init (progn
           (persistent-scratch-setup-default)
           (persistent-scratch-autosave-mode t)
+
+          (let ((persistdir (concat user-cache-directory "persist")))
+            (mkdir persistdir t)
+            (setq persistent-scratch-backup-directory persistdir))
+
+          ;; keep the newest 10 backups
+          (setq persistent-scratch-backup-filter
+                (persistent-scratch-keep-n-newest-backups 10))
+
+          ;; keep backups not older than a month
+          (setq persistent-scratch-backup-filter
+                (persistent-scratch-keep-backups-not-older-than
+                 (days-to-time 30)))
           ))
 
 (use-package color-identifiers-mode
