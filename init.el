@@ -1196,7 +1196,7 @@ a terminal, just try to remove default the background color."
   :ensure t
   :disabled t
   :init (progn
-          ;; (defun tao-palette () (tao-theme-golden-grayscale-yang-palette))
+          (defun tao-palette () (tao-theme-golden-grayscale-yang-palette))
           (load-theme 'tao-yin 'y)
           ;; (load-theme 'tao-yang 'y)
           ;; (mhl/load-dark-theme 'tao-yin)
