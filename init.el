@@ -2198,7 +2198,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package dired
   :commands (dired)
-  :config (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso"))
+  :config (progn
+            (use-package dired-details
+              :ensure t
+              :config (progn
+                        (setq-default dired-details-hidden-string "--- ")
+                        (dired-details-install)))
+
+            (setq dired-listing-switches "-aGghlv --group-directories-first --time-style=long-iso")))
 
 (use-package ranger
   :ensure t
