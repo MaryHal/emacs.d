@@ -828,14 +828,263 @@ compilation."
           ))
 
 (use-package undo-tree
+  :ensure t
   :demand t
-  :config
-  (global-undo-tree-mode +1)
-  ;; persistent undo history is known to cause undo history corruption, which
-  ;; can be very destructive! So disable it!
-  (setq undo-tree-auto-save-history nil
-        undo-tree-history-directory-alist
-        (list (cons "." (concat user-cache-directory "undo-tree-hist/")))))
+  :config (progn
+            (global-undo-tree-mode +1)
+            ;; persistent undo history is known to cause undo history corruption, which
+            ;; can be very destructive! So disable it!
+            (setq undo-tree-auto-save-history nil
+                  undo-tree-history-directory-alist (list (cons "." (concat user-cache-directory "undo-tree-hist/"))))))
+
+;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package evil
+  :ensure t
+  :demand t
+  :init (progn
+          (setq evil-want-C-u-scroll t
+                evil-want-visual-char-semi-exclusive t
+                evil-want-Y-yank-to-eol t
+                evil-magic t
+                evil-echo-state t
+                evil-auto-indent t
+                evil-indent-convert-tabs t
+                evil-ex-search-vim-style-regexp t
+                evil-ex-visual-char-range t
+                evil-insert-skip-empty-lines t
+                evil-mode-line-format 'nil
+                ;; more vim-like behavior
+                evil-symbol-word-search t
+                ;; don't activate mark on shift-click
+                shift-select-mode nil))
+  :config (progn
+
+            (defun mhl/evil-set-cursor-colors (&rest _)
+              (setq evil-emacs-state-cursor    '("#8abeb7" box)
+                    evil-normal-state-cursor   '("#e0e0e0" box)
+                    evil-insert-state-cursor   '("#f0c674" box)
+                    ;; evil-visual-state-cursor   '("#de935f" box)
+                    evil-replace-state-cursor  '("#a3685a" box)
+                    evil-operator-state-cursor '("#81a2be" box)))
+
+              (advice-add #'load-theme :after #'mhl/evil-set-cursor-colors)
+
+            ;; make `try-expand-dabbrev' from `hippie-expand' work in minibuffer
+            ;; @see `he-dabbrev-beg', so we need re-define syntax for '/'
+            (defun minibuffer-inactive-mode-hook-setup ()
+              (set-syntax-table (let* ((table (make-syntax-table)))
+                                  (modify-syntax-entry ?/ "." table)
+                                  table)))
+            (add-hook 'minibuffer-inactive-mode-hook #'minibuffer-inactive-mode-hook-setup)
+
+            (evil-set-toggle-key "C-\\")
+            (general-define-key "C-z" 'evil-execute-in-normal-state)
+
+            ;; (evil-set-initial-state 'erc-mode 'normal)
+            ;; (evil-set-initial-state 'package-menu-mode 'normal)
+            (evil-set-initial-state 'term-mode 'emacs)
+
+            ;; Make ESC work more or less like it does in Vim
+            (defun init/minibuffer-keyboard-quit()
+              "Abort recursive edit.
+
+In Delete Selection mode, if the mark is active, just deactivate it;
+then it takes a second \\[keyboard-quit] to abort the minibuffer."
+              (interactive)
+              (if (and delete-selection-mode transient-mark-mode mark-active)
+                  (setq deactivate-mark t)
+                (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
+                (abort-recursive-edit)))
+
+            (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-map)
+            (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-ns-map)
+            (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-completion-map)
+            (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-must-match-map)
+            (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-isearch-map)
+
+            (defun mhl/evil-be-emacsy ()
+              (general-define-key "C-a" #'evil-beginning-of-line    :keymaps '(insert motion))
+              (general-define-key "C-e" #'evil-end-of-line          :keymaps '(insert motion))
+
+              (general-define-key "C-b" #'evil-backward-char        :keymaps '(insert))
+              (general-define-key "C-d" #'evil-delete-char          :keymaps '(insert))
+              (general-define-key "C-f" #'evil-forward-char         :keymaps '(insert))
+              (general-define-key "C-k" #'evil-delete-line          :keymaps '(insert motion))
+
+              (general-define-key "C-p" #'evil-previous-visual-line :keymaps '(insert))
+              (general-define-key "C-n" #'evil-next-visual-line     :keymaps '(insert)))
+
+            (mhl/evil-be-emacsy)
+
+            ;; Extra text objects
+            (defmacro define-and-bind-text-object (key start-regex end-regex)
+              (let ((inner-name (make-symbol "inner-name"))
+                    (outer-name (make-symbol "outer-name")))
+                `(progn
+                   (evil-define-text-object ,inner-name (count &optional beg end type)
+                     (evil-select-paren ,start-regex ,end-regex beg end type count nil))
+                   (evil-define-text-object ,outer-name (count &optional beg end type)
+                     (evil-select-paren ,start-regex ,end-regex beg end type count t))
+                   (define-key evil-inner-text-objects-map ,key (quote ,inner-name))
+                   (define-key evil-outer-text-objects-map ,key (quote ,outer-name)))))
+
+            ;; create "il"/"al" (inside/around) line text objects:
+            (define-and-bind-text-object "l" "^\\s-*" "\\s-*$")
+
+            ;; create "ie"/"ae" (inside/around) entire buffer text objects:
+            (define-and-bind-text-object "e" "\\`\\s-*" "\\s-*\\'")
+
+            (define-and-bind-text-object "*" "*" "*")
+            (define-and-bind-text-object "/" "/" "/")
+
+            ;; Swap j,k with gj, gk
+            (general-define-key "j"   #'evil-next-visual-line     :keymaps '(normal))
+            (general-define-key "k"   #'evil-previous-visual-line :keymaps '(normal))
+            (general-define-key "g j" #'evil-next-line            :keymaps '(normal))
+            (general-define-key "g k" #'evil-previous-line        :keymaps '(normal))
+
+            ;; Other evil keybindings
+            (evil-define-operator evil-join-previous-line (beg end)
+              "Join the previous line with the current line."
+              :motion evil-line
+              ;; (evil-previous-visual-line)
+              ;; (evil-join beg end)
+              (join-line))
+
+            ;; Let K match J
+            (general-define-key "K" #'evil-join-previous-line :keymaps '(normal))
+
+            (defun mhl/evil-visual-indent ()
+              (interactive)
+              (evil-shift-right (region-beginning) (region-end))
+              (evil-normal-state)
+              (evil-visual-restore))
+
+            (defun mhl/evil-visual-dedent ()
+              (interactive)
+              (evil-shift-left (region-beginning) (region-end))
+              (evil-normal-state)
+              (evil-visual-restore))
+
+            (general-define-key ">" #'mhl/evil-visual-indent)
+            (general-define-key "<" #'mhl/evil-visual-dedent)
+
+            ;; Commentin'
+            (general-define-key "g c c" #'comment-line-or-region :keymaps '(normal))
+            (general-define-key "g c"   #'comment-line-or-region :keymaps '(visual))
+
+            ;; Don't quit!
+            (defadvice evil-quit (around advice-for-evil-quit activate)
+              (do-not-quit))
+            (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
+              (do-not-quit))
+
+            (evil-mode t)
+            ))
+
+(evil-define-operator evil-delete-char-without-register (beg end type reg)
+  "delete character without yanking unless in visual mode"
+  :motion evil-forward-char
+  (interactive "<R><y>")
+  (if (evil-visual-state-p)
+    (evil-delete beg end type reg)
+    (evil-delete beg end type ?_)))
+
+(evil-define-operator evil-delete-backward-char-without-register (beg end type _)
+  "delete backward character without yanking"
+  :motion evil-backward-char
+  (interactive "<R><y>")
+  (evil-delete beg end type ?_))
+
+(evil-define-operator evil-delete-without-register (beg end type _ _2)
+  (interactive "<R><y>")
+  (evil-delete beg end type ?_))
+
+(evil-define-operator evil-delete-without-register-if-whitespace (beg end type reg yank-handler)
+  (interactive "<R><y>")
+  (let ((text (replace-regexp-in-string "\n" "" (filter-buffer-substring beg end))))
+    (if (string-match-p "^\\s-*$" text)
+      (evil-delete beg end type ?_)
+      (evil-delete beg end type reg yank-handler))))
+
+(evil-define-operator evil-delete-line-without-register (beg end type _ yank-handler)
+    (interactive "<R><y>")
+    (evil-delete-line beg end type ?_ yank-handler))
+
+(evil-define-operator evil-change-without-register (beg end type _ yank-handler)
+  (interactive "<R><y>")
+  (evil-change beg end type ?_ yank-handler))
+
+(evil-define-operator evil-change-line-without-register (beg end type _ yank-handler)
+  "Change to end of line without yanking."
+  :motion evil-end-of-line
+  (interactive "<R><y>")
+  (evil-change beg end type ?_ yank-handler #'evil-delete-line))
+
+(evil-define-command evil-paste-after-without-register (count &optional register yank-handler)
+  "evil paste before without yanking"
+  :suppress-operator t
+  (interactive "P<x>")
+  (if (evil-visual-state-p)
+      (evil-visual-paste-without-register count register)
+      (evil-paste-after count register yank-handler)))
+
+(evil-define-command evil-paste-before-without-register (count &optional register yank-handler)
+  "evil paste before without yanking"
+  :suppress-operator t
+  (interactive "P<x>")
+  (if (evil-visual-state-p)
+      (evil-visual-paste-without-register count register)
+      (evil-paste-before count register yank-handler)))
+
+(evil-define-command evil-visual-paste-without-register (count &optional register)
+  "Paste over Visual selection."
+  :suppress-operator t
+  (interactive "P<x>")
+  ;; evil-visual-paste is typically called from evil-paste-before or
+  ;; evil-paste-after, but we have to mark that the paste was from
+  ;; visual state
+  (setq this-command 'evil-visual-paste)
+  (let* ((text (if register
+                   (evil-get-register register)
+                 (current-kill 0)))
+         (yank-handler (car-safe (get-text-property
+                                  0 'yank-handler text)))
+         new-kill
+         paste-eob)
+    (evil-with-undo
+      (let* ((kill-ring (list (current-kill 0)))
+             (kill-ring-yank-pointer kill-ring))
+        (when (evil-visual-state-p)
+          (evil-visual-rotate 'upper-left)
+          ;; if we replace the last buffer line that does not end in a
+          ;; newline, we use `evil-paste-after' because `evil-delete'
+          ;; will move point to the line above
+          (when (and (= evil-visual-end (point-max))
+                     (/= (char-before (point-max)) ?\n))
+            (setq paste-eob t))
+          (evil-delete-without-register evil-visual-beginning evil-visual-end
+                       (evil-visual-type))
+          (when (and (eq yank-handler #'evil-yank-line-handler)
+                     (not (eq (evil-visual-type) 'line))
+                     (not (= evil-visual-end (point-max))))
+            (insert "\n"))
+          (evil-normal-state)
+          (setq new-kill (current-kill 0))
+          (current-kill 1))
+        (if paste-eob
+            (evil-paste-after count register)
+          (evil-paste-before count register)))
+      (kill-new new-kill)
+      ;; mark the last paste as visual-paste
+      (setq evil-last-paste
+            (list (nth 0 evil-last-paste)
+                  (nth 1 evil-last-paste)
+                  (nth 2 evil-last-paste)
+                  (nth 3 evil-last-paste)
+                  (nth 4 evil-last-paste)
+                  t)))))
 
 ;; Appearance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1574,255 +1823,6 @@ a terminal, just try to remove default the background color."
               "Hide the modeline so FZF will render properly."
               (setq mode-line-format nil))
             ))
-
-;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package evil
-  :ensure t
-  :demand t
-  :init (progn
-          (setq evil-want-C-u-scroll t
-                evil-want-visual-char-semi-exclusive t
-                evil-want-Y-yank-to-eol t
-                evil-magic t
-                evil-echo-state t
-                evil-auto-indent t
-                evil-indent-convert-tabs t
-                evil-ex-search-vim-style-regexp t
-                evil-ex-visual-char-range t
-                evil-insert-skip-empty-lines t
-                evil-mode-line-format 'nil
-                ;; more vim-like behavior
-                evil-symbol-word-search t
-                ;; don't activate mark on shift-click
-                shift-select-mode nil))
-  :config (progn
-
-            (defun mhl/evil-set-cursor-colors ()
-              (setq evil-emacs-state-cursor    '("#8abeb7" box))
-              (setq evil-normal-state-cursor   '("#e0e0e0" box))
-              (setq evil-insert-state-cursor   '("#f0c674" box))
-              ;; (setq evil-visual-state-cursor   '("#de935f" box))
-              (setq evil-replace-state-cursor  '("#a3685a" box))
-              (setq evil-operator-state-cursor '("#81a2be" box)))
-
-            (advice-add #'load-theme :after #'mhl/evil-set-cursor-colors)
-
-            ;; make `try-expand-dabbrev' from `hippie-expand' work in minibuffer
-            ;; @see `he-dabbrev-beg', so we need re-define syntax for '/'
-            (defun minibuffer-inactive-mode-hook-setup ()
-              (set-syntax-table (let* ((table (make-syntax-table)))
-                                  (modify-syntax-entry ?/ "." table)
-                                  table)))
-            (add-hook 'minibuffer-inactive-mode-hook #'minibuffer-inactive-mode-hook-setup)
-
-            (evil-set-toggle-key "C-\\")
-            (general-define-key "C-z" 'evil-execute-in-normal-state)
-
-            ;; (evil-set-initial-state 'erc-mode 'normal)
-            ;; (evil-set-initial-state 'package-menu-mode 'normal)
-            (evil-set-initial-state 'term-mode 'emacs)
-
-            ;; Make ESC work more or less like it does in Vim
-            (defun init/minibuffer-keyboard-quit()
-              "Abort recursive edit.
-
-In Delete Selection mode, if the mark is active, just deactivate it;
-then it takes a second \\[keyboard-quit] to abort the minibuffer."
-              (interactive)
-              (if (and delete-selection-mode transient-mark-mode mark-active)
-                  (setq deactivate-mark t)
-                (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
-                (abort-recursive-edit)))
-
-            (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-map)
-            (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-ns-map)
-            (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-completion-map)
-            (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-must-match-map)
-            (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-isearch-map)
-
-            (defun mhl/evil-be-emacsy ()
-              (general-define-key "C-a" #'evil-beginning-of-line    :keymaps '(insert motion))
-              (general-define-key "C-e" #'evil-end-of-line          :keymaps '(insert motion))
-
-              (general-define-key "C-b" #'evil-backward-char        :keymaps '(insert))
-              (general-define-key "C-d" #'evil-delete-char          :keymaps '(insert))
-              (general-define-key "C-f" #'evil-forward-char         :keymaps '(insert))
-              (general-define-key "C-k" #'evil-delete-line          :keymaps '(insert motion))
-
-              (general-define-key "C-p" #'evil-previous-visual-line :keymaps '(insert))
-              (general-define-key "C-n" #'evil-next-visual-line     :keymaps '(insert)))
-
-            (mhl/evil-be-emacsy)
-
-            ;; Extra text objects
-            (defmacro define-and-bind-text-object (key start-regex end-regex)
-              (let ((inner-name (make-symbol "inner-name"))
-                    (outer-name (make-symbol "outer-name")))
-                `(progn
-                   (evil-define-text-object ,inner-name (count &optional beg end type)
-                     (evil-select-paren ,start-regex ,end-regex beg end type count nil))
-                   (evil-define-text-object ,outer-name (count &optional beg end type)
-                     (evil-select-paren ,start-regex ,end-regex beg end type count t))
-                   (define-key evil-inner-text-objects-map ,key (quote ,inner-name))
-                   (define-key evil-outer-text-objects-map ,key (quote ,outer-name)))))
-
-            ;; create "il"/"al" (inside/around) line text objects:
-            (define-and-bind-text-object "l" "^\\s-*" "\\s-*$")
-
-            ;; create "ie"/"ae" (inside/around) entire buffer text objects:
-            (define-and-bind-text-object "e" "\\`\\s-*" "\\s-*\\'")
-
-            (define-and-bind-text-object "*" "*" "*")
-            (define-and-bind-text-object "/" "/" "/")
-
-            ;; Swap j,k with gj, gk
-            (general-define-key "j"   #'evil-next-visual-line     :keymaps '(normal))
-            (general-define-key "k"   #'evil-previous-visual-line :keymaps '(normal))
-            (general-define-key "g j" #'evil-next-line            :keymaps '(normal))
-            (general-define-key "g k" #'evil-previous-line        :keymaps '(normal))
-
-            ;; Other evil keybindings
-            (evil-define-operator evil-join-previous-line (beg end)
-              "Join the previous line with the current line."
-              :motion evil-line
-              ;; (evil-previous-visual-line)
-              ;; (evil-join beg end)
-              (join-line))
-
-            ;; Let K match J
-            (general-define-key "K" #'evil-join-previous-line :keymaps '(normal))
-
-            (defun mhl/evil-visual-indent ()
-              (interactive)
-              (evil-shift-right (region-beginning) (region-end))
-              (evil-normal-state)
-              (evil-visual-restore))
-
-            (defun mhl/evil-visual-dedent ()
-              (interactive)
-              (evil-shift-left (region-beginning) (region-end))
-              (evil-normal-state)
-              (evil-visual-restore))
-
-            (general-define-key ">" #'mhl/evil-visual-indent)
-            (general-define-key "<" #'mhl/evil-visual-dedent)
-
-            ;; Commentin'
-            (general-define-key "g c c" #'comment-line-or-region :keymaps '(normal))
-            (general-define-key "g c"   #'comment-line-or-region :keymaps '(visual))
-
-            ;; Don't quit!
-            (defadvice evil-quit (around advice-for-evil-quit activate)
-              (do-not-quit))
-            (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
-              (do-not-quit))
-
-            (evil-mode t)
-            ))
-
-(evil-define-operator evil-delete-char-without-register (beg end type reg)
-  "delete character without yanking unless in visual mode"
-  :motion evil-forward-char
-  (interactive "<R><y>")
-  (if (evil-visual-state-p)
-    (evil-delete beg end type reg)
-    (evil-delete beg end type ?_)))
-
-(evil-define-operator evil-delete-backward-char-without-register (beg end type _)
-  "delete backward character without yanking"
-  :motion evil-backward-char
-  (interactive "<R><y>")
-  (evil-delete beg end type ?_))
-
-(evil-define-operator evil-delete-without-register (beg end type _ _2)
-  (interactive "<R><y>")
-  (evil-delete beg end type ?_))
-
-(evil-define-operator evil-delete-without-register-if-whitespace (beg end type reg yank-handler)
-  (interactive "<R><y>")
-  (let ((text (replace-regexp-in-string "\n" "" (filter-buffer-substring beg end))))
-    (if (string-match-p "^\\s-*$" text)
-      (evil-delete beg end type ?_)
-      (evil-delete beg end type reg yank-handler))))
-
-(evil-define-operator evil-delete-line-without-register (beg end type _ yank-handler)
-    (interactive "<R><y>")
-    (evil-delete-line beg end type ?_ yank-handler))
-
-(evil-define-operator evil-change-without-register (beg end type _ yank-handler)
-  (interactive "<R><y>")
-  (evil-change beg end type ?_ yank-handler))
-
-(evil-define-operator evil-change-line-without-register (beg end type _ yank-handler)
-  "Change to end of line without yanking."
-  :motion evil-end-of-line
-  (interactive "<R><y>")
-  (evil-change beg end type ?_ yank-handler #'evil-delete-line))
-
-(evil-define-command evil-paste-after-without-register (count &optional register yank-handler)
-  "evil paste before without yanking"
-  :suppress-operator t
-  (interactive "P<x>")
-  (if (evil-visual-state-p)
-      (evil-visual-paste-without-register count register)
-      (evil-paste-after count register yank-handler)))
-
-(evil-define-command evil-paste-before-without-register (count &optional register yank-handler)
-  "evil paste before without yanking"
-  :suppress-operator t
-  (interactive "P<x>")
-  (if (evil-visual-state-p)
-      (evil-visual-paste-without-register count register)
-      (evil-paste-before count register yank-handler)))
-
-(evil-define-command evil-visual-paste-without-register (count &optional register)
-  "Paste over Visual selection."
-  :suppress-operator t
-  (interactive "P<x>")
-  ;; evil-visual-paste is typically called from evil-paste-before or
-  ;; evil-paste-after, but we have to mark that the paste was from
-  ;; visual state
-  (setq this-command 'evil-visual-paste)
-  (let* ((text (if register
-                   (evil-get-register register)
-                 (current-kill 0)))
-         (yank-handler (car-safe (get-text-property
-                                  0 'yank-handler text)))
-         new-kill
-         paste-eob)
-    (evil-with-undo
-      (let* ((kill-ring (list (current-kill 0)))
-             (kill-ring-yank-pointer kill-ring))
-        (when (evil-visual-state-p)
-          (evil-visual-rotate 'upper-left)
-          ;; if we replace the last buffer line that does not end in a
-          ;; newline, we use `evil-paste-after' because `evil-delete'
-          ;; will move point to the line above
-          (when (and (= evil-visual-end (point-max))
-                     (/= (char-before (point-max)) ?\n))
-            (setq paste-eob t))
-          (evil-delete-without-register evil-visual-beginning evil-visual-end
-                       (evil-visual-type))
-          (when (and (eq yank-handler #'evil-yank-line-handler)
-                     (not (eq (evil-visual-type) 'line))
-                     (not (= evil-visual-end (point-max))))
-            (insert "\n"))
-          (evil-normal-state)
-          (setq new-kill (current-kill 0))
-          (current-kill 1))
-        (if paste-eob
-            (evil-paste-after count register)
-          (evil-paste-before count register)))
-      (kill-new new-kill)
-      ;; mark the last paste as visual-paste
-      (setq evil-last-paste
-            (list (nth 0 evil-last-paste)
-                  (nth 1 evil-last-paste)
-                  (nth 2 evil-last-paste)
-                  (nth 3 evil-last-paste)
-                  (nth 4 evil-last-paste)
-                  t)))))
 
 ;; Evil Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
