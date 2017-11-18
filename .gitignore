@@ -30,3 +30,4 @@ custom.el
 
 /server/
 emacs_backtrace.txt
+/packages/

@@ -3,50 +3,62 @@
 
 ;; Preload Init ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Things that should be set early just in case something bad happens.
-
-;; Turn off backup files
-(setq make-backup-files nil)
-
-;; ad-handle-definition warnings are generated when functions are redefined with
-;; defadvice. Let's disable these warnings for now.
-(setq ad-redefinition-action 'accept)
-
-;; Emacs will run garbage collection after `gc-cons-threshold' bytes of
-;; consing. The default value is 800,000 bytes, or ~ 0.7 MiB. By increasing to
-;; 40 MiB we reduce the number of pauses due to garbage collection.
-(setq gc-cons-threshold (* 4 10 1024 1024))
-
-;; Pre-init Variables ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defconst emacs-start-time (current-time))
 
 (unless noninteractive
   (message "Loading %s..." load-file-name))
 
-(require 'package)
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("gnu"   . "https://elpa.gnu.org/packages/")))
-
-(if (string= system-type "windows-nt")
-    (setq package-check-signature nil))
-
 (defconst user-custom-file (concat user-emacs-directory "custom.el"))
 (defconst user-cache-directory (concat user-emacs-directory "cache/"))
+(defconst user-package-directory (concat user-emacs-directory "packages/"))
+
+(defvar mhl/post-init-hook nil)
+
+(defconst is-linux    (eq system-type 'gnu/linux))
+(defconst is-mac      (eq system-type 'darwin))
+(defconst is-windows  (eq system-type 'windows-nt))
+
+(defconst in-x        (eq window-system 'x))
+
+;; Properly verify outgoing ssl connections.
+(setq gnutls-verify-error t
+      tls-checktrust gnutls-verify-error
+      tls-program (list "gnutls-cli --x509cafile %t -p %p %h"
+                        ;; compatibility fallbacks
+                        "gnutls-cli -p %p %h"
+                        "openssl s_client -connect %h:%p -no_ssl2 -no_ssl3 -ign_eof")
+      nsm-settings-file (expand-file-name "network-security.data" user-cache-directory))
+
+;; We’re going to increase the gc-cons-threshold to a very high number to
+;; decrease the load time. We’re going to add a hook to reset this value after
+;; initialization
+(eval-and-compile
+  (setq gc-cons-threshold 402653184
+        gc-cons-percentage 0.6))
+
+(add-hook 'mhl|post-init-hook #'(lambda () (setq gc-cons-threshold 16777216
+                                                 gc-cons-percentage 0.1)))
 
 ;; Bootstrap use-package ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq-default use-package-enable-imenu-support t)
+(setq use-package-verbose t
+      use-package-minimum-reported-time 0
+      use-package-enable-imenu-support t)
 
-;; This file uses [[https://github.com/jwiegley/use-package][use-package]] to
-;; install and configure third-party packages. Since use-package itself is a
-;; third-party package, we need to handle the case for when we have a fresh
-;; install.
+(setq package-user-dir (expand-file-name user-package-directory))
+(setq package-check-signature nil)
+
+(setq load-prefer-newer noninteractive
+      package--init-file-ensured t
+      package-enable-at-startup nil)
+
+(require 'package)
 
 (when (>= emacs-major-version 24)
   (setq package-enable-at-startup nil)
   (package-initialize)
-  ;; (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                           ("gnu"   . "https://elpa.gnu.org/packages/")))
   (unless (package-installed-p 'use-package)
     (package-refresh-contents)
     (package-install 'use-package)))
@@ -54,12 +66,10 @@
 (eval-when-compile
   (require 'use-package))
 
-(setq use-package-verbose t)
-(setq use-package-minimum-reported-time 0)
-
 ;; Very important, init-file-encompassing packages
 (use-package general
   :ensure t
+  :demand t
   :config (progn
             ;; (setq general-default-keymaps '(evil-normal-state-map
             ;;                                 evil-visual-state-map
@@ -90,15 +100,6 @@
   (if (or arg (not buffer-file-name))
       (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
-
-(defun my-window-killer ()
-  "Closes the window, and deletes the buffer if it's the last window open."
-  (interactive)
-  (if (> buffer-display-count 1)
-      (if (= (length (window-list)) 1)
-          (kill-buffer)
-        (delete-window))
-    (kill-buffer-and-window)))
 
 (defun copy-to-end-of-line ()
   "Copy to the end of the line, even if no region is selected.
@@ -164,7 +165,7 @@ active, apply to active region instead."
 (defun open-terminal ()
  "Just open a terminal in the cwd using the $TERMINAL environment variable."
   (interactive)
-  (if (string= system-type "gnu/linux")
+  (if is-linux
       (call-process-shell-command "eval $TERMINAL" nil 0)
       (call-process-shell-command "start powershell.exe" nil 0)))
 
@@ -203,6 +204,18 @@ selection of all minor-modes, active or not."
         (message (buffer-substring-no-properties (region-beginning) (region-end)))
       (message (buffer-substring-no-properties (line-beginning-position) (goto-char (line-end-position n)))))))
 
+(defmacro after! (feature &rest forms)
+  "A smart wrapper around `with-eval-after-load'. Supresses warnings during
+compilation."
+  (declare (indent defun) (debug t))
+  `(,(if (or (not (bound-and-true-p byte-compile-current-file))
+             (if (symbolp feature)
+                 (require feature nil :no-error)
+               (load feature :no-message :no-error)))
+         #'progn
+       #'with-no-warnings)
+    (with-eval-after-load ',feature ,@forms)))
+
 ;; Advice ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; When popping the mark, continue popping until the cursor actually moves
@@ -234,68 +247,29 @@ selection of all minor-modes, active or not."
 
 ;; Sane Defaults ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; (setq epa-file-select-keys nil)
+(setq-default apropos-do-all t
+              compilation-always-kill t
+              compilation-ask-about-save nil
+              compilation-scroll-output t
+              confirm-nonexistent-file-or-buffer t
+              idle-update-delay 2) ;; Update UI less often
 
-;; Show keystrokes in progress
-(setq echo-keystrokes 0.02)
-
-;; Move files to trash when deleting
-;; (setq delete-by-moving-to-trash t)
-
-(setq-default fill-column 80)
-
-;; ;; Easily navigate sillyCased words
-;; (global-subword-mode t)
-
-;; Don't break lines for me, please
-(setq-default truncate-lines t)
-
-;; Sentences do not need double spaces to end. Period.
-(set-default 'sentence-end-double-space nil)
-
-;; Useful frame title, that show either a file or a buffer name (if the buffer
-;; isn't visiting a file)
-(setq frame-title-format
-      '("" invocation-name " : " (:eval (if (buffer-file-name)
-                                            (abbreviate-file-name (buffer-file-name))
-                                          "%b"))))
-
-;; Backwards compatibility as default-buffer-file-coding-system
-;; is deprecated in 23.2.
-(if (boundp 'buffer-file-coding-system)
-    (setq-default buffer-file-coding-system 'utf-8)
-  (setq buffer-file-coding-system 'utf-8-unix))
-
-(prefer-coding-system       'utf-8-unix)
-(set-default-coding-systems 'utf-8-unix)
-(set-terminal-coding-system 'utf-8-unix)
-(set-keyboard-coding-system 'utf-8-unix)
-
-(setq coding-system-for-read 'utf-8-unix)
-(setq coding-system-for-write 'utf-8-unix)
+;; Utf-8 please. Pretty please.
+(when (fboundp 'set-charset-priority)
+  (set-charset-priority 'unicode))
+(prefer-coding-system        'utf-8)
+(set-terminal-coding-system  'utf-8)
+(set-keyboard-coding-system  'utf-8)
+(set-selection-coding-system 'utf-8)
+(setq locale-coding-system   'utf-8)
+(setq-default buffer-file-coding-system 'utf-8)
 
 ;; Enable syntax highlighting for older Emacsen that have it off
 (global-font-lock-mode t)
-(setq font-lock-maximum-decoration nil)
-
-;; Answering just 'y' or 'n' will do
-(defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; Window Rebalancing
 (setq split-height-threshold nil)
 (setq split-width-threshold 0)
-
-;; http://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/
-;; In this init file we also set gc-cons-threshold to a very high value then
-;; reduce it once we're done loading.
-(defun my-minibuffer-setup-hook ()
-  (setq gc-cons-threshold most-positive-fixnum))
-
-(defun my-minibuffer-exit-hook ()
-  (setq gc-cons-threshold 1600000))
-
-(add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
-(add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
 (use-package emacs-lock-mode
   :init (progn
@@ -336,12 +310,13 @@ selection of all minor-modes, active or not."
   :config (progn (setq tls-checktrust t)))
 
 (use-package recentf
-  :defer 10
+  :demand t 
   :commands (recentf-mode)
-  :config (progn (setq recentf-save-file (concat user-cache-directory "recentf"))
-                 (setq recentf-max-saved-items 100)
-                 (setq recentf-max-menu-items 15)
-                 ))
+  :config (progn
+            (setq recentf-save-file (concat user-cache-directory "recentf")
+                  recentf-max-saved-items 100
+                  recentf-max-menu-items 0)
+            (recentf-mode)))
 
 (use-package uniquify
   :defer t
@@ -354,11 +329,12 @@ selection of all minor-modes, active or not."
 
 (use-package winner
   :if (not noninteractive)
-  :defer 5
+  :commands (winner-undo winnder-redo)
   :general ("M-N" #'winner-redo
             "M-P" #'winner-undo)
   :config (progn
-            (winner-mode t)))
+            (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
+            (add-hook 'mhl/post-init-hook #'winner-mode)))
 
 (use-package ediff
   :defer t
@@ -402,7 +378,10 @@ selection of all minor-modes, active or not."
 (setq backup-inhibited t)
 
 ;; Disable auto save
-(setq auto-save-default nil)
+(setq-default auto-save-default nil
+              create-lockfiles nil
+              make-backup-files nil)
+
 (with-current-buffer (get-buffer "*scratch*")
   (auto-save-mode -1))
 
@@ -425,17 +404,30 @@ selection of all minor-modes, active or not."
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 
-(setq create-lockfiles nil)
+;; From http://www.wisdomandwonder.com/wp-content/uploads/2014/03/C3F.html:
+(setq savehist-file (concat user-cache-directory "savehist")
+      history-length 500
+      savehist-save-minibuffer-history t
+      savehist-autosave-interval nil ; save on kill only
+      savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
+      save-place-file (concat user-cache-directory "saveplace"))
+
+(savehist-mode +1)
+(save-place-mode +1)
 
 ;; Helper Libraries ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; String manipulation library
 (use-package s
-  :ensure t)
+  :ensure t
+  :demand t)
 
 ;; Modern list library
 (use-package dash
-  :ensure t)
+  :ensure t
+  :demand t)
+
+(require 'cl-lib)
 
 ;; Homeless Keybindings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -524,9 +516,23 @@ selection of all minor-modes, active or not."
 
 ;; Editing ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; I prefer spaces over tabs. Note how this is not a mode, but a buffer-local
-;; variable.
-(setq-default indent-tabs-mode nil)
+;; Show keystrokes in progress
+(setq echo-keystrokes 0.02)
+
+(setq-default fill-column 80)
+
+;; ;; Easily navigate sillyCased words
+;; (global-subword-mode t)
+
+;; Sentences do not need double spaces to end. Period.
+(set-default 'sentence-end-double-space nil)
+
+;; Useful frame title, that show either a file or a buffer name (if the buffer
+;; isn't visiting a file)
+(setq frame-title-format
+      '("" invocation-name " : " (:eval (if (buffer-file-name)
+                                            (abbreviate-file-name (buffer-file-name))
+                                          "%b"))))
 
 ;; Don't add newlines when cursor goes past end of file
 (setq next-line-add-newlines nil)
@@ -542,21 +548,25 @@ selection of all minor-modes, active or not."
               scroll-preserve-screen-position t
               auto-window-vscroll nil)
 
+;; Don't break lines for me, please
+(setq-default truncate-lines t)
+
+;; Whitespace settings
+(setq-default indent-tabs-mode nil
+              require-final-newline t
+              tab-always-indent t
+              tab-width 4
+              tabify-regexp "^\t* [ \t]+")
+
 (use-package editorconfig
   :ensure t
   :config (editorconfig-mode 1))
 
-(use-package paren
-  :config (progn (show-paren-mode t)
+;; revert buffers for changed files
+(global-auto-revert-mode 1)
+(setq auto-revert-verbose nil)
 
-                 ;; Show matched parens even in selections
-                 (setq show-paren-priority -50)
-
-                 ;; Immediately match parens
-                 (setq show-paren-delay 0)
-
-                 (setq show-paren-style 'parenthesis)
-                 ))
+(show-paren-mode)
 
 (use-package highlight-parentheses
   :ensure t
@@ -567,33 +577,11 @@ selection of all minor-modes, active or not."
             (add-hook 'prog-mode-hook #'hl-parens-hook)
             ))
 
-(use-package highlight-thing
-  :ensure t
-  :disabled t
-  :config (progn
-            (global-highlight-thing-mode)
-            ))
-
 (use-package rainbow-delimiters
   :ensure t
   :disabled t
   :config (progn
             (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)))
-
-(use-package highlight-leading-spaces
-  :ensure t
-  :disabled t
-  :defer t
-  :init (progn (add-hook 'prog-mode-hook 'highlight-leading-spaces-mode)))
-
-(use-package highlight-indent-guides
-  :ensure t
-  :disabled t
-  :config (progn
-            (add-hook 'prog-mode-hook #'highlight-indent-guides-mode)
-            (set-face-background 'highlight-indent-guides-even-face "#101010")
-            (set-face-background 'highlight-indent-guides-odd-face  "#0B0B0B")
-            ))
 
 (use-package term
   :defer t
@@ -613,76 +601,42 @@ selection of all minor-modes, active or not."
           ))
 
 (use-package imenu
-  :config (progn
+  :init (progn
             ;; Always rescan buffer for imenu
             (set-default 'imenu-auto-rescan t)
             ))
 
 (use-package avy
   :ensure t
-  :commands (avy-goto-word-or-subword-1)
-  :config (progn (setq avy-keys
-                       '(?c ?a ?s ?d ?e ?f ?h ?w ?y ?j ?k ?l ?n ?m ?v ?r ?u ?p))
-                 ))
+  :commands (avy-goto-char-2 avy-goto-line avy-go-word-or-subword-1 avy-goto-char-timer)
+  :config (progn
+            (setq avy-keys
+                  '(?c ?a ?s ?d ?e ?f ?h ?w ?y ?j ?k ?l ?n ?m ?v ?r ?u ?p)
+                  avy-background t
+                  avy-timeout-seconds 0.3)))
 
-(use-package swiper
+(use-package amx
   :ensure t
-  :defer t
   :init (progn
-            (setq ivy-re-builders-alist
-                  '((t . ivy--regex-fuzzy)))
+          (setq amx-save-file (concat user-cache-directory "amx-items"))))
 
-            ;; (setq ivy-re-builders-alist
-            ;;       '((t . ivy--regex-plus)))
-
-            (setq ivy-height 20)
-            (setq ivy-format-function 'ivy-format-function-arrow)
-            (setq ivy-count-format "%d/%d ")
-
-            ;; (setq ivy-display-style 'fancy)
-
-            (setq swiper-faces '(region region region region))
-            (setq ivy-minibuffer-faces '(region region region region))
-
-            (ivy-mode t)
+(use-package ivy
+  :demand t
+  :init (progn
+          (add-hook 'mhl/post-init-hook #'ivy-mode))
+  :config (progn
+            (setq ivy-height 20
+                  ivy-format-function 'ivy-format-function-arrow
+                  ivy-count-format "%d/%d ")
 
             (setq projectile-completion-system 'ivy)
             (setq magit-completing-read-function 'ivy-completing-read)
 
-            ;; (defun mhl/swiper-recenter (&rest args)
-            ;;   "recenter display after swiper"
-            ;;   (recenter))
-            ;; (advice-add 'swiper--cleanup :after #'mhl/swiper-recenter)
+            ;; (setq ivy-minibuffer-faces '(region region region region))
 
-            (use-package smex
-              :ensure t
-              :disabled t
-              :init (progn (setq smex-save-file (concat user-cache-directory "smex-items"))))
+            (setq ivy-re-builders-alist
+                  '((t . ivy--regex-fuzzy)))
 
-            (use-package amx
-              :ensure t
-              :init (progn (setq amx-save-file (concat user-cache-directory "amx-items"))))
-
-            (use-package counsel
-              :ensure t
-              :defer t
-              :general ("M-x"   #'counsel-M-x
-                        "C-c x" #'counsel-M-x
-                        "C-c o" #'counsel-imenu
-                        "C-c l" #'ivy-resume
-                        "C-c y" #'counsel-yank-pop
-                        "C-c s" #'swiper)
-              :config (progn
-                        (counsel-mode t)
-
-                        (advice-add 'counsel-imenu :after #'mhl/swiper-recenter)
-                        (setq counsel-yank-pop-separator (concat "\n\n" (make-string 70 ?-) "\n\n"))
-                        ))
-
-            ;; (use-package counsel-projectile
-            ;;   :ensure t)
-            )
-  :config (progn
             (defun ivy-insert-action (x)
               (with-ivy-window
                 (insert x)))
@@ -691,7 +645,38 @@ selection of all minor-modes, active or not."
              t
              '(("I" ivy-insert-action "insert")
                ("W" kill-new "save to kill ring")))
-  ))
+
+            ;; Don't sort perp mode related lists
+            (nconc ivy-sort-functions-alist
+                   '((persp-kill-buffer   . nil)
+                     (persp-remove-buffer . nil)
+                     (persp-add-buffer    . nil)
+                     (persp-switch        . nil)
+                     (persp-window-switch . nil)
+                     (persp-frame-switch  . nil)))
+            ))
+
+(use-package counsel
+  :ensure t
+  :demand t
+  :general ("M-x"   #'counsel-M-x
+            "C-c x" #'counsel-M-x
+            "C-c o" #'counsel-imenu
+            "C-c l" #'ivy-resume
+            "C-c y" #'counsel-yank-pop
+            "C-c s" #'swiper)
+  :config (progn
+            (counsel-mode t)
+
+            (advice-add 'counsel-imenu :after #'mhl/swiper-recenter)
+            (setq counsel-yank-pop-separator (concat "\n\n" (make-string 70 ?-) "\n\n"))
+            ))
+
+(use-package swiper
+  :ensure t
+  :commands (swiper swiper-all)
+  :init (progn
+            (setq swiper-faces '(region region region region))))
 
 (use-package anzu
   :ensure t
@@ -711,7 +696,7 @@ selection of all minor-modes, active or not."
 
 (use-package expand-region
   :ensure t
-  :defer t
+  :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word)
   :general ("C-=" #'er/expand-region))
 
 (use-package viking-mode
@@ -735,24 +720,21 @@ selection of all minor-modes, active or not."
                  (key-chord-define-global "qf" #'helm-find-files)
             ))
 
-(use-package guide-key
-  :ensure t
-  :disabled t
-  :defer 10
-  :commands (guide-key-mode)
-  :config (progn (setq guide-key/guide-key-sequence '("C-x" "C-c" "SPC" "M-SPC"))
-                 (setq guide-key/recursive-key-sequence-flag t)
-
-                 ;; Alignment and extra spacing
-                 (setq guide-key/align-command-by-space-flag t)
-
-                 (guide-key-mode t)
-                 ))
-
 (use-package which-key
   :ensure t
+  :demand t
   :config (progn
-            (which-key-mode t)))
+            (setq which-key-sort-order #'which-key-prefix-then-key-order
+                  which-key-sort-uppercase-first nil
+                  which-key-add-column-padding 1
+                  which-key-max-display-columns nil
+                  which-key-min-display-lines 5)
+
+            (set-face-attribute 'which-key-local-map-description-face nil :weight 'bold)
+            (which-key-setup-side-window-bottom)
+
+            (which-key-mode t)
+            ))
 
 (use-package multiple-cursors
   :ensure t
@@ -772,13 +754,7 @@ selection of all minor-modes, active or not."
 
 (use-package ag
   :ensure t
-  :commands (ag ag-regexp)
-  :init (progn
-          (use-package helm-ag
-            :ensure t
-            :disabled t
-            :commands (helm-ag))
-          ))
+  :commands (ag ag-regexp))
 
 (use-package ripgrep
   :ensure t
@@ -798,22 +774,6 @@ selection of all minor-modes, active or not."
 (use-package rainbow-mode
   :ensure t
   :commands (rainbow-mode))
-
-(use-package beacon
-  :if (window-system)
-  :ensure t
-  :disabled t
-  :config (progn
-            ;; (add-to-list 'beacon-dont-blink-commands 'fzf)
-            ;; (add-to-list 'beacon-dont-blink-commands 'fzf-directory)
-
-            (setq beacon-blink-when-window-scrolls t)
-            (setq beacon-blink-when-window-changes t)
-            ;; (setq beacon-blink-when-point-moves 2)
-
-            (setq beacon-color 0.8)
-
-            (beacon-mode t)))
 
 (use-package string-edit
   :ensure t
@@ -867,16 +827,17 @@ selection of all minor-modes, active or not."
                  (days-to-time 30)))
           ))
 
-(use-package color-identifiers-mode
-  :ensure t
-  :disabled t
-  :config (progn
-            (global-color-identifiers-mode)
-            ))
+(use-package undo-tree
+  :demand t
+  :config
+  (global-undo-tree-mode +1)
+  ;; persistent undo history is known to cause undo history corruption, which
+  ;; can be very destructive! So disable it!
+  (setq undo-tree-auto-save-history nil
+        undo-tree-history-directory-alist
+        (list (cons "." (concat user-cache-directory "undo-tree-hist/")))))
 
 ;; Appearance ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Frame Defaults ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Set margins in terminal
 (when (not (display-graphic-p))
@@ -887,28 +848,54 @@ selection of all minor-modes, active or not."
       '((vertical-scroll-bars . nil)
         (horizontal-scroll-bars . nil)
         (left-fringe . 0) (right-fringe . 0)
-        ))
+        (inhibit-double-buffering . t)))
 
 ;; Remove GUI elements
-(when (and (fboundp 'tool-bar-mode) (not (eq tool-bar-mode -1)))
-  (tool-bar-mode -1))
-(when (and (fboundp 'scroll-bar-mode) (not (eq scroll-bar-mode -1)))
-  (scroll-bar-mode -1))
+(tooltip-mode -1)
+(menu-bar-mode -1)
+(if (fboundp 'tool-bar-mode)   (tool-bar-mode -1))
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
-;; tooltips in echo-area
-(when (and (fboundp 'tooltip-mode) (not (eq tooltip-mode -1)))
-  (tooltip-mode -1))
-(unless (eq window-system 'mac)
-  (when (and (fboundp 'menu-bar-mode) (not (eq menu-bar-mode -1)))
-    (menu-bar-mode -1)))
+(setq-default bidi-display-reordering nil
+              blink-matching-paren nil
+              cursor-in-non-selected-windows nil
+              ;; remove continuation arrow on right fringe
+              fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
+                                           fringe-indicator-alist)
+              highlight-nonselected-windows nil
+              max-mini-window-height 0.3
+              mode-line-default-help-echo nil ; disable mode-line mouseovers
+              mouse-yank-at-point t           ; middle-click paste at point, not at click
+              resize-mini-windows 'grow-only  ; Minibuffer resizing
+              show-help-function nil          ; hide :help-echo text
+              split-width-threshold 160       ; favor horizontal splits
+              uniquify-buffer-name-style 'forward
+              use-dialog-box nil              ; always avoid GUI
+              visible-cursor nil
+              x-stretch-cursor nil
+              ;; defer jit font locking slightly to [try to] improve Emacs performance
+              jit-lock-defer-time nil
+              ;; BMACS - improve cpu usage
+              jit-lock-stealth-nice 0.5
+              jit-lock-stealth-time 1
+              jit-lock-stealth-verbose nil
+              ;; `pos-tip' defaults
+              pos-tip-internal-border-width 6
+              pos-tip-border-width 1
+              ;; no beeping or blinking please
+              ring-bell-function #'ignore
+              visible-bell nil)
 
 ;; No splash screen please
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-message t)
 (setq initial-scratch-message nil)
 
-(setq visible-bell nil
-      truncate-partial-width-windows nil)
+;; Answering just 'y' or 'n' will do
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+(if is-linux
+  (setq x-gtk-use-system-tooltips nil))
 
 ;; Modeline ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -935,150 +922,6 @@ selection of all minor-modes, active or not."
                  ;; "You don't need to activate rich-minority-mode if you're using smart-mode-line"
                  (rich-minority-mode t)
                  ))
-
-(use-package telephone-line
-  :ensure t
-  :disabled t
-  :config (progn
-            ;; Need to create custom segments
-            (use-package telephone-line-utils)
-
-            ;; Set default separators: choose either of them
-            (setq telephone-line-primary-left-separator 'telephone-line-identity-left)
-            (setq telephone-line-primary-right-separator 'telephone-line-identity-right)
-            ;; OR
-            ;; (setq telephone-line-primary-left-separator 'telephone-line-cubed-left)
-            ;; (setq telephone-line-primary-right-separator 'telephone-line-cubed-right)
-
-            ;; ;; Set subseparator
-            ;; (if window-system
-            ;;     (progn
-            ;;       (setq telephone-line-secondary-left-separator 'telephone-line-identity-hollow-left)
-            ;;       (setq telephone-line-secondary-right-separator 'telephone-line-identity-hollow-right)))
-
-            ;;;; Custom segments
-
-            ;; Example of color string segment
-            ;; (telephone-line-defsegment* my-color-segment
-            ;;   (propertize "some-string" 'face `(:foreground "green")))
-
-            ;; TODO: Rewrite using assoc and defvar
-            ;; Display major mode
-            (telephone-line-defsegment* my-major-mode-segment
-              (let ((mode (cond
-                           ((string= mode-name "Fundamental") "Text")
-                           ((string= mode-name "Emacs-Lisp") "Elisp")
-                           ((string= mode-name "Javascript-IDE") "Javascript")
-                           (t mode-name))))
-                (propertize mode 'face `(:foreground "#F0F0EF"))
-                ))
-
-            ;; Display evil state
-            (telephone-line-defsegment* my-evil-segment
-              (if (telephone-line-selected-window-active)
-                  (let ((tag (cond
-                              ((string= evil-state "normal") ":")
-                              ((string= evil-state "insert") ">")
-                              ((string= evil-state "replace") "r")
-                              ((string= evil-state "visual") "v")
-                              ((string= evil-state "operator") "=")
-                              ((string= evil-state "motion") "m")
-                              ((string= evil-state "emacs") "Emacs")
-                              ((string= evil-state "multiedit") "Multi")
-                              (t "-"))))
-                    (concat " " tag))))
-
-            ;; Display buffer name
-            (telephone-line-defsegment* my-buffer-segment
-              `(""
-                ,(telephone-line-raw mode-line-buffer-identification t)))
-
-            ;; Display current position in a buffer
-            (telephone-line-defsegment* my-position-segment
-              (if (telephone-line-selected-window-active)
-                  (if (eq major-mode 'paradox-menu-mode)
-                      (telephone-line-trim (format-mode-line mode-line-front-space))
-                    '(" %3l,%2c "))))
-
-            ;; Ignore some buffers in modeline
-            (defvar modeline-ignored-modes nil
-              "List of major modes to ignore in modeline")
-
-            (setq modeline-ignored-modes '("Dashboard"
-                                           "Warnings"
-                                           "Compilation"
-                                           "EShell"
-                                           "REPL"
-                                           "Messages"))
-
-            ;; Display modified status
-            (telephone-line-defsegment* my-modified-status-segment
-              (if (and (buffer-modified-p) (not (member mode-name modeline-ignored-modes)))
-                  (propertize "*" 'face `(:foreground "#FFFF57"))
-                ""))
-
-            ;; Display encoding system
-            (telephone-line-defsegment* my-coding-segment
-              (if (telephone-line-selected-window-active)
-                  (let* ((code (symbol-name buffer-file-coding-system))
-                         (eol-type (coding-system-eol-type buffer-file-coding-system))
-                         (eol (cond
-                               ((eq 0 eol-type) "unix")
-                               ((eq 1 eol-type) "dos")
-                               ((eq 2 eol-type) "mac")
-                               (t ""))))
-                    (concat eol " "))))
-
-            ;; Left edge
-            (setq telephone-line-lhs
-                  '((evil   . (my-evil-segment))
-                    (nil    . (my-buffer-segment))
-                    (nil    . (my-modified-status-segment))))
-
-            ;; Right edge
-            (setq telephone-line-rhs
-                  '((nil     . ((telephone-line-vc-segment :active)))
-                    (nil     . (telephone-line-misc-info-segment))
-                    (accent  . (my-position-segment))
-                    (nil     . (my-major-mode-segment))
-                    (nil     . (my-coding-segment))))
-
-            (setq telephone-line-height 20)
-
-            (telephone-line-mode 1)))
-
-(use-package spaceline
-  :ensure t
-  :disabled t
-  :config (progn
-          (require 'spaceline-config)
-
-          (setq powerline-height 18)
-          (setq-default powerline-default-separator 'bar)
-
-          (spaceline-emacs-theme)
-
-          ;; (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
-
-          (spaceline-toggle-minor-modes-off)
-
-          (spaceline-toggle-flycheck-error-off)
-          (spaceline-toggle-flycheck-warning-off)
-          (spaceline-toggle-flycheck-info-off)
-
-          (spaceline-toggle-evil-state-on)
-
-          (spaceline-toggle-point-position-off)
-          (spaceline-toggle-version-control-off)
-
-          (spaceline-toggle-buffer-size-off)
-          (spaceline-toggle-buffer-id-on)
-          (spaceline-toggle-buffer-position-on)
-
-          (spaceline-toggle-window-number-off)
-
-          (spaceline-toggle-hud-off)
-          ))
 
 ;; Fringe ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1180,11 +1023,11 @@ a terminal, just try to remove default the background color."
   (load-theme theme :no-confirm)
 
   ;; Set transparent background.
-  (if (string= system-type "gnu/linux")
-      (if (string= window-system "x")
+  (if is-linux
+      (if in-x
           (progn
-            (set-face-attribute 'default nil :background "black")
-            (set-face-attribute 'fringe nil :background "black")
+            ;; (set-face-attribute 'default nil :background "black")
+            ;; (set-face-attribute 'fringe nil :background "black")
             (set-frame-alpha 90)
             )
         (progn (when (getenv "DISPLAY")
@@ -1353,15 +1196,22 @@ a terminal, just try to remove default the background color."
              magit-blame-mode)
   :general ("C-c m" #'magit-status)
   :config (progn
-            (if (string= system-type "windows-nt")
+            (if is-windows
                 (setenv "SSH_ASKPASS" "git-gui--askpass"))
 
             (setq-default magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
             ))
 
+(use-package gitconfig-mode
+  :mode "/\\.?git/?config$"
+  :mode "/\\.gitmodules$")
+
+(use-package gitignore-mode
+  :mode "/\\.gitignore$")
+
 (use-package git-timemachine
   :ensure t
-  :commands (git-timemachine))
+  :commands (git-timemachine git-timemachine-toggle))
 
 (use-package git-gutter
   :if (not window-system)
@@ -1433,58 +1283,42 @@ a terminal, just try to remove default the background color."
                #b0011000
                #b0011000])))
 
+(use-package smerge-mode
+  :ensure t
+  :init (progn
+          (defun mhl/enable-smerge-mode-maybe ()
+            "Auto-enable `smerge-mode' when merge conflict is detected."
+            (save-excursion
+              (goto-char (point-min))
+              (when (re-search-forward "^<<<<<<< " nil :noerror)
+                (smerge-mode 1))))
+
+          (add-hook 'find-file-hook #'mhl/enable-smerge-mode-maybe))
+  :config (progn
+            (when (version< emacs-version "26")
+              (defalias #'smerge-keep-upper #'smerge-keep-mine)
+              (defalias #'smerge-keep-lower #'smerge-keep-other)
+              (defalias #'smerge-diff-base-upper #'smerge-diff-base-mine)
+              (defalias #'smerge-diff-upper-lower #'smerge-diff-mine-other)
+              (defalias #'smerge-diff-base-lower #'smerge-diff-base-other))))
+
 ;; Clipboard ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun clipboard-setup ()
-  "Do clipboard setup."
-  (setq select-enable-clipboard t)
-  (setq select-enable-primary t)
-  (setq save-interprogram-paste-before-kill t)
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)
+      select-enable-clipboard t
+      select-enable-primary t)
 
-  ;; (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
-
-  ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
-  (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
-
-  (defun xsel-cut-function (text &optional push)
-    """Insert TEXT to temp-buffer and send content to xsel stdin."""
-    (with-temp-buffer
-      (insert text)
-      ;; I prefer using the "clipboard" selection (the one the typically is used
-      ;; by c-c/c-v) before the primary selection (that uses
-      ;; mouse-select/middle-button-click)
-      (call-process-region (point-min) (point-max)
-                           "xsel"
-                           nil 0
-                           nil "--clipboard" "--input")))
-  ;; Callback for when user pastes
-  (defun xsel-paste-function()
-    ;; Find out what is current selection by xsel. If it is different from the
-    ;; top of the kill-ring (car kill-ring), then return it. Else, nil is
-    ;; returned, so whatever is in the top of the kill-ring will be used.
-    (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
-      (unless (string= (car kill-ring) xsel-output)
-        xsel-output )))
-
-  ;; If emacs is run in a terminal, the default clipboard functions have no
-  ;; effect. Instead, we'll make use of xsel. See
-  ;; [[http://www.vergenet.net/~conrad/software/xsel/][this]] -- "a command-line
-  ;; program for getting and setting the contents of the X selection"
-  (when (not (display-graphic-p))
-    ;; Callback for when user cuts
-    ;; Attach callbacks to hooks
-    (setq interprogram-cut-function #'xsel-cut-function)
-    (setq interprogram-paste-function #'xsel-paste-function)
-    ;; Idea from http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
-    ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
-    ))
+(after! evil
+  (advice-add #'evil-visual-update-x-selection :override #'ignore))
 
 ;; Hydra ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package hydra
   :ensure t
-  :defer t
+  :demand t
   :init (progn
+          (setq lv-use-separator t)
+
           (defhydra hydra-help (:exit t)
             "Help"
             ("a" counsel-apropos "Apropos")
@@ -1550,18 +1384,61 @@ a terminal, just try to remove default the background color."
             ("M-y" yank-pop nil)
             ("y" (yank-pop 1) "next")
             ("Y" (yank-pop -1) "prev")
-            ("l" counsel-yank-pop "list" :exit t)))
-  :config (progn
-            (use-package ivy-hydra
-              :ensure t
-              :defer t)
-            ))
+            ("l" counsel-yank-pop "list" :exit t))))
+
+(use-package ivy-hydra
+  :after ivy
+  :commands (+ivy@coo/body ivy-dispatching-done-hydra)
+  :general ("C-o" #'+ivy@coo/body
+            "M-o" #'ivy-dispatching-done-hydra
+            :keymaps 'ivy-minibuffer-map)
+  :config
+  (defhydra +ivy@coo (:hint nil :color pink)
+    "
+   Move     ^^^^^^^^^^ | Call         ^^^^ | Cancel^^ | Options^^ | Action _w_/_s_/_a_: %s(ivy-action-name)
+  ----------^^^^^^^^^^-+--------------^^^^-+-------^^-+--------^^-+---------------------------------
+   _g_ ^ ^ _k_ ^ ^ _u_ | _f_orward _o_ccur | _i_nsert | _c_alling: %-7s(if ivy-calling \"on\" \"off\") _C_ase-fold: %-10`ivy-case-fold-search
+   ^ ^ _h_ ^+^ _l_ ^ ^ | _RET_ done     ^^ | _q_uit   | _m_atcher: %-7s(ivy--matcher-desc) _t_runcate: %-11`truncate-lines
+   _G_ ^ ^ _j_ ^ ^ _d_ | _TAB_ alt-done ^^ | ^ ^      | _<_/_>_: shrink/grow
+  "
+    ;; arrows
+    ("j" ivy-next-line)
+    ("k" ivy-previous-line)
+    ("l" ivy-alt-done)
+    ("h" ivy-backward-delete-char)
+    ("g" ivy-beginning-of-buffer)
+    ("G" ivy-end-of-buffer)
+    ("d" ivy-scroll-up-command)
+    ("u" ivy-scroll-down-command)
+    ("e" ivy-scroll-down-command)
+    ;; actions
+    ("q" keyboard-escape-quit :exit t)
+    ("C-g" keyboard-escape-quit :exit t)
+    ("<escape>" keyboard-escape-quit :exit t)
+    ("C-o" nil)
+    ("i" nil)
+    ("TAB" ivy-alt-done :exit nil)
+    ("C-j" ivy-alt-done :exit nil)
+    ;; ("d" ivy-done :exit t)
+    ("RET" ivy-done :exit t)
+    ("C-m" ivy-done :exit t)
+    ("f" ivy-call)
+    ("c" ivy-toggle-calling)
+    ("m" ivy-toggle-fuzzy)
+    (">" ivy-minibuffer-grow)
+    ("<" ivy-minibuffer-shrink)
+    ("w" ivy-prev-action)
+    ("s" ivy-next-action)
+    ("a" ivy-read-action)
+    ("t" (setq truncate-lines (not truncate-lines)))
+    ("C" ivy-toggle-case-fold)
+    ("o" ivy-occur :exit t)))
 
 ;; Project Management ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package projectile
   :ensure t
-  :defer 1
+  :demand t
   :commands (projectile-ack
              projectile-ag
              projectile-compile-project
@@ -1586,20 +1463,23 @@ a terminal, just try to remove default the background color."
   :general ("C-c p" '(:keymap projectile-command-map))
   :init (progn
           (setq projectile-enable-caching t
-                projectile-cache-file (concat user-cache-directory
-                                              "projectile.cache")
+                projectile-indexing-method 'alien
+                projectile-require-project-root nil
+                projectile-cache-file (concat user-cache-directory "projectile.cache")
                 projectile-known-projects-file (concat user-cache-directory
-                                                       "projectile-bookmarks.eld"))
+                                                       "projectile-bookmarks.eld")
+
+                projectile-globally-ignored-files '(".DS_Store" "Icon" "TAGS")
+                projectile-globally-ignored-file-suffixes '(".elc" ".pyc" ".o" ".class"))
 
           ;; projectile modeline updates causes some slowdown, so let's
           ;; change it to a static string.
           ;; https://github.com/bbatsov/projectile/issues/657
-          (setq projectile-mode-line "Projectile"))
-  :config (progn
-            ;; (setq projectile-indexing-method 'native)
-            (add-to-list 'projectile-globally-ignored-directories "elpa")
+          (setq projectile-mode-line "Projectile")
 
-            (projectile-mode)
+          (add-hook 'mhl/post-init-hook #'projectile-mode))
+  :config (progn
+            (add-to-list 'projectile-globally-ignored-directories "elpa")
             ))
 
 (use-package helm-projectile
@@ -1620,163 +1500,18 @@ a terminal, just try to remove default the background color."
           (setq helm-projectile-fuzzy-match t)
           (setq projectile-switch-project-action 'helm-projectile)))
 
-;; [[https://github.com/pashinin/workgroups2][Workgroups2]] adds workspace and
-;; session support to Emacs. I've found that over time, my use of helm-* to
-;; switch buffers quickly has somewhat obsoleted the necessity of this feature,
-;; so I've disabled it for now.
-(use-package workgroups2
-  :disabled t
-  :config (progn (setq wg-default-session-file (concat user-cache-directory "workgroups2"))
-                 (setq wg-use-default-session-file nil)
-
-                 ;; Change prefix key (before activating WG)
-                 (setq wg-prefix-key (kbd "C-c z"))
-
-                 ;; What to do on Emacs exit / workgroups-mode exit?
-                 (setq wg-emacs-exit-save-behavior nil)           ;; Options: 'save 'ask nil
-                 (setq wg-workgroups-mode-exit-save-behavior nil) ;; Options: 'save 'ask nil
-
-                 ;; Mode Line changes
-                 ;; Display workgroups in Mode Line?
-                 (setq wg-mode-line-display-on t) ;; Default: (not (featurep 'powerline))
-                 (setq wg-flag-modified t)        ;; Display modified flags as well
-
-                 (setq wg-mode-line-decor-left-brace  "["
-                       wg-mode-line-decor-right-brace "]"
-                       wg-mode-line-decor-divider     ":")
-
-                 (workgroups-mode t)
-                 ))
-
-;; Helm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Helm Core ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package helm
+(use-package persp-mode
   :ensure t
-  :disabled t
-  :defer 1
-  :commands (helm-mode)
-  :general ("C-x C-f" #'helm-find-files
-            "M-x"     #'helm-M-x
-            "C-c x"   #'helm-M-x
-            "C-c o"   #'helm-imenu
-            "C-c y"   #'helm-show-kill-ring)
+  :demand t
   :config (progn
-            (setq helm-apropos-fuzzy-match t
-                  helm-buffers-fuzzy-matching t
-                  helm-file-cache-fuzzy-match t
-                  helm-imenu-fuzzy-match t
-                  helm-lisp-fuzzy-completion t
-                  helm-locate-fuzzy-match nil
-                  helm-recentf-fuzzy-match t
-                  helm-M-x-fuzzy-match t
-                  helm-semantic-fuzzy-match t)
-
-            ;; (helm-mode t)
-
-            (setq-default helm-mode-line-string "")
-
-            ;; Scroll 4 lines other window using M-<next>/M-<prior>
-            (setq helm-scroll-amount 4)
-
-            ;; Do not display invisible candidates
-            (setq helm-quick-update t)
-
-            ;; (setq helm-ff-auto-update-initial-value nil)
-            ;; (setq helm-ff-smart-completion nil)
-
-            ;; Be idle for this many seconds, before updating in delayed sources.
-            (setq helm-idle-delay 0)
-
-            ;; Be idle for this many seconds, before updating candidate buffer
-            (setq helm-input-idle-delay 0.01)
-
-            (setq helm-full-frame nil)
-            (setq helm-split-window-default-side 'other)
-            (setq helm-split-window-in-side-p t)         ;; open helm buffer inside current window, not occupy whole other window
-
-            (setq helm-candidate-number-limit 1000)
-
-            ;; Don't loop helm sources.
-            (setq helm-move-to-line-cycle-in-source nil)
-
-            ;; Free up some visual space.
-            (setq helm-display-header-line nil)
-
-            (defun helm-cfg-use-header-line-instead-of-minibuffer ()
-              ;; Enter search patterns in header line instead of minibuffer.
-              (setq helm-echo-input-in-header-line t)
-              (defun helm-hide-minibuffer-maybe ()
-                (when (with-helm-buffer helm-echo-input-in-header-line)
-                  (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
-                    (overlay-put ov 'window (selected-window))
-                    (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
-                                            `(:background ,bg-color :foreground ,bg-color)))
-                    (setq-local cursor-type nil))))
-              (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe))
-            ;; (helm-cfg-use-header-line-instead-of-minibuffer)
-
-            ;; ;; "Remove" source header text
-            ;; (set-face-attribute 'helm-source-header nil :height 1.0)
-
-            ;; ;; Save current position to mark ring when jumping to a different place
-            ;; (add-hook 'helm-goto-line-before-hook #'helm-save-current-pos-to-mark-ring)
-
-            (general-define-key "C-z"   #'helm-select-action :keymaps 'helm-map)
-
-            ;; Tab -> do persistent action
-            (general-define-key "<tab>" #'helm-execute-persistent-action :keymaps 'helm-map)
-
-            ;; Make Tab work in terminal. Cannot use "bind-key" since it
-            ;; would detect that we already bound tab.
-            (define-key helm-map (kbd "C-i") #'helm-execute-persistent-action)
-
-            ;; (setq helm-mode-fuzzy-match t)
-            ;; (setq helm-completion-in-region-fuzzy-match t)
-
-            ;; When there is only a single directory candidate when
-            ;; file-finding, don't automatically enter that directory.
-            (setq helm-ff-auto-update-initial-value nil)
-
-            (setq helm-ff-skip-boring-files t)
-
-            ;; Fuzzy matching with flx!
-            (use-package helm-flx
-              :ensure t
-              :init (progn (helm-flx-mode t)))
-            ))
-
-;; Helm Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package helm-descbinds
-  :ensure t
-  :disabled t
-  :defer t
-  :commands (helm-descbinds)
-  :init (progn
-          (fset #'describe-bindings #'helm-descbinds)
-          (setq helm-descbinds-window-style 'split)
-          ))
-
-(use-package helm-imenu
-  :disabled t
-  :general ("C-c o" #'helm-imenu))
-
-(use-package helm-swoop
-  :ensure t
-  :disabled t
-  :general (("C-c s" #'helm-swoop))
-  :init (progn
-          (general-define-key "M-i" #'helm-swoop-from-isearch :keymaps 'isearch-mode-map))
-  :config (progn ;; disable pre-input
-                 (setq helm-swoop-pre-input-function (lambda () ""))
-
-                 (setq helm-swoop-split-with-multiple-windows nil
-                       helm-swoop-split-direction 'split-window-vertically
-                       helm-swoop-speed-or-color t
-                       helm-swoop-split-window-function 'helm-default-display-buffer)
-                 ))
+            (setq wg-morph-on nil
+                  persp-autokill-buffer-on-remove 'kill-weak
+                  persp-nil-name "nil"
+                  persp-nil-hidden t
+                  persp-auto-save-fname "autosave"
+                  persp-auto-resume-time 1
+                  persp-auto-save-opt 1
+                  persp-save-dir (concat user-cache-directory "workspaces/"))))
 
 ;; Ido-mode ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1842,256 +1577,340 @@ a terminal, just try to remove default the background color."
 
 ;; Evil ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Evil Core ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (use-package evil
   :ensure t
-  :preface (progn (setq evil-want-C-u-scroll t))
-  :init (progn ;; (setq evil-move-cursor-back nil)
-               (setq evil-cross-lines t)
-               (setq evil-intercept-esc 'always)
+  :demand t
+  :init (progn
+          (setq evil-want-C-u-scroll t
+                evil-want-visual-char-semi-exclusive t
+                evil-want-Y-yank-to-eol t
+                evil-magic t
+                evil-echo-state t
+                evil-auto-indent t
+                evil-indent-convert-tabs t
+                evil-ex-search-vim-style-regexp t
+                evil-ex-visual-char-range t
+                evil-insert-skip-empty-lines t
+                evil-mode-line-format 'nil
+                ;; more vim-like behavior
+                evil-symbol-word-search t
+                ;; don't activate mark on shift-click
+                shift-select-mode nil))
+  :config (progn
 
-               (setq evil-want-fine-undo t)
-               (setq evil-symbol-word-search t)
+            (defun mhl/evil-set-cursor-colors ()
+              (setq evil-emacs-state-cursor    '("#8abeb7" box))
+              (setq evil-normal-state-cursor   '("#e0e0e0" box))
+              (setq evil-insert-state-cursor   '("#f0c674" box))
+              ;; (setq evil-visual-state-cursor   '("#de935f" box))
+              (setq evil-replace-state-cursor  '("#a3685a" box))
+              (setq evil-operator-state-cursor '("#81a2be" box)))
 
-               ;; (setq evil-disable-insert-state-bindings t)
+            (advice-add #'load-theme :after #'mhl/evil-set-cursor-colors)
 
-               (setq evil-auto-indent t)
+            ;; make `try-expand-dabbrev' from `hippie-expand' work in minibuffer
+            ;; @see `he-dabbrev-beg', so we need re-define syntax for '/'
+            (defun minibuffer-inactive-mode-hook-setup ()
+              (set-syntax-table (let* ((table (make-syntax-table)))
+                                  (modify-syntax-entry ?/ "." table)
+                                  table)))
+            (add-hook 'minibuffer-inactive-mode-hook #'minibuffer-inactive-mode-hook-setup)
 
-               ;; Holy-mode (from [[https://github.com/syl20bnr/spacemacs][Spacemacs]]) for
-               ;; when I want to use evil features (like evil-leader) while staying in the
-               ;; emacs-state.
-               (use-package holy-mode
-                 :load-path "site-lisp/holy-mode"
-                 :disabled t
-                 :commands (holy-mode)
-                 :general ("<f12>" #'holy-mode))
+            (evil-set-toggle-key "C-\\")
+            (general-define-key "C-z" 'evil-execute-in-normal-state)
 
-               ;; (setq evil-normal-state-tag   " N ")
-               ;; (setq evil-visual-state-tag   " V ")
-               ;; (setq evil-emacs-state-tag    " E ")
-               ;; (setq evil-insert-state-tag   " I ")
-               ;; (setq evil-replace-state-tag  " R ")
-               ;; (setq evil-operator-state-tag " O ")
+            ;; (evil-set-initial-state 'erc-mode 'normal)
+            ;; (evil-set-initial-state 'package-menu-mode 'normal)
+            (evil-set-initial-state 'term-mode 'emacs)
 
-               (setq evil-emacs-state-cursor    '("#8abeb7" box))
-               (setq evil-normal-state-cursor   '("#e0e0e0" box))
-               (setq evil-insert-state-cursor   '("#f0c674" box))
-               ;; (setq evil-visual-state-cursor   '("#de935f" box))
-               (setq evil-replace-state-cursor  '("#a3685a" box))
-               (setq evil-operator-state-cursor '("#81a2be" box))
-
-               (evil-mode t))
-  :config (progn (evil-set-toggle-key "C-\\")
-                 (general-define-key "C-z" 'evil-execute-in-normal-state)
-
-                 ;; (evil-set-initial-state 'erc-mode 'normal)
-                 ;; (evil-set-initial-state 'package-menu-mode 'normal)
-                 (evil-set-initial-state 'term-mode 'emacs)
-
-                 ;; Make ESC work more or less like it does in Vim
-                 (defun init/minibuffer-keyboard-quit()
-                   "Abort recursive edit.
+            ;; Make ESC work more or less like it does in Vim
+            (defun init/minibuffer-keyboard-quit()
+              "Abort recursive edit.
 
 In Delete Selection mode, if the mark is active, just deactivate it;
 then it takes a second \\[keyboard-quit] to abort the minibuffer."
-                   (interactive)
-                   (if (and delete-selection-mode transient-mark-mode mark-active)
-                       (setq deactivate-mark t)
-                     (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
-                     (abort-recursive-edit)))
+              (interactive)
+              (if (and delete-selection-mode transient-mark-mode mark-active)
+                  (setq deactivate-mark t)
+                (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
+                (abort-recursive-edit)))
 
-                 (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-map)
-                 (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-ns-map)
-                 (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-completion-map)
-                 (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-must-match-map)
-                 (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-isearch-map)
+            (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-map)
+            (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-ns-map)
+            (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-completion-map)
+            (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-must-match-map)
+            (general-define-key [escape] #'init/minibuffer-keyboard-quit :keymaps 'minibuffer-local-isearch-map)
 
-                 (defun mhl/evil-be-emacsy ()
-                   (general-define-key "C-a" #'evil-beginning-of-line    :keymaps '(insert motion))
-                   (general-define-key "C-e" #'evil-end-of-line          :keymaps '(insert motion))
+            (defun mhl/evil-be-emacsy ()
+              (general-define-key "C-a" #'evil-beginning-of-line    :keymaps '(insert motion))
+              (general-define-key "C-e" #'evil-end-of-line          :keymaps '(insert motion))
 
-                   (general-define-key "C-b" #'evil-backward-char        :keymaps '(insert))
-                   (general-define-key "C-d" #'evil-delete-char          :keymaps '(insert))
-                   (general-define-key "C-f" #'evil-forward-char         :keymaps '(insert))
-                   (general-define-key "C-k" #'evil-delete-line          :keymaps '(insert motion))
+              (general-define-key "C-b" #'evil-backward-char        :keymaps '(insert))
+              (general-define-key "C-d" #'evil-delete-char          :keymaps '(insert))
+              (general-define-key "C-f" #'evil-forward-char         :keymaps '(insert))
+              (general-define-key "C-k" #'evil-delete-line          :keymaps '(insert motion))
 
-                   (general-define-key "C-p" #'evil-previous-visual-line :keymaps '(insert))
-                   (general-define-key "C-n" #'evil-next-visual-line     :keymaps '(insert)))
+              (general-define-key "C-p" #'evil-previous-visual-line :keymaps '(insert))
+              (general-define-key "C-n" #'evil-next-visual-line     :keymaps '(insert)))
 
-                 (mhl/evil-be-emacsy)
+            (mhl/evil-be-emacsy)
 
-                 ;; Extra text objects
-                 (defmacro define-and-bind-text-object (key start-regex end-regex)
-                   (let ((inner-name (make-symbol "inner-name"))
-                         (outer-name (make-symbol "outer-name")))
-                     `(progn
-                        (evil-define-text-object ,inner-name (count &optional beg end type)
-                          (evil-select-paren ,start-regex ,end-regex beg end type count nil))
-                        (evil-define-text-object ,outer-name (count &optional beg end type)
-                          (evil-select-paren ,start-regex ,end-regex beg end type count t))
-                        (define-key evil-inner-text-objects-map ,key (quote ,inner-name))
-                        (define-key evil-outer-text-objects-map ,key (quote ,outer-name)))))
+            ;; Extra text objects
+            (defmacro define-and-bind-text-object (key start-regex end-regex)
+              (let ((inner-name (make-symbol "inner-name"))
+                    (outer-name (make-symbol "outer-name")))
+                `(progn
+                   (evil-define-text-object ,inner-name (count &optional beg end type)
+                     (evil-select-paren ,start-regex ,end-regex beg end type count nil))
+                   (evil-define-text-object ,outer-name (count &optional beg end type)
+                     (evil-select-paren ,start-regex ,end-regex beg end type count t))
+                   (define-key evil-inner-text-objects-map ,key (quote ,inner-name))
+                   (define-key evil-outer-text-objects-map ,key (quote ,outer-name)))))
 
-                 ;; create "il"/"al" (inside/around) line text objects:
-                 (define-and-bind-text-object "l" "^\\s-*" "\\s-*$")
+            ;; create "il"/"al" (inside/around) line text objects:
+            (define-and-bind-text-object "l" "^\\s-*" "\\s-*$")
 
-                 ;; create "ie"/"ae" (inside/around) entire buffer text objects:
-                 (define-and-bind-text-object "e" "\\`\\s-*" "\\s-*\\'")
+            ;; create "ie"/"ae" (inside/around) entire buffer text objects:
+            (define-and-bind-text-object "e" "\\`\\s-*" "\\s-*\\'")
 
-                 (define-and-bind-text-object "*" "*" "*")
-                 (define-and-bind-text-object "/" "/" "/")
+            (define-and-bind-text-object "*" "*" "*")
+            (define-and-bind-text-object "/" "/" "/")
 
-                 ;; Swap j,k with gj, gk
-                 (general-define-key "j"   #'evil-next-visual-line     :keymaps '(normal))
-                 (general-define-key "k"   #'evil-previous-visual-line :keymaps '(normal))
-                 (general-define-key "g j" #'evil-next-line            :keymaps '(normal))
-                 (general-define-key "g k" #'evil-previous-line        :keymaps '(normal))
+            ;; Swap j,k with gj, gk
+            (general-define-key "j"   #'evil-next-visual-line     :keymaps '(normal))
+            (general-define-key "k"   #'evil-previous-visual-line :keymaps '(normal))
+            (general-define-key "g j" #'evil-next-line            :keymaps '(normal))
+            (general-define-key "g k" #'evil-previous-line        :keymaps '(normal))
 
-                 ;; Other evil keybindings
-                 (evil-define-operator evil-join-previous-line (beg end)
-                   "Join the previous line with the current line."
-                   :motion evil-line
-                   ;; (evil-previous-visual-line)
-                   ;; (evil-join beg end)
-                   (join-line))
+            ;; Other evil keybindings
+            (evil-define-operator evil-join-previous-line (beg end)
+              "Join the previous line with the current line."
+              :motion evil-line
+              ;; (evil-previous-visual-line)
+              ;; (evil-join beg end)
+              (join-line))
 
-                 ;; Let K match J
-                 (general-define-key "K" #'evil-join-previous-line :keymaps '(normal))
+            ;; Let K match J
+            (general-define-key "K" #'evil-join-previous-line :keymaps '(normal))
 
-                 ;; Make Y work like D
-                 (general-define-key "Y" (lambda ()
-                                           (interactive)
-                                           (evil-yank (point) (line-end-position)))
-                                     :keymaps '(normal))
+            (defun mhl/evil-visual-indent ()
+              (interactive)
+              (evil-shift-right (region-beginning) (region-end))
+              (evil-normal-state)
+              (evil-visual-restore))
 
-                 ;; Kill buffer if only window with buffer open, otherwise just close
-                 ;; the window.
-                 (general-define-key "Q" #'my-window-killer :keymaps '(normal))
+            (defun mhl/evil-visual-dedent ()
+              (interactive)
+              (evil-shift-left (region-beginning) (region-end))
+              (evil-normal-state)
+              (evil-visual-restore))
 
-                 ;; Visual indentation now reselects visual selection.
-                (general-define-key ">" (lambda ()
-                                        (interactive)
-                                        ;; ensure mark is less than point
-                                        (when (> (mark) (point))
-                                            (exchange-point-and-mark)
-                                            )
-                                        (evil-normal-state)
-                                        (evil-shift-right (mark) (point))
-                                        ;; re-select last visual-mode selection
-                                        (evil-visual-restore))
-                                    :keymaps '(visual))
+            (general-define-key ">" #'mhl/evil-visual-indent)
+            (general-define-key "<" #'mhl/evil-visual-dedent)
 
-                 (general-define-key "<" (lambda ()
-                                           (interactive)
-                                           ;; ensure mark is less than point
-                                           (when (> (mark) (point))
-                                             (exchange-point-and-mark)
-                                             )
-                                           (evil-normal-state)
-                                           (evil-shift-left (mark) (point))
-                                           ;; re-select last visual-mode selection
-                                           (evil-visual-restore))
-                                     :keymaps '(visual))
+            ;; Commentin'
+            (general-define-key "g c c" #'comment-line-or-region :keymaps '(normal))
+            (general-define-key "g c"   #'comment-line-or-region :keymaps '(visual))
 
-                 ;; Commentin'
-                 (general-define-key "g c c" #'comment-line-or-region :keymaps '(normal))
-                 (general-define-key "g c"   #'comment-line-or-region :keymaps '(visual))
+            ;; Don't quit!
+            (defadvice evil-quit (around advice-for-evil-quit activate)
+              (do-not-quit))
+            (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
+              (do-not-quit))
 
-                 ;; Don't quit!
-                 (defadvice evil-quit (around advice-for-evil-quit activate)
-                   (do-not-quit))
-                 (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
-                   (do-not-quit))
+            (evil-mode t)
+            ))
 
-                 (use-package evil-surround
-                   :ensure t
-                   :defer t
-                   :init (global-evil-surround-mode t))
+(evil-define-operator evil-delete-char-without-register (beg end type reg)
+  "delete character without yanking unless in visual mode"
+  :motion evil-forward-char
+  (interactive "<R><y>")
+  (if (evil-visual-state-p)
+    (evil-delete beg end type reg)
+    (evil-delete beg end type ?_)))
 
-                 (use-package evil-embrace
-                   :ensure t
-                   :defer t
-                   :init (progn
-                             (evil-embrace-enable-evil-surround-integration)
-                             ))
+(evil-define-operator evil-delete-backward-char-without-register (beg end type _)
+  "delete backward character without yanking"
+  :motion evil-backward-char
+  (interactive "<R><y>")
+  (evil-delete beg end type ?_))
 
-                 (use-package evil-matchit
-                   :ensure t
-                   :defer t
-                   :config (progn
-                             (global-evil-matchit-mode t)))
+(evil-define-operator evil-delete-without-register (beg end type _ _2)
+  (interactive "<R><y>")
+  (evil-delete beg end type ?_))
 
-                 (use-package evil-textobj-anyblock
-                   :ensure t
-                   :defer t
-                   :init (progn
-                           (general-define-key "b" #'evil-textobj-anyblock-inner-block :keymaps 'evil-inner-text-objects-map)
-                           (general-define-key "b" #'evil-textobj-anyblock-a-block     :keymaps 'evil-outer-text-objects-map)
-                           ))
+(evil-define-operator evil-delete-without-register-if-whitespace (beg end type reg yank-handler)
+  (interactive "<R><y>")
+  (let ((text (replace-regexp-in-string "\n" "" (filter-buffer-substring beg end))))
+    (if (string-match-p "^\\s-*$" text)
+      (evil-delete beg end type ?_)
+      (evil-delete beg end type reg yank-handler))))
 
-                 (use-package evil-args
-                   :ensure t
-                   :defer t
-                   :disabled t
-                   :init (progn
-                           ;; bind evil-args text objects
-                           (general-define-key "a" #'evil-inner-arg :keymaps 'evil-inner-text-objects-map)
-                           (general-define-key "a" #'evil-outer-arg :keymaps 'evil-outer-text-objects-map)
+(evil-define-operator evil-delete-line-without-register (beg end type _ yank-handler)
+    (interactive "<R><y>")
+    (evil-delete-line beg end type ?_ yank-handler))
 
-                           ;; bind evil-forward/backward-args
-                           (general-define-key "gl" #'evil-forward-arg  :keymaps '(normal motion))
-                           (general-define-key "gh" #'evil-backward-arg :keymaps '(normal motion))
+(evil-define-operator evil-change-without-register (beg end type _ yank-handler)
+  (interactive "<R><y>")
+  (evil-change beg end type ?_ yank-handler))
 
-                           ;; bind evil-jump-out-args
-                           ;; (general-define-key "gm" 'evil-jump-out-args :keymaps '(normal))
-                           ))
+(evil-define-operator evil-change-line-without-register (beg end type _ yank-handler)
+  "Change to end of line without yanking."
+  :motion evil-end-of-line
+  (interactive "<R><y>")
+  (evil-change beg end type ?_ yank-handler #'evil-delete-line))
 
-                 (use-package evil-exchange
-                   :ensure t
-                   :defer t
-                   :init (progn (evil-exchange-install)))
+(evil-define-command evil-paste-after-without-register (count &optional register yank-handler)
+  "evil paste before without yanking"
+  :suppress-operator t
+  (interactive "P<x>")
+  (if (evil-visual-state-p)
+      (evil-visual-paste-without-register count register)
+      (evil-paste-after count register yank-handler)))
 
-                 (use-package evil-numbers
-                   :ensure t
-                   :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt)
-                   :init (progn
-                           ;; Instead of C-a and C-x like in Vim, let's use + and -.
-                           (general-define-key "-" #'evil-numbers/dec-at-pt :keymaps '(normal))
-                           (general-define-key "+" #'evil-numbers/inc-at-pt :keymaps '(normal))
-                           ))
+(evil-define-command evil-paste-before-without-register (count &optional register yank-handler)
+  "evil paste before without yanking"
+  :suppress-operator t
+  (interactive "P<x>")
+  (if (evil-visual-state-p)
+      (evil-visual-paste-without-register count register)
+      (evil-paste-before count register yank-handler)))
 
-                 (use-package evil-quickscope
-                   :ensure t
-                   :defer t
-                   :disabled t
-                   :init (progn (setq evil-quickscope-cross-lines t)))
+(evil-define-command evil-visual-paste-without-register (count &optional register)
+  "Paste over Visual selection."
+  :suppress-operator t
+  (interactive "P<x>")
+  ;; evil-visual-paste is typically called from evil-paste-before or
+  ;; evil-paste-after, but we have to mark that the paste was from
+  ;; visual state
+  (setq this-command 'evil-visual-paste)
+  (let* ((text (if register
+                   (evil-get-register register)
+                 (current-kill 0)))
+         (yank-handler (car-safe (get-text-property
+                                  0 'yank-handler text)))
+         new-kill
+         paste-eob)
+    (evil-with-undo
+      (let* ((kill-ring (list (current-kill 0)))
+             (kill-ring-yank-pointer kill-ring))
+        (when (evil-visual-state-p)
+          (evil-visual-rotate 'upper-left)
+          ;; if we replace the last buffer line that does not end in a
+          ;; newline, we use `evil-paste-after' because `evil-delete'
+          ;; will move point to the line above
+          (when (and (= evil-visual-end (point-max))
+                     (/= (char-before (point-max)) ?\n))
+            (setq paste-eob t))
+          (evil-delete-without-register evil-visual-beginning evil-visual-end
+                       (evil-visual-type))
+          (when (and (eq yank-handler #'evil-yank-line-handler)
+                     (not (eq (evil-visual-type) 'line))
+                     (not (= evil-visual-end (point-max))))
+            (insert "\n"))
+          (evil-normal-state)
+          (setq new-kill (current-kill 0))
+          (current-kill 1))
+        (if paste-eob
+            (evil-paste-after count register)
+          (evil-paste-before count register)))
+      (kill-new new-kill)
+      ;; mark the last paste as visual-paste
+      (setq evil-last-paste
+            (list (nth 0 evil-last-paste)
+                  (nth 1 evil-last-paste)
+                  (nth 2 evil-last-paste)
+                  (nth 3 evil-last-paste)
+                  (nth 4 evil-last-paste)
+                  t)))))
 
-                 (use-package evil-mc
-                   :ensure t
-                   :disabled t
-                   :init (progn (global-evil-mc-mode t)))
+;; Evil Additions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-                 ;; Make Anzu work with evil-search
-                 (use-package evil-anzu
-                   :ensure t)
+(use-package evil-surround
+  :ensure t
+  :commands (global-evil-surround-mode
+             evil-surround-edit
+             evil-Surround-edit
+             evil-surround-region)
+  :init (global-evil-surround-mode t))
 
-                 (use-package evil-lion
-                   :ensure t
-                   :config (progn
-                             (evil-lion-mode)))
+(use-package evil-embrace
+  :ensure t
+  :defer t
+  :after evil-surround
+  :init (progn
+          (evil-embrace-enable-evil-surround-integration)
+          ))
 
-                 (use-package evil-goggles
-                   :ensure t
-                   :disabled t
-                   :config (progn
-                             (evil-goggles-mode)
-                             ;; optionally use diff-mode's faces; as a result, deleted text
-                             ;; will be highlighed with `diff-removed` face which is typically
-                             ;; some red color (as defined by the color theme)
-                             ;; other faces such as `diff-added` will be used for other actions
-                             (evil-goggles-use-diff-faces))
-                   )))
+(use-package evil-matchit
+  :ensure t
+  :defer t
+  :config (progn
+            (global-evil-matchit-mode t)))
+
+(use-package evil-textobj-anyblock
+  :ensure t
+  :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block)
+  :init (progn
+          (general-define-key "b" #'evil-textobj-anyblock-inner-block :keymaps 'evil-inner-text-objects-map)
+          (general-define-key "b" #'evil-textobj-anyblock-a-block     :keymaps 'evil-outer-text-objects-map)
+          ))
+
+(use-package evil-args
+  :ensure t
+  :commands (evil-inner-arg
+             evil-outer-arg
+             evil-forward-arg
+             evil-backward-arg
+             evil-jump-out-args)
+  :init (progn
+          ;; bind evil-args text objects
+          (general-define-key "a" #'evil-inner-arg :keymaps 'evil-inner-text-objects-map)
+          (general-define-key "a" #'evil-outer-arg :keymaps 'evil-outer-text-objects-map)
+
+          ;; bind evil-forward/backward-args
+          (general-define-key "gl" #'evil-forward-arg  :keymaps '(normal motion))
+          (general-define-key "gh" #'evil-backward-arg :keymaps '(normal motion))
+
+          ;; bind evil-jump-out-args
+          ;; (general-define-key "gm" 'evil-jump-out-args :keymaps '(normal))
+          ))
+
+(use-package evil-exchange
+  :ensure t
+  :defer t
+  :init (progn (evil-exchange-install)))
+
+(use-package evil-numbers
+  :ensure t
+  :commands (evil-numbers/inc-at-pt evil-numbers/dec-at-pt)
+  :init (progn
+          ;; Instead of C-a and C-x like in Vim, let's use + and -.
+          (general-define-key "-" #'evil-numbers/dec-at-pt :keymaps '(normal))
+          (general-define-key "+" #'evil-numbers/inc-at-pt :keymaps '(normal))
+          ))
+
+;; Make Anzu work with evil-search
+(use-package evil-anzu
+  :when (featurep 'evil)
+  :ensure t)
+
+(use-package evil-lion
+  :ensure t
+  :config (progn
+            (evil-lion-mode)))
+
+(use-package evil-goggles
+  :ensure t
+  :config (progn
+            (setq evil-goggles-duration 0.2)
+            (add-hook 'mhl/post-init-hook #'evil-goggles-mode t))
+
+            ;; optionally use diff-mode's faces; as a result, deleted text
+            ;; will be highlighed with `diff-removed` face which is typically
+            ;; some red color (as defined by the color theme)
+            ;; other faces such as `diff-added` will be used for other actions
+            (evil-goggles-use-diff-faces))
 
 ;; Leader ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -2223,7 +2042,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             (setq ranger-show-dotfiles t)
             ))
 
-;; Language Hooks ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Programming Languages ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package sh-script
   :defer t
@@ -2255,7 +2074,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package markdown-mode
   :ensure t
-  :mode ("\\.md$" . markdown-mode)
+  :mode "\\.m\\(d\\|arkdown\\)$"
+  :mode ("/README\\.md$" . gfm-mode)
   :config (progn (defun my-markdown-mode-hook()
                    (defvar markdown-imenu-generic-expression
                      '(("title" "^\\(.*\\)[\n]=+$" 1)
@@ -2271,11 +2091,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                    (setq imenu-generic-expression markdown-imenu-generic-expression))
 
                  (add-hook 'markdown-mode-hook #'my-markdown-mode-hook)
-
-                 (use-package markdown-toc
-                   :ensure t
-                   :commands (markdown-toc-generate-toc))
                  ))
+
+(use-package markdown-toc
+  :ensure t
+  :commands (markdown-toc-generate-toc))
 
 (use-package haskell-mode
   :ensure t
@@ -2292,7 +2112,15 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package lua-mode
   :ensure t
   :mode ("\\.lua$" . lua-mode)
-  :interpreter ("lua" . lua-mode))
+  :interpreter ("lua" . lua-mode)
+  :init (progn
+          (add-hook 'lua-mode-hook #'flycheck-mode))
+  :config (progn
+            ;; sp's lua-specific rules are obnoxious, so we disable them
+            (setq sp-pairs (delete (assq 'lua-mode sp-pairs) sp-pairs))))
+
+(use-package company-lua
+  :after lua-mode)
 
 (use-package php-mode
   :ensure t
@@ -2326,6 +2154,27 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :ensure t
   :commands (writegood-mode))
 
+(use-package disaster
+  :ensure t
+  :commands disaster)
+
+(use-package toml-mode
+  :ensure t
+  :mode "\\.toml$")
+
+(use-package yaml-mode
+  :ensure t
+  :mode "\\.ya?ml$")
+
+(use-package json-mode
+  :ensure t
+  :mode "\\.js\\(on\\|[hl]int\\(rc\\)?\\)$")
+
+;; TODO: racer, company-racer, flycheck-rust
+(use-package rust-mode
+  :ensure t
+  :mode "\\.rs$")
+
 ;; Yasnippet ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package yasnippet
@@ -2343,101 +2192,62 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Auto-completion ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package irony
-  :ensure t
-  :defer t
-  :disabled t
-  :config (progn
-            (defun irony-mode-enable ()
-              (when (member major-mode irony-supported-major-modes)
-                (irony-mode t)))
-
-            ;; (add-hook 'objc-mode-hook #'irony-mode-enable)
-            (add-hook 'c++-mode-hook  #'irony-mode-enable)
-            (add-hook 'c-mode-hook    #'irony-mode-enable)
-
-            ;; replace the `completion-at-point' and `complete-symbol' bindings in
-            ;; irony-mode's buffers by irony-mode's function
-            (defun my-irony-mode-hook ()
-              (define-key irony-mode-map [remap completion-at-point]
-                'irony-completion-at-point-async)
-              (define-key irony-mode-map [remap complete-symbol]
-                'irony-completion-at-point-async))
-            (add-hook 'irony-mode-hook #'my-irony-mode-hook)
-            (add-hook 'irony-mode-hook #'irony-cdb-autosetup-compile-options)))
-
 (use-package company
   :ensure t
+  :commands (company-mode global-company-mode company-complete
+                          company-complete-common company-manual-begin company-grab-line)
   :config (progn
-            (general-define-key "C-n" #'company-select-next     :keymaps 'company-active-map)
-            (general-define-key "C-p" #'company-select-previous :keymaps 'company-active-map)
-
-            (general-define-key "C-<tab>" #'company-dabbrev)
-            (general-define-key "M-<tab>" #'company-complete)
-            (general-define-key "C-c C-y" #'company-yasnippet)
-
-            (setq company-idle-delay 0
+            (setq company-idle-delay 0.1
+                  company-tooltip-limit 10
+                  company-tooltip-align-annotations t
                   company-minimum-prefix-length 2
                   company-show-numbers nil
                   company-require-match 'never
                   company-selection-wrap-around t)
 
-            (use-package company-flx
-              :ensure t
-              :defer t
-              :config (progn (company-flx-mode t)))
+            (setq company-global-modes '(not eshell-mode comint-mode erc-mode message-mode help-mode gud-mode)
+                  company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)
+                  company-backends '(company-capf company-dabbrev-code company-keywords company-files company-dabbrev)
+                  company-transformers '(company-sort-by-occurrence))
 
-            (use-package company-irony
-              :ensure t
-              :defer t
-              :disabled t
-              :config (progn
-                        ;; (optional) adds CC special commands to `company-begin-commands' in order to
-                        ;; trigger completion at interesting places, such as after scope operator
-                        ;; std::|
-                        (add-hook 'irony-mode-hook #'company-irony-setup-begin-commands)))
+            (after! yasnippet
+              (nconc company-backends '(company-yasnippet)))
 
-            (use-package company-go
-              :ensure t
-              :defer t
-              :disabled t
-              :config (add-hook 'go-mode-hook
-                                (lambda ()
-                                  (set (make-local-variable 'company-backends) '(company-go)))))
+            (defun mhl/company-complete ()
+              "Bring up the completion popup. If only one result, complete it."
+              (interactive)
+              (require 'company)
+              (when (and (company-manual-begin)
+                         (= company-candidates-length 1))
+                (company-complete-common)))
 
-            ;; "Iterating through back-ends that don’t apply to the current buffer is pretty fast."
-            (setq company-backends '(company-files
-                                     company-elisp
-                                     company-css
-                                     ;; company-eclim
-                                     ;; company-clang
-                                     company-capf
-                                     ;; (company-dabbrev-code company-keywords)
-                                     company-keywords
-                                     ;; company-dabbrev
-                                     ))
+            (general-define-key "C-n" #'company-select-next     :keymaps 'company-active-map)
+            (general-define-key "C-p" #'company-select-previous :keymaps 'company-active-map)
 
-            ;; Add yasnippet support for all company backends
-            ;; https://github.com/syl20bnr/spacemacs/pull/179
-            (defvar company-mode/enable-yas t "Enable yasnippet for all backends.")
-
-            (defun company-mode/backend-with-yas (backend)
-              (if (or (not company-mode/enable-yas) (and (listp backend)    (member 'company-yasnippet backend)))
-                  backend
-                (append (if (consp backend) backend (list backend))
-                        '(:with company-yasnippet))))
-
-            (setq company-backends (mapc #'company-mode/backend-with-yas company-backends))
+            (general-define-key "C-<tab>" #'company-dabbrev)
+            (general-define-key "M-<tab>" #'mhl/company-complete)
+            (general-define-key "C-c C-y" #'company-yasnippet)
 
             (global-company-mode t)
             ))
+
+(use-package company-flx
+  :ensure t
+  :defer t
+  :after company
+  :config (progn (company-flx-mode t)))
+
+(use-package company-quickhelp
+  :after company
+  :config
+  (setq company-quickhelp-delay nil)
+  (company-quickhelp-mode +1))
 
 ;; Flycheck ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package flycheck
   :ensure t
-  :defer 5
-  :disabled t
+  :commands (flycheck-mode flycheck-list-errors flycheck-buffer)
   :init (progn
             ;; Remove newline checks, since they would trigger an immediate check
             ;; when we want the idle-change-delay to be in effect while editing.
@@ -2445,33 +2255,20 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                                                         idle-change
                                                         mode-enabled))
 
-            (setq flycheck-perlcritic-severity 4)
-
             ;; Flycheck doesn't use =load-path= when checking emacs-lisp files.
             ;; Instead, it uses =flycheck-emacs-lisp-load-path=, which is empty by
             ;; default. Let's have flycheck use =load-path=!
-            (setq-default flycheck-emacs-lisp-load-path 'inherit)
-
-            ;; (flycheck-define-checker proselint
-            ;;   "A linter for prose."
-            ;;   :command ("proselint" source-inplace)
-            ;;   :error-patterns
-            ;;   ((warning line-start (file-name) ":" line ":" column ": "
-            ;;             (id (one-or-more (not (any " "))))
-            ;;             (message (one-or-more not-newline)
-            ;;                      (zero-or-more "\n" (any " ") (one-or-more not-newline)))
-            ;;             line-end))
-            ;;   :modes (text-mode org-mode markdown-mode gfm-mode))
-            ;; (add-to-list 'flycheck-checkers 'proselint)
-
+            (setq-default flycheck-emacs-lisp-load-path 'inherit))
+  :config (progn
             (global-flycheck-mode t)
             ))
 
-(use-package flycheck-irony
-  :ensure t
-  :defer t
-  :disabled t
-  :config (add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+(use-package flycheck-pos-tip
+  :after flycheck
+  :config
+  (setq flycheck-pos-tip-timeout 10
+        flycheck-display-errors-delay 0.5)
+  (flycheck-pos-tip-mode t))
 
 (use-package ispell
   :defer t
@@ -2495,7 +2292,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
               (setq-default ispell-extra-args '("--sug-mode=ultra" "--lang=en_US"))))
 
             ;; On windows, append .exe suffix
-            (when (and (string= system-type "windows-nt")
+            (when (and is-windows
                        (not (s-suffix? ".exe" ispell-program-name)))
               (setq-default ispell-program-name (concat ispell-program-name ".exe")))
             ))
@@ -2565,32 +2362,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                        '(("^$" "Goodbye.")))
                  ))
 
-(use-package znc
-  :defer t
-  :disabled t
-  :ensure t)
-
-(use-package twittering-mode
-  :defer t
-  :ensure t
-  :commands (twittering-mode)
-  :config (progn (setq twittering-use-master-password t)
-                 (setq twittering-icon-mode t)
-                 (setq twittering-allow-insecure-server-cert t)
-                 ))
-
 ;; Finishing Up ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(run-hooks 'mhl/post-init-hook)
 
 ;; Load custom init file at the end.
 (setq custom-file user-custom-file)
 (load user-custom-file t)
-
-;; Garbage collection of larger blocks of data can be slow, causes pauses during
-;; operation. Let's reduce the size of the threshold to a smaller value (the
-;; default) after most of our init is complete.
-(add-hook 'after-init-hook `(lambda ()
-                              (setq gc-cons-threshold 1600000)
-                              ))
 
 ;; Make sure emacs is daemonized.
 (use-package server
