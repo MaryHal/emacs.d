@@ -101,6 +101,15 @@
       (find-file (concat "/sudo:root@localhost:" (ido-read-file-name "File: ")))
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 
+(defun my-window-killer ()
+  "Closes the window, and deletes the buffer if it's the last window open."
+  (interactive)
+  (if (> buffer-display-count 1)
+      (if (= (length (window-list)) 1)
+          (kill-buffer)
+        (delete-window))
+    (kill-buffer-and-window)))
+
 (defun copy-to-end-of-line ()
   "Copy to the end of the line, even if no region is selected.
 Meant to replace 'kill-ring-save'."
@@ -332,7 +341,7 @@ compilation."
   :commands (winner-undo winnder-redo)
   :general ("M-N" #'winner-redo
             "M-P" #'winner-undo)
-  :config (progn
+  :init (progn
             (defvar winner-dont-bind-my-keys t) ; I'll bind keys myself
             (add-hook 'mhl/post-init-hook #'winner-mode)))
 
@@ -968,8 +977,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
               (evil-normal-state)
               (evil-visual-restore))
 
-            (general-define-key ">" #'mhl/evil-visual-indent)
-            (general-define-key "<" #'mhl/evil-visual-dedent)
+            (general-define-key ">" #'mhl/evil-visual-indent :keymaps '(visual))
+            (general-define-key "<" #'mhl/evil-visual-dedent :keymaps '(visual))
 
             ;; Commentin'
             (general-define-key "g c c" #'comment-line-or-region :keymaps '(normal))
@@ -2183,8 +2192,9 @@ a terminal, just try to remove default the background color."
 
 (use-package company
   :ensure t
-  :commands (company-mode global-company-mode company-complete
-                          company-complete-common company-manual-begin company-grab-line)
+  :demand t
+  ;; :commands (company-mode global-company-mode company-complete
+  ;;                         company-complete-common company-manual-begin company-grab-line)
   :config (progn
             (setq company-idle-delay 0.1
                   company-tooltip-limit 10
