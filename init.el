@@ -615,11 +615,6 @@ compilation."
                   avy-background t
                   avy-timeout-seconds 0.3)))
 
-(use-package amx
-  :ensure t
-  :init (progn
-          (setq amx-save-file (concat user-cache-directory "amx-items"))))
-
 (use-package ivy
   :demand t
   :init (progn
@@ -659,9 +654,7 @@ compilation."
 (use-package counsel
   :ensure t
   :demand t
-  :general ("M-x"   #'counsel-M-x
-            "C-c x" #'counsel-M-x
-            "C-c o" #'counsel-imenu
+  :general ("C-c o" #'counsel-imenu
             "C-c l" #'ivy-resume
             "C-c y" #'counsel-yank-pop
             "C-c s" #'swiper)
@@ -677,6 +670,14 @@ compilation."
   :commands (swiper swiper-all)
   :init (progn
             (setq swiper-faces '(region region region region))))
+
+(use-package amx
+  :ensure t
+  :general ("M-x"   #'amx
+            "C-c x" #'amx)
+  :init (progn
+          (setq amx-save-file (concat user-cache-directory "amx-items"))
+          (add-hook 'mhl/post-init-hook #'amx-mode))) 
 
 (use-package anzu
   :ensure t
@@ -1934,7 +1935,7 @@ a terminal, just try to remove default the background color."
              "u" #'switch-to-buffer
 
              "o" #'imenu
-             "x" #'execute-extended-command
+             "x" #'amx
 
              "l" #'ivy-resume
 
