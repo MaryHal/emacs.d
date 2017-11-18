@@ -1982,18 +1982,6 @@ a terminal, just try to remove default the background color."
 ;; certain location in a frame. I mostly use this for helm and compilation
 ;; buffers.
 
-(use-package popwin
-  :ensure t
-  :defer t
-  :disabled t
-  :config (progn (push '("\\`\\*helm.*?\\*\\'" :regexp t :height 16) popwin:special-display-config)
-                 (push '("magit" :regexp t :height 16) popwin:special-display-config)
-                 (push '(".*Shell Command Output\*" :regexp t :height 16) popwin:special-display-config)
-                 (push '(compilation-mode :height 16) popwin:special-display-config)
-
-                 (popwin-mode t)
-                 ))
-
 (use-package shackle
   :ensure t
   :init (progn (shackle-mode t))
